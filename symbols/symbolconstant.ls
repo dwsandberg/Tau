@@ -19,7 +19,8 @@ use set.symdef
 Export type:symbolconstant
 
 Function seqelements(s:symbol) seq.symbol
-if iswords.s then for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /for (acc)
+if iswords.s then
+ for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /for (acc)
 else
  assert isrecordconstant.s report "constant code error $(s)"
  let code1 = fullconstantcode.s
@@ -60,27 +61,35 @@ for map = map0, todo = empty:seq.symdef, sd ∈ prg do
     if isrecordconstant.sym then
      let mapvalue = map_(toint.name.sym)
      next(acc + mapvalue, isrecordconstant.mapvalue)
-    else next(acc + sym, ok)
+    else
+     next(acc + sym, ok)
    /for (if ok then replaceS(map, i, [Constant2.acc]) else empty:seq.symbol)
   if isempty.newmap then next(map, todo + sd) else next(newmap, todo)
- else next(map, todo)
+ else
+  next(map, todo)
 /for (
- if isempty.todo then map
+ if isempty.todo then
+  map
  else
   assert length.todo < length.prg
-  report "ill formed program $(for txt = "", sd2 ∈ todo do txt + "
-   /p" + %.sym.sd2 + %.code.sd2 /for (txt))"
-  map(map, todo))
+  report
+   "ill formed program $(for txt = "", sd2 ∈ todo do txt + "
+    /p" + %.sym.sd2 + %.code.sd2 /for (txt))"
+  map(map, todo)
+)
 
 Function renumberconstants(prg:seq.symdef) seq.symdef
 let map = map(sparseseq.Lit.0, prg)
 for newprg = empty:seq.symdef, sd ∈ prg do
- if isrecordconstant.sym.sd then newprg
+ if isrecordconstant.sym.sd then
+  newprg
  else
   let newcode = 
    for acc = empty:seq.symbol, changed = false, sym ∈ code.sd do
-    if isrecordconstant.sym then next(acc + map_(toint.name.sym), true)
-    else next(acc + sym, changed)
+    if isrecordconstant.sym then
+     next(acc + map_(toint.name.sym), true)
+    else
+     next(acc + sym, changed)
    /for (if changed then acc else code.sd)
   newprg + symdef(sym.sd, newcode, paragraphno.sd)
 /for (newprg) 

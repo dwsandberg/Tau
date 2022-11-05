@@ -53,36 +53,37 @@ function addbody(R:reduction.bindinfo, common:commoninfo, place:int, parsestk:st
 let exp = R_2
 let returntype = last.types.R_1
 assert mode.common ∈ "symbol" ∨ returntype = (types.exp)_1
-report errormessage("function type of $(returntype) does not match expression type $((types.exp)_1)"
-, common
-, place
-, parsestk
-)
+report
+ errormessage("function type of $(returntype) does not match expression type $((types.exp)_1)"
+  , common
+  , place
+  , parsestk)
 let codewithcomments = 
  code.R_1 + code.exp
  + constantseq(length.code.R_1, symbol(internalmod, "{", seqof.typeword, returntype, returntype))
 bindinfo(dict.R, codewithcomments, types.R_1, text.R_1)
 
 function createfunc(R:reduction.bindinfo
-, common:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-, funcname:seq.word
-, PL:bindinfo
-, functypebind:bindinfo
-) bindinfo
+ , common:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo
+ , funcname:seq.word
+ , PL:bindinfo
+ , functypebind:bindinfo) bindinfo
 let paralist = if mode.common ∈ "symbol" then types.PL else empty:seq.mytype
 let returntype = resolvetype(text.functypebind, common, place, parsestk)
 let newdict = 
- if mode.common ∈ "symbol" then dict.R
- else addparameters(PL, common, place, parsestk)
+ if mode.common ∈ "symbol" then
+  dict.R
+ else
+  addparameters(PL, common, place, parsestk)
 if length.funcname > 1 then
  bindinfo(newdict
- , empty:seq.symbol
- , [resolvetype(funcname << 1, common, place, parsestk)] + paralist + returntype
- , funcname
- )
-else bindinfo(newdict, empty:seq.symbol, paralist + returntype, funcname)
+  , empty:seq.symbol
+  , [resolvetype(funcname << 1, common, place, parsestk)] + paralist + returntype
+  , funcname)
+else
+ bindinfo(newdict, empty:seq.symbol, paralist + returntype, funcname)
 
 function errormessage(message:seq.word, common:commoninfo, place:int, parsestk:stack.stkele.bindinfo) seq.word
 errormessage:bindinfo(message, input.common, place, parsestk)
@@ -95,40 +96,44 @@ for flds = dict.b, idx = 1, paratype ∈ types.b do
 /for (flds)
 
 function lookupbysig(dict:symboldict
-, name:seq.word
-, paratypes:seq.mytype
-, common:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-) symbol
+ , name:seq.word
+ , paratypes:seq.mytype
+ , common:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo) symbol
 let sym3 = 
- if length.name = 1 then symbol(internalmod, name, paratypes, typeint)
+ if length.name = 1 then
+  symbol(internalmod, name, paratypes, typeint)
  else
   symbol4(internalmod
-  , name_1
-  , resolvetype(name << 1, common, place, parsestk)
-  , paratypes
-  , typeint
-  )
+   , name_1
+   , resolvetype(name << 1, common, place, parsestk)
+   , paratypes
+   , typeint)
 let f0 = lookupbysig(dict, sym3)
 let f = 
- if cardinality.f0 < 2 then f0
+ if cardinality.f0 < 2 then
+  f0
  else
-  for acc = empty:set.symbol, sy ∈ toseq.f0 do if isunbound.sy then acc else acc + sy /for (acc)
+  for acc = empty:set.symbol, sy ∈ toseq.f0 do
+   if isunbound.sy then acc else acc + sy
+  /for (acc)
 assert not.isempty.f
-report errormessage("cannot find 1 $(fixNM.name) ($(for acc = "", @e ∈ paratypes do acc + %.@e + "
- ," /for (acc >> 1)))"
-, common
-, place
-, parsestk
-)
+report
+ errormessage(
+  "cannot find 1 $(fixNM.name) ($(for acc = "", @e ∈ paratypes do acc + %.@e + "
+   ," /for (acc >> 1)))"
+  , common
+  , place
+  , parsestk)
 assert cardinality.f = 1
-report errormessage("found more than one $(for acc = "", @e ∈ toseq.f do acc + library.module.@e + "
- ." + %.@e /for (acc))"
-, common
-, place
-, parsestk
-)
+report
+ errormessage(
+  "found more than one $(for acc = "", @e ∈ toseq.f do acc + library.module.@e + "
+   ." + %.@e /for (acc))"
+  , common
+  , place
+  , parsestk)
 let discard = 
  for acc = 0, sym2 ∈ requires(dict, f_1) do
   let xxx = lookupbysig(dict, sym2)
@@ -141,15 +146,16 @@ f_1
 function bindlit(R:reduction.bindinfo) bindinfo
 let chars = decodeword.first.text.R_1
 let rt = 
- if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx" then typebits
- else typeint
+ if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx" then typebits else typeint
 bindinfo(dict.R
-, [if mode.common.dict.R = "text"_1 then symbol(internalmod, text.R_1, rt)
-else Lit.cvttoint.chars
-]
-, [rt]
-, ""
-)
+ , [
+  if mode.common.dict.R = "text"_1 then
+   symbol(internalmod, text.R_1, rt)
+  else
+   Lit.cvttoint.chars
+  ]
+ , [rt]
+ , "")
 
 function opaction(R:reduction.bindinfo, input:commoninfo, place:int, parsestk:stack.stkele.bindinfo) bindinfo
 let op = tokentext.R_2
@@ -157,32 +163,34 @@ let dict = dict.R_1
 let types = types.R_1 + types.R_3
 if op = "∧" ∧ types = [typeboolean, typeboolean] ∧ mode.input ∈ "body" then
  bindinfo(dict
- , ifthenelse(code.R_1, code.R_3, [Litfalse], typeboolean)
- , [typeboolean]
- , ""
- )
+  , ifthenelse(code.R_1, code.R_3, [Litfalse], typeboolean)
+  , [typeboolean]
+  , "")
 else if op = "∨" ∧ types = [typeboolean, typeboolean] ∧ mode.input ∈ "body" then
  bindinfo(dict
- , ifthenelse(code.R_1, [Littrue], code.R_3, typeboolean)
- , [typeboolean]
- , ""
- )
+  , ifthenelse(code.R_1, [Littrue], code.R_3, typeboolean)
+  , [typeboolean]
+  , "")
 else
  let f = 
-  if op = "≠" then [lookupbysig(dict, "=", types, input, place, parsestk), NotOp]
-  else if op = "∉" then [lookupbysig(dict, "∈", types, input, place, parsestk), NotOp]
-  else if op = "≥" then [lookupbysig(dict, "<", types, input, place, parsestk), NotOp]
-  else if op = "≤" then [lookupbysig(dict, ">", types, input, place, parsestk), NotOp]
-  else [lookupbysig(dict, [op_1], types, input, place, parsestk)]
+  if op = "≠" then
+   [lookupbysig(dict, "=", types, input, place, parsestk), NotOp]
+  else if op = "∉" then
+   [lookupbysig(dict, "∈", types, input, place, parsestk), NotOp]
+  else if op = "≥" then
+   [lookupbysig(dict, "<", types, input, place, parsestk), NotOp]
+  else if op = "≤" then
+   [lookupbysig(dict, ">", types, input, place, parsestk), NotOp]
+  else
+   [lookupbysig(dict, [op_1], types, input, place, parsestk)]
  bindinfo(dict, code.R_1 + code.R_3 + f, [resulttype.first.f], "")
 
 function unaryop(R:reduction.bindinfo
-, common:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-, op:seq.word
-, exp:bindinfo
-) bindinfo
+ , common:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo
+ , op:seq.word
+ , exp:bindinfo) bindinfo
 if op_1 = "process"_1 ∧ length.types.exp = 1 then
  let rt = resolvetype(types.common, %.(types.exp)_1)_1
  let processtype = processof.rt
@@ -191,25 +199,27 @@ if op_1 = "process"_1 ∧ length.types.exp = 1 then
   [PreFref, deepcopySym.rt, PreFref, dcws, PreFref, last.code.exp]
   + subseq(code.exp, 1, length.code.exp - 1)
   + symbol(builtinmod.rt
-  , "createthreadY"
-  , [typeint, typeint, typeint] + paratypes.last.code.exp
-  , processtype
-  )
+   , "createthreadY"
+   , [typeint, typeint, typeint] + paratypes.last.code.exp
+   , processtype)
  bindinfo(dict.R
- , if mode.common ∈ "text" then code.exp + symbol(internalmod, "process", rt, rt)
- else newcode
- , [processtype]
- , ""
- )
+  , if mode.common ∈ "text" then
+   code.exp + symbol(internalmod, "process", rt, rt)
+  else
+   newcode
+  , [processtype]
+  , "")
 else if op_1 = "$"_1 ∧ length.types.exp = 2 ∧ first.types.exp = seqof.typeword then
  let f = 
   lookupbysig(dict.R, "+", [seqof.typeword, seqof.typeword], common, place, parsestk)
  let newcode = 
-  if (types.exp)_2 = seqof.typeword then code.exp + f
+  if (types.exp)_2 = seqof.typeword then
+   code.exp + f
   else
    let cvt = lookupbysig(dict.R, "%", [(types.exp)_2], common, place, parsestk)
    assert resulttype.cvt = seqof.typeword
-   report errormessage("Expected function $(cvt) to have return type of seq.word", common, place, parsestk)
+   report
+    errormessage("Expected function $(cvt) to have return type of seq.word", common, place, parsestk)
    code.exp + cvt + f
  bindinfo(dict.R, newcode, [resulttype.f], "")
 else
@@ -217,65 +227,59 @@ else
  bindinfo(dict.R, code.exp + f, [resulttype.f], "")
 
 function ifexp(R:reduction.bindinfo
-, ifpart:bindinfo
-, thenpart:bindinfo
-, elsepart:bindinfo
-, input:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-) bindinfo
+ , ifpart:bindinfo
+ , thenpart:bindinfo
+ , elsepart:bindinfo
+ , input:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo) bindinfo
 assert (types.ifpart)_1 = typeboolean
-report errormessage("cond of if must be boolean but is $((types.ifpart)_1)", input, place, parsestk)
+report
+ errormessage("cond of if must be boolean but is $((types.ifpart)_1)", input, place, parsestk)
 assert types.thenpart = types.elsepart
 report errormessage("then and else types are different", input, place, parsestk)
 bindinfo(dict.R
-, ifthenelse(code.ifpart, code.thenpart, code.elsepart, (types.thenpart)_1)
-, types.thenpart
-, ""
-)
+ , ifthenelse(code.ifpart, code.thenpart, code.elsepart, (types.thenpart)_1)
+ , types.thenpart
+ , "")
 
 function addpara(dict:symboldict, name:seq.word, typ:bindinfo, place:int, parsestk:stack.stkele.bindinfo) bindinfo
 bindinfo(dict
-, empty:seq.symbol
-, [resolvetype(tokentext.typ, common.dict, place, parsestk)]
-, name
-)
+ , empty:seq.symbol
+ , [resolvetype(tokentext.typ, common.dict, place, parsestk)]
+ , name)
 
 function addpara(dict:symboldict
-, name:seq.word
-, typ:bindinfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-, old:bindinfo
-) bindinfo
+ , name:seq.word
+ , typ:bindinfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo
+ , old:bindinfo) bindinfo
 bindinfo(dict
-, empty:seq.symbol
-, types.old + [resolvetype(tokentext.typ, common.dict, place, parsestk)]
-, text.old + name
-)
+ , empty:seq.symbol
+ , types.old + [resolvetype(tokentext.typ, common.dict, place, parsestk)]
+ , text.old + name)
 
 function forlocaldeclare(dict:symboldict
-, code:seq.symbol
-, seqtype:mytype
-, elename:seq.word
-, acctypes:seq.mytype
-, accnames:seq.word
-, input:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-) bindinfo
+ , code:seq.symbol
+ , seqtype:mytype
+ , elename:seq.word
+ , acctypes:seq.mytype
+ , accnames:seq.word
+ , input:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo) bindinfo
 assert isseq.seqtype
-report errormessage("final expression in for list must be a sequence but it is of type:$(seqtype)"
-, input
-, place
-, parsestk
-)
+report
+ errormessage("final expression in for list must be a sequence but it is of type:$(seqtype)"
+  , input
+  , place
+  , parsestk)
 let elesym = 
  symbol(moduleref("internallib $for", parameter.seqtype)
- , elename
- , empty:seq.mytype
- , parameter.seqtype
- )
+  , elename
+  , empty:seq.mytype
+  , parameter.seqtype)
 {keep track so right next is used in nested fors}
 let basetype = typebase.place
 let resultsym = symbol(moduleref("internallib $for", basetype), "next", acctypes, basetype)
@@ -285,52 +289,53 @@ let oldnesting = lookupbysig(dict, "for")
 let dict1 = if isempty.oldnesting then dict else dict - oldnesting /if + resultsym + nestingsym
 let accumulators = 
  for acc = empty:seq.symbol, i = 1, name ∈ accnames do
-  next(acc
-  + symbol(moduleref("internallib $for", acctypes_i)
-  , [name]
-  , empty:seq.mytype
-  , acctypes_i
-  )
-  , i + 1
-  )
+  next(
+   acc
+   + symbol(moduleref("internallib $for", acctypes_i)
+    , [name]
+    , empty:seq.mytype
+    , acctypes_i)
+   , i + 1)
  /for (acc)
 bindinfo(dict1 ∪ asset(accumulators + elesym)
-, code + accumulators + elesym
-, acctypes + seqtype
-, elename
-)
+ , code + accumulators + elesym
+ , acctypes + seqtype
+ , elename)
 
 function lookupbysig(dict:symboldict, name:seq.word) set.symbol
 lookupbysig(dict, symbol(internalmod, name, typeint))
 
 function forbody(dict:symboldict
-, vars:bindinfo
-, forbody:bindinfo
-, exitexp:bindinfo
-, endexp:bindinfo
-, input:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-) bindinfo
+ , vars:bindinfo
+ , forbody:bindinfo
+ , exitexp:bindinfo
+ , endexp:bindinfo
+ , input:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo) bindinfo
 let checktypes = 
  if tokentext.exitexp = "for" ∨ first.types.exitexp = typeboolean then
   {while type is OK. now check body type}
   if length.types.vars > 2 then
-   if resulttype.lookupbysig(dict.vars, "for")_1 = (types.forbody)_1 then ""
-   else "incorrect body type:$((types.forbody)_1)"
-  else if first.types.vars = first.types.forbody then ""
-  else "Type of body expression $(first.types.vars) must match accumaltor type $(first.types.forbody)"
- else "while expresssion type must be boolean"
+   if resulttype.lookupbysig(dict.vars, "for")_1 = (types.forbody)_1 then
+    ""
+   else
+    "incorrect body type:$((types.forbody)_1)"
+  else if first.types.vars = first.types.forbody then
+   ""
+  else
+   "Type of body expression $(first.types.vars) must match accumaltor type $(first.types.forbody)"
+ else
+  "while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place, parsestk)
 let resulttype = first.types.endexp
 let sym = 
  symbol(builtinmod.typeint
- , "forexp"
- , types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
- + typeboolean
- + resulttype
- , resulttype
- )
+  , "forexp"
+  , types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
+  + typeboolean
+  + resulttype
+  , resulttype)
 let newcode = 
  code.vars + code.forbody
  + if tokentext.exitexp = "for" then [Littrue] else code.exitexp /if
@@ -339,24 +344,26 @@ let newcode =
 bindinfo(dict, newcode, [resulttype], "")
 
 function action(ruleno:int
-, dupinput:seq.word
-, place:int
-, R:reduction.bindinfo
-, parsestk:stack.stkele.bindinfo
-) bindinfo
-{Alphabet.= ():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for
- W do wl T X L E F2 D FP A F F1 G NM HH}
-{RulePrecedence | HH HH comment | comment | let | assert | if | for | W | wl | I | [| $wordlist | (| E
- NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E = E | = |
- > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then E else E /if | /if | E if E then E else E | E assert
- E report D E | A W = E | E let A E | D E |}
+ , dupinput:seq.word
+ , place:int
+ , R:reduction.bindinfo
+ , parsestk:stack.stkele.bindinfo) bindinfo
+{Alphabet.= ():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist
+ while /for W do wl wlend T X F2 A E FP NM L D F F1 G HH}
+{RulePrecedence | HH HH comment | comment | let | assert | if | for | W | wl | I | [
+ | $wordlist | (| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E >
+ E | E E = E | = | > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then E else E /if | /if | E if E then
+ E else E | E assert E report D E | A W = E | E let A E | D E |}
 let common = common.dict.R
-if ruleno = {F HH E} 1 then addbody(R, common, place, parsestk)
-else if ruleno = {F HH} 2 then R_1
+if ruleno = {F HH E} 1 then
+ addbody(R, common, place, parsestk)
+else if ruleno = {F HH} 2 then
+ R_1
 else if ruleno = {HH HH comment} 3 then
  if mode.common ∈ "text" then
   bindinfo(dict.R, code.R_1 + Words.tokentext.R_2, types.R_1, "")
- else R_1
+ else
+  R_1
 else if ruleno = {HH W NM (FP) T} 4 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
 else if ruleno = {HH W_(FP) T} 5 then
@@ -378,50 +385,67 @@ else if ruleno = {HH W NM T} 12 then
 else if ruleno = {HH W NM is FP} 13 then
  let tp = 
   resolvetype(if isabstract.modname.common then tokentext.R_2 + ".T" else tokentext.R_2
-  , common
-  , place
-  , parsestk
-  )
+   , common
+   , place
+   , parsestk)
  bindinfo(dict.R, empty:seq.symbol, [tp] + types.R_4, text.R_4)
-else if ruleno = {FP T} 14 then addpara(dict.R, ":", R_1, place, parsestk)
-else if ruleno = {FP FP, T} 15 then addpara(dict.R, ":", R_3, place, parsestk, R_1)
-else if ruleno = {FP W:T} 16 then addpara(dict.R, tokentext.R_1, R_3, place, parsestk)
+else if ruleno = {FP T} 14 then
+ addpara(dict.R, ":", R_1, place, parsestk)
+else if ruleno = {FP FP, T} 15 then
+ addpara(dict.R, ":", R_3, place, parsestk, R_1)
+else if ruleno = {FP W:T} 16 then
+ addpara(dict.R, tokentext.R_1, R_3, place, parsestk)
 else if ruleno = {FP FP, W:T} 17 then
  addpara(dict.R, tokentext.R_3, R_5, place, parsestk, R_1)
-else if ruleno = {FP comment W:T} 18 then addpara(dict.R, tokentext.R_2, R_4, place, parsestk)
+else if ruleno = {FP comment W:T} 18 then
+ addpara(dict.R, tokentext.R_2, R_4, place, parsestk)
 else if ruleno = {FP FP, comment W:T} 19 then
  addpara(dict.R, tokentext.R_4, R_6, place, parsestk, R_1)
-else if ruleno = {NM W} 20 then R_1
+else if ruleno = {NM W} 20 then
+ R_1
 else if ruleno = {NM W:T} 21 then
  bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 + tokentext.R_3)
-else if ruleno = {T W} 22 then R_1
+else if ruleno = {T W} 22 then
+ R_1
 else if ruleno = {T W.T} 23 then
  bindinfo(dict.R
- , empty:seq.symbol
- , empty:seq.mytype
- , tokentext.R_1 + "." + tokentext.R_3
- )
+  , empty:seq.symbol
+  , empty:seq.mytype
+  , tokentext.R_1 + "." + tokentext.R_3)
 else if ruleno = {E NM} 24 then
  if mode.common ∈ "body text" then
   let f = lookupbysig(dict.R, text.R_1, empty:seq.mytype, common, place, parsestk)
   bindinfo(dict.R, [f], [resulttype.f], "")
- else R_1
-else if ruleno = {E NM (L)} 25 then unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
-else if ruleno = {E (E)} 26 then R_2
+ else
+  R_1
+else if ruleno = {E NM (L)} 25 then
+ unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
+else if ruleno = {E (E)} 26 then
+ R_2
 else if ruleno = {E if E then E else E} 27 then
  ifexp(R, R_2, R_4, R_6, common, place, parsestk)
 else if ruleno = {E if E then E else E /if} 28 then
  ifexp(R, R_2, R_4, R_6, common, place, parsestk)
-else if ruleno = {E E_E} 29 then opaction(R, common, place, parsestk)
-else if ruleno = {E-E} 30 then unaryop(R, common, place, parsestk, tokentext.R_1, R_2)
-else if ruleno = {E W.E} 31 then unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
-else if ruleno = {E E * E} 32 then opaction(R, common, place, parsestk)
-else if ruleno = {E E-E} 33 then opaction(R, common, place, parsestk)
-else if ruleno = {E E = E} 34 then opaction(R, common, place, parsestk)
-else if ruleno = {E E > E} 35 then opaction(R, common, place, parsestk)
-else if ruleno = {E E ∧ E} 36 then opaction(R, common, place, parsestk)
-else if ruleno = {E E ∨ E} 37 then opaction(R, common, place, parsestk)
-else if ruleno = {L E} 38 then R_1
+else if ruleno = {E E_E} 29 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {E-E} 30 then
+ unaryop(R, common, place, parsestk, tokentext.R_1, R_2)
+else if ruleno = {E W.E} 31 then
+ unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
+else if ruleno = {E E * E} 32 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {E E-E} 33 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {E E = E} 34 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {E E > E} 35 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {E E ∧ E} 36 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {E E ∨ E} 37 then
+ opaction(R, common, place, parsestk)
+else if ruleno = {L E} 38 then
+ R_1
 else if ruleno = {L L, E} 39 then
  bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3, "")
 else if ruleno = {E [L]} 40 then
@@ -439,7 +463,8 @@ else if ruleno = {E let A E} 42 then
  let letsym = 
   if mode.common ∈ "text" then
    [symbol(internalmod, "let", typeint, first.types.R_3, first.types.R_3)]
-  else empty:seq.symbol
+  else
+   empty:seq.symbol
  bindinfo(dict.R_1, code.R_2 + code.R_3 + letsym, types.R_3, "")
 else if ruleno = {E assert E report D E} 43 then
  assert (types.R_2)_1 = typeboolean
@@ -449,38 +474,38 @@ else if ruleno = {E assert E report D E} 43 then
  let typ = (types.R_5)_1
  let assertsym = symbol(builtinmod.typ, "assert", seqof.typeword, typ)
  bindinfo(dict.R
- , [Start.(types.R_5)_1] + code.R_2 + Br2(1, 2) + code.R_5 + Exit
- + code.R_4
- + assertsym
- + Exit
- + if mode.common ∈ "text" then symbol(internalmod, "report", typeint)
- else EndBlock
- , types.R_5
- , ""
- )
-else if ruleno = {E I} 44 then bindlit.R
+  , [Start.(types.R_5)_1] + code.R_2 + Br2(1, 2) + code.R_5 + Exit
+  + code.R_4
+  + assertsym
+  + Exit
+  + if mode.common ∈ "text" then
+   symbol(internalmod, "report", typeint)
+  else
+   EndBlock
+  , types.R_5
+  , "")
+else if ruleno = {E I} 44 then
+ bindlit.R
 else if ruleno = {E I.I} 45 then
  bindinfo(dict.R
- , [Words(tokentext.R_1 + "." + tokentext.R_3), makerealSymbol]
- , [typereal]
- , ""
- )
+  , [Words(tokentext.R_1 + "." + tokentext.R_3), makerealSymbol]
+  , [typereal]
+  , "")
 else if ruleno = {E $wordlist} 46 then
  let s = tokentext.R_1
  bindinfo(dict.R
- , [Words.if mode.common ∈ "text" then s else subseq(s, 2, length.s - 1)]
- , [seqof.typeword]
- , ""
- )
+  , [Words.if mode.common ∈ "text" then s else subseq(s, 2, length.s - 1)]
+  , [seqof.typeword]
+  , "")
 else if ruleno = {E comment E} 47 then
  if mode.common ∈ "text" then
   bindinfo(dict.R
-  , [Words.tokentext.R_1] + code.R_2
-  + symbol(internalmod, "{", seqof.typeword, first.types.R_2, first.types.R_2)
-  , types.R_2
-  , ""
-  )
- else R_2
+   , [Words.tokentext.R_1] + code.R_2
+   + symbol(internalmod, "{", seqof.typeword, first.types.R_2, first.types.R_2)
+   , types.R_2
+   , "")
+ else
+  R_2
 else if ruleno = {F1 W = E} 48 then
  let name = tokentext.R_1
  assert isempty.lookupbysig(dict.R, name)
@@ -491,54 +516,54 @@ else if ruleno = {F1 F1, W = E} 49 then
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:$(name)", common, place, parsestk)
  bindinfo(dict.R
- , code.R_1 + code.R_5
- , types.R_1 + types.R_5
- , tokentext.R_1 + tokentext.R_3
- )
+  , code.R_1 + code.R_5
+  , types.R_1 + types.R_5
+  , tokentext.R_1 + tokentext.R_3)
 else if ruleno = {F2 F1, W-E} 50 then
  let name = tokentext.R_3
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:$(name)", common, place, parsestk)
  forlocaldeclare(dict.R
- , code.R_1 + code.R_5
- , last.types.R_5
- , [last.tokentext.R_3]
- , types.R_1
- , tokentext.R_1
- , common
- , place
- , parsestk
- )
+  , code.R_1 + code.R_5
+  , last.types.R_5
+  , [last.tokentext.R_3]
+  , types.R_1
+  , tokentext.R_1
+  , common
+  , place
+  , parsestk)
 else if ruleno = {E for F2 do E /for (E)} 51 then
  forbody(dict.R_1, R_2, R_4, R_1, R_7, common, place, parsestk)
 else if ruleno = {E for F2 while E do E /for (E)} 52 then
  forbody(dict.R_1, R_2, R_6, R_4, R_9, common, place, parsestk)
-else if ruleno = {D E} 53 then R_1
-else if ruleno = {X wl E} 54 then binary2(R, common, place, parsestk, R_1, R_2, false)
+else if ruleno = {D E} 53 then
+ R_1
+else if ruleno = {X wl E} 54 then
+ binary2(R, common, place, parsestk, R_1, R_2, false)
 else if ruleno = {X X wl E} 55 then
  let B = binary2(R, common, place, parsestk, R_1, R_2, true)
  unaryop(R
- , common
- , place
- , parsestk
- , "$"
- , bindinfo(dict.R, code.B + code.R_3, types.B + types.R_3, "")
- )
-else if ruleno = {E X $wordlist} 56 then binary2(R, common, place, parsestk, R_1, R_2, true)
-else if ruleno = {G F #} 57 then R_1
+  , common
+  , place
+  , parsestk
+  , "$"
+  , bindinfo(dict.R, code.B + code.R_3, types.B + types.R_3, ""))
+else if ruleno = {E X wlend} 56 then
+ binary2(R, common, place, parsestk, R_1, R_2, true)
+else if ruleno = {G F #} 57 then
+ R_1
 else
  {ruleno}
  assert false report "invalid rule number" + toword.ruleno
  R_1
 
 function binary2(R:reduction.bindinfo
-, common:commoninfo
-, place:int
-, parsestk:stack.stkele.bindinfo
-, arg1:bindinfo
-, arg2:bindinfo
-, switch:boolean
-) bindinfo
+ , common:commoninfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo
+ , arg1:bindinfo
+ , arg2:bindinfo
+ , switch:boolean) bindinfo
 let code = 
  if switch then
   let s1 = tokentext.arg2

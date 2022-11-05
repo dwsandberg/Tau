@@ -107,23 +107,27 @@ SpecialImports
 +common barycenter layergraph makeDAG bandeskopf
 exports=webIO SpecialExports
 
-doclibrary stdlibdoc.html stdlib.libsrc
+doclibrary + documentation stdlibdoc.html +$build stdlib.libsrc
 
-doclibrary commondoc.html common.libsrc
+doclibrary + documentation commondoc.html +$build common.libsrc
 
-transform taudoc.html  
+transform + documentation taudoc.html  
 +tools doc.txt flags=html noindex
 
-transform installdoc.html 
+transform + documentation installdoc.html 
 +tools install.txt flags=html noindex
 
-usegraph + tools install1.html +$build core.libsrc 
+usegraph + documentation install1.html +$build core.libsrc 
 
-usegraph + tools install2.html +$build core.libsrc exclude=seq standard    
+usegraph + documentation install2.html +$build core.libsrc exclude=seq standard    
 
-usegraph + tools install3.html +$build core.libsrc include=UTF8 words format standard textio stack encoding xxhash exclude=seq standard  
+usegraph + documentation install3.html +$build core.libsrc include = UTF8 words  standard textio xxhash  exclude= seq standard      
 
-enumerate +tools install4.html  enumexample.ls
+enumerate +documentation install4.html +tools  enumexample.ls
+
+doclibrary +documentation subtools.html +subtools prettycompilerfront.ls frontcmd.ls doc.ls
+
+
 
 LR1 taugrammer.html
 +compilerfront parse.ls parsersupport flags=parameterized

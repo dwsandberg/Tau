@@ -35,10 +35,12 @@ Export to:myseq.T(s:seq.T) myseq.T
 Export toseq(myseq.T) seq.T
 
 Function clength(s:seq.T, i:int) int
-if i > length.s then 0
+if i > length.s then
+ 0
 else
  assert s_i > 0 report "invalid"
- if s_i < 128 then 1 + clength(s, i + 1)
+ if s_i < 128 then
+  1 + clength(s, i + 1)
  else
   assert s_i < 128 + 64 + 32 report "invalid"
   1 + clength(s, i + 2)
@@ -46,7 +48,8 @@ else
 Function cindex(s:seq.T, i:int, idx:int) T
 if idx = 1 then
  if s_i < 128 then s_i else s_(i + 1) - 128 + (s_i - 128 - 64) * 64
-else cindex(s, i + if s_i < 128 then 1 else 2, idx - 1)
+else
+ cindex(s, i + if s_i < 128 then 1 else 2, idx - 1)
 
 We need a constructor of our sequence.Note the use of a toseq function.This is defined implicitly by
 the sequence type definition to change the type from myseq (T) to seq (T).

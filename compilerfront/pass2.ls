@@ -29,15 +29,18 @@ Export expandresult(int, seq.symbol, bits) expandresult
 Function reorgwhen int 6000
 
 Function isverysimple(nopara:int, code:seq.symbol) boolean
-if code = [Local.1] ∧ nopara = 1 then true
+if code = [Local.1] ∧ nopara = 1 then
+ true
 else
  for isverysimple = length.code ≥ nopara, idx = 1, sym ∈ code
  while isverysimple
  do
-  next(if idx ≤ nopara then sym = Local.idx
-  else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
-  , idx + 1
-  )
+  next(
+   if idx ≤ nopara then
+    sym = Local.idx
+   else
+    not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
+   , idx + 1)
  /for (isverysimple)
 
 Function Callself bits bits.1
@@ -81,7 +84,8 @@ for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
    + [Lit.1, PlusOp, Define(nextvar + 2)]
    + indexseqcode(Local.nextvar, theseq2, Local(nextvar + 2), theseqtype, true)
   next(newcode, nextvar + 3)
- else next(result + sym, nextvar)
+ else
+  next(result + sym, nextvar)
 /for (result)
 
 Function forexpisnoop(forsym:symbol, code:seq.symbol) seq.symbol
@@ -100,45 +104,50 @@ if nopara.forsym = 7 ∧ length.code > 4 ∧ first.paratypes.forsym = resulttype
  let initacc = subseq(code, t2_1, t2_2 - 1)
  if length.initacc = 1 ∧ isrecordconstant.initacc_1 ∧ isempty.seqelements.initacc_1 then
   subseq(code, 1, t2_1 - 1) + subseq(code, t2_2, length.code - 8)
- else empty:seq.symbol
-else empty:seq.symbol
+ else
+  empty:seq.symbol
+else
+ empty:seq.symbol
 
 function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqtype:mytype, boundscheck:boolean) seq.symbol
 {seqtype will be a basetype}
 let seqparameter = parameter.xtheseqtype
 let theseqtype = seqof.seqparameter
 let elementtype = 
- if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then seqparameter
- else typeptr
+ if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then
+  seqparameter
+ else
+  typeptr
 let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte
 let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
 [Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)]
 + [theseq, masteridx, callidx, Exit]
 + if boundscheck then
  [masteridx
- , theseq
- , GetSeqLength
- , GtOp
- , Br2(1, 2)
- , outofboundssymbol
- , abortsymbol.elementtype
- , Exit
- ]
-else empty:seq.symbol /if
+  , theseq
+  , GetSeqLength
+  , GtOp
+  , Br2(1, 2)
+  , outofboundssymbol
+  , abortsymbol.elementtype
+  , Exit]
+else
+ empty:seq.symbol
+/if
 + if maybepacked then
  [seqtype, Lit.1, EqOp, Br2(1, 2)]
  + [theseq
- , masteridx
- , symbol(internalmod, "packedindex", theseqtype, typeint, elementtype)
- , Exit
- ]
-else empty:seq.symbol /if
+  , masteridx
+  , symbol(internalmod, "packedindex", theseqtype, typeint, elementtype)
+  , Exit]
+else
+ empty:seq.symbol
+/if
 + [theseq
-, masteridx
-, symbol(internalmod, "idxseq", seqof.elementtype, typeint, elementtype)
-, Exit
-, EndBlock
-]
+ , masteridx
+ , symbol(internalmod, "idxseq", seqof.elementtype, typeint, elementtype)
+ , Exit
+ , EndBlock]
 
 function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int) expandresult
 let t = backparse2(code, length.code, 5, empty:seq.int) << 1
@@ -149,7 +158,9 @@ let endofsymbols = t_(length.t - 2) - 1
 let startofsymbols = endofsymbols - (nopara.forsym - 3) / 2 + 1
 let syms = subseq(code, startofsymbols, endofsymbols)
 let tmp = 
- for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do next(acc + Local(nextvar + i - 1), i + 1) /for (acc)
+ for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do
+  next(acc + Local(nextvar + i - 1), i + 1)
+ /for (acc)
 let masteridx = Local(value.last.tmp + 1)
 let seqelement = Local(value.masteridx + 1)
 let nextvar1 = value.seqelement + 1
@@ -166,18 +177,16 @@ let Defineseqtype = Define(nextvar1 + 2)
 let firstpart = 
  subseq(code, 1, startofsymbols - 1)
  + [Define.nextvar1
- , theseq
- , GetSeqLength
- , Define(nextvar1 + 1)
- , theseq
- , GetSeqType
- , Defineseqtype
- , Lit.1
- ]
+  , theseq
+  , GetSeqLength
+  , Define(nextvar1 + 1)
+  , theseq
+  , GetSeqType
+  , Defineseqtype
+  , Lit.1]
  + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint
- , nextvar
- , resulttype.forsym
- )
+  , nextvar
+  , resulttype.forsym)
  + {2 if masteridx > totallength then exit} [masteridx, totallength, GtOp]
  + Br2(2, 1)
  + {3 else let sequenceele = seq_(idx)}
@@ -188,71 +197,81 @@ let firstpart =
  + {4 exit loop} replace$for(endexp, newsyms, syms)
  + Exit
 let bodyexp2 = replace$for(bodyexp, newsyms, syms)
+let continue2 = [masteridx, Lit.1, PlusOp, continue.length.syms]
 let lastpart = 
- if length.syms = 2 then bodyexp2 + [masteridx, Lit.1, PlusOp, continue.2, EndBlock]
- else if not.iscompound.bodyexp then
-  bodyexp2 >> 1 + [masteridx, Lit.1, PlusOp, continue.length.syms, EndBlock]
+ if length.syms = 2 then
+  bodyexp2 + continue2
+ else if inModFor.last.bodyexp2 then
+  {case where there is only one next expression in for expression} bodyexp2 >> 1 + continue2
+ else if name.last.bodyexp2 ∈ "assert" then
+  {case where the body of the export is reduced to a assert} bodyexp2 >> 1
+  + abortsymbol.resulttype.forsym
+  + Exit
  else
   {replace exits in body with a continue or abortsymbol}
-  let continue2 = [masteridx, Lit.1, PlusOp, continue.length.syms]
   let assert2 = [abortsymbol.resulttype.forsym, Exit]
   let locs = exitlocations(bodyexp2, length.bodyexp2 - 1, empty:seq.int)
   {first item in locs is start of block and the rest are exits}
   for acc = subseq(bodyexp2, 1, first.locs - 1)
-  , last = first.locs + 1
-  , i ∈ locs << 1
+   , last = first.locs + 1
+   , i ∈ locs << 1
   do
-   next(acc + subseq(bodyexp2, last, i - 2)
-   + if inModFor.bodyexp2_(i - 1) then continue2 else assert2
-   , i + 1
-   )
-  /for (acc + subseq(bodyexp2, last, length.bodyexp2 - 1) + EndBlock)
-expandresult(nextvar1 + 3, firstpart + lastpart, bits.0)
-
-function iscompound(bodyexp:seq.symbol) boolean
-{detects compound accumulator}
-let sym = bodyexp_(length.bodyexp - 2)
-isblock.last.bodyexp
-∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inModFor.sym
-∨ {assert case} abstracttype.resulttype.sym
-= addabstract(typeref."$base internal internallib", typeT))
+   next(
+    acc + subseq(bodyexp2, last, i - 2)
+    + if inModFor.bodyexp2_(i - 1) then continue2 else assert2
+    , i + 1)
+  /for (acc + subseq(bodyexp2, last, length.bodyexp2 - 1))
+expandresult(nextvar1 + 3, firstpart + lastpart + EndBlock, bits.0)
 
 function exitlocations(s:seq.symbol, i:int, result:seq.int) seq.int
 let sym = s_i
-if isstart.sym then [i] + result
-else if isblock.sym then exitlocations(s, matchblock(s, i - 1, 0) - 1, result)
-else exitlocations(s, i - 1, if isexit.sym then [i] + result else result)
+if isstart.sym then
+ [i] + result
+else if isblock.sym then
+ exitlocations(s, matchblock(s, i - 1, 0) - 1, result)
+else
+ exitlocations(s, i - 1, if isexit.sym then [i] + result else result)
 
 function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol) seq.symbol
 for acc = empty:seq.symbol, s ∈ code do
  acc
  + if inModFor.s then
   let i = findindex(old, s)
-  if i ≤ length.new then [new_i]
+  if i ≤ length.new then
+   [new_i]
   else
-   {this is for one of two cases 1:a nested for and $for variable is from outer loop 2:the next expresion
-    }
+   {this is for one of two cases
+    /br 1:a nested for and $for variable is from outer loop
+    /br 2:the next expresion}
    [s]
- else [s]
+ else
+  [s]
 /for (acc)
 
 function matchblock(s:seq.symbol, i:int, nest:int) int
 let sym = s_i
-if isblock.sym then matchblock(s, i - 1, nest + 1)
+if isblock.sym then
+ matchblock(s, i - 1, nest + 1)
 else if isstartorloop.sym then
  if nest = 0 then
-  if isloopblock.sym then backparse2(s, i - 1, nopara.sym, empty:seq.int)_1
-  else addDefine(s, i)
- else matchblock(s, i - 1, nest - 1)
-else matchblock(s, i - 1, nest)
+  if isloopblock.sym then
+   backparse2(s, i - 1, nopara.sym, empty:seq.int)_1
+  else
+   addDefine(s, i)
+ else
+  matchblock(s, i - 1, nest - 1)
+else
+ matchblock(s, i - 1, nest)
 
 function addDefine(s:seq.symbol, i:int) int
 if i > 1 ∧ isdefine.s_(i - 1) then
  addDefine(s, backparse2(s, i - 2, 1, empty:seq.int)_1)
-else i
+else
+ i
 
 Function backparse2(s:seq.symbol, i:int, no:int, result:seq.int) seq.int
-if no = 0 then result
+if no = 0 then
+ result
 else
  assert i > 0 report "back parse 1a:" + toword.no + %.s + stacktrace
  if isdefine.s_i then
@@ -260,21 +279,26 @@ else
   backparse2(s, args_1, no, result)
  else if isblock.s_i then
   let b = matchblock(s, i - 1, 0)
-  if b = 1 then [b] + result
-  else backparse2(s, b - 1, no - 1, [b] + result)
+  if b = 1 then
+   [b] + result
+  else
+   backparse2(s, b - 1, no - 1, [b] + result)
  else
   let nopara = nopara.s_i
   let first = 
-   if nopara = 0 then i
+   if nopara = 0 then
+    i
    else
     let args = backparse2(s, i - 1, nopara, empty:seq.int)
     assert length.args = nopara
-    report "back parse 3 $(s_i)" + toword.nopara + "//"
-    + for acc = "", @e ∈ args do acc + toword.@e /for (acc)
+    report
+     "back parse 3 $(s_i)" + toword.nopara + "//"
+     + for acc = "", @e ∈ args do acc + toword.@e /for (acc)
     args_1
   let b = 
    if first > 1 ∧ isdefine.s_(first - 1) then
     let c = backparse2(s, first - 2, 1, empty:seq.int)
     c_1
-   else first
+   else
+    first
   backparse2(s, b - 1, no - 1, [b] + result) 

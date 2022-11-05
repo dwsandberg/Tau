@@ -8,7 +8,8 @@ use set.word
 
 use svg2graph.word
 
-Export drawgraph(arcs:seq.arc.word, set.word, set.word) seq.word {From svg2graph.word}
+Export drawgraph(arcs:seq.arc.word, set.word, set.word) seq.word
+{From svg2graph.word}
 
 function nodeTitle(word) seq.word ""
 

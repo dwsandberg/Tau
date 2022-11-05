@@ -27,7 +27,9 @@ type arc is tail:T, head:T
 type graph is arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 
 Function newgraph(a:seq.arc.T) graph.T
-for acc = graph(empty:set.arc.T, empty:set.arc.T, empty:set.T), @e ∈ a do acc + @e /for (acc)
+for acc = graph(empty:set.arc.T, empty:set.arc.T, empty:set.T), @e ∈ a do
+ acc + @e
+/for (acc)
 
 Function =(c:arc.T, d:arc.T) boolean tail.c = tail.d ∧ head.c = head.d
 
@@ -45,7 +47,9 @@ for acc = graph(empty:set.arc.T, empty:set.arc.T, nodes), @e ∈ toseq.arcs.g do
 /for (acc)
 
 Function successors(g:graph.T, n:T) set.T
-for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do acc + head.@e /for (acc)
+for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do
+ acc + head.@e
+/for (acc)
 
 Function arcstosuccessors(g:graph.T, n:T) set.arc.T findelement2(arcs.g, arc(n, n))
 
@@ -53,7 +57,9 @@ Function arcstopredecessors(g:graph.T, n:T) set.arc.T
 asset.toarcs(toseq.predecessors(g, n), n)
 
 Function predecessors(g:graph.T, n:T) set.T
-for acc = empty:set.T, @e ∈ toseq.findelement2(backarcs.g, arc(n, n)) do acc + head.@e /for (acc)
+for acc = empty:set.T, @e ∈ toseq.findelement2(backarcs.g, arc(n, n)) do
+ acc + head.@e
+/for (acc)
 
 Function deletearc(g:graph.T, a:arc.T) graph.T
 graph(arcs.g - a, backarcs.g - arc(head.a, tail.a), nodes.g)
@@ -63,8 +69,7 @@ for acc = g, @e ∈ toseq.a do deletearc(acc, @e) /for (acc)
 
 Function deletenode(g:graph.T, n:T) graph.T
 deletearcs(graph(arcs.g, backarcs.g, nodes.g - n)
-, arcstosuccessors(g, n) ∪ arcstopredecessors(g, n)
-)
+ , arcstosuccessors(g, n) ∪ arcstopredecessors(g, n))
 
 Function toarcs(n:T, s:seq.T) seq.arc.T
 for acc = empty:seq.arc.T, @e ∈ s do acc + arc(n, @e) /for (acc)
@@ -91,7 +96,8 @@ reachable(g, d, d, 1)
 
 function reachable(g:graph.T, old:set.T, new:set.T, count:int) set.T
 assert count < 1000 report "fal" + toword.cardinality.old + toword.cardinality.new
-if isempty.new then old
+if isempty.new then
+ old
 else
  let a = for acc = empty:set.T, @e ∈ toseq.new do acc ∪ successors(g, @e) /for (acc)
  let b = old ∪ new
@@ -149,6 +155,8 @@ Function transitiveClosure(gin:graph.T) graph.T
 for g = gin, n ∈ toseq.nodes.gin do
  {add arcs to graph so path does not need to go through n}
  for arcs = empty:seq.arc.T, p ∈ toseq.predecessors(g, n) do
-  for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n) do acc2 + arc(p, s) /for (arcs + acc2)
+  for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n) do
+   acc2 + arc(p, s)
+  /for (arcs + acc2)
  /for (g + arcs)
 /for (g) 

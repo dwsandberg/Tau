@@ -1,0 +1,111 @@
+<!doctype html> <meta charset =" UTF-8" ><style><!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}span.literal {color:red ;} span.comment {color:green ;}span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style><a href ="#prettycompilerfront" > prettycompilerfront </a> <a href ="#frontcmd" > frontcmd </a> <a href ="#doc" > doc </a><hr id ="prettycompilerfront" >
+<h2> <span class = keyword> module</span> prettycompilerfront </h2>
+<br> defines types:  result2 rename
+<p> <span class = keyword> Function</span> transform(input:seq.file <span class = block >, o:seq.word
+<br> , target:seq.word
+<br> , modrename:seq.word
+<br> , parseit:boolean
+<br> , reorguse:boolean
+<br> , html:boolean
+<br> , noindex:boolean
+<br> , cleanexports:boolean
+<br> , moveexports:boolean) seq.file </span>
+<p> The <span class = keyword> transform</span> cmd takes a list of input source files. For each module in the input a pretty printed file is in the directory &ltTau>/tmp Addition parameters allows for different variants. <span class = block > transform helloworld/helloworld.ls
+<br> transform helloworld/helloworld.ls flags = reorguse
+<br> transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit
+<br> transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse </span>
+<p> This first variant does not require the source to be sematicaly correct but the syntax must be correct. It does not change the order of the paragraphs. 
+<p> The second is like the first except that it moves the use paragraphs to the beginning of the module, removes duplicates, and sorts them.
+<p> The third is like the first but requires correct semantics. This allows some additional transformations such as" not (a = b)" to become" a /ne b"
+<p> If the parameter" flags = html" is used, an html file is produced with an index of modules. This option is useful for examining source code. For example &lt/ block transform htmlcode+built core.libsrc flags = html*> If the option" flags = html noindex" is used then no index is included. This final form is useful for producing documentation with imbedded Tau code.
+<p> <span class = keyword> Function</span> unusedsymbols(input:seq.file <span class = block >, o:seq.word
+<br> , flags:seq.word
+<br> , all:boolean
+<br> , generated:boolean
+<br> , excessExports:boolean) seq.file </span>
+<p> The <span class = keyword> unusedsymbols</span> cmd analyzes code for unused functions. It forms the function call graph for the program. It then looks for any any sources in the call graph that are not the entry point of the program and lists them. Any functions that are generated from type definitions are also removed. 
+<p> The behavior can be modified with flags. If the flag <span class = keyword> all</span> is included the all unused functions are listed and not just the roots. If the flag <span class = keyword> generated</span> is included only the symbols generated from type definitions are included. If the flag <span class = keyword> excessExports</span> is included symbols exported from a module but only used internally to that module are listed.
+<p> Here is an example <span class = block > tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common </span><hr id ="frontcmd" >
+<h2> <span class = keyword> module</span> frontcmd </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> front(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word <span class = block >, mods:seq.word, ~mods:seq.word, within:boolean, out:seq.word) seq.file </span>
+<p> The <span class = keyword> front</span> command is a multiple purpose command. It outputs data from various stages of the compiler.
+<p> One use is to figure out what functions are used between modules. The usegraph of the core functions indicates there are dependences between the modules texio, file and bits.To see the dependences use <span class = block > front+built stdlib.libsrc mods = textio file bits format </span> A graph will be display with the dependences between the modules. The nodes in the graph are the procedure names. Since a name does not uniquely identify a function hovering over the beginning of the name will pop up a more complete discription beginning with the name of the function. 
+<p> The dependence on the module bits will not be displayed. If an earilier pass of the compiler is specified like this <span class = block > front  +built stdlib.libsrc mods = textio file bits format pass = text </span> then it will be displayed. 
+<p> The dependence with in the module textio can be seen with <span class = block > front  +built stdlib.libsrc mods = textio pass = text flags = within </span>
+<p> To see all the functions that call functions named <em> breakparagraph </em> in the library use <span class = block > front  +built stdlib.libsrc n = breakparagraph pass = text out = calledby </span>
+<p> This will list the function definitions in a package <span class = block > front  +built stdlib.libsrc mods = textio out = symdef </span> The format is the function followed by a post order transversal of the call tree. 
+<p> The front command takes several parameters that control which functions are considered.
+<br> ○ <strong> n </strong> = a list of names of functions to include
+<br> ○ <strong> ~n </strong> = a list of names to exclude
+<br> ○ <strong> mod </strong> = a list of modules to include
+<br> ○ <strong> ~mod </strong> = a list of modules to exculde
+<br> ○ <strong> pass </strong> = The option pass determines how much processing is done before looking at the symbols. <span class = block > • <strong> library </strong> Only report on functions imported from libraries.
+<br> • <strong> text </strong> Parse the input in such a way that the source code can be reconstructed.
+<br> • <strong> pass1 </strong> Output from first stage of processing. All bindings of text to symbols have been done.
+<br> • <strong> pass1a </strong> Like pass1 with Compiler options on Export statements added. 
+<br> • <strong> pass2 </strong> After some optimization
+<br> • <strong> all </strong> Just before code generation. </span>
+<br> ○ <strong> out </strong> The option out determines what will be output. <span class = block > • sym Just the symbol names
+<br> • symdefs The symbol definitions. The format is the symbol followed by a post order transversal of the call tree.
+<br> • symdefgraph For each symbol definition, the definition is presented as a call tree graph.
+<br> • calledby The option n is ignored in building a call graph. Then only the symbols that • call symbols in n directly or indirectly are included in the graph
+<br> • calls The option n is ignored in building a call graph. Then only the symbols that • are called (directly or indirectly) from symbols in n are included in the graph.
+<br> • txt Instead of producing a SVG graph print the args of the graph.
+<br> • baseTypeCheck
+<br> • resultCheck </span><hr id ="doc" >
+<h2> <span class = keyword> module</span> doc </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word) seq.file
+<p> The <span class = keyword> usegraph</span> cmd creates a graph with each node being a module and the arcs being to other module referenced by the module in the <span class = keyword> use</span> clauses. The <span class = keyword> exclude</span> option lists the modules to ignore in the use clauses.The <span class = keyword> include</span> option restricts the modules considered to those listed.
+<p> Examples:<span class = block >
+<br> > usegraph +built core.libsrc<a href ="../Tools/install1.html" > Result </a>
+<br> > usegraph +built core.libsrc exclude = seq standard<a href ="../Tools/install2.html" > Result </a>
+<br> > usegraph +built core.libsrc include = UTF8 words standard textio exclude = seq standard<a href ="../Tools/install3.html" > Result </a>
+<br> > usegraph +core UTF8.ls textio words standard encoding xxhash exclude = seq standard </span>
+<p> The last two examples give the same result. The first excludes modules from consideration and the second only includes source files of modules that should be included. 
+<p> <span class = keyword> Function</span> doclibrary(input:seq.file, o:seq.word, mods:seq.word) seq.file &lt*headercomment {OPTION PROFILE} {create summary documentation for library. } The doclibrary cmd produces summary documentation from source code. The option <strong> mods </strong> list the modules to be document if the option is not empty.
+<p> Paragraphs beginning with * are included in documentation.
+<p> If a paragraph in the library is of the form:* usegraph exclude &ltlist of modules> include &ltlist of modules> then a use graph will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large library should be used to restrict the size of the graph. The use graph below was created using the line <span class = block > * usegraph exclude standard seq set UTF8 stack graph otherseq </span>
+<p><script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).getBBox () ;
+arcs.forEach (function (idval, index) {if (index > 0) {
+let element = document.getElementById (idval) ; let d ="M"+(bb.x+bb.width)+","+(bb.y+bb.height)+element.getAttribute ("d").substring (5) ; element.setAttribute ("d", d) ;}}) ;} </script>
+<style>.arcs {fill:none ; stroke:black ; stroke-width:.07 ;}.nodes {font-size:.03em; stroke-width:.1 ;} svg g:hover text {opacity:1;} svg g:hover rect {opacity:1;} </style>
+<svg id ="svg10" dqns ="http://www.w3.org/2000/svg" width ="100%" viewBox ="5.0 -1 17.00 13.30" onload ="[[46, 47, 48, 49, 50, 51], [56, 57, 58, 59, 60, 61, 62, 63, 64, 65], [66, 67, 68, 69, 70, 71, 72]].forEach (shiftstart)" > <text id ="38" class ="nodes" x ="12.000" y ="4.000" > symbol </text>
+<text id ="39" class ="nodes" x ="12.000" y ="8.800" > symbol2 </text>
+<text id ="40" class ="nodes" x ="12.000" y ="0.800" > bits </text>
+<text id ="41" class ="nodes" x ="12.000" y ="5.600" > file </text>
+<text id ="42" class ="nodes" x ="12.000" y ="2.400" > pretty </text>
+<text id ="43" class ="nodes" x ="12.000" y ="9.600" > callconfig </text>
+<text id ="44" class ="nodes" x ="12.000" y ="3.200" > textio </text>
+<text id ="45" class ="nodes" x ="12.000" y ="10.400" > compilerfrontT </text>
+<text id ="46" class ="nodes" x ="6.000" y ="2.000" > doc </text>
+<path id ="47" class ="arcs" d ="M 0 0 L 12.000 0.800" ></path>
+<path id ="48" class ="arcs" d ="M 0 0 L 12.000 5.600" ></path>
+<path id ="49" class ="arcs" d ="M 0 0 L 12.000 2.400" ></path>
+<path id ="50" class ="arcs" d ="M 0 0 L 12.000 3.200" ></path>
+<path id ="51" class ="arcs" d ="M 0 0 L 12.000 1.600" ></path>
+<text id ="52" class ="nodes" x ="12.000" y ="11.200" > baseTypeCheck </text>
+<text id ="53" class ="nodes" x ="12.000" y ="12.000" > graphcode </text>
+<text id ="54" class ="nodes" x ="12.000" y ="7.200" > reconstructUses </text>
+<text id ="55" class ="nodes" x ="12.000" y ="8.000" > cleanExports </text>
+<text id ="56" class ="nodes" x ="6.000" y ="7.200" > prettycompilerfront </text>
+<path id ="57" class ="arcs" d ="M 0 0 L 12.000 4.000" ></path>
+<path id ="58" class ="arcs" d ="M 0 0 L 12.000 8.800" ></path>
+<path id ="59" class ="arcs" d ="M 0 0 L 12.000 5.600" ></path>
+<path id ="60" class ="arcs" d ="M 0 0 L 12.000 2.400" ></path>
+<path id ="61" class ="arcs" d ="M 0 0 L 12.000 9.600" ></path>
+<path id ="62" class ="arcs" d ="M 0 0 L 12.000 3.200" ></path>
+<path id ="63" class ="arcs" d ="M 0 0 L 12.000 10.400" ></path>
+<path id ="64" class ="arcs" d ="M 0 0 L 12.000 7.200" ></path>
+<path id ="65" class ="arcs" d ="M 0 0 L 12.000 8.000" ></path>
+<text id ="66" class ="nodes" x ="6.000" y ="11.600" > frontcmd </text>
+<path id ="67" class ="arcs" d ="M 0 0 L 12.000 8.800" ></path>
+<path id ="68" class ="arcs" d ="M 0 0 L 12.000 5.600" ></path>
+<path id ="69" class ="arcs" d ="M 0 0 L 12.000 9.600" ></path>
+<path id ="70" class ="arcs" d ="M 0 0 L 12.000 10.400" ></path>
+<path id ="71" class ="arcs" d ="M 0 0 L 12.000 11.200" ></path>
+<path id ="72" class ="arcs" d ="M 0 0 L 12.000 12.000" ></path>
+<text id ="73" class ="nodes" x ="12.000" y ="1.600" > wordgraph </text>
++</svg>
+<p> <span class = keyword> Function</span> usegraph(lib:seq.seq.word, kind:word) seq.arc.word 

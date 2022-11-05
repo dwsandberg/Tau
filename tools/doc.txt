@@ -149,7 +149,10 @@ and <* code 1.0 = 8.0 *> is of type boolean.
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
-Occasionally some unexpected syntactical  issues arise.   The  /keyword let statement  
+A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.
+A let statement DOES NOT define a variable that can change values.
+
+Occasionally some unexpected syntactical  issues arise.   The   let statement  
  does not have a required seperator between the two expressions.
  The follow function looks good but will cause a syntax error:  
 <* block /keyword function f1 int /br /keyword let x=  56  /br  -4+x *> 
@@ -173,7 +176,18 @@ The types /em int and /em real are implement by the underlying hardware and have
 
 The type boolean has operators:∧ ∨ /em not /em true and /em false. The second operator of ∧ and ∨ is evaluated if and only if the first operator does not determine the result.
 
-For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The is a binary operaator >1 in the standard module that could be defined as
+This document itself can be feed directly to a Tau compiler.  Modules like the next with a 
+? as the last character of their name are introduced sole for the purpose of allowing the document to compile. 
+
+Module standard?
+
+The paragraph below makes visible in module standard?  the function and types in the module standard.
+
+use standard
+
+
+
+For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT are defined. The is a binary operaator >1 in the standard module that could be defined as
 
 Function >1(a:int,b:int) ordering if a > b then GT else if a=b then EQ else LT
 
@@ -300,24 +314,42 @@ Function %(p:point2d)seq.word  "( $(x.p) , $(y.p) )"
 
 Function testpoint seq.word %(point2d(2, 3)+ point2d(4, 5))
 
-???? rest of sectoin out of date Since a program is sequence of paragraphs.The above text can be placed in a file and 
-turned into a running program.  A module lives with in the context of a library.  
-So a file name point2d.ls  is required with the first   paragraphs  being:
 
-Library point2d uses stdlib exports point2d 
+<* section Module to run tests in this document *>
 
-The remainder  of the file is the above text.    This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  <* block ./taumain “point2d point2d testpoint” *>
+Module testdoc
+
+use standard
+
+use file
+
+use testseq
+
+use point2d
+
+use testlistset
+
+use testdict
+
+use exampleEncoding
+
+use  geotest
+
+Function testdoc(input:seq.file,o:seq.word) seq.file
+[file(o,"testseq $(testseq) point2d $(testpoint) testlistset $(testlistset) testdict $(testdict) exampleEncoding $(testExampleEncoding) /p geotest  $(geotest)")]
+
+
 
 
 <* section Parameterized Module *>
 
-A type can have a single type parameter of named T. The T can be used anywhere a type can be used.
+A type can have a single type parameter named T. The T can be used anywhere a type can be used.
 
 Generic unbound functions on the type T may be included by using the word unbound as the defining expression. When the parameterized type is used, there must exist a function with the same signature as the unbound one where T is replaced with the actual type for T.
 
 As an example the follow defines a parameterized set implemented as a sequence
 
-  module listset.T
+Module listset.T
 
   use standard
 
@@ -356,17 +388,14 @@ use standard
 
 use listset.word
 
-The following function uses a let statement.  A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.
-A let statement DOES NOT define a variable that can change values.
 
-
-Function test7 seq.word 
+Function testlistset seq.word 
 let set1 = tolistset."A A B C A C B"
 let set2 = tolistset."D B E"
 if toseq.set1 = "C B A" ∧ first."C" ∈ set1
  ∧ first."D" ∉ set1
  ∧ toseq(set1 ∪ set2) = "D E C B A"then
- "PASS"
+ "PASS "
  else"FAIL"
 
 Sets can be used to implement dictionaries.   A dictionary contains entries.  
@@ -377,13 +406,13 @@ Entries will be equal if and only if the keys are equal.
 
  function =(a:myentry, b:myentry)boolean key.a = key.b
 
-Now a set of entries will be a dictionary.   From the mathematical view of the set each entry is an representation of an entry.  The integer 3 could be represented by
- myentry(3,"X") , myentry (3,"A B C") or and infinite number of other possibilities.  But only one representation will be used in any listset.myentry.
+Now a set of entries will be a dictionary.   From the mathematical view of the set each entry is an representation of an integer.  The integer 3 could be represented by
+ myentry(3,/so "X") , myentry (3,/so "A B C") or and infinite number of other possibilities.  But only one representation will be used in any listset.myentry.
 
 Looking up an entry in the dictionary is just looking up the representation used in the set.  The last
 function in the /em listset module does just that.  The A ∪ B function in the listset module is carefully crafted
 so that if an element is in both A and B  the representation of used in A is used in the result.  Thus 
- listset.[myentry(3,"X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,"X") or  B /cup [myentry(3,"X")] will not redefine the entry in B.  
+ listset.[myentry(3,/so "X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3, /so "X") or  B /cup [myentry(3, /so "X")] will not redefine the entry in B.  
  By convention, the result  of a binary operation on sets   uses the representation of in the left operand -- not the one on the right.
    
 Module testdict
@@ -408,7 +437,7 @@ function print(a:listset.myentry)seq.word
  
 
  
-Function test8 seq.word let dict = tolistset.[ myentry(1,"add"), myentry(2,"sub"), myentry(3,"mult")]
+Function testdict seq.word let dict = tolistset.[ myentry(1,"add"), myentry(2,"sub"), myentry(3,"mult")]
 let dict2 = tolistset.[ myentry(2,"subtract"), myentry(4,"divide")]
 let l1 = lookup(dict, 4)
 if print.dict = "(3, mult),(2, sub),(1, add)"
@@ -495,15 +524,23 @@ Module encode?.T
 
   Export   decode(encoding.T)T { will return the value that was encoded } 
 
- ???? Function findencode(t:T, erecord.T)seq.T { will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.} 
+  Export   findencode(T) seq.T { will return the empty sequence if the value has not been mapped or a sequence  containing the value that was mapped.} 
 
-   Function encodingdata:T seq.T { list of values that have been encoded.}  
+   Export encodingdata:T seq.T { list of values that have been encoded.}  
    
-  Function valueofencoding(encoding.T) int { the integer value of the encoding}
+  Export valueofencoding(encoding.T) int { the integer value of the encoding}
   
-Since the mapping  can be shared by multiple process, modification of  the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
+Since the encoding  can be shared by multiple process, modification of  the encoding is a critical section. Also the mapping may contain encodings not assigned by the current process.
 
-???? need explanation of how encodings are shared among processes  
+Encodings do not exist until it is referenced by a process and the process owns the encoding.
+
+A child process shares any encodings that its parents process has.
+
+Sibling process do not share encodings they own.
+
+An  encoding create by a process is not available to it's parent processes.
+
+ 
 
 Module exampleEncoding
 
@@ -534,7 +571,7 @@ This must be true for the hash to work correctly.
 The hash function in this example could be improved by including operands in the argument.
 
  
-Function testexample seq.word
+Function testExampleEncoding seq.word  
   let  R="R1 R2 R3 R4 R5 R6 R7 R8 R9 R11 R12 R13"
   let postfix="5   3 4 + *  3 4 + *  6   3 4 + * +  7 +"
   {encode every subexpression of the postfix expression.  If a sub-expression is used
@@ -720,14 +757,10 @@ Perhaps the best way to reverse a sequence is to use
 In this case the tau compiler will remove  the bounds checking when indexing the sequence.  
 If the sequence was built up out of smaller sequences, it may also  break the sequence into the smaller parts and process them separately. 
 
-<* table    Sample  Table 
- /row   1 /cell 2 /cell  3 
- /row   3 /cell 4 /cell 5  
-  *>
 
 <* section markup *>
 
-<* table 
+<* table Markup Commands
 /row Example /cell with format /cell note
 /row first /keyword /p second   /cell /   first /p second  /cell paragraph break
 /row first /keyword /br second  /cell  first /br second /cell line break
@@ -737,18 +770,18 @@ If the sequence was built up out of smaller sequences, it may also  break the se
 /row /keyword <* /keyword literal this is an example  /keyword *> /cell <* literal  this is an example *>  /cell
 /row /keyword <* /keyword keyword this is an example  /keyword *>  /cell <* keyword this is an example  *>  /cell
 /row /keyword <* /keyword comment this is an example  /keyword *>; /cell <* comment this is an example  *>  /cell
-/row parent block /keyword <* /keyword block Indented block. /keyword /br second line /keyword *> 
+/row parent /br block /keyword <* /keyword block Indented block. /br /keyword /br second line /keyword *> 
 /cell parent block <* block Indented block. /br second line *> 
 /cell   Indented block 
 /row /keyword <* /keyword none <hr/> /keyword *> 
 /cell  <* none <hr> *>  /cell 
-/row /keyword <* /keyword table <caption> <rows of table> /keyword <* /cell /cell Defines a table 
+/row /keyword <* /keyword table <* none <caption> <rows of table>  *> /keyword *> /cell /cell Defines a table 
 /row  /keyword /row../keyword /cell../keyword /cell..  /cell /cell Defines a row of with three columns. 
 /br Must be placed within table. 
 /row /keyword <* /keyword table    Sample   Table 
 /br /keyword /row   1 /keyword /cell 2 /keyword /cell 3
 /br /keyword /row   3 /keyword /cell 4 /keyword /cell 5
-/keyword <*
+/keyword *>
 /cell
 <* table    Sample  Table 
  /row   1 /cell 2 /cell  3 

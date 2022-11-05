@@ -16,7 +16,8 @@ Function >1(a:sparseele.T, b:sparseele.T) ordering start.a >1 start.b
 
 function _(s:sparse.T, i:int) T
 let place = binarysearch(sdata.s, sparseele(i, empty:seq.T))
-if place = -1 then default.s
+if place = -1 then
+ default.s
 else
  let k = if place < 0 then-place - 1 else place
  let before = (sdata.s)_k
@@ -43,20 +44,26 @@ else
  toseq.sparse(start.last + length.edata.last - 1, t, default.d)
 
 function removeoverlap(finish:int, s:seq.sparseele.T, i:int) seq.sparseele.T
-if i > length.s then empty:seq.sparseele.T
-else if finish < start.s_i then s << (i - 1)
+if i > length.s then
+ empty:seq.sparseele.T
+else if finish < start.s_i then
+ s << (i - 1)
 else
  let this = s_i
  let thisfinish = start.this + length.edata.this - 1
- if finish ≥ thisfinish then removeoverlap(finish, s, i + 1)
- else [sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
+ if finish ≥ thisfinish then
+  removeoverlap(finish, s, i + 1)
+ else
+  [sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
 
 function *(a:seq.sparseele.T, e:sparseele.T) seq.sparseele.T
-if isempty.a then [e]
+if isempty.a then
+ [e]
 else
  let last = last.a
  let lastend = start.last + length.edata.last - 1
- if lastend < start.e then a + e
+ if lastend < start.e then
+  a + e
  else
   a >> 1
   * sparseele(start.last, subseq(edata.last, 1, start.e - start.last) + edata.e) 

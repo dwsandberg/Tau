@@ -8,7 +8,8 @@ use ptr
 
 use standard
 
-builtin getfld(address:blockseq.T, offset:int) seq.T {load value of type T at address}
+builtin getfld(address:blockseq.T, offset:int) seq.T
+{load value of type T at address}
 
 Export type:blockseq.T
 
@@ -40,11 +41,13 @@ else
  let blkseq = allocatespace(noblks + 2)
  let discard = 
   for acc = set(set(blkseq, blockseqtype), length.s)
-  , @e ∈ arithseq(noblks, blksz, 1)
+   , @e ∈ arithseq(noblks, blksz, 1)
   do
    let newseq = allocatespace(blksz + 2)
    let d = 
-    for acc2 = set(set(newseq, 0), blksz), e ∈ subseq(s, @e, @e + blksz - 1) do set(acc2, e) /for (acc2)
+    for acc2 = set(set(newseq, 0), blksz), e ∈ subseq(s, @e, @e + blksz - 1) do
+     set(acc2, e)
+    /for (acc2)
    let x = bitcast:seq.T(newseq)
    set(acc, newseq)
   /for (acc)
@@ -63,7 +66,7 @@ else
  let blkseq = allocatespace(noblks + 2)
  let discard = 
   for acc = set(set(blkseq, blockseqtype), length.s)
-  , @e ∈ arithseq(noblks, blksz, 1)
+   , @e ∈ arithseq(noblks, blksz, 1)
   do
    let s2 = subseq(s, @e, @e + blksz - 1)
    let newseq = allocatespace(length.s2 * ds + 2)

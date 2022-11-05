@@ -36,8 +36,8 @@ function %(a:symloc) seq.word %.loc.a + %.sym.a
 
 Function tograph(s:seq.symbol) seq.word
 for acc = empty:seq.arc.symloc
-, stk = empty:stack.symloc
-, i ∈ arithseq(length.s, 1, 1)
+ , stk = empty:stack.symloc
+ , i ∈ arithseq(length.s, 1, 1)
 do
  let sym = s_i
  let sons = 
@@ -63,7 +63,8 @@ Function generatenode(a:set.symloc) symloc symloc(cardinality.a, Lit.0)
 
 Function node2text(a:symloc) seq.word
 let sy = sym.a
-if isloopblock.sy then "Loop:$(firstvar.sy)"
+if isloopblock.sy then
+ "Loop:$(firstvar.sy)"
 else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then %.sy else [name.sy]
 
 Function nodeTitle(a:symloc) seq.word %.sym.a

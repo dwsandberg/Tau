@@ -56,7 +56,8 @@ let i = toint.code
 if between(i + 1, 1, 8) then
  let r = ["unspecified ? ? ? align8 align16 align32 align64"_(i + 1)]
  if r ≠ "?" then r else "align." + toword.i
-else "align." + toword.i
+else
+ "align." + toword.i
 
 type instop is toint:int
 
@@ -99,12 +100,13 @@ let discard = [BLOCK, BINOP, CAST, SELECT, RET, BR, PHI, ALLOCA, LOAD, CMP2, CAL
 let i = toint.code
 if between(i + 1, 1, 45) then
  let r = 
-  ["? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ?
-   ? CALL ? ? ? ? ? ? ? ? GEP STORE"
-  _(i + 1)
-  ]
+  [
+   "? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ?
+    ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+   _(i + 1)]
  if r ≠ "?" then r else "instop." + toword.i
-else "instop." + toword.i
+else
+ "instop." + toword.i
 
 type typeop is toint:int
 
@@ -137,11 +139,12 @@ let discard = [NumEle, TVOID, DOUBLE, OPAQUE, INTEGER, POINTER, ARRAY, FUNCTION]
 let i = toint.code
 if between(i + 1, 1, 22) then
  let r = 
-  ["? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
-  _(i + 1)
-  ]
+  [
+   "? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
+   _(i + 1)]
  if r ≠ "?" then r else "typeop." + toword.i
-else "typeop." + toword.i
+else
+ "typeop." + toword.i
 
 type blockop is toint:int
 
@@ -174,11 +177,12 @@ let discard = [INFOBLOCK, MODULE, PARA, PARAGRP, CONSTANTS, FUNCTIONBLK, VALUESY
 let i = toint.code
 if between(i + 1, 1, 18) then
  let r = 
-  ["INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
-  _(i + 1)
-  ]
+  [
+   "INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
+   _(i + 1)]
  if r ≠ "?" then r else "blockop." + toword.i
-else "blockop." + toword.i
+else
+ "blockop." + toword.i
 
 type moduleop is toint:int
 
@@ -206,7 +210,8 @@ let i = toint.code
 if between(i + 1, 1, 9) then
  let r = ["? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"_(i + 1)]
  if r ≠ "?" then r else "moduleop." + toword.i
-else "moduleop." + toword.i
+else
+ "moduleop." + toword.i
 
 type constop is toint:int
 
@@ -247,17 +252,18 @@ Function CDATA constop constop.22
 Function decode(code:constop) seq.word
 let discard = 
  [SETTYPE, CNULL, CUNDEF, CINTEGER, CWIDEINTEGER
- , CFLOAT, CAGGREGATE, CSTRING2, CSTRING0, CBINOP
- , CCAST, CGEP, CDATA]
+  , CFLOAT, CAGGREGATE, CSTRING2, CSTRING0, CBINOP
+  , CCAST, CGEP, CDATA]
 let i = toint.code
 if between(i + 1, 1, 23) then
  let r = 
-  ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ?
-   ? ? ? ? ? ? CGEP ? CDATA"
-  _(i + 1)
-  ]
+  [
+   "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ?
+    ? ? ? ? ? ? CGEP ? CDATA"
+   _(i + 1)]
  if r ≠ "?" then r else "constop." + toword.i
-else "constop." + toword.i
+else
+ "constop." + toword.i
 
 type castop is toint:int
 
@@ -296,16 +302,17 @@ Function bitcast castop castop.11
 Function decode(code:castop) seq.word
 let discard = 
  [trunc, zext, sext, fptoui, fptosi
- , uitofp, sitofp, fptrunc, fpext, ptrtoint
- , inttoptr, bitcast]
+  , uitofp, sitofp, fptrunc, fpext, ptrtoint
+  , inttoptr, bitcast]
 let i = toint.code
 if between(i + 1, 1, 12) then
  let r = 
-  ["trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
-  _(i + 1)
-  ]
+  [
+   "trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
+   _(i + 1)]
  if r ≠ "?" then r else "castop." + toword.i
-else "castop." + toword.i
+else
+ "castop." + toword.i
 
 type binaryop is toint:int
 
@@ -349,7 +356,8 @@ let i = toint.code
 if between(i + 1, 1, 13) then
  let r = ["add sub mul udiv sdiv urem srem shl lshr ashr and or xor"_(i + 1)]
  if r ≠ "?" then r else "binaryop." + toword.i
-else "binaryop." + toword.i
+else
+ "binaryop." + toword.i
 
 type cmp2op is toint:int
 
@@ -398,9 +406,10 @@ let discard = [Feq, Fgt, Fge, Flt, Fle, Fne, eq, ne, ugt, uge, ult, ule, sgt, sg
 let i = toint.code
 if between(i + 1, 1, 42) then
  let r = 
-  ["? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule
-   sgt sge slt sle"
-  _(i + 1)
-  ]
+  [
+   "? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule
+    sgt sge slt sle"
+   _(i + 1)]
  if r ≠ "?" then r else "cmp2op." + toword.i
-else "cmp2op." + toword.i 
+else
+ "cmp2op." + toword.i 

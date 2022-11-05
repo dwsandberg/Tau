@@ -188,13 +188,14 @@ bitcast:seq.byte(set(set(toptr.c, getseqtype.c), length.c))
 
 Function blockIt(s:seq.byte) seq.byte
 let blksz = 8128 * 8
-if length.s ≤ blksz then packedbytes.s
+if length.s ≤ blksz then
+ packedbytes.s
 else
  let noblks = (length.s + blksz - 1) / blksz
  let blkseq = allocatespace(noblks + 2)
  let discard = 
   for acc = set(set(blkseq, blockseqtype:byte), length.s)
-  , @e ∈ arithseq(noblks, blksz, 1)
+   , @e ∈ arithseq(noblks, blksz, 1)
   do
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
   /for (acc)
@@ -219,25 +220,39 @@ for acc = empty:seq.seq.byte, start ∈ arithseq(noblks, blksz, 1) do
 ____________
 
 Function cat(obj1:ptr, obj2:ptr, typ:word) ptr
-if typ ∈ "int" then toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
-else if typ ∈ "real" then toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
-else if typ ∈ "ptr" then toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
-else if typ ∈ "packed2" then toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
-else if typ ∈ "packed3" then toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
-else if typ ∈ "packed4" then toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
-else if typ ∈ "packed5" then toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
+if typ ∈ "int" then
+ toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
+else if typ ∈ "real" then
+ toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
+else if typ ∈ "ptr" then
+ toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
+else if typ ∈ "packed2" then
+ toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
+else if typ ∈ "packed3" then
+ toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
+else if typ ∈ "packed4" then
+ toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
+else if typ ∈ "packed5" then
+ toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
 else
  assert typ ∈ "packed6" report "packing cat not found" + typ
  toptr(bitcast:seq.packed6(obj1) + bitcast:seq.packed6(obj2))
 
 Function packobject(typ:word, obj:ptr) ptr
-if typ ∈ "int" then toptr.blockIt.bitcast:seq.int(obj)
-else if typ ∈ "real" then toptr.blockIt.bitcast:seq.real(obj)
-else if typ ∈ "ptr" then toptr.blockIt.bitcast:seq.ptr(obj)
-else if typ ∈ "packed2" then toptr.blockIt.bitcast:seq.packed2(obj)
-else if typ ∈ "packed3" then toptr.blockIt.bitcast:seq.packed3(obj)
-else if typ ∈ "packed4" then toptr.blockIt.bitcast:seq.packed4(obj)
-else if typ ∈ "packed5" then toptr.blockIt.bitcast:seq.packed5(obj)
+if typ ∈ "int" then
+ toptr.blockIt.bitcast:seq.int(obj)
+else if typ ∈ "real" then
+ toptr.blockIt.bitcast:seq.real(obj)
+else if typ ∈ "ptr" then
+ toptr.blockIt.bitcast:seq.ptr(obj)
+else if typ ∈ "packed2" then
+ toptr.blockIt.bitcast:seq.packed2(obj)
+else if typ ∈ "packed3" then
+ toptr.blockIt.bitcast:seq.packed3(obj)
+else if typ ∈ "packed4" then
+ toptr.blockIt.bitcast:seq.packed4(obj)
+else if typ ∈ "packed5" then
+ toptr.blockIt.bitcast:seq.packed5(obj)
 else
  assert typ ∈ "packed6" report "packing not found" + typ
  toptr.blockIt.bitcast:seq.packed6(obj) 

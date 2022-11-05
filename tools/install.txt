@@ -74,27 +74,27 @@ Function fact2(a:int,result:int) int
  else if a=0 then result else  fact2(a-1,result * a)
 
 
-The intermediate code is represented by symbols.  The text representation does
-not contain all the information in a symbol. The function fact2 is represented by the
+The intermediate code is represented by symbols.  The text representation is missing some information
+that is contained in a symbol. The function fact2 is represented by the
 text  "helloworld:test2(int,int)int".  The module of the symbol is represented but not the library. 
 Each type also has module and library but only the name of the type is given. 
 
-  The local variables are represented by % followed by a number, for example   %2.  Local variables  also have name assocciated with 
+  The local variables are represented by % followed by a number, for example   %2.  Local variables  also have name associated with 
   them that is not in the text representation. 
 
 The body of fact2 can be rewritten as a sequence of statments using explicit gotos. All the statements are wrap up in a block.   
-Block(
-  if  a=1 then goto(+1) else goto(+2)
-  ,Exit(result)  
-  ,if  a=0  then goto(+1) else goto(+2) 
-  ,Exit( result)
-  ,Exit( fact2(a-1,result * a))
-  )
-/strong goto(+n) means do not execute the next n-1 statements and Continue with the following statement.
+<* block Block(
+  /br if  a=1 then goto(+1) else goto(+2)
+   /br,Exit(result)  
+   /br,if  a=0  then goto(+1) else goto(+2) 
+   /br,Exit( result)
+   /br,Exit( fact2(a-1,result * a))
+  ) *>
+/strong goto(+n) means do not execute the next n-1 statements and continue with the following statement.
 /strong Exit means skip executing all the follow statements in the block. 
 
 
-A further rewrite  gets closer to the  intermediate code.  The rewrite starst the  block with /strong
+A further rewrite  gets closer to the  intermediate code.  The rewrite start the  block with /strong
 Start(<type of value returned by block>). Each statement is expressed in postfix notation. 
 The "if <exp> then goto(a) else goto(b)"
 becomes  "<postfix exp> Br2(a,b)".  The end of the block is indicated by /strong EndBlock

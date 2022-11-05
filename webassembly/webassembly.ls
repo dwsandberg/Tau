@@ -32,12 +32,14 @@ Function cat(files:seq.file, uses:seq.word, exports:seq.word, Library:seq.word) 
 for acc = empty:seq.byte, names = "parts =", f ∈ files do
  if ext.fn.f ∈ "ls libsrc" then
   next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
- else next(acc, names)
+ else
+  next(acc, names)
 /for (
- [file(filename(Library + ".libsrc")
- , toseqbyte.toUTF8(names + "uses = $(uses) exports = $(exports) Library = $(Library)") + acc
- )
- ])
+ [
+  file(filename(Library + ".libsrc")
+   , toseqbyte.toUTF8(names + "uses = $(uses) exports = $(exports) Library = $(Library)") + acc)
+  ]
+)
 
 Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean) seq.file
 {problem is same symbol is used in different onclicks}
@@ -49,13 +51,15 @@ let libname = Library
 let libexports = exports + "SpecialExports" + "SpecialImports"
 let rcinfo = 
  compilerFront:callconfig("wasm"
- , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")]
- + input
- )
+  , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")]
+  + input)
 for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo do
- if name.modname.m ∈ "SpecialImports" then next(syms2, imports + exports.m)
- else if name.modname.m ∈ libexports then next(syms2 + exports.m, imports)
- else next(syms2, imports)
+ if name.modname.m ∈ "SpecialImports" then
+  next(syms2, imports + exports.m)
+ else if name.modname.m ∈ libexports then
+  next(syms2 + exports.m, imports)
+ else
+  next(syms2, imports)
 /for (
  {should check for dup names on syms2}
  let scriptstart = 
@@ -81,15 +85,16 @@ for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo d
    .toUTF8." </script>" else}
   toseqbyte.toUTF8."<script src = $(merge.dq."/webassembly/template.js") > </script>"
  for acc = wasmfiles, page ∈ input do
-  if ext.fn.page ∉ "html" then acc
+  if ext.fn.page ∉ "html" then
+   acc
   else
    let pagehtml = data.page
    acc
    + file(filename."+$(dirpath.fn.first.wasmfiles) $([name.fn.page]).html"
-   , pagehtml + script
-   + toseqbyte.toUTF8(scriptstart + "$(LF) pageinit ($(merge.dq.libname), $(name.fn.page)) ; </script>")
-   )
- /for (acc))
+    , pagehtml + script
+    + toseqbyte.toUTF8(scriptstart + "$(LF) pageinit ($(merge.dq.libname), $(name.fn.page)) ; </script>"))
+ /for (acc)
+)
 
 Function doc seq.word
 "Steps to call function f1 as a process.

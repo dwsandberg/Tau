@@ -56,12 +56,17 @@ Function %(t:llvmtype) seq.word
 let a = asseq.t
 let tp = typeop.a_1
 let b = for acc = empty:seq.llvmtype, @e ∈ a do acc + inttollvmtype.@e /for (acc)
-if tp = INTEGER then [merge("i" + toword.a_2)]
-else if tp = ARRAY then "array (" + toword.a_2 + "," + %.b_3 + ")"
-else if tp = POINTER then "ptr.$(b_2)"
+if tp = INTEGER then
+ [merge("i" + toword.a_2)]
+else if tp = ARRAY then
+ "array (" + toword.a_2 + "," + %.b_3 + ")"
+else if tp = POINTER then
+ "ptr.$(b_2)"
 else if tp = FUNCTION then
- "function ($(for acc = "", @e ∈ subseq(b, 3, length.a) do acc + %.@e + "
-  ," /for (acc >> 1)))"
+ "function ($(for acc = "", @e ∈ subseq(b, 3, length.a) do
+  acc + %.@e + ",
+   "
+ /for (acc >> 1)))"
 else if tp = TVOID then "VOID" else if tp = DOUBLE then "double" else "?"
 
 Function typerecords seq.seq.int
@@ -98,7 +103,8 @@ if typ.a ∈ [-1,-2] then subseq(toseq.a, 2, 1 + (toseq.a)_1) else toseq.a
 
 Function modulerecord(name:seq.word, rec:seq.int) slot
 let c = 
- if name = "" then llvmconst(-3, rec)
+ if name = "" then
+  llvmconst(-3, rec)
  else
   let chars = tointseq.for acc = empty:seq.char, @e ∈ name do acc + decodeword.@e /for (acc)
   llvmconst(-1, [length.chars] + chars + rec)
@@ -119,8 +125,7 @@ slot(addorder.llvmconst(typ.t, [toint.CDATA] + data) - 1)
 Function AGGREGATE(data:seq.slot) slot
 let t = array(length.data, i64)
 slot(addorder.llvmconst(typ.t
-, [toint.CAGGREGATE] + for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for (acc)
-)
+ , [toint.CAGGREGATE] + for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for (acc))
 - 1)
 
 Function ptrtoint(argtype:llvmtype, p:slot) slot
@@ -129,14 +134,12 @@ slot.C(i64, [toint.CCAST, 9, typ.argtype, toint.p])
 Function CGEP(p:slot, b:int) slot
 let t1 = consttype.p
 slot.C(ptr.i64
-, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b]
-)
+ , [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b])
 
 Function CGEPi8(p:slot, b:int) slot
 let t1 = consttype.p
 slot.C(ptr.i8
-, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b]
-)
+ , [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b])
 
 /Function zeroinit (profiletype:llvmtype) int C (profiletype, [toint, CNULL])
 
@@ -144,7 +147,8 @@ Function Creal(i:int) slot slot.C(double, [toint.CCAST, 11, typ.i64, toint.C64.i
 
 Function asi64(s:slot) slot
 let l = decode.to:encoding.llvmconst(toint.s + 1)
-if typ.l = typ.i64 then s
+if typ.l = typ.i64 then
+ s
 else if typ.l = typ.ptr.i64 then
  constantrecord(i64, [toint.CCAST, toint.ptrtoint, typ.ptr.i64, toint.s])
 else
@@ -161,13 +165,17 @@ type slotrecord is tollvmconst:llvmconst
 
 Function record(b:slotrecord) seq.int
 let a = tollvmconst.b
-if typ.a = -1 then {name comes before record} subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
-else toseq.a
+if typ.a = -1 then
+ {name comes before record} subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
+else
+ toseq.a
 
 Function symtablename(c:slotrecord) seq.char
 let a = tollvmconst.c
-if typ.a ∈ [-1,-2] then tocharseq.subseq(toseq.a, 2, 1 + (toseq.a)_1)
-else empty:seq.char
+if typ.a ∈ [-1,-2] then
+ tocharseq.subseq(toseq.a, 2, 1 + (toseq.a)_1)
+else
+ empty:seq.char
 
 Function ismoduleblock(a:slotrecord) boolean typ.tollvmconst.a < 0
 
@@ -175,7 +183,8 @@ Function typ(s:slotrecord) int typ.tollvmconst.s
 
 Function consttype(s:slot) llvmtype
 let l = decode.to:encoding.llvmconst(toint.s + 1)
-inttollvmtype.if typ.l = -1 then ({must skip name to find record} toseq.l)_(3 + (toseq.l)_1)
+inttollvmtype.if typ.l = -1 then
+ ({must skip name to find record} toseq.l)_(3 + (toseq.l)_1)
 else if typ.l = -3 then (toseq.l)_2 else typ.l
 
 type slot is toint:int

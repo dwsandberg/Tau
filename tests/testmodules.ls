@@ -36,17 +36,16 @@ Function testmodules seq.word
 assert true report randomphrase
 let y = 
  [t501
- , t502
- , t503
- , t504
- , t505
- , t506
- , testrandomphrase
- , t508
- , test20
- , t044
- , "200:1:4:5.4:56 (200, 1, 5.4):" = %(":", postorder.tr1)
- ]
+  , t502
+  , t503
+  , t504
+  , t505
+  , t506
+  , testrandomphrase
+  , t508
+  , test20
+  , t044
+  , "200:1:4:5.4:56 (200, 1, 5.4):" = %(":", postorder.tr1)]
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int) seq.word
@@ -94,7 +93,7 @@ function n8 int 8
 function t505 boolean
 let g = 
  newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6)
- , arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
+  , arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
 let r = 
  print.g + "transversal" + print.sinksfirst.g + "Suc"
  + print.toseq.successors(g, n2)
@@ -116,8 +115,12 @@ function print(a:arc.int) seq.word "(" + toword.tail.a + toword.head.a + ")"
 function t508 boolean
 let s = 
  for acc = constantseq(100, 0)
- , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001) do acc + (e mod 100 + 1) /for (acc)
- do replace(acc, i, acc_i + 1) /for (acc)
+  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001) do
+   acc + (e mod 100 + 1)
+  /for (acc)
+ do
+  replace(acc, i, acc_i + 1)
+ /for (acc)
 let totalcounts = for acc = 0, @e ∈ s do acc + @e /for (acc)
 length.s = 100 ∧ totalcounts = 100001
 
@@ -143,18 +146,17 @@ bits
 Function checkbits seq.word
 let min64integer = toint(0x1 << 63)
 let max64integer = toint(bits.-1 >> 1)
-check([toint.toword.min64integer = min64integer
-, toint.toword.max64integer = max64integer
-, min64integer + 1 = -max64integer
-, 0xD = bits.13
-, 878082210 = toint.rotl32(0xA2345678, 8)
-, %(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000"
-, %(0xD687F001 >> 2) = "0000 0000 35A1 FC00"
-, %(0xD687F001 << 2) = "0000 0003 5A1F C004"
-, %(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
-, %(0xD687F000 ⊻ 0x0FE00000) = "0000 0000 D967 F000"
-]
-, "bits"
-)
+check(
+ [toint.toword.min64integer = min64integer
+  , toint.toword.max64integer = max64integer
+  , min64integer + 1 = -max64integer
+  , 0xD = bits.13
+  , 878082210 = toint.rotl32(0xA2345678, 8)
+  , %(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000"
+  , %(0xD687F001 >> 2) = "0000 0000 35A1 FC00"
+  , %(0xD687F001 << 2) = "0000 0003 5A1F C004"
+  , %(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
+  , %(0xD687F000 ⊻ 0x0FE00000) = "0000 0000 D967 F000"]
+ , "bits")
 
 function rotl32(x:bits, n:int) bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n)) 

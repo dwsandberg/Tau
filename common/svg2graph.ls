@@ -61,7 +61,8 @@ Function >1(a:arcpath.T, b:arcpath.T) ordering
 head.arc.a >1 head.arc.b ∧ {from.a >1 from.b /and} tail.arc.a >1 tail.arc.b
 
 Function addgroup(grp:seq.arcpath.T) seq.arcpath.T
-if length.grp = 1 then grp
+if length.grp = 1 then
+ grp
 else
  let inc = 0.6
  let dd = d.first.grp
@@ -88,8 +89,10 @@ Function drawgraph(xxx:graph.T) seq.word drawgraph(xxx, empty:set.labeledarc.T)
 
 Function drawgraph(arcs:seq.arc.T, include:set.T, exclude:set.T) seq.word
 for arclist = empty:seq.arc.T, a ∈ arcs do
- if head.a ∈ exclude ∨ not.isempty.include ∧ tail.a ∉ include then arclist
- else arclist + a
+ if head.a ∈ exclude ∨ not.isempty.include ∧ tail.a ∉ include then
+  arclist
+ else
+  arclist + a
 /for (drawgraph.newgraph.arclist)
 
 Function drawgraph(xxx:graph.T, labels:set.labeledarc.T) seq.word
@@ -102,28 +105,31 @@ let arcpaths0 =
   let from = if length.a = 2 then x.lookup(nodeinfo.layout, nodeinfo(a_1, 0, 0))_1 else 0
   for d = "", from0 = 0, from1 = from, p ∈ a << 1 do
    let xy = lookup(nodeinfo.layout, nodeinfo(p, 0, 0))_1
-   next(d + "L" + print(3, toreal.y.xy * scalex)
-   + print(3, toreal.x.xy * scaley)
-   , from1
-   , x.xy
-   )
+   next(
+    d + "L" + print(3, toreal.y.xy * scalex)
+    + print(3, toreal.x.xy * scaley)
+    , from1
+    , x.xy)
   /for (asset.[arcpath(arc(first.a, last.a), d, from0)] ∪ ap)
  /for (ap)
 let arcpaths = 
- if not.haslabels then arcpaths0
+ if not.haslabels then
+  arcpaths0
  else
   for acc = empty:seq.arcpath.T, grp = empty:seq.arcpath.T, p ∈ toseq.arcpaths0 do
-   if isempty.grp ∨ head.arc.last.grp = head.arc.p then next(acc, grp + p)
-   else next(acc + addgroup.grp, [p])
+   if isempty.grp ∨ head.arc.last.grp = head.arc.p then
+    next(acc, grp + p)
+   else
+    next(acc + addgroup.grp, [p])
   /for (asset(acc + addgroup.grp))
 for txt = ""
-, i = 1
-, id = requestids(cardinality.nodes.xxx + cardinality.arcs.xxx) + requestids.1
-, draw = ""
-, maxx = 0.0
-, maxy = 0.0
-, hover = empty:seq.hovertext.T
-, n ∈ toseq.nodeinfo.layout
+ , i = 1
+ , id = requestids(cardinality.nodes.xxx + cardinality.arcs.xxx) + requestids.1
+ , draw = ""
+ , maxx = 0.0
+ , maxy = 0.0
+ , hover = empty:seq.hovertext.T
+ , n ∈ toseq.nodeinfo.layout
 do
  {assumes nodes in g uses same sortorder as nodinfo}
  let nodex = toreal.y.n * scalex
@@ -139,48 +145,57 @@ do
     let xy = lookup(nodeinfo.layout, nodeinfo(s, 0, 0))_1
     let paths = lookup(arcpaths, arcpath(arc(n.n, s), "", 0))
     let path = 
-     if isempty.paths then "L $(print(3, toreal.y.xy * scalex)) $(print(3, toreal.x.xy * scaley))"
-     else d.paths_1
-    next(arctxt
-    + "<path id = $(dq.[toword.j]) class = $(dq."arcs") d = $(dq."M 0 0 $(path)") ></path>"
-    + encodeword.[char.10]
-    + if haslabels then
-     let lab = lookup(labels, arc(n.n, s, ""))
-     if isempty.lab then ""
+     if isempty.paths then
+      "L $(print(3, toreal.y.xy * scalex)) $(print(3, toreal.x.xy * scaley))"
      else
-      "<text class = $(dq."nodes") > <textPath href = $(dq.[merge("
-       #" + toword.j)]) startOffset = $(dq."100%") text-anchor = $(dq."end") > <tspan dy = $(dq."-0.1") >
-       $(label.lab_1) </tspan> </textPath> </text>"
-      + encodeword.[char.10]
-    else ""
-    , j + 1
-    )
+      d.paths_1
+    next(
+     arctxt
+     + "<path id = $(dq.[toword.j]) class = $(dq."arcs") d = $(dq."M 0 0 $(path)") ></path>"
+     + encodeword.[char.10]
+     + if haslabels then
+      let lab = lookup(labels, arc(n.n, s, ""))
+      if isempty.lab then
+       ""
+      else
+       "<text class = $(dq."nodes") > <textPath href = $(dq.[merge("
+        #" + toword.j)]) startOffset = $(dq."100%") text-anchor = $(dq."end") > <tspan dy = $(dq."-0.1") >
+        $(label.lab_1) </tspan> </textPath> </text>"
+       + encodeword.[char.10]
+     else
+      ""
+     , j + 1)
    /for (arctxt)
   let newdraw = 
    if length.succ > 0 then
-    for drawtxt = "", k ∈ arithseq(1 + length.succ, 1, id) do drawtxt + toword.k + "," /for ("[$(drawtxt >> 1)],")
-   else ""
+    for drawtxt = "", k ∈ arithseq(1 + length.succ, 1, id) do
+     drawtxt + toword.k + ","
+    /for ("[$(drawtxt >> 1)],")
+   else
+    ""
   next(txt + svg
-  , i + 1
-  , id + length.succ + 1
-  , draw + newdraw
-  , max(maxx, nodex)
-  , max(maxy, nodey)
-  , if isempty.hovertext then hover else hover + hovertext(n.n, nodex, nodey, hovertext)
-  )
- else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
+   , i + 1
+   , id + length.succ + 1
+   , draw + newdraw
+   , max(maxx, nodex)
+   , max(maxy, nodey)
+   , if isempty.hovertext then hover else hover + hovertext(n.n, nodex, nodey, hovertext))
+ else
+  next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 /for (
  let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for (svg2)
  "
   /br <* none $(drawscript:T) <svg id = $(dq."svg10") dqns = $(dq."http://www.w3.
   org/2000/svg") width = $(dq."100%") viewBox = $(dq("5.0" + space + "-1" + print(2, maxx + 5.0)
  + print(2, maxy + 1.3))) onload = $(dq."[$(draw >> 1)].forEach (shiftstart)") >
-  $(txt + hovertxt)+</svg> *>")
+  $(txt + hovertxt)+</svg> *>"
+)
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
 
 function >1(a:hovertext.T, b:hovertext.T) ordering
-if nodex.b < nodex.a ∨ nodey.b < nodey.b then LT
+if nodex.b < nodex.a ∨ nodey.b < nodey.b then
+ LT
 else if nodex.b = nodex.a ∨ nodey.b = nodey.b then EQ else GT
 
 function assvg(h:hovertext.T) seq.word

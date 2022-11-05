@@ -1,0 +1,1518 @@
+<!doctype html> <meta charset =" UTF-8" ><style><!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}span.literal {color:red ;} span.comment {color:green ;}span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style><a href ="#stdlib$root" > stdlib$root </a> <a href ="#updatestate" > updatestate </a> <a href ="#main2" > main2 </a> <a href ="#callconfig" > callconfig </a> <a href ="#impDependent" > impDependent </a> <a href ="#bits" > bits </a> <a href ="#encoding" > encoding </a> <a href ="#format" > format </a> <a href ="#graph" > graph </a> <a href ="#process" > process </a> <a href ="#real" > real </a> <a href ="#seq" > seq </a> <a href ="#set" > set </a> <a href ="#sparseseq" > sparseseq </a> <a href ="#stack" > stack </a> <a href ="#standard" > standard </a> <a href ="#UTF8" > UTF8 </a> <a href ="#words" > words </a> <a href ="#xxhash" > xxhash </a> <a href ="#otherseq" > otherseq </a> <a href ="#textio" > textio </a> <a href ="#file" > file </a> <a href ="#symbol2" > symbol2 </a> <a href ="#typedict" > typedict </a> <a href ="#mytype" > mytype </a> <a href ="#symbolconstant" > symbolconstant </a> <a href ="#symbol" > symbol </a> <a href ="#pretty" > pretty </a> <a href ="#parse" > parse </a> <a href ="#parsersupport" > parsersupport </a> <a href ="#compilerfrontT" > compilerfrontT </a> <a href ="#compilerfront" > compilerfront </a> <a href ="#mergeblocks" > mergeblocks </a> <a href ="#pass2" > pass2 </a> <a href ="#hashset" > hashset </a> <a href ="#localmap2" > localmap2 </a> <a href ="#passparse" > passparse </a> <a href ="#passsymbol" > passsymbol </a> <a href ="#postbind" > postbind </a> <a href ="#symboldict" > symboldict </a> <a href ="#compileTimeT" > compileTimeT </a> <a href ="#object01" > object01 </a> <a href ="#objectio" > objectio </a> <a href ="#LEBencoding" > LEBencoding </a> <a href ="#persistant" > persistant </a> <a href ="#bitstream" > bitstream </a> <a href ="#codetemplates2" > codetemplates2 </a> <a href ="#codegennew" > codegennew </a> <a href ="#codetemplates" > codetemplates </a> <a href ="#internalbc" > internalbc </a> <a href ="#llvm" > llvm </a> <a href ="#llvmconstants" > llvmconstants </a> <a href ="#ptr" > ptr </a> <a href ="#taublockseq" > taublockseq </a> <a href ="#bitcast" > bitcast </a> <a href ="#tausupport" > tausupport </a><hr id ="stdlib$root" >
+<h2> <span class = keyword> module</span> stdlib$root </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> stdlib$EP(args:seq.word, input:seq.file) seq.file<hr id ="updatestate" >
+<h2> <span class = keyword> module</span> updatestate </h2>
+<br> Module updatestate is used in modules:  stdlib$root
+<br> defines types:  defines result cmdpara
+<p> <span class = keyword> Function</span> prettystate(input:seq.file, o:seq.word) seq.file
+<p> <span class = keyword> Function</span> updatestate2(input:seq.file, o:seq.word, builddir:seq.word) seq.file
+<p> <span class = keyword> Function</span> >1(a:filename, b:filename) ordering<hr id ="main2" >
+<h2> <span class = keyword> module</span> main2 </h2>
+<br> Module main2 is used in modules:  stdlib$root
+<br> defines types: 
+<p> <span class = keyword> Function</span> libname(info:midpoint) word
+<p> <span class = keyword> Function</span> libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word) seq.file
+<p> <span class = keyword> Function</span> makebitcode(input:seq.file) seq.file<hr id ="callconfig" >
+<h2> <span class = keyword> module</span> callconfig </h2>
+<br> Module callconfig is used in modules:  main2
+<br> defines types:  callconfig
+<p> Export type:callconfig
+<p> <span class = keyword> Function</span> callfunc:callconfig(ctsym:symbol, typedict:typedict, stk:seq.int) seq.int<hr id ="impDependent" >
+<h2> <span class = keyword> module</span> impDependent </h2>
+<br> Module impDependent is used in modules:  callconfig main2 persistant
+<br> defines types:  debuginfo parc dummyparameterrecord dummyrec2 symaddresses addrsym
+<p> Export type:debuginfo
+<p> <span class = keyword> Export</span> profiledata(debuginfo) seq.parc
+<p> <span class = keyword> Export</span> symbolrefdecodeX(debuginfo) seq.symbol
+<p> <span class = keyword> Export</span> words(debuginfo) seq.seq.char
+<p> Export type:parc
+<p> <span class = keyword> Export</span> callee(parc) int
+<p> <span class = keyword> Export</span> caller(parc) int
+<p> <span class = keyword> Export</span> clocks(parc) int
+<p> <span class = keyword> Export</span> counts(parc) int
+<p> <span class = keyword> Export</span> space(parc) int
+<p> <span class = keyword> Function</span> =(a:parc, b:parc) boolean
+<p> <span class = keyword> Function</span> symboladdress seq.int
+<p> <span class = keyword> Function</span> symbolrefdecodeX seq.symbol
+<p> <span class = keyword> Function</span> dependentwords(dependentlibs:seq.word) seq.seq.char
+<p> <span class = keyword> Function</span> bcwordsep char
+<p> <span class = keyword> Function</span> addlibwords(l:debuginfo) int
+<p> <span class = keyword> Function</span> callfunc(ctsym:symbol, typedict:typedict, stk:seq.int) seq.int
+<p> <span class = keyword> Function</span> stackTraceImp seq.word
+<p> <span class = keyword> Function</span> getfiles(args:seq.word) seq.file
+<p> <span class = keyword> Function</span> prepare(s:seq.seq.byte) seq.seq.byte
+<p> <span class = keyword> Function</span> finishentry(result:seq.file) UTF8<hr id ="bits" >
+<h2> <span class = keyword> module</span> bits </h2>
+<br> Module bits is used in modules:  LEBencoding UTF8 bitstream codegennew compilerfrontT encoding file hashset impDependent internalbc main2 mytype object01 objectio pass2 persistant process real symbol tausupport textio updatestate xxhash
+<br> defines types:  bits byte
+<p> Export type:bits
+<p> <span class = keyword> Export</span> toint(bits) int
+<p> Export type:byte
+<p> <span class = keyword> Export</span> bits(int) bits
+<p> <span class = keyword> Function</span> tobits(a:int) bits
+<p> <span class = keyword> Function</span> =(a:bits, b:bits) boolean
+<p> <span class = keyword> Function</span> %(b:bits) seq.word
+<p> <span class = keyword> Function</span> %(b:byte) seq.word
+<p> <span class = keyword> Function</span> floorlog2(a:int) int
+<p> <span class = keyword> Function</span> =(a:byte, b:byte) boolean
+<p> <span class = keyword> Function</span> tobits(a:byte) bits
+<p> <span class = keyword> Function</span> tobyte(a:int) byte
+<p> <span class = keyword> Function</span> toseqbits(a:seq.byte) seq.bits<hr id ="encoding" >
+<h2> <span class = keyword> module</span> encoding.T </h2>
+<br> defines types:  encoding encodingstate encodingpair e3
+<p> Export type:encoding.T
+<p> <span class = keyword> Export</span> valueofencoding(a:encoding.T) int
+<p> Export type:encodingpair.T
+<p> <span class = keyword> Export</span> code(a:encodingpair.T) encoding.T
+<p> <span class = keyword> Export</span> data(a:encodingpair.T) T
+<p> <span class = keyword> Export</span> hash(a:encodingpair.T) int
+<p> <span class = keyword> Function</span> to:encoding.T(i:int) encoding.T
+<p> <span class = keyword> Function</span> encodingpair(code:encoding.T, data:T) encodingpair.T
+<p> <span class = keyword> Function</span> =(a:encodingpair.T, b:encodingpair.T) boolean
+<p> <span class = keyword> Function</span> lastadded(h:encodingstate.T) encoding.T
+<p> <span class = keyword> Function</span> add(h:encodingstate.T, v:encodingpair.T) encodingstate.T
+<p> <span class = keyword> Function</span> addencoding(h:encodingstate.T, datav:T) encodingstate.T &lt*headercomment {this is the add that is called by primitiveadd} <span class = keyword> Function</span> addencodingpairs(l:seq.encodingpair.T) int
+<p> <span class = keyword> Function</span> addencodings(l:seq.T) int
+<p> <span class = keyword> Function</span> lookupencodingpair(t:encoding.T) seq.encodingpair.T
+<p> <span class = keyword> Function</span> decode(t:encoding.T) T
+<p> <span class = keyword> Function</span> encoding:seq.encodingpair.T seq.encodingpair.T
+<p> <span class = keyword> Function</span> encodingdata:T seq.T
+<p> <span class = keyword> Function</span> encode(t:T) encoding.T
+<p> <span class = keyword> Function</span> =(a:encoding.T, b:encoding.T) boolean
+<p> <span class = keyword> Function</span> >1(a:encoding.T, b:encoding.T) ordering
+<p> <span class = keyword> Function</span> hash(a:encoding.T) int
+<p> <span class = keyword> Function</span> findencode(t:T) seq.T
+<p> <span class = keyword> Function</span> addorder(t:T) int<hr id ="format" >
+<h2> <span class = keyword> module</span> format </h2>
+<br> Module format is used in modules:  file impDependent main2
+<br> defines types: 
+<p> Export type:UTF8 {From UTF8}
+<p> <span class = keyword> Export</span> towords(UTF8) seq.word <span class = comment > {From textio} </span>
+<p> <span class = keyword> Function</span> htmlheader UTF8 &lt*headercomment {the format of the meta tag is carefully crafted to get math unicode characters to display
+<br> correctly} <span class = keyword> Function</span> HTMLformat(a:seq.word) UTF8 &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> textformat(a:seq.word) UTF8<hr id ="graph" >
+<h2> <span class = keyword> module</span> graph.T </h2>
+<br> defines types:  arc graph
+<p> Export type:arc.T
+<p> <span class = keyword> Export</span> head(arc.T) T
+<p> <span class = keyword> Export</span> tail(arc.T) T
+<p> <span class = keyword> Export</span> arc(a:T, b:T) arc.T
+<p> Export type:graph.T
+<p> <span class = keyword> Export</span> arcs(graph.T) set.arc.T
+<p> <span class = keyword> Export</span> nodes(graph.T) set.T
+<p> <span class = keyword> Function</span> newgraph(a:seq.arc.T) graph.T
+<p> <span class = keyword> Function</span> =(c:arc.T, d:arc.T) boolean
+<p> <span class = keyword> Function</span> >1(a:arc.T, b:arc.T) ordering
+<p> <span class = keyword> Function</span> >2(a:arc.T, b:arc.T) ordering
+<p> <span class = keyword> Function</span> subgraph(g:graph.T, nodes:set.T) graph.T
+<p> <span class = keyword> Function</span> successors(g:graph.T, n:T) set.T
+<p> <span class = keyword> Function</span> arcstosuccessors(g:graph.T, n:T) set.arc.T
+<p> <span class = keyword> Function</span> arcstopredecessors(g:graph.T, n:T) set.arc.T
+<p> <span class = keyword> Function</span> predecessors(g:graph.T, n:T) set.T
+<p> <span class = keyword> Function</span> deletearc(g:graph.T, a:arc.T) graph.T
+<p> <span class = keyword> Function</span> deletearcs(g:graph.T, a:set.arc.T) graph.T
+<p> <span class = keyword> Function</span> deletenode(g:graph.T, n:T) graph.T
+<p> <span class = keyword> Function</span> toarcs(n:T, s:seq.T) seq.arc.T
+<p> <span class = keyword> Function</span> toarcs(s:seq.T, n:T) seq.arc.T
+<p> <span class = keyword> Function</span> backarc(a:arc.T) arc.T
+<p> <span class = keyword> Function</span> replacearcs(g:graph.T, oldarcs:set.arc.T, newarcs:set.arc.T) graph.T
+<p> <span class = keyword> Function</span> +(g:graph.T, a:arc.T) graph.T
+<p> <span class = keyword> Function</span> +(g:graph.T, a:seq.arc.T) graph.T
+<p> <span class = keyword> Function</span> +(g:graph.T, node:T) graph.T
+<p> <span class = keyword> Function</span> reachable(g:graph.T, a:seq.T) set.T
+<p> <span class = keyword> Function</span> complement(g:graph.T) graph.T
+<p> <span class = keyword> Function</span> sinks(g:graph.T, b:set.T) seq.T &lt*headercomment {returns list of sinks in graph with arcs to nodes in set b removed} <span class = keyword> Function</span> sources(g:graph.T, b:set.T) seq.T &lt*headercomment {returns list of sources in graph with arcs to nodes in set b removed} <span class = keyword> Function</span> sources(g:graph.T) seq.T
+<p> <span class = keyword> Function</span> sinks(g:graph.T) seq.T
+<p> <span class = keyword> Function</span> sinksfirst(g:graph.T) seq.T &lt*headercomment {will not return nodes involved in a cycle} <span class = keyword> Function</span> breathfirst(g:graph.T) seq.T &lt*headercomment {will not return nodes involved in a cycle} <span class = keyword> Function</span> outdegree(g:graph.T, n:T) int
+<p> <span class = keyword> Function</span> indegree(g:graph.T, n:T) int
+<p> <span class = keyword> Function</span> =(a:graph.T, b:graph.T) boolean
+<p> <span class = keyword> Function</span> transitiveClosure(gin:graph.T) graph.T &lt*headercomment {add arcs to graph so if node is reachable, it can be reached with single arc} none &lthr id =" process" > section <span class = keyword> module</span> process.T defines types:  process
+<p> Export type:process.T
+<p> <span class = keyword> Export</span> body2(process.T) T
+<p> <span class = keyword> Export</span> header(a:process.T) UTF8
+<p> <span class = keyword> Function</span> message(p:process.T) seq.word
+<p> <span class = keyword> Function</span> result(p:process.T) T
+<p> <span class = keyword> Function</span> merge(a:process.T, b:T, c:T) process.T<hr id ="real" >
+<h2> <span class = keyword> module</span> real </h2>
+<br> Module real is used in modules:  compileTimeT tausupport
+<br> defines types: 
+<p> <span class = keyword> Function</span> -(r:real) real
+<p> <span class = keyword> Function</span> abs(x:real) real
+<p> <span class = keyword> Function</span> decpart(a:real) real
+<p> <span class = keyword> Function</span> pi real
+<p> <span class = keyword> Function</span> =(a:real, b:real) boolean
+<p> <span class = keyword> Function</span> >(a:real, b:real) boolean
+<p> <span class = keyword> Function</span> &lt(a:real, b:real) boolean
+<p> <span class = keyword> Function</span> max(a:real, b:real) real
+<p> <span class = keyword> Function</span> min(a:real, b:real) real
+<p> <span class = keyword> Function</span> ^(a:real, n:int) real
+<p> <span class = keyword> Function</span> *(a:int, b:real) real
+<p> <span class = keyword> Function</span> makereal(w:seq.word) real &lt*headercomment {OPTION COMPILETIME} <span class = keyword> Function</span> print(decimals:int, rin1:real) seq.word
+<p> <span class = keyword> Function</span> toUTF8(rin:real, decimals:int) UTF8
+<p> <span class = keyword> Function</span> reallit(s:UTF8) real<hr id ="seq" >
+<h2> <span class = keyword> module</span> seq.T </h2>
+<br> defines types:  seq pseq
+<p> Export type:pseq.T
+<p> <span class = keyword> Export</span> a(pseq.T) seq.T
+<p> <span class = keyword> Export</span> b(pseq.T) seq.T
+<p> <span class = keyword> Export</span> start(a:pseq.T) int
+<p> Export type:seq.T
+<p> <span class = keyword> Export</span> to:pseq.T(s:seq.T) pseq.T
+<p> <span class = keyword> Export</span> getseqtype(a:seq.T) int
+<p> <span class = keyword> Export</span> length(a:seq.T) int
+<p> <span class = keyword> Function</span> _(a:seq.T, c:int) T
+<p> <span class = keyword> Function</span> =(a:seq.T, b:seq.T) boolean
+<p> <span class = keyword> Function</span> ∈(a:T, s:seq.T) boolean
+<p> <span class = keyword> Function</span> lookup(s:seq.T, a:T) seq.T
+<p> <span class = keyword> Function</span> _(s:pseq.T, ii:int) T
+<p> <span class = keyword> Function</span> ispseq(s:seq.T) boolean
+<p> <span class = keyword> Function</span> +(a:seq.T, b:seq.T) seq.T
+<p> <span class = keyword> Function</span> +(l:seq.T, a:T) seq.T
+<p> <span class = keyword> Function</span> subseq(s:seq.T, start:int, finish:int) seq.T
+<p> <span class = keyword> Function</span> last(a:seq.T) T
+<p> <span class = keyword> Function</span> first(a:seq.T) T
+<p> <span class = keyword> Function</span> isempty(a:seq.T) boolean
+<p> <span class = keyword> Function</span> &lt&lt(s:seq.T, i:int) seq.T &lt*headercomment {* removes i elements from beginning of s} <span class = keyword> Function</span> >>(s:seq.T, i:int) seq.T &lt*headercomment {* removes i elements from end of s} none &lthr id =" set" > section <span class = keyword> module</span> set.T defines types:  set
+<p> Export type:set.T
+<p> <span class = keyword> Export</span> toseq(set.T) seq.T
+<p> <span class = keyword> Export</span> +(seq.T, T) seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> +(seq.T, seq.T) seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> _(seq.T, int) T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> empty:seq.T seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Function</span> asset(s:seq.T) set.T
+<p> <span class = keyword> Function</span> empty:set.T set.T
+<p> <span class = keyword> Function</span> +(s:set.T, val:T) set.T
+<p> <span class = keyword> Function</span> replace(s:set.T, val:T) set.T
+<p> <span class = keyword> Function</span> ∪(val:T, s:set.T) set.T
+<p> <span class = keyword> Function</span> _(s:set.T, i:int) T
+<p> <span class = keyword> Function</span> lookup(s:set.T, val:T) set.T
+<p> <span class = keyword> Function</span> ∩(a:set.T, b:set.T) set.T
+<p> <span class = keyword> Function</span> ∪(a:set.T, b:set.T) set.T
+<p> <span class = keyword> Function</span> \(a:set.T, b:set.T) set.T &lt*headercomment {elements in a but not in b} <span class = keyword> Function</span> -(a:set.T, b:T) set.T
+<p> <span class = keyword> Function</span> replace(a:set.T, b:set.T) set.T
+<p> <span class = keyword> Function</span> isempty(a:set.T) boolean
+<p> <span class = keyword> Function</span> ∈(val:T, a:set.T) boolean
+<p> <span class = keyword> Function</span> findindex(a:set.T, val:T) int
+<p> <span class = keyword> Function</span> cardinality(a:set.T) int
+<p> <span class = keyword> Function</span> =(a:set.T, b:set.T) boolean
+<p> <span class = keyword> Function</span> findelement2(a:set.T, n:T) set.T<hr id ="sparseseq" >
+<h2> <span class = keyword> module</span> sparseseq.T </h2>
+<br> defines types:  sparseele sparse
+<p> lets a sequence have a default value even beyond the length of the seq.
+<p> <span class = keyword> Function</span> >1(a:sparseele.T, b:sparseele.T) ordering
+<p> <span class = keyword> Function</span> sparseseq(a:T) seq.T
+<p> <span class = keyword> Function</span> replaceS(a:seq.T, i:int, b:seq.T) seq.T<hr id ="stack" >
+<h2> <span class = keyword> module</span> stack.T </h2>
+<br> defines types:  stack
+<p> Export type:stack.T
+<p> <span class = keyword> Export</span> toseq(stack.T) seq.T
+<p> <span class = keyword> Function</span> top(f:stack.T, n:int) seq.T
+<p> <span class = keyword> Function</span> top(f:stack.T) T
+<p> <span class = keyword> Function</span> push(f:stack.T, t:T) stack.T
+<p> <span class = keyword> Function</span> pop(f:stack.T, n:int) stack.T
+<p> <span class = keyword> Function</span> pop(f:stack.T) stack.T
+<p> <span class = keyword> Function</span> empty:stack.T stack.T
+<p> <span class = keyword> Function</span> isempty(f:stack.T) boolean
+<p> <span class = keyword> Function</span> undertop(f:stack.T, n:int) T<hr id ="standard" >
+<h2> <span class = keyword> module</span> standard </h2>
+<br> Module standard is used in modules:  LEBencoding UTF8 bits bitstream codegennew codetemplates codetemplates2 compileTimeT compilerfront compilerfrontT encoding file format graph hashset impDependent internalbc llvm llvmconstants localmap2 main2 mergeblocks mytype object01 otherseq parse parsersupport pass2 passparse passsymbol persistant postbind pretty process real seq set sparseseq stack stdlib$root symbol symbol2 symbolconstant symboldict taublockseq tausupport textio typedict updatestate words xxhash
+<br> defines types:  ordering boolean char index
+<p> Export type:boolean
+<p> Export type:char
+<p> <span class = keyword> Export</span> toint(char) int
+<p> Export type:index
+<p> <span class = keyword> Export</span> char(int) char
+<p> <span class = keyword> Export</span> index(int) index
+<p> Export type:ordering
+<p> Export type:UTF8 {From UTF8}
+<p> <span class = keyword> Export</span> toword(n:int) word
+<br> <span class = comment > {Covert integer to a single word. } </span>
+<br> <span class = comment > {From UTF8} </span>
+<p> <span class = keyword> Export</span> toint(w:word) int
+<br> <span class = comment > {Convert an integer represented as a word to an int} </span>
+<br> <span class = comment > {From UTF8} </span>
+<p> <span class = keyword> Export</span> length(seq.char) int
+<p> <span class = keyword> Export</span> length(seq.int) int
+<p> <span class = keyword> Export</span> length(seq.seq.word) int
+<p> <span class = keyword> Export</span> length(seq.word) int
+<p> <span class = keyword> Export</span> not(a:boolean) boolean <span class = comment > {From internal} </span>
+<p> <span class = keyword> Export</span> =(a:boolean, b:boolean) boolean <span class = comment > {From internal} </span>
+<p> <span class = keyword> Export</span> false boolean <span class = comment > {From internal} </span>
+<p> <span class = keyword> Export</span> true boolean <span class = comment > {From internal} </span>
+<p> <span class = keyword> Export</span> _(arithmeticseq.int, int) int <span class = comment > {From otherseq.int} </span>
+<p> <span class = keyword> Export</span> arithseq(int, int, int) seq.int <span class = comment > {From otherseq.int} </span>
+<p> <span class = keyword> Export</span> constantseq(len:int, element:int) seq.int <span class = comment > {From otherseq.int} </span>
+<p> <span class = keyword> Export</span> findindex(seq.word, word) int <span class = comment > {From otherseq.word} </span>
+<p> Export type:seq.char {From seq.char}
+<p> <span class = keyword> Export</span> isempty(seq.char) boolean <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> +(seq.char, char) seq.char <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> +(seq.char, seq.char) seq.char <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> =(seq.char, seq.char) boolean <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> _(seq.char, int) char <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> empty:seq.char seq.char <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> subseq(seq.char, int, int) seq.char <span class = comment > {From seq.char} </span>
+<p> <span class = keyword> Export</span> +(seq.index, index) seq.index <span class = comment > {From seq.index} </span>
+<p> <span class = keyword> Export</span> empty:seq.index seq.index <span class = comment > {From seq.index} </span>
+<p> Export type:seq.int {From seq.int}
+<p> <span class = keyword> Export</span> isempty(seq.int) boolean <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> last(seq.int) int <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> +(seq.int, int) seq.int <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> +(seq.int, seq.int) seq.int <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> =(seq.int, seq.int) boolean <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> _(seq.int, int) int <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> empty:seq.int seq.int <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> subseq(seq.int, int, int) seq.int <span class = comment > {From seq.int} </span>
+<p> <span class = keyword> Export</span> ∈(int, seq.int) boolean <span class = comment > {From seq.int} </span>
+<p> Export type:seq.seq.word {From seq.seq.word}
+<p> <span class = keyword> Export</span> +(seq.seq.word, seq.seq.word) seq.seq.word <span class = comment > {From seq.seq.word} </span>
+<p> <span class = keyword> Export</span> +(seq.seq.word, seq.word) seq.seq.word <span class = comment > {From seq.seq.word} </span>
+<p> <span class = keyword> Export</span> _(seq.seq.word, int) seq.word <span class = comment > {From seq.seq.word} </span>
+<p> <span class = keyword> Export</span> empty:seq.seq.word seq.seq.word <span class = comment > {From seq.seq.word} </span>
+<p> <span class = keyword> Export</span> subseq(seq.seq.word, int, int) seq.seq.word <span class = comment > {From seq.seq.word} </span>
+<p> <span class = keyword> Export</span> ∈(seq.word, seq.seq.word) boolean <span class = comment > {From seq.seq.word} </span>
+<p> Export type:seq.word {From seq.word}
+<p> <span class = keyword> Export</span> first(s:seq.word) word <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> isempty(seq.word) boolean <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> last(s:seq.word) word <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> +(a:seq.word, b:seq.word) seq.word
+<br> <span class = comment > {OPTION COMPILETIME} </span>
+<br> <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> +(seq.word, word) seq.word <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> &lt&lt(s:seq.word, i:int) seq.word
+<br> <span class = comment > {* removes i words from beginning of s} </span>
+<br> <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> =(seq.word, seq.word) boolean <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> >>(s:seq.word, i:int) seq.word
+<br> <span class = comment > {* removes i words from end of s} </span>
+<br> <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> _(seq.word, int) word <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> empty:seq.word seq.word <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> subseq(seq.word, int, int) seq.word <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> ∈(word, seq.word) boolean <span class = comment > {From seq.word} </span>
+<p> <span class = keyword> Export</span> towords(UTF8) seq.word <span class = comment > {From textio} </span>
+<p> <span class = keyword> Export</span> encodeword(a:seq.char) word <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> alphasort(a:seq.seq.word) seq.seq.word <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> alphasort(a:seq.word) seq.word <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> merge(a:seq.word) word
+<br> <span class = comment > {make multiple words into a single word. } </span>
+<br> <span class = comment > {From words} </span>
+<p> Export type:word {From words}
+<p> <span class = keyword> Export</span> checkinteger(w:word) word
+<br> <span class = comment > {* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out
+<br> like an integer but has illegal characters in it. otherwise returns WORD. } </span>
+<br> <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> decodeword(w:word) seq.char <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> hash(a:word) int <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> =(a:word, b:word) boolean <span class = comment > {From words} </span>
+<p> <span class = keyword> Export</span> >1(a:word, b:word) ordering <span class = comment > {From words} </span>
+<p> <span class = keyword> Function</span> dq seq.word &lt*headercomment {doublequote} <span class = keyword> Function</span> dq(s:seq.word) seq.word
+<p> <span class = keyword> Function</span> space word
+<p> EQ GT and LT are the possible results of >1 operator
+<p> <span class = keyword> Function</span> EQ ordering
+<p> <span class = keyword> Function</span> GT ordering
+<p> <span class = keyword> Function</span> LT ordering
+<p> <span class = keyword> Function</span> >1(a:ordering, b:ordering) ordering
+<p> <span class = keyword> Function</span> =(a:ordering, b:ordering) boolean
+<p> <span class = keyword> Function</span> toword(o:ordering) word
+<p> <span class = keyword> Function</span> ∧(a:ordering, b:ordering) ordering
+<p> <span class = keyword> Function</span> >1(a:boolean, b:boolean) ordering
+<p> <span class = keyword> Function</span> ∧(a:boolean, b:boolean) boolean
+<p> <span class = keyword> Function</span> ∨(a:boolean, b:boolean) boolean
+<p> <span class = keyword> Function</span> -(i:int) int &lt*headercomment {OPTION COMPILETIME} <span class = keyword> Function</span> hash(i:int) int
+<p> <span class = keyword> Function</span> abs(x:int) int
+<p> <span class = keyword> Function</span> mod(x:int, y:int) int
+<p> <span class = keyword> Function</span> &lt(a:int, b:int) boolean
+<p> <span class = keyword> Function</span> max(a:int, b:int) int
+<p> <span class = keyword> Function</span> min(a:int, b:int) int
+<p> <span class = keyword> Function</span> between(i:int, lower:int, upper:int) boolean
+<p> <span class = keyword> Function</span> ^(i:int, n:int) int &lt*headercomment {* nth power of i} <span class = keyword> Function</span> hash(a:seq.int) int
+<p> <span class = keyword> Function</span> hash(a:seq.word) int
+<p> <span class = keyword> Function</span> pseudorandom(seed:int) int
+<p> <span class = keyword> Function</span> randomseq(seed:int, length:int) seq.int
+<p> <span class = keyword> Function</span> %(n:int) seq.word
+<p> <span class = keyword> Function</span> %(w:word) seq.word
+<p> <span class = keyword> Function</span> break(s:seq.word, seperators:seq.word, includeseperator:boolean) seq.seq.word
+<p> <span class = keyword> Function</span> extractValue(s:seq.word, name:seq.word) seq.word
+<p> <span class = keyword> Function</span> =(a:char, b:char) boolean
+<p> <span class = keyword> Function</span> >1(a:char, b:char) ordering
+<p> <span class = keyword> Function</span> hash(a:char) int
+<p> <span class = keyword> Function</span> +(i:index, b:int) index
+<p> <span class = keyword> Function</span> toindex(i:int) index
+<p> <span class = keyword> Function</span> toint(i:index) int<hr id ="UTF8" >
+<h2> <span class = keyword> module</span> UTF8 </h2>
+<br> Module UTF8 is used in modules:  codegennew file format impDependent internalbc llvm main2 object01 parse persistant pretty process real standard textio updatestate words
+<br> defines types:  UTF8
+<p> Export type:UTF8
+<p> <span class = keyword> Export</span> toseqbyte(UTF8) seq.byte
+<p> <span class = keyword> Export</span> UTF8(seq.byte) UTF8
+<p> <span class = keyword> Function</span> length(a:UTF8) int
+<p> <span class = keyword> Function</span> _(a:UTF8, i:int) byte
+<p> <span class = keyword> Function</span> emptyUTF8 UTF8
+<p> <span class = keyword> Function</span> +(a:UTF8, b:UTF8) UTF8
+<p> <span class = keyword> Function</span> +(a:UTF8, ch:char) UTF8
+<p> <span class = keyword> Function</span> +(a:UTF8, s:seq.char) UTF8
+<p> <span class = keyword> Function</span> =(a:UTF8, b:UTF8) boolean
+<p> <span class = keyword> Function</span> commachar char
+<p> <span class = keyword> Function</span> hyphenchar char
+<p> <span class = keyword> Function</span> periodchar char
+<p> <span class = keyword> Function</span> nbspchar char &lt*headercomment {no break space character} <span class = keyword> Function</span> char1(s:seq.word) char &lt*headercomment {* First character of first word of s} <span class = keyword> Function</span> toUTF8(n:int) UTF8
+<p> <span class = keyword> Function</span> encodeUTF8(ch:char) UTF8 &lt*headercomment {convert to UTF8 byte encoding of unicode character} <span class = keyword> Function</span> decodeUTF8(b:UTF8) seq.char &lt*headercomment {converts UTF-8 encoded sequence into a sequence of chars} <span class = keyword> Function</span> toword(n:int) word &lt*headercomment {OPTION NOINLINE COMPILETIME} {Covert integer to sequence of characters represented as a single word. } <span class = keyword> Function</span> toint(w:word) int &lt*headercomment {Convert an integer represented as a word to an int} <span class = keyword> Function</span> intlit(s:UTF8) int
+<p> <span class = keyword> Function</span> cvttoint(s:seq.char) int &lt*headercomment {Hex values starting with 0x or 0X are allowed. } <span class = keyword> Function</span> tointseq(a:seq.char) seq.int &lt*headercomment {This is just a type change and the compiler recognizes this and does not generate code
+<br> } <span class = keyword> Function</span> tocharseq(a:seq.int) seq.char &lt*headercomment {This is just a type change and the compiler recognizes this and does not generate code
+<br> } <span class = keyword> Function</span> toUTF8(s:seq.word) UTF8 &lt*headercomment {OPTION INLINE} <span class = keyword> Function</span> toUTF8(s:seq.word, escapehtml:boolean) UTF8 &lt*headercomment {OPTION INLINE} {nospace means add no space before word} {if the first character of a multi-character word is char.0 then the character is
+<br> discarded. This is to allow format with format meaning to be escaped.} none &lthr id =" words" > section <span class = keyword> module</span> words Module words is used in modules:  compileTimeT mergeblocks persistant standard tausupport updatestate
+<br> defines types:  word alphaword alphawords
+<p> Export type:alphaword
+<p> <span class = keyword> Export</span> toword(alphaword) word
+<p> Export type:word
+<p> <span class = keyword> Export</span> alphaword(word) alphaword
+<p> <span class = keyword> Export</span> asencoding(w:word) encoding.seq.char
+<p> <span class = keyword> Export</span> >1(a:seq.alphaword, b:seq.alphaword) ordering <span class = comment > {From otherseq.alphaword} </span>
+<p> <span class = keyword> Function</span> hash(a:seq.char) int
+<p> <span class = keyword> Function</span> wordencodingtoword(i:int) word
+<p> <span class = keyword> Function</span> encodeword(a:seq.char) word &lt*headercomment {OPTION NOINLINE COMPILETIME} <span class = keyword> Function</span> decodeword(w:word) seq.char &lt*headercomment {OPTION NOINLINE COMPILETIME} <span class = keyword> Function</span> hash(a:word) int
+<p> <span class = keyword> Function</span> =(a:word, b:word) boolean &lt*headercomment {OPTION COMPILETIME} <span class = keyword> Function</span> >1(a:word, b:word) ordering
+<p> <span class = keyword> Function</span> merge(a:seq.word) word &lt*headercomment {OPTION COMPILETIME} {make multiple words into a single word. } Functions to perform alphabetical sorting
+<p> <span class = keyword> Function</span> toalphaseq(a:seq.word) seq.alphaword &lt*headercomment {This is just a type change and the compiler recognizes this and does not generate code
+<br> } <span class = keyword> Function</span> ?alpha(a:char, b:char) ordering
+<p> <span class = keyword> Function</span> >1(a:alphaword, b:alphaword) ordering
+<p> <span class = keyword> Function</span> towordseq(a:seq.alphaword) seq.word
+<p> <span class = keyword> Function</span> alphasort(a:seq.word) seq.word
+<p> <span class = keyword> Function</span> alphasort(a:seq.seq.word) seq.seq.word
+<p> <span class = keyword> Function</span> checkinteger(w:word) word<hr id ="xxhash" >
+<h2> <span class = keyword> module</span> xxhash </h2>
+<br> Module xxhash is used in modules:  mytype standard words
+<br> defines types: 
+<p> <span class = keyword> Function</span> rotateleft(x:bits, n:int) bits
+<p> <span class = keyword> Function</span> hash(acc:bits, x:int) bits &lt*headercomment {after xxhash} {example use to hash x and y finalmix (hash (hash (hashstart (seed), x), y))} <span class = keyword> Function</span> hashstart(seed:int) bits
+<p> <span class = keyword> Function</span> hashstart bits
+<p> <span class = keyword> Function</span> finalmix(acc:bits) int
+<p> <span class = keyword> Function</span> rotl32(x:bits, n:int) bits
+<p> <span class = keyword> Function</span> hash32(hash:bits, key:int) bits
+<p> <span class = keyword> Function</span> *(a:bits, b:int) bits
+<p> <span class = keyword> Function</span> finalmix32(hash:bits) int
+<p> <span class = keyword> Function</span> hashstart32(seed:int) bits<hr id ="otherseq" >
+<h2> <span class = keyword> module</span> otherseq.T </h2>
+<br> defines types:  cseq cseq2 arithmeticseq
+<p> Export type:arithmeticseq.T
+<p> <span class = keyword> Export</span> length(a:seq.T) int
+<p> Export type:seq.T {From seq.T}
+<p> <span class = keyword> Export</span> first(a:seq.T) T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> isempty(a:seq.T) boolean <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> ispseq(s:seq.T) boolean <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> last(a:seq.T) T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> +(a:seq.T, b:seq.T) seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> +(l:seq.T, a:T) seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> &lt&lt(s:seq.T, i:int) seq.T
+<br> <span class = comment > {* removes i elements from beginning of s} </span>
+<br> <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> =(a:seq.T, b:seq.T) boolean <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> >>(s:seq.T, i:int) seq.T
+<br> <span class = comment > {* removes i elements from end of s} </span>
+<br> <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> _(a:seq.T, c:int) T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> _(s:pseq.T, ii:int) T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> empty:seq.T seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> lookup(s:seq.T, T) seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> subseq(s:seq.T, start:int, finish:int) seq.T <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Export</span> ∈(a:T, s:seq.T) boolean <span class = comment > {From seq.T} </span>
+<p> <span class = keyword> Function</span> reverse(s:seq.T) seq.T
+<p> <span class = keyword> Function</span> _(s:cseq.T, i:int) T
+<p> <span class = keyword> Function</span> constantseq(len:int, element:T) seq.T
+<p> <span class = keyword> Function</span> _(s:cseq2.T, i:int) T
+<p> <span class = keyword> Function</span> constantseq(len:int, element:seq.T) seq.T
+<p> <span class = keyword> Function</span> replace(s:seq.T, index:int, value:T) seq.T
+<p> <span class = keyword> Function</span> _(s:arithmeticseq.T, i:int) T
+<p> <span class = keyword> Function</span> arithseq(length:int, step:T, start:T) seq.T
+<p> <span class = keyword> Function</span> >1(a:seq.T, b:seq.T) ordering
+<p> <span class = keyword> Function</span> >2(a:seq.T, b:seq.T) ordering
+<p> <span class = keyword> Function</span> ?alpha(a:seq.T, b:seq.T) ordering
+<p> <span class = keyword> Function</span> sort(a:seq.T) seq.T
+<p> <span class = keyword> Function</span> merge(a:seq.T, b:seq.T) seq.T &lt*headercomment {* combines sorted seq} <span class = keyword> Function</span> binarysearch(s:seq.T, val:T) int &lt*headercomment {* binarysearch returns position in seq if found and the negation of the posistion if
+<br> not found} <span class = keyword> Function</span> binarysearch(s:seq.T, b:int, a:int, val:T) int
+<p> <span class = keyword> Function</span> setinsert(s:seq.T, val:T) seq.T &lt*headercomment {* assumes s is sorted} <span class = keyword> Function</span> setdelete(s:seq.T, val:T) seq.T &lt*headercomment {* assumes s is sorted} <span class = keyword> Function</span> setreplaceorinsert(s:seq.T, val:T) seq.T &lt*headercomment {assumes s is sorted} <span class = keyword> Function</span> lpad(n:int, val:T, l:seq.T) seq.T
+<p> <span class = keyword> Function</span> break(w:T, a:seq.T) seq.seq.T
+<p> <span class = keyword> Function</span> break(seperator:T, quotes:seq.T, a:seq.T) seq.seq.T
+<p> <span class = keyword> Function</span> suffix(s:seq.T, len:int) seq.T
+<p> <span class = keyword> Function</span> findindex(s:seq.T, w:T) int &lt*headercomment {result > length.s when element is not found.Otherwise results is location in sequence
+<br> } <span class = keyword> Function</span> %(term:seq.word, z:seq.T) seq.word
+<p> <span class = keyword> Function</span> %(z:seq.T) seq.word
+<p> <span class = keyword> Function</span> %n(z:seq.T) seq.word<hr id ="textio" >
+<h2> <span class = keyword> module</span> textio </h2>
+<br> Module textio is used in modules:  compilerfrontT file main2 standard updatestate
+<br> defines types: 
+<p> <span class = keyword> Function</span> breaklines(a:UTF8) seq.UTF8
+<p> <span class = keyword> Function</span> breaklines(a:seq.byte) seq.UTF8
+<p> <span class = keyword> Function</span> breakcommas(a:UTF8) seq.UTF8
+<p> <span class = keyword> Function</span> breakparagraph(a:seq.byte) seq.seq.word &lt*headercomment {breaks file into seq of paragraphs} <span class = keyword> Function</span> breakparagraph(u:UTF8, i:int, last:int, result:seq.seq.word) seq.seq.word
+<p> <span class = keyword> Function</span> classifychar seq.word
+<p> <span class = keyword> Function</span> towords(a:UTF8) seq.word
+<p> <span class = keyword> Function</span> towords(chars:seq.char) seq.word<hr id ="file" >
+<h2> <span class = keyword> module</span> file </h2>
+<br> Module file is used in modules:  codegennew compilerfrontT impDependent main2 stdlib$root updatestate
+<br> defines types:  filename file
+<p> Export type:file
+<p> <span class = keyword> Export</span> fn(file) filename
+<p> <span class = keyword> Export</span> rawdata(file) seq.seq.byte
+<p> Export type:filename
+<p> <span class = keyword> Export</span> dirpath(filename) seq.word
+<p> <span class = keyword> Export</span> ext(filename) word
+<p> <span class = keyword> Export</span> name(filename) word
+<p> <span class = keyword> Function</span> fullname(fn:filename) word
+<p> <span class = keyword> Function</span> data(f:file) seq.byte
+<p> <span class = keyword> Function</span> file(name:seq.word, out:seq.word) file
+<p> <span class = keyword> Function</span> file(fn:filename, {C} out:seq.word) file &lt*headercomment {OPTION NOINLINE} {BXXX} <span class = keyword> Function</span> file(fn:filename, a:seq.byte) file
+<p> <span class = keyword> Function</span> file(fn:filename, a:seq.seq.byte) file
+<p> <span class = keyword> Function</span> filename(s:seq.word) filename
+<p> <span class = keyword> Function</span> %(a:filename) seq.word
+<p> <span class = keyword> Function</span> getfilenames(s:seq.word) seq.filename
+<p> <span class = keyword> Function</span> changeext(f:filename, ext:seq.word) filename
+<p> <span class = keyword> Function</span> breakparagraph(fileseq:seq.file) seq.seq.word<hr id ="symbol2" >
+<h2> <span class = keyword> module</span> symbol2 </h2>
+<br> Module symbol2 is used in modules:  callconfig codegennew codetemplates2 compileTimeT compilerfront compilerfrontT impDependent main2 mergeblocks object01 objectio pass2 symbolconstant
+<br> defines types:  modExports midpoint
+<p> Export type:midpoint
+<p> <span class = keyword> Export</span> libmods(m:midpoint) seq.modExports
+<p> <span class = keyword> Export</span> option(midpoint) seq.word
+<p> <span class = keyword> Export</span> prg(midpoint) set.symdef
+<p> <span class = keyword> Export</span> src(midpoint) seq.seq.word
+<p> <span class = keyword> Export</span> templates(midpoint) set.symdef
+<p> <span class = keyword> Export</span> typedict(midpoint) typedict
+<p> <span class = keyword> Export</span> midpoint(seq.word, set.symdef, set.symdef, typedict, seq.modExports, seq.seq.word) midpoint
+<p> Export type:modExports
+<p> <span class = keyword> Export</span> exports(modExports) seq.symbol
+<p> <span class = keyword> Export</span> modname(modExports) modref
+<p> <span class = keyword> Export</span> types(modExports) seq.seq.mytype
+<p> <span class = keyword> Export</span> modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
+<p> Export type:modref {From mytype}
+<p> <span class = keyword> Export</span> isabstract(modref) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> library(modref) word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> name(modref) word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> para(modref) mytype <span class = comment > {From mytype} </span>
+<p> Export type:mytype {From mytype}
+<p> <span class = keyword> Export</span> %(t:mytype) seq.word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> parameter(mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> seqof(mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> moduleref(seq.word) modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeref(seq.word) mytype <span class = comment > {From mytype} </span>
+<p> Export type:typedef {From mytype}
+<p> <span class = keyword> Export</span> =(modref, modref) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> =(mytype, mytype) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> >1(mytype, mytype) ordering <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> addabstract(mytype, mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> internalmod modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> moduleref(seq.word, mytype) modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeT mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeboolean mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeint mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeptr mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typereal mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> %(seq.symbol) seq.word <span class = comment > {From otherseq.symbol} </span>
+<p> <span class = keyword> Export</span> Lit(int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Local(int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Reallit(i:int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> continue(i:int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Start(mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> abortsymbol(mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> builtinmod(mytype) modref <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> deepcopySym(mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isseq(mytype) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Record(seq.mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> getoption(seq.symbol) seq.word <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> removeoptions(seq.symbol) seq.symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Words(seq.word) symbol <span class = comment > {From symbol} </span>
+<p> Export type:symbol {From symbol}
+<p> <span class = keyword> Export</span> %(symbol) seq.word <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Fref(s:symbol) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> basesym(s:symbol) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> brf(symbol) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> brt(symbol) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> clearrequiresbit(symbol) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> firstvar(symbol) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> fullname(symbol) seq.word <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> hash(symbol) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> inModFor(sym:symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isBuiltin(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isFref(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isGlobal(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isIntLit(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isInternal(sym:symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isRealLit(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isRecord(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isSequence(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isblock(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isbr(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isconst(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isconstantorspecial(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> iscontinue(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isdefine(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isexit(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> islocal(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isloopblock(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isrecordconstant(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> issimplename(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isspecial(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isstart(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isstartorloop(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isunbound(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> isword(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> iswords(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> iswordseq(symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> module(symbol) modref <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> name(symbol) word <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> nametype(symbol) seq.mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> nopara(symbol) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> paratypes(symbol) seq.mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> privatefields(s:symbol) seq.int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> resulttype(symbol) mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> types(symbol) seq.mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> value(symbol) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> worddata(symbol) seq.word <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> wordname(symbol) word <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symbol(modref, seq.word, mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symbol(modref, seq.word, mytype, mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symbol(modref, seq.word, mytype, mytype, mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symbol(modref, seq.word, mytype, mytype, mytype, mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symbol(modref, seq.word, seq.mytype, mytype) symbol <span class = comment > {From symbol} </span>
+<p> Export type:symdef {From symbol}
+<p> <span class = keyword> Export</span> code(symdef) seq.symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> paragraphno(symdef) int <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> sym(symdef) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symdef(symbol, seq.symbol, int) symdef <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Word(word) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> =(symbol, symbol) boolean <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> >1(a:symdef, b:symdef) ordering <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> >1(symbol, symbol) ordering <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Br2(int, int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Define(word, int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> EndBlock symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Exit symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> GetSeqLength symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> GetSeqType symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Litfalse symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Littrue symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Local(name:word, type:mytype, parano:int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol
+<br> <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> NotOp symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Optionsym symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> PlusOp symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> PreFref symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Sequence(mytype, int) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> addoption(seq.symbol, seq.word) seq.symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> getCode(set.symdef, symbol) seq.symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> getSymdef(set.symdef, symbol) set.symdef <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symbol4(modref, word, mytype, seq.mytype, mytype) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symconst(i:int, hashfref:boolean) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> type? mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> typebits mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> typebyte mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> typeword mytype <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> Constant2(args:seq.symbol) symbol <span class = comment > {From symbolconstant} </span>
+<p> <span class = keyword> Export</span> renumberconstants(prg:seq.symdef) seq.symdef <span class = comment > {From symbolconstant} </span>
+<p> <span class = keyword> Export</span> fullconstantcode(s:symbol) seq.symbol <span class = comment > {From symbolconstant} </span>
+<p> Export type:symbolconstant {From symbolconstant}
+<p> Export type:typedict {From typedict}
+<p> Export type:typeentry {From typedict}
+<p> <span class = keyword> Export</span> basetype(mytype, typedict) mytype <span class = comment > {From typedict} </span>
+<p> <span class = keyword> Export</span> emptytypedict typedict <span class = comment > {From typedict} </span>
+<p> <span class = keyword> Function</span> empty:midpoint midpoint
+<p> <span class = keyword> Function</span> midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word) midpoint<hr id ="typedict" >
+<h2> <span class = keyword> module</span> typedict </h2>
+<br> Module typedict is used in modules:  codetemplates compilerfront postbind symbol2
+<br> defines types:  typeentry typedict checkflatresult2
+<p> Export type:typedict
+<p> Export type:typeentry
+<p> <span class = keyword> Function</span> emptytypedict typedict
+<p> <span class = keyword> Function</span> addtypes(alltypes:typedict, syms:set.symbol) typedict
+<p> <span class = keyword> Function</span> addtype(alltypes:typedict, type:mytype) typedict
+<p> <span class = keyword> Function</span> buildtypedict(syms:set.symbol, types:seq.seq.mytype) typedict
+<p> <span class = keyword> Function</span> asseqseqmytype(dict:typedict) seq.seq.mytype
+<p> <span class = keyword> Function</span> %(dict:typedict) seq.word
+<p> <span class = keyword> Function</span> add(alltypes:typedict, t:mytype, flatflds:seq.mytype) typedict
+<p> <span class = keyword> Function</span> flatflds(alltypes:typedict, type:mytype) seq.mytype
+<p> <span class = keyword> Function</span> subdict(all:typedict, t:mytype) typedict
+<p> <span class = keyword> Function</span> basetype(typ:mytype, alltypes:typedict) mytype<hr id ="mytype" >
+<h2> <span class = keyword> module</span> mytype </h2>
+<br> Module mytype is used in modules:  codegennew codetemplates2 compilerfront parse passsymbol postbind symbol symbol2 typedict
+<br> defines types:  mytype modref typedef passtypes
+<p> Export type:modref
+<p> <span class = keyword> Export</span> library(modref) word
+<p> <span class = keyword> Export</span> name(modref) word
+<p> <span class = keyword> Export</span> para(modref) mytype
+<p> Export type:mytype
+<p> <span class = keyword> Export</span> typerep(mytype) seq.typedef
+<p> Export type:passtypes
+<p> <span class = keyword> Export</span> modname(passtypes) modref
+<p> <span class = keyword> Export</span> uses(passtypes) set.modref
+<p> Export type:typedef
+<p> <span class = keyword> Export</span> library(typedef) word
+<p> <span class = keyword> Export</span> modname(a:typedef) word
+<p> <span class = keyword> Export</span> name(typedef) word
+<p> <span class = keyword> Function</span> %(s:mytype) seq.word
+<p> <span class = keyword> Function</span> fullprint(s:mytype) seq.word
+<p> <span class = keyword> Function</span> changelibrary(s:mytype, map:seq.word) mytype
+<p> <span class = keyword> Function</span> =(a:mytype, b:mytype) boolean
+<p> <span class = keyword> Function</span> abstracttypename(m:mytype) word
+<p> <span class = keyword> Function</span> abstracttype(t:mytype) mytype
+<p> <span class = keyword> Function</span> abstractModref(typ:mytype) modref
+<p> <span class = keyword> Function</span> tomodref(m:mytype) modref
+<p> <span class = keyword> Function</span> abstractmod(m:modref) modref
+<p> <span class = keyword> Function</span> isabstract(m:modref) boolean
+<p> <span class = keyword> Function</span> issimple(m:modref) boolean
+<p> <span class = keyword> Function</span> parameter(t:mytype) mytype
+<p> <span class = keyword> Function</span> isabstract(a:mytype) boolean
+<p> <span class = keyword> Function</span> replaceT(with:mytype, m:mytype) mytype
+<p> <span class = keyword> Function</span> replaceT(m:modref, t:mytype) modref
+<p> <span class = keyword> Function</span> =(a:typedef, b:typedef) boolean
+<p> <span class = keyword> Function</span> >1(a:typedef, b:typedef) ordering
+<p> <span class = keyword> Function</span> >2(a:typedef, b:typedef) ordering
+<p> <span class = keyword> Function</span> >1(a:mytype, b:mytype) ordering
+<p> <span class = keyword> Function</span> >2(a:mytype, b:mytype) ordering
+<p> <span class = keyword> Function</span> %(s:modref) seq.word
+<p> <span class = keyword> Function</span> replaceT(with:mytype, m:modref) modref
+<p> <span class = keyword> Function</span> typeint mytype
+<p> <span class = keyword> Function</span> typeptr mytype
+<p> <span class = keyword> Function</span> typeboolean mytype
+<p> <span class = keyword> Function</span> typereal mytype
+<p> <span class = keyword> Function</span> typeT mytype
+<p> <span class = keyword> Function</span> typeseqdec mytype
+<p> <span class = keyword> Function</span> typeref(s:seq.word) mytype
+<p> <span class = keyword> Function</span> internalmod modref
+<p> <span class = keyword> Function</span> hash(b:seq.mytype, other:seq.word) int
+<p> <span class = keyword> Function</span> addabstract(a:mytype, t:mytype) mytype
+<p> <span class = keyword> Function</span> moduleref(modname:seq.word, para:mytype) modref
+<p> <span class = keyword> Function</span> moduleref(modname:seq.word) modref
+<p> <span class = keyword> Function</span> =(a:modref, b:modref) boolean
+<p> <span class = keyword> Function</span> >1(a:modref, b:modref) ordering
+<p> <span class = keyword> Function</span> >2(a:modref, b:modref) ordering
+<p> <span class = keyword> Function</span> typebase(i:int) mytype
+<p> <span class = keyword> Function</span> internalmod(s:seq.word) modref
+<p> <span class = keyword> Function</span> seqof(base:mytype) mytype
+<p> <span class = keyword> Function</span> processof(base:mytype) mytype
+<p> <span class = keyword> Function</span> passtypes(modname:modref, defines:set.mytype, exports:set.mytype) passtypes
+<p> <span class = keyword> Function</span> resolvetypes(librarytypes:set.passtypes, t:seq.seq.word, lib:word) set.passtypes
+<p> <span class = keyword> Function</span> >1(a:passtypes, b:passtypes) ordering
+<p> <span class = keyword> Function</span> resolvetype(knowntypes:set.mytype, ref:seq.word) seq.mytype
+<p> <span class = keyword> Function</span> findpasstypes(all:set.passtypes, lib:word, m:seq.word) set.passtypes
+<p> <span class = keyword> Function</span> formtypedict(all:set.passtypes, this:passtypes) set.mytype<hr id ="symbolconstant" >
+<h2> <span class = keyword> module</span> symbolconstant </h2>
+<br> Module symbolconstant is used in modules:  compilerfrontT pass2 symbol2
+<br> defines types:  symbolconstant
+<p> Export type:symbolconstant
+<p> <span class = keyword> Function</span> seqelements(s:symbol) seq.symbol
+<p> <span class = keyword> Function</span> fullconstantcode(s:symbol) seq.symbol
+<p> <span class = keyword> Function</span> Constant2(args:seq.symbol) symbol
+<p> <span class = keyword> Function</span> hash(s:seq.symbol) int
+<p> <span class = keyword> Function</span> constantsymbols set.symdef
+<p> <span class = keyword> Function</span> renumberconstants(prg:seq.symdef) seq.symdef<hr id ="symbol" >
+<h2> <span class = keyword> module</span> symbol </h2>
+<br> Module symbol is used in modules:  codegennew codetemplates compileTimeT compilerfront compilerfrontT localmap2 mergeblocks parse pass2 passparse passsymbol postbind symbol2 symbolconstant symboldict typedict
+<br> defines types:  symbol symdef
+<p> Export type:symbol
+<p> <span class = keyword> Export</span> module(symbol) modref
+<p> <span class = keyword> Export</span> types(symbol) seq.mytype
+<p> <span class = keyword> Export</span> worddata(symbol) seq.word
+<p> Export type:symdef
+<p> <span class = keyword> Export</span> code(sd:symdef) seq.symbol
+<p> <span class = keyword> Export</span> paragraphno(symdef) int
+<p> <span class = keyword> Export</span> sym(sd:symdef) symbol
+<p> <span class = keyword> Export</span> symdef(sym:symbol, code:seq.symbol, p:int) symdef
+<p> <span class = keyword> Export</span> typebase(i:int) mytype <span class = comment > {From mytype} </span>
+<p> Export type:modref {From mytype}
+<p> <span class = keyword> Export</span> %(modref) seq.word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> isabstract(modref) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> issimple(modref) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> library(modref) word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> name(modref) word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> para(modref) mytype <span class = comment > {From mytype} </span>
+<p> Export type:mytype {From mytype}
+<p> <span class = keyword> Export</span> %(p:mytype) seq.word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> abstractModref(mytype) modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> abstracttype(mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> abstracttypename(mytype) word <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> isabstract(m:mytype) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> parameter(mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> processof(mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> seqof(mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> tomodref(mytype) modref <span class = comment > {From mytype} </span>
+<p> Export type:passtypes {From mytype}
+<p> <span class = keyword> Export</span> moduleref(seq.word) modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeref(seq.word) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> =(a:modref, b:modref) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> =(t:mytype, b:mytype) boolean <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> >1(modref, modref) ordering <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> >1(typedef, typedef) ordering <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> addabstract(a:mytype, t:mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> internalmod modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> moduleref(seq.word, para:mytype) modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> replaceT(mytype, modref) modref <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> replaceT(with:mytype, m:mytype) mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeT mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeboolean mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeint mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typeptr mytype <span class = comment > {From mytype} </span>
+<p> <span class = keyword> Export</span> typereal mytype <span class = comment > {From mytype} </span>
+<p> Export type:set.symbol {From set.symbol}
+<p> <span class = keyword> Function</span> changelibrary(s:symbol, map:seq.word) symbol
+<p> <span class = keyword> Function</span> replacestar(s:symbol, typelib:word, modulelib:word) symbol
+<p> <span class = keyword> Function</span> clearrequiresbit(s:symbol) symbol &lt*headercomment {will clear requires bit} <span class = keyword> Function</span> =(a:symbol, b:symbol) boolean
+<p> <span class = keyword> Function</span> >1(a:symbol, b:symbol) ordering
+<p> <span class = keyword> Function</span> >2(a:symbol, b:symbol) ordering
+<p> <span class = keyword> Function</span> privatefields(s:symbol) seq.int
+<p> <span class = keyword> Function</span> Words(s:seq.word) symbol
+<p> <span class = keyword> Function</span> hasfref(sym:symbol) boolean
+<p> <span class = keyword> Function</span> issimplename(sym:symbol) boolean
+<p> <span class = keyword> Function</span> isspecial(s:symbol) boolean
+<p> <span class = keyword> Function</span> isFref(s:symbol) boolean
+<p> <span class = keyword> Function</span> isconst(s:symbol) boolean
+<p> <span class = keyword> Function</span> isunbound(sym:symbol) boolean
+<p> <span class = keyword> Function</span> hasrequires(sym:symbol) boolean
+<p> <span class = keyword> Function</span> hash(sym:symbol) int
+<p> <span class = keyword> Function</span> setunbound(sym:symbol) symbol
+<p> <span class = keyword> Function</span> setrequires(sym:symbol) symbol
+<p> <span class = keyword> Function</span> replaceTsymbol(with:mytype, sym:symbol) symbol
+<p> <span class = keyword> Function</span> Br2(t:int, f:int) symbol
+<p> <span class = keyword> Function</span> brt(s:symbol) int
+<p> <span class = keyword> Function</span> brf(s:symbol) int
+<p> <span class = keyword> Function</span> type? mytype
+<p> <span class = keyword> Function</span> name(sym:symbol) word
+<p> <span class = keyword> Function</span> iswords(s:symbol) boolean
+<p> <span class = keyword> Function</span> islocal(s:symbol) boolean
+<p> <span class = keyword> Function</span> isdefine(s:symbol) boolean
+<p> <span class = keyword> Function</span> isbr(s:symbol) boolean
+<p> <span class = keyword> Function</span> isexit(s:symbol) boolean
+<p> <span class = keyword> Function</span> value(sym:symbol) int
+<p> <span class = keyword> Function</span> nopara(s:symbol) int
+<p> <span class = keyword> Function</span> istype(s:symbol) boolean
+<p> <span class = keyword> Function</span> Record(types:seq.mytype) symbol
+<p> <span class = keyword> Function</span> Reallit(i:int) symbol
+<p> <span class = keyword> Function</span> Exit symbol
+<p> <span class = keyword> Function</span> Start(t:mytype) symbol
+<p> <span class = keyword> Function</span> EndBlock symbol
+<p> <span class = keyword> Function</span> NotOp symbol
+<p> <span class = keyword> Function</span> PlusOp symbol
+<p> <span class = keyword> Function</span> paratypes(s:symbol) seq.mytype
+<p> <span class = keyword> Function</span> resulttype(s:symbol) mytype
+<p> <span class = keyword> Function</span> fullname(s:symbol) seq.word
+<p> <span class = keyword> Function</span> %(s:symbol) seq.word
+<p> <span class = keyword> Function</span> Lit(i:int) symbol &lt*headercomment {OPTION INLINE} <span class = keyword> Function</span> Sequence(eletype:mytype, length:int) symbol
+<p> <span class = keyword> Function</span> symbol(m:modref, name:seq.word, returntype:mytype, b:bits) symbol
+<p> <span class = keyword> Function</span> symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype) symbol
+<p> <span class = keyword> Function</span> symbol(module:modref, name:seq.word, para:mytype, para2:mytype, para3:mytype, returntype:mytype) symbol
+<p> <span class = keyword> Function</span> symbol(module:modref, name:seq.word, para:mytype, para2:mytype, returntype:mytype) symbol
+<p> <span class = keyword> Function</span> symbol(module:modref, name:seq.word, para:mytype, returntype:mytype) symbol
+<p> <span class = keyword> Function</span> symbol(module:modref, name:seq.word, returntype:mytype) symbol
+<p> <span class = keyword> Function</span> symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype, flags:bits) symbol
+<p> <span class = keyword> Function</span> symbol4(module:modref, name:word, namePara:mytype, paras:seq.mytype, rt:mytype) symbol
+<p> <span class = keyword> Function</span> ifthenelse(cond:seq.symbol, thenclause:seq.symbol, elseclause:seq.symbol, m:mytype) seq.symbol
+<p> <span class = keyword> Function</span> Littrue symbol
+<p> <span class = keyword> Function</span> Litfalse symbol
+<p> <span class = keyword> Function</span> continue(i:int) symbol
+<p> <span class = keyword> Function</span> Word(s:word) symbol
+<p> <span class = keyword> Function</span> isstartorloop(sym:symbol) boolean
+<p> <span class = keyword> Function</span> isstart(sym:symbol) boolean
+<p> <span class = keyword> Function</span> isloopblock(s:symbol) boolean
+<p> <span class = keyword> Function</span> Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol
+<p> <span class = keyword> Function</span> firstvar(a:symbol) int
+<p> <span class = keyword> Function</span> EqOp symbol
+<p> <span class = keyword> Function</span> GtOp symbol
+<p> <span class = keyword> Function</span> isblock(s:symbol) boolean
+<p> <span class = keyword> Function</span> iscontinue(s:symbol) boolean
+<p> <span class = keyword> Function</span> isSequence(s:symbol) boolean
+<p> <span class = keyword> Function</span> isRecord(s:symbol) boolean
+<p> <span class = keyword> Function</span> iswordseq(s:symbol) boolean
+<p> <span class = keyword> Function</span> isword(s:symbol) boolean
+<p> <span class = keyword> Function</span> isIntLit(s:symbol) boolean
+<p> <span class = keyword> Function</span> isRealLit(s:symbol) boolean
+<p> <span class = keyword> Function</span> isrecordconstant(s:symbol) boolean
+<p> <span class = keyword> Function</span> wordname(s:symbol) word
+<p> <span class = keyword> Function</span> typebits mytype
+<p> <span class = keyword> Function</span> typebyte mytype
+<p> <span class = keyword> Function</span> typeword mytype
+<p> <span class = keyword> Function</span> typechar mytype
+<p> <span class = keyword> Function</span> isseq(t:mytype) boolean
+<p> <span class = keyword> Function</span> packedtypes seq.mytype
+<p> <span class = keyword> Function</span> deepcopyseqword symbol
+<p> <span class = keyword> Function</span> makerealSymbol symbol
+<p> <span class = keyword> Function</span> indexsymbol(T:mytype) symbol
+<p> <span class = keyword> Function</span> outofboundssymbol symbol
+<p> <span class = keyword> Function</span> encodenosym symbol
+<p> <span class = keyword> Function</span> blockitsymbol(T:mytype) symbol
+<p> <span class = keyword> Function</span> isconstantorspecial(s:symbol) boolean
+<p> <span class = keyword> Function</span> Local(i:int) symbol
+<p> <span class = keyword> Function</span> Optionsym symbol
+<p> <span class = keyword> Function</span> Define(i:int) symbol
+<p> <span class = keyword> Function</span> Define(name:word, i:int) symbol
+<p> <span class = keyword> Function</span> Fref(s:symbol) symbol
+<p> <span class = keyword> Function</span> basesym(s:symbol) symbol
+<p> <span class = keyword> Function</span> GetSeqLength symbol
+<p> <span class = keyword> Function</span> GetSeqType symbol
+<p> <span class = keyword> Function</span> abortsymbol(typ:mytype) symbol
+<p> <span class = keyword> Function</span> getoption(code:seq.symbol) seq.word
+<p> <span class = keyword> Function</span> removeoptions(code:seq.symbol) seq.symbol
+<p> <span class = keyword> Function</span> addoption(code:seq.symbol, option:seq.word) seq.symbol
+<p> <span class = keyword> Function</span> nametype(sym:symbol) seq.mytype
+<p> <span class = keyword> Function</span> PreFref symbol
+<p> <span class = keyword> Function</span> Local(name:word, type:mytype, parano:int) symbol
+<p> <span class = keyword> Function</span> inModFor(sym:symbol) boolean
+<p> <span class = keyword> Function</span> builtinmod(para:mytype) modref
+<p> <span class = keyword> Function</span> isBuiltin(sym:symbol) boolean
+<p> <span class = keyword> Function</span> isInternal(sym:symbol) boolean
+<p> <span class = keyword> Function</span> isGlobal(sym:symbol) boolean
+<p> <span class = keyword> Function</span> isencoding(t:mytype) boolean
+<p> <span class = keyword> Function</span> deepcopySym(rt:mytype) symbol
+<p> <span class = keyword> Function</span> iscore4(typ:mytype) boolean
+<p> <span class = keyword> Function</span> setSym(typ:mytype) symbol
+<p> <span class = keyword> Function</span> Getfld(fldtype:mytype) symbol
+<p> <span class = keyword> Function</span> >1(a:symdef, b:symdef) ordering
+<p> <span class = keyword> Function</span> getSymdef(a:set.symdef, sym:symbol) set.symdef
+<p> <span class = keyword> Function</span> getCode(a:set.symdef, sym:symbol) seq.symbol
+<p> <span class = keyword> Function</span> symconst(i:int, hasfref:boolean) symbol<hr id ="pretty" >
+<h2> <span class = keyword> module</span> pretty </h2>
+<br> Module pretty is used in modules:  parsersupport
+<br> defines types:  prettyresult attribute2
+<p> Export type:attribute2
+<p> Export type:prettyresult
+<p> <span class = keyword> Function</span> leftdq seq.word
+<p> <span class = keyword> Function</span> pretty(s:seq.word) seq.word
+<p> <span class = keyword> Function</span> escapeformat(s:seq.word) seq.word
+<p> <span class = keyword> Function</span> escape2format(s:seq.word) seq.word
+<p> <span class = keyword> Function</span> pretty(s:seq.word, headeronly:boolean) seq.word
+<p> <span class = keyword> Function</span> breakup(in:seq.word) attribute2
+<p> <span class = keyword> Function</span> sortuse(b:seq.seq.word, prefix:seq.word) seq.seq.word
+<p> <span class = keyword> Function</span> changeheader(in:attribute2, with:seq.word, more:seq.word) seq.word<hr id ="parse" >
+<h2> <span class = keyword> module</span> parse </h2>
+<br> Module parse is used in modules:  passsymbol
+<br> defines types: 
+<p> Export type:bindinfo {From symboldict}
+<p> <span class = keyword> Function</span> text(b:bindinfo) seq.word
+<p> <span class = keyword> Function</span> bindinfo(dict:symboldict, types:seq.mytype, tokentext:seq.word) bindinfo
+<p> <span class = keyword> Function</span> parse(dict:symboldict, headeronly:boolean) bindinfo<hr id ="parsersupport" >
+<h2> <span class = keyword> module</span> parsersupport.T </h2>
+<br> defines types:  token stkele reduction
+<p> Export type:stkele.T
+<p> Export type:reduction.T
+<p> Export type:token.T
+<p> <span class = keyword> Function</span> >1(a:token.T, b:token.T) ordering
+<p> <span class = keyword> Function</span> =(a:token.T, b:token.T) boolean
+<p> <span class = keyword> Function</span> _(r:reduction.T, n:int) T
+<p> <span class = keyword> Function</span> last(r:reduction.T) T
+<p> <span class = keyword> Function</span> errormessage:T(message:seq.word, input:seq.word, place:int, parsestk:stack.stkele.T) seq.word
+<p> <span class = keyword> Function</span> removemore:T(tail2:seq.word, acc3:seq.word) seq.word
+<p> <span class = keyword> Function</span> parse:T(initial:T, lextable:seq.token.T, input:seq.word, headeronly:boolean) T
+<p> <span class = keyword> Function</span> sortedlextable:T seq.token.T<hr id ="compilerfrontT" >
+<h2> <span class = keyword> module</span> compilerfrontT.T </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> compilerFront:T(option:seq.word, input:seq.file) midpoint &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint) midpoint &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> pass2:T(librarymap:seq.word, knownsymbols0:set.symdef, t:typedict, option:seq.word) set.symdef &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> additionalpass:T(librarymap:seq.word, p:seq.symdef, start:set.symdef, typedict:typedict) set.symdef &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> firstopt:T(librarymap:seq.word <span class = block >, p:set.symdef
+<br> , s:symbol
+<br> , code:seq.symbol
+<br> , options:seq.word
+<br> , first:boolean
+<br> , typedict:typedict) seq.symbol </span>
+<p> <span class = keyword> Function</span> scancode:T(librarymap:seq.word <span class = block >, p:set.symdef
+<br> , org:seq.symbol
+<br> , nextvarX:int
+<br> , mapX:set.localmap2
+<br> , self:symbol
+<br> , typedict:typedict) expandresult </span><hr id ="compilerfront" >
+<h2> <span class = keyword> module</span> compilerfront </h2>
+<br> Module compilerfront is used in modules:  compilerfrontT main2
+<br> defines types: 
+<p> Export type:midpoint {From symbol2}
+<p> <span class = keyword> Export</span> libmods(m:midpoint) seq.modExports <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> option(midpoint) seq.word <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> prg(midpoint) set.symdef <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> src(midpoint) seq.seq.word <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> templates(midpoint) set.symdef <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> typedict(midpoint) typedict <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word) midpoint
+<br> <span class = comment > {From symbol2} </span>
+<p> Export type:modExports {From symbol2}
+<p> <span class = keyword> Export</span> exports(modExports) seq.symbol <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> modname(modExports) modref <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> types(modExports) seq.seq.mytype <span class = comment > {From symbol2} </span>
+<p> <span class = keyword> Export</span> modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
+<br> <span class = comment > {From symbol2} </span>
+<p> Export type:typedict {From typedict}
+<p> <span class = keyword> Function</span> compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint) midpoint
+<p> <span class = keyword> Function</span> addoption(p:set.symdef, s:symbol, option:seq.word) set.symdef
+<p> <span class = keyword> Function</span> toModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word) seq.modExports
+<p> <span class = keyword> Function</span> prepareback(prg10:set.symdef, midin:midpoint, dependentlibs:midpoint) midpoint &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> libcode(m:midpoint) seq.symdef<hr id ="mergeblocks" >
+<h2> <span class = keyword> module</span> mergeblocks </h2>
+<br> Module mergeblocks is used in modules:  compilerfrontT
+<br> defines types:  ggg casenode repos reorgresult
+<p> <span class = keyword> Function</span> valid(s:seq.symbol) boolean
+<p> <span class = keyword> Function</span> optB(s:seq.symbol, self:symbol, reorgwhen:int) seq.symbol<hr id ="pass2" >
+<h2> <span class = keyword> module</span> pass2 </h2>
+<br> Module pass2 is used in modules:  compilerfrontT
+<br> defines types:  expandresult
+<p> Export type:expandresult
+<p> <span class = keyword> Export</span> code(expandresult) seq.symbol
+<p> <span class = keyword> Export</span> flags(expandresult) bits
+<p> <span class = keyword> Export</span> nextvar(expandresult) int
+<p> <span class = keyword> Export</span> expandresult(int, seq.symbol, bits) expandresult
+<p> <span class = keyword> Function</span> reorgwhen int
+<p> <span class = keyword> Function</span> isverysimple(nopara:int, code:seq.symbol) boolean
+<p> <span class = keyword> Function</span> Callself bits
+<p> <span class = keyword> Function</span> State bits
+<p> <span class = keyword> Function</span> Hasfor bits
+<p> <span class = keyword> Function</span> Hasmerge bits
+<p> <span class = keyword> Function</span> ∈(a:bits, b:bits) boolean
+<p> <span class = keyword> Function</span> ismember(s:symbol) boolean
+<p> <span class = keyword> Function</span> expandforexp(code:seq.symbol, nextvarin:int) seq.symbol
+<p> <span class = keyword> Function</span> forexpisnoop(forsym:symbol, code:seq.symbol) seq.symbol
+<p> <span class = keyword> Function</span> backparse2(s:seq.symbol, i:int, no:int, result:seq.int) seq.int<hr id ="hashset" >
+<h2> <span class = keyword> module</span> hashset.T </h2>
+<br> defines types:  hashelement hashset
+<p> Export type:hashelement.T
+<p> Export type:hashset.T
+<p> <span class = keyword> Export</span> cardinality(hashset.T) int
+<p> Export type:seq.seq.hashelement.T {From seq.seq.hashelement.T}
+<p> <span class = keyword> Function</span> empty:hashset.T hashset.T
+<p> <span class = keyword> Function</span> lookup(s:hashset.T, ele:T) seq.T
+<p> <span class = keyword> Function</span> toseq(h:hashset.T) seq.T
+<p> <span class = keyword> Function</span> +(h:hashset.T, ele:T) hashset.T
+<p> <span class = keyword> Function</span> ∪(ele:T, h:hashset.T) hashset.T<hr id ="localmap2" >
+<h2> <span class = keyword> module</span> localmap2 </h2>
+<br> Module localmap2 is used in modules:  compilerfrontT postbind
+<br> defines types:  localmap2
+<p> Export type:localmap2
+<p> <span class = keyword> Export</span> key(localmap2) int
+<p> <span class = keyword> Export</span> value(localmap2) seq.symbol
+<p> <span class = keyword> Export</span> localmap2(key:int, value:seq.symbol) localmap2
+<p> Export type:hashset.localmap2 {From hashset.localmap2}
+<p> <span class = keyword> Export</span> +(hashset.localmap2, localmap2) hashset.localmap2
+<br> <span class = comment > {From hashset.localmap2} </span>
+<p> <span class = keyword> Export</span> empty:hashset.localmap2 hashset.localmap2 <span class = comment > {From hashset.localmap2} </span>
+<p> <span class = keyword> Export</span> ∪(localmap2, hashset.localmap2) hashset.localmap2 <span class = comment > {From hashset.localmap2} </span>
+<p> <span class = keyword> Export</span> isempty(seq.localmap2) boolean <span class = comment > {From seq.localmap2} </span>
+<p> <span class = keyword> Export</span> _(seq.localmap2, int) localmap2 <span class = comment > {From seq.localmap2} </span>
+<p> <span class = keyword> Export</span> isempty(set.localmap2) boolean <span class = comment > {From set.localmap2} </span>
+<p> <span class = keyword> Export</span> +(set.localmap2, localmap2) set.localmap2 <span class = comment > {From set.localmap2} </span>
+<p> <span class = keyword> Export</span> _(set.localmap2, int) localmap2 <span class = comment > {From set.localmap2} </span>
+<p> <span class = keyword> Export</span> empty:set.localmap2 set.localmap2 <span class = comment > {From set.localmap2} </span>
+<p> <span class = keyword> Export</span> ∪(localmap2, set.localmap2) set.localmap2 <span class = comment > {From set.localmap2} </span>
+<p> <span class = keyword> Function</span> lookup(a:set.localmap2, key:int) set.localmap2
+<p> <span class = keyword> Function</span> =(a:localmap2, b:localmap2) boolean
+<p> <span class = keyword> Function</span> hash(a:localmap2) int
+<p> <span class = keyword> Function</span> >1(a:localmap2, b:localmap2) ordering
+<p> <span class = keyword> Function</span> lookup(a:hashset.localmap2, key:int) seq.localmap2<hr id ="passparse" >
+<h2> <span class = keyword> module</span> passparse </h2>
+<br> Module passparse is used in modules:  compilerfront
+<br> defines types: 
+<p> <span class = keyword> Function</span> compile(allmods:set.passsymbols <span class = block >, modlist:set.passsymbols
+<br> , lib:word
+<br> , src:seq.seq.word
+<br> , textmode:boolean
+<br> , requireUnbound:set.symdef) seq.symdef </span>
+<p> <span class = keyword> Function</span> addExportOptions(modlist:set.passsymbols, prgin:set.symdef, src:seq.seq.word) set.symdef
+<p> <span class = keyword> Function</span> buildrequires(prg:seq.symdef) set.symdef
+<p> <span class = keyword> Function</span> prescan2(s:seq.symdef) seq.symdef &lt*headercomment {removes name from locals and change length and getseqtype to GetSeqLength and GetSeqType
+<br> } none &lthr id =" passsymbol" > section <span class = keyword> module</span> passsymbol Module passsymbol is used in modules:  compilerfront passparse postbind
+<br> defines types:  prg6 partdict findabstractresult passsymbols
+<p> Export type:findabstractresult
+<p> <span class = keyword> Export</span> modpara(findabstractresult) mytype
+<p> <span class = keyword> Export</span> sd(findabstractresult) symdef
+<p> Export type:passsymbols
+<p> <span class = keyword> Export</span> defines(passsymbols) set.symbol
+<p> <span class = keyword> Export</span> exports(passsymbols) set.symbol
+<p> <span class = keyword> Export</span> modname(passsymbols) modref
+<p> <span class = keyword> Export</span> srclink(passsymbols) seq.symdef
+<p> <span class = keyword> Export</span> typedict(passsymbols) set.mytype
+<p> <span class = keyword> Export</span> uses(passsymbols) set.modref
+<p> <span class = keyword> Export</span> passsymbols(modname:modref <span class = block >, uses:set.modref
+<br> , defines:set.symbol
+<br> , exports:set.symbol
+<br> , unresolvedexports:set.symbol
+<br> , typedict:set.mytype
+<br> , text:seq.symdef) passsymbols </span>
+<p> Export type:prg6
+<p> <span class = keyword> Export</span> abstract(prg6) seq.passsymbols
+<p> <span class = keyword> Export</span> code(prg6) set.symdef
+<p> <span class = keyword> Export</span> modules(prg6) set.passsymbols
+<p> <span class = keyword> Export</span> simple(prg6) seq.passsymbols
+<p> <span class = keyword> Export</span> types(prg6) seq.seq.mytype
+<p> Export type:symdef {From symbol}
+<p> <span class = keyword> Export</span> code(symdef) seq.symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> sym(symdef) symbol <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Export</span> symdef(symbol, seq.symbol, int) symdef <span class = comment > {From symbol} </span>
+<p> <span class = keyword> Function</span> resolvesymbols(allsrc:seq.seq.word, lib:word, mods:set.passtypes, libmods:set.passsymbols) prg6
+<p> <span class = keyword> Function</span> flds(isseq:boolean, binfotext:seq.word, modname:modref, name:word, typs:seq.mytype) seq.symdef
+<p> <span class = keyword> Function</span> parse(input:seq.word, p:partdict, c:commoninfo) bindinfo
+<p> <span class = keyword> Function</span> formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef, mode:word) partdict &lt*headercomment {bug here should not need i = 0 in forloop} <span class = keyword> Function</span> findabstract(templates:set.symdef, sym:symbol) seq.findabstractresult
+<p> <span class = keyword> Function</span> module(f:passsymbols) modref
+<p> <span class = keyword> Function</span> passsymbols(modname:modref) passsymbols
+<p> <span class = keyword> Function</span> >1(a:passsymbols, b:passsymbols) ordering<hr id ="postbind" >
+<h2> <span class = keyword> module</span> postbind </h2>
+<br> Module postbind is used in modules:  compilerfront
+<br> defines types:  postbindresult symbolref
+<p> <span class = keyword> Export</span> prg(postbindresult) set.symdef
+<p> <span class = keyword> Export</span> typedict(postbindresult) typedict
+<p> <span class = keyword> Function</span> postbind(roots:seq.symbol, theprg:set.symdef, templates:set.symdef, typedict1:typedict) postbindresult<hr id ="symboldict" >
+<h2> <span class = keyword> module</span> symboldict </h2>
+<br> Module symboldict is used in modules:  compilerfront parse passparse passsymbol postbind
+<br> defines types:  commoninfo symboldict bindinfo
+<p> Export type:bindinfo
+<p> <span class = keyword> Export</span> code(bindinfo) seq.symbol
+<p> <span class = keyword> Export</span> dict(bindinfo) symboldict
+<p> <span class = keyword> Export</span> tokentext(bindinfo) seq.word
+<p> <span class = keyword> Export</span> types(bindinfo) seq.mytype
+<p> <span class = keyword> Export</span> bindinfo(dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word) bindinfo
+<p> Export type:commoninfo
+<p> <span class = keyword> Export</span> input(commoninfo) seq.word
+<p> <span class = keyword> Export</span> lib(commoninfo) word
+<p> <span class = keyword> Export</span> mode(commoninfo) word
+<p> <span class = keyword> Export</span> modname(commoninfo) modref
+<p> <span class = keyword> Export</span> types(commoninfo) set.mytype
+<p> <span class = keyword> Export</span> commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word) commoninfo
+<p> Export type:symboldict
+<p> <span class = keyword> Export</span> asset(symboldict) set.symbol
+<p> <span class = keyword> Export</span> symboldict(asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo) symboldict
+<p> <span class = keyword> Function</span> lookupbysig(dict:symboldict, sym:symbol) set.symbol
+<p> <span class = keyword> Function</span> symboldict(d:set.symbol, common:seq.commoninfo) symboldict
+<p> <span class = keyword> Function</span> common(d:symboldict) commoninfo
+<p> <span class = keyword> Function</span> requires(d:symboldict, sym:symbol) seq.symbol
+<p> <span class = keyword> Function</span> empty:symboldict symboldict
+<p> <span class = keyword> Function</span> +(d:symboldict, sym:symbol) symboldict
+<p> <span class = keyword> Function</span> -(d:symboldict, s:set.symbol) symboldict
+<p> <span class = keyword> Function</span> ∪(d:symboldict, s:set.symbol) symboldict
+<p> <span class = keyword> Function</span> cardinality(d:symboldict) int<hr id ="compileTimeT" >
+<h2> <span class = keyword> module</span> compileTimeT.T </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict) seq.symbol
+<p> <span class = keyword> Function</span> buildargs:T(codein:seq.symbol) seq.int<hr id ="object01" >
+<h2> <span class = keyword> module</span> object01 </h2>
+<br> Module object01 is used in modules:  objectio
+<br> defines types:  tableentry
+<p> Export type:tableentry
+<p> <span class = keyword> Function</span> formatTypeDef(defs0:seq.seq.mytype) seq.seq.int
+<p> <span class = keyword> Function</span> fix5(a0:seq.seq.mytype) seq.seq.mytype &lt*headercomment {if length.root = 2 ∧ isseq.root_2 then [[root_2, parameter.root_2]]+a0 else
+<br> } <span class = keyword> Function</span> outrec(inobj:ptr, allpatterns:seq.seq.int) seq.seq.int
+<p> <span class = keyword> Function</span> inrec(inrecs:seq.seq.int) ptr
+<p> <span class = keyword> Function</span> encode2(data:seq.seq.int) seq.byte
+<p> <span class = keyword> Function</span> decode2(b:seq.byte) seq.seq.int<hr id ="objectio" >
+<h2> <span class = keyword> module</span> objectio.T </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> outbytes:T(try:seq.T) seq.byte
+<p> <span class = keyword> Function</span> inbytes:T(in:seq.byte) seq.T<hr id ="LEBencoding" >
+<h2> <span class = keyword> module</span> LEBencoding </h2>
+<br> Module LEBencoding is used in modules:  object01
+<br> defines types:  decoderesult
+<p> Export type:decoderesult
+<p> <span class = keyword> Export</span> next(decoderesult) int
+<p> <span class = keyword> Export</span> value(decoderesult) int
+<p> <span class = keyword> Function</span> testLEB seq.word
+<p> <span class = keyword> Function</span> LEBu(i:int) seq.byte
+<p> <span class = keyword> Function</span> LEBs(i:int) seq.byte
+<p> <span class = keyword> Function</span> decodeLEBu(a:seq.byte, i:int) decoderesult
+<p> <span class = keyword> Function</span> decodeLEBs(a:seq.byte, i:int) decoderesult
+<p> <span class = keyword> Function</span> decodeLEBu:seq.int(a:seq.byte) seq.int
+<p> <span class = keyword> Function</span> decodeLEBs:seq.int(a:seq.byte) seq.int
+<p> <span class = keyword> Function</span> tobyte(b:bits) byte<hr id ="persistant" >
+<h2> <span class = keyword> module</span> persistant </h2>
+<br> Module persistant is used in modules:  codegennew codetemplates codetemplates2
+<br> defines types:  word3 const3
+<p> Export type:word3
+<p> <span class = keyword> Function</span> constdata seq.slot
+<p> <span class = keyword> Function</span> wordref(w:word) int &lt*headercomment {identity, y} <span class = keyword> Function</span> addint(i:int) int
+<p> <span class = keyword> Function</span> initwordref(baselibwords:seq.seq.char) int
+<p> <span class = keyword> Function</span> wordstoadd(baselibwords:seq.seq.char) seq.encoding.word3
+<p> <span class = keyword> Function</span> commonwords(wordstoadd:seq.encoding.word3) seq.byte
+<p> <span class = keyword> Function</span> bytes(i:int) seq.byte
+<p> <span class = keyword> Function</span> loadbcwords int
+<p> <span class = keyword> Function</span> addliblib(libname:word, name:int, wordstoadd:seq.encoding.word3, more:seq.int) int &lt*headercomment {build packed seq of word encodings} <span class = keyword> Function</span> global(name:seq.word, type:llvmtype, init:slot) int
+<p> <span class = keyword> Function</span> addobject(fldsin:seq.int) int
+<p> <span class = keyword> Function</span> addwordseq(a:seq.word) int<hr id ="bitstream" >
+<h2> <span class = keyword> module</span> bitstream </h2>
+<br> Module bitstream is used in modules:  internalbc
+<br> defines types:  bitstream
+<p> Export type:bitstream
+<p> <span class = keyword> Export</span> length(bitstream) int
+<p> <span class = keyword> Function</span> tobitstream(s:seq.bits) bitstream
+<p> <span class = keyword> Function</span> toseqseqbyte(bs:bitstream) seq.seq.byte
+<p> <span class = keyword> Function</span> empty:bitstream bitstream
+<p> <span class = keyword> Function</span> patch(a:bitstream, i:int, val:int) bitstream
+<p> <span class = keyword> Function</span> bitstream(length:int, val:bits) bitstream
+<p> <span class = keyword> Function</span> index(s:bitstream, i:int, sizebits:int) bits
+<p> <span class = keyword> Function</span> _(s:bitstream, i:int) byte
+<p> <span class = keyword> Function</span> subseq(s:bitstream, start:int, finish:int) bitstream
+<p> <span class = keyword> Function</span> +(a:bitstream, b:bitstream) bitstream &lt*headercomment {steal bits from b to make full words in a} <span class = keyword> Function</span> add(a:bitstream, b:bits, nobits:int) bitstream
+<p> <span class = keyword> Function</span> +(a:bitstream, b:byte) bitstream
+<p> <span class = keyword> Function</span> +(a:bitstream, b:seq.byte) bitstream<hr id ="codetemplates2" >
+<h2> <span class = keyword> module</span> codetemplates2 </h2>
+<br> Module codetemplates2 is used in modules:  codegennew
+<br> defines types:  steponeresult
+<p> Export type:steponeresult
+<p> <span class = keyword> Export</span> defines(steponeresult) seq.symdef
+<p> <span class = keyword> Export</span> entrypoint(steponeresult) slot
+<p> Export type:match5 {From codetemplates}
+<p> <span class = keyword> Export</span> action(match5) word <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> arg(match5) int <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> brf(a:match5) int
+<p> <span class = keyword> Export</span> brt(a:match5) int
+<p> <span class = keyword> Export</span> firstvar(a:match5) int
+<p> <span class = keyword> Export</span> functype(m:match5) llvmtype <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> length(match5) int
+<br> <span class = comment > {no of instruction that return results} </span>
+<br> <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> llvmtypelist(match5) seq.llvmtype <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> sym(match5) symbol <span class = comment > {From codetemplates} </span>
+<p> Export type:recordcoderesult {From codetemplates}
+<p> <span class = keyword> Export</span> bc(recordcoderesult) internalbc <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> regno(recordcoderesult) int <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> findtemplate(d:symbol) seq.match5 <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean) recordcoderesult
+<br> <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean) recordcoderesult
+<br> <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> symboltableentry(name:seq.word, type:llvmtype) slot <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> tollvmtype(typedict, symbol) llvmtype <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
+<br> <span class = comment > {From codetemplates} </span>
+<p> <span class = keyword> Export</span> constdata seq.slot <span class = comment > {From persistant} </span>
+<p> <span class = keyword> Function</span> conststype llvmtype
+<p> <span class = keyword> Function</span> profiletype llvmtype
+<p> <span class = keyword> Function</span> stepone(alltypes:typedict, prgX:set.symdef, libname:word, isbase:boolean) steponeresult
+<p> <span class = keyword> Function</span> uses(alltypes:typedict <span class = block >, used1:set.symbol
+<br> , isrecordconstant:seq.symdef
+<br> , extnames:set.symdef
+<br> , typedict:typedict
+<br> , libname:word) int </span>
+<p> <span class = keyword> Function</span> processconst(toprocess:seq.symdef, alltypes:typedict) int
+<p> <span class = keyword> Function</span> internalidx(s:symbol) int &lt*headercomment {list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint
+<br> getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted
+<br> addencoding getinstance"} <span class = keyword> Function</span> mangledname(extname:set.symdef, s:symbol, library:word) word
+<p> <span class = keyword> Function</span> addtype(a:mytype) int
+<p> <span class = keyword> Function</span> addtypeseq(a:seq.mytype) int
+<p> <span class = keyword> Function</span> addsymbol(a:symbol) int<hr id ="codegennew" >
+<h2> <span class = keyword> module</span> codegennew </h2>
+<br> Module codegennew is used in modules:  main2
+<br> defines types:  geninfo Lcode2 localmap processblkresult
+<p> <span class = keyword> Function</span> compilerback(m:midpoint, baselibwords:seq.seq.char, outname:filename) seq.file &lt*headercomment {OPTION PROFILE} <span class = keyword> Function</span> starmap(m:midpoint) midpoint &lt*headercomment {if symbol with * match symbol in uses then use that one else match current library
+<br> } <span class = keyword> Function</span> codegen(m:midpoint <span class = block >, baselibwords:seq.seq.char
+<br> , profilearcs:set.seq.symbol
+<br> , addresssymbolrefdecode0:seq.symbol
+<br> , outname:filename) seq.file </span> &lt*headercomment {OPTION PROFILE} none &lthr id =" codetemplates" > section <span class = keyword> module</span> codetemplates Module codetemplates is used in modules:  codegennew codetemplates2
+<br> defines types:  match5 recordcoderesult
+<p> Export type:match5
+<p> <span class = keyword> Export</span> action(match5) word
+<p> <span class = keyword> Export</span> arg(match5) int
+<p> <span class = keyword> Export</span> length(match5) int <span class = comment > {no of instruction that return results} </span>
+<p> <span class = keyword> Export</span> llvmtypelist(match5) seq.llvmtype
+<p> <span class = keyword> Export</span> sym(match5) symbol
+<p> Export type:recordcoderesult
+<p> <span class = keyword> Export</span> bc(recordcoderesult) internalbc
+<p> <span class = keyword> Export</span> regno(recordcoderesult) int
+<p> <span class = keyword> Export</span> wordref(w:word) int <span class = comment > {From persistant} </span>
+<p> <span class = keyword> Export</span> constdata seq.slot <span class = comment > {From persistant} </span>
+<p> Export type:symbol {From symbol}
+<p> <span class = keyword> Function</span> tollvmtype(alltypes:typedict, s:symbol) llvmtype
+<p> <span class = keyword> Function</span> tollvmtype(alltypes:typedict, s:mytype) llvmtype
+<p> <span class = keyword> Function</span> firstvar(a:match5) int
+<p> <span class = keyword> Function</span> brt(a:match5) int
+<p> <span class = keyword> Function</span> brf(a:match5) int
+<p> <span class = keyword> Function</span> empty:match5 match5
+<p> <span class = keyword> Function</span> functype(m:match5) llvmtype
+<p> <span class = keyword> Function</span> addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype) match5
+<p> <span class = keyword> Function</span> addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot) match5
+<p> <span class = keyword> Function</span> addtemplate(sym:symbol, length:int, b:internalbc) match5
+<p> <span class = keyword> Function</span> findtemplate(d:symbol) seq.match5
+<p> <span class = keyword> Function</span> templatesyms seq.symbol
+<p> <span class = keyword> Function</span> funcdec(alltypes:typedict, i:symbol, symname:word) int
+<p> <span class = keyword> Function</span> initmap5 seq.match5
+<p> <span class = keyword> Function</span> symboltableentry(name:seq.word, type:llvmtype) slot
+<p> <span class = keyword> Function</span> buildconst(xx:symbol, alltypes:typedict) match5
+<p> <span class = keyword> Function</span> buildspecial(xx:symbol, alltypes:typedict) match5
+<p> <span class = keyword> Function</span> call(alltypes:typedict, xx:symbol, type:word, symname:word) match5
+<p> <span class = keyword> Function</span> usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
+<p> <span class = keyword> Function</span> sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean) recordcoderesult
+<p> <span class = keyword> Function</span> recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean) recordcoderesult<hr id ="internalbc" >
+<h2> <span class = keyword> module</span> internalbc </h2>
+<br> Module internalbc is used in modules:  codegennew codetemplates codetemplates2
+<br> defines types:  templatepart internalbc llvmpartial trackconst machineinfo
+<p> Export type:internalbc
+<p> Export type:templatepart
+<p> <span class = keyword> Function</span> ibcfirstpara2 int
+<p> <span class = keyword> Function</span> ibcsub(i:int) slot
+<p> <span class = keyword> Function</span> %(bc:internalbc) seq.word
+<p> <span class = keyword> Function</span> emptyinternalbc internalbc
+<p> <span class = keyword> Function</span> +(a:internalbc, b:internalbc) internalbc
+<p> <span class = keyword> Function</span> addtobitstream(offset:int, bs:bitstream, b:internalbc) bitstream
+<p> <span class = keyword> Function</span> processtemplate(s:internalbc, deltaoffset:int, args:seq.int) internalbc
+<p> <span class = keyword> Function</span> BLOCKCOUNT(slot:int, a1:int) internalbc
+<p> <span class = keyword> Function</span> RETURN internalbc
+<p> <span class = keyword> Function</span> RET(slot:slot, a1:slot) internalbc
+<p> <span class = keyword> Function</span> CAST(slot:slot, a1:slot, a2:llvmtype, a3:castop) internalbc
+<p> <span class = keyword> Function</span> BR(slot:slot, a1:int, a2:int, a3:slot) internalbc
+<p> <span class = keyword> Function</span> ALLOCA(slot:slot, a1:llvmtype, a2:llvmtype, a3:slot, a4:int) internalbc
+<p> <span class = keyword> Function</span> BR(a1:int) internalbc
+<p> <span class = keyword> Function</span> GEP(slot:slot, a2:llvmtype, a3:slot) internalbc
+<p> <span class = keyword> Function</span> GEP(slot:slot, a2:llvmtype, a3:slot, a4:slot) internalbc
+<p> <span class = keyword> Function</span> STORE(slot:slot, a1:slot, a2:slot) internalbc
+<p> <span class = keyword> Function</span> LOAD(slot:slot, a1:slot, a2:llvmtype) internalbc
+<p> <span class = keyword> Function</span> CMP2(slot:slot, a1:slot, a2:slot, a3:int) internalbc
+<p> <span class = keyword> Function</span> BINOP(slot:slot, a1:slot, a2:slot, a3:binaryop) internalbc
+<p> <span class = keyword> Function</span> CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot) internalbc
+<p> <span class = keyword> Function</span> CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot) internalbc
+<p> <span class = keyword> Function</span> CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot) internalbc
+<p> <span class = keyword> Function</span> CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot, a7:slot) internalbc
+<p> <span class = keyword> Function</span> CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, rest:seq.slot) internalbc
+<p> <span class = keyword> Function</span> CALLSTART(slot:int, a1:int, a2:int, a3:int, a4:int, noargs:int) internalbc
+<p> <span class = keyword> Function</span> CALLFINISH(slot:int, rest:seq.int) internalbc
+<p> <span class = keyword> Function</span> PHI(slot:slot, a1:llvmtype, a2:slot, a3:int, a4:slot, a5:int, a6:slot, a7:int) internalbc
+<p> <span class = keyword> Function</span> PHI(slot:slot, a1:llvmtype, a2:slot, a3:int, a4:slot, a5:int) internalbc
+<p> <span class = keyword> Function</span> PHI(slot:int, a1:int, s:seq.int) internalbc
+<p> <span class = keyword> Function</span> phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int) internalbc
+<p> <span class = keyword> Function</span> addvbr(b:bitstream, newbits:int, bitcount:int) bitstream
+<p> <span class = keyword> Function</span> addvbr6(b:bitstream, v:int) bitstream
+<p> <span class = keyword> Function</span> addvbrsigned6(b:bitstream, val:int) bitstream
+<p> <span class = keyword> Function</span> align32(a:bitstream) bitstream
+<p> <span class = keyword> Function</span> addblockheader(b:bitstream, currentabbrelength:int, blockid:int, abbrevlength:int) bitstream
+<p> <span class = keyword> Function</span> finishblock(current:bitstream, headerplace:int, blockabbrevlength:int) bitstream
+<p> <span class = keyword> Function</span> addbody(m:bitstream, offset:int, bodytxt:internalbc) bitstream
+<p> <span class = keyword> Function</span> addbody(m:bitstream, bodytxt:seq.seq.int) bitstream
+<p> <span class = keyword> Function</span> addrecords(bits:bitstream, abbrevlength:int, s:seq.seq.int) bitstream
+<p> <span class = keyword> Function</span> llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int) seq.seq.byte
+<p> <span class = keyword> Function</span> llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int) seq.seq.byte
+<p> <span class = keyword> Function</span> symentries(bits:bitstream, s:seq.slotrecord, i:int) bitstream<hr id ="llvm" >
+<h2> <span class = keyword> module</span> llvm </h2>
+<br> Module llvm is used in modules:  codegennew codetemplates codetemplates2 internalbc persistant
+<br> defines types:  llvmtypeele llvmtype llvmconst slotrecord slot
+<p> <span class = keyword> Export</span> slot(int) slot
+<p> Export type:llvmconst
+<p> Export type:llvmtype
+<p> <span class = keyword> Export</span> typ(llvmtype) int
+<p> Export type:llvmtypeele
+<p> Export type:slot
+<p> <span class = keyword> Export</span> toint(slot) int
+<p> Export type:slotrecord
+<p> <span class = keyword> Function</span> returntype(func:llvmtype) llvmtype
+<p> <span class = keyword> Function</span> llvmtype(s:seq.int) llvmtype
+<p> <span class = keyword> Function</span> %(t:llvmtype) seq.word
+<p> <span class = keyword> Function</span> typerecords seq.seq.int
+<p> <span class = keyword> Function</span> double llvmtype
+<p> <span class = keyword> Function</span> i64 llvmtype
+<p> <span class = keyword> Function</span> i32 llvmtype
+<p> <span class = keyword> Function</span> i8 llvmtype
+<p> <span class = keyword> Function</span> i1 llvmtype
+<p> <span class = keyword> Function</span> VOID llvmtype
+<p> <span class = keyword> Function</span> array(size:int, base:llvmtype) llvmtype
+<p> <span class = keyword> Function</span> ptr(base:llvmtype) llvmtype
+<p> <span class = keyword> Function</span> function(para:seq.llvmtype) llvmtype
+<p> <span class = keyword> Function</span> =(a:llvmconst, b:llvmconst) boolean
+<p> <span class = keyword> Function</span> modulerecord(name:seq.word, rec:seq.int) slot
+<p> <span class = keyword> Function</span> C64(i:int) slot
+<p> <span class = keyword> Function</span> C32(i:int) slot
+<p> <span class = keyword> Function</span> constantrecord(t:llvmtype, s:seq.int) slot
+<p> <span class = keyword> Function</span> DATA(t:llvmtype, data:seq.int) slot
+<p> <span class = keyword> Function</span> AGGREGATE(data:seq.slot) slot
+<p> <span class = keyword> Function</span> ptrtoint(argtype:llvmtype, p:slot) slot
+<p> <span class = keyword> Function</span> CGEP(p:slot, b:int) slot
+<p> <span class = keyword> Function</span> CGEPi8(p:slot, b:int) slot
+<p> <span class = keyword> Function</span> Creal(i:int) slot
+<p> <span class = keyword> Function</span> asi64(s:slot) slot
+<p> <span class = keyword> Function</span> constvalue(i:slot) int
+<p> <span class = keyword> Function</span> constantrecords seq.slotrecord
+<p> <span class = keyword> Function</span> record(b:slotrecord) seq.int
+<p> <span class = keyword> Function</span> symtablename(c:slotrecord) seq.char
+<p> <span class = keyword> Function</span> ismoduleblock(a:slotrecord) boolean
+<p> <span class = keyword> Function</span> typ(s:slotrecord) int
+<p> <span class = keyword> Function</span> consttype(s:slot) llvmtype
+<p> <span class = keyword> Function</span> r(a:int) slot<hr id ="llvmconstants" >
+<h2> <span class = keyword> module</span> llvmconstants </h2>
+<br> Module llvmconstants is used in modules:  codegennew codetemplates internalbc llvm persistant
+<br> defines types:  align instop typeop blockop moduleop constop castop binaryop cmp2op
+<p> <span class = keyword> Export</span> toint(align) int
+<p> <span class = keyword> Export</span> align(i:int) align
+<p> Export type:align
+<p> <span class = keyword> Function</span> =(a:align, b:align) boolean
+<p> <span class = keyword> Function</span> unspecified align
+<p> <span class = keyword> Function</span> align8 align
+<p> <span class = keyword> Function</span> align16 align
+<p> <span class = keyword> Function</span> align32 align
+<p> <span class = keyword> Function</span> align64 align
+<p> <span class = keyword> Function</span> decode(code:align) seq.word
+<p> <span class = keyword> Export</span> toint(instop) int
+<p> <span class = keyword> Export</span> instop(i:int) instop
+<p> Export type:instop
+<p> <span class = keyword> Function</span> =(a:instop, b:instop) boolean
+<p> <span class = keyword> Function</span> BLOCK instop
+<p> <span class = keyword> Function</span> BINOP instop
+<p> <span class = keyword> Function</span> CAST instop
+<p> <span class = keyword> Function</span> SELECT instop
+<p> <span class = keyword> Function</span> RET instop
+<p> <span class = keyword> Function</span> BR instop
+<p> <span class = keyword> Function</span> PHI instop
+<p> <span class = keyword> Function</span> ALLOCA instop
+<p> <span class = keyword> Function</span> LOAD instop
+<p> <span class = keyword> Function</span> CMP2 instop
+<p> <span class = keyword> Function</span> CALL instop
+<p> <span class = keyword> Function</span> GEP instop
+<p> <span class = keyword> Function</span> STORE instop
+<p> <span class = keyword> Function</span> decode(code:instop) seq.word
+<p> <span class = keyword> Export</span> toint(typeop) int
+<p> <span class = keyword> Export</span> typeop(i:int) typeop
+<p> Export type:typeop
+<p> <span class = keyword> Function</span> =(a:typeop, b:typeop) boolean
+<p> <span class = keyword> Function</span> NumEle typeop
+<p> <span class = keyword> Function</span> TVOID typeop
+<p> <span class = keyword> Function</span> DOUBLE typeop
+<p> <span class = keyword> Function</span> OPAQUE typeop
+<p> <span class = keyword> Function</span> INTEGER typeop
+<p> <span class = keyword> Function</span> POINTER typeop
+<p> <span class = keyword> Function</span> ARRAY typeop
+<p> <span class = keyword> Function</span> FUNCTION typeop
+<p> <span class = keyword> Function</span> decode(code:typeop) seq.word
+<p> <span class = keyword> Export</span> toint(blockop) int
+<p> <span class = keyword> Export</span> blockop(i:int) blockop
+<p> Export type:blockop
+<p> <span class = keyword> Function</span> =(a:blockop, b:blockop) boolean
+<p> <span class = keyword> Function</span> INFOBLOCK blockop
+<p> <span class = keyword> Function</span> MODULE blockop
+<p> <span class = keyword> Function</span> PARA blockop
+<p> <span class = keyword> Function</span> PARAGRP blockop
+<p> <span class = keyword> Function</span> CONSTANTS blockop
+<p> <span class = keyword> Function</span> FUNCTIONBLK blockop
+<p> <span class = keyword> Function</span> VALUESYMTABLE blockop
+<p> <span class = keyword> Function</span> TYPES blockop
+<p> <span class = keyword> Function</span> decode(code:blockop) seq.word
+<p> <span class = keyword> Export</span> toint(moduleop) int
+<p> <span class = keyword> Export</span> moduleop(i:int) moduleop
+<p> Export type:moduleop
+<p> <span class = keyword> Function</span> =(a:moduleop, b:moduleop) boolean
+<p> <span class = keyword> Function</span> Version moduleop
+<p> <span class = keyword> Function</span> TRIPLE moduleop
+<p> <span class = keyword> Function</span> LAYOUT moduleop
+<p> <span class = keyword> Function</span> GLOBALVAR moduleop
+<p> <span class = keyword> Function</span> FUNCTIONDEC moduleop
+<p> <span class = keyword> Function</span> decode(code:moduleop) seq.word
+<p> <span class = keyword> Export</span> toint(constop) int
+<p> <span class = keyword> Export</span> constop(i:int) constop
+<p> Export type:constop
+<p> <span class = keyword> Function</span> =(a:constop, b:constop) boolean
+<p> <span class = keyword> Function</span> SETTYPE constop
+<p> <span class = keyword> Function</span> CNULL constop
+<p> <span class = keyword> Function</span> CUNDEF constop
+<p> <span class = keyword> Function</span> CINTEGER constop
+<p> <span class = keyword> Function</span> CWIDEINTEGER constop
+<p> <span class = keyword> Function</span> CFLOAT constop
+<p> <span class = keyword> Function</span> CAGGREGATE constop
+<p> <span class = keyword> Function</span> CSTRING2 constop
+<p> <span class = keyword> Function</span> CSTRING0 constop
+<p> <span class = keyword> Function</span> CBINOP constop
+<p> <span class = keyword> Function</span> CCAST constop
+<p> <span class = keyword> Function</span> CGEP constop
+<p> <span class = keyword> Function</span> CDATA constop
+<p> <span class = keyword> Function</span> decode(code:constop) seq.word
+<p> <span class = keyword> Export</span> toint(castop) int
+<p> <span class = keyword> Export</span> castop(i:int) castop
+<p> Export type:castop
+<p> <span class = keyword> Function</span> =(a:castop, b:castop) boolean
+<p> <span class = keyword> Function</span> trunc castop
+<p> <span class = keyword> Function</span> zext castop
+<p> <span class = keyword> Function</span> sext castop
+<p> <span class = keyword> Function</span> fptoui castop
+<p> <span class = keyword> Function</span> fptosi castop
+<p> <span class = keyword> Function</span> uitofp castop
+<p> <span class = keyword> Function</span> sitofp castop
+<p> <span class = keyword> Function</span> fptrunc castop
+<p> <span class = keyword> Function</span> fpext castop
+<p> <span class = keyword> Function</span> ptrtoint castop
+<p> <span class = keyword> Function</span> inttoptr castop
+<p> <span class = keyword> Function</span> bitcast castop
+<p> <span class = keyword> Function</span> decode(code:castop) seq.word
+<p> <span class = keyword> Export</span> toint(binaryop) int
+<p> <span class = keyword> Export</span> binaryop(i:int) binaryop
+<p> Export type:binaryop
+<p> <span class = keyword> Function</span> =(a:binaryop, b:binaryop) boolean
+<p> <span class = keyword> Function</span> add binaryop
+<p> <span class = keyword> Function</span> sub binaryop
+<p> <span class = keyword> Function</span> mul binaryop
+<p> <span class = keyword> Function</span> udiv binaryop
+<p> <span class = keyword> Function</span> sdiv binaryop
+<p> <span class = keyword> Function</span> urem binaryop
+<p> <span class = keyword> Function</span> srem binaryop
+<p> <span class = keyword> Function</span> shl binaryop
+<p> <span class = keyword> Function</span> lshr binaryop
+<p> <span class = keyword> Function</span> ashr binaryop
+<p> <span class = keyword> Function</span> and binaryop
+<p> <span class = keyword> Function</span> or binaryop
+<p> <span class = keyword> Function</span> xor binaryop
+<p> <span class = keyword> Function</span> decode(code:binaryop) seq.word
+<p> <span class = keyword> Export</span> toint(cmp2op) int
+<p> <span class = keyword> Export</span> cmp2op(i:int) cmp2op
+<p> Export type:cmp2op
+<p> <span class = keyword> Function</span> =(a:cmp2op, b:cmp2op) boolean
+<p> <span class = keyword> Function</span> Feq cmp2op
+<p> <span class = keyword> Function</span> Fgt cmp2op
+<p> <span class = keyword> Function</span> Fge cmp2op
+<p> <span class = keyword> Function</span> Flt cmp2op
+<p> <span class = keyword> Function</span> Fle cmp2op
+<p> <span class = keyword> Function</span> Fne cmp2op
+<p> <span class = keyword> Function</span> eq cmp2op
+<p> <span class = keyword> Function</span> ne cmp2op
+<p> <span class = keyword> Function</span> ugt cmp2op
+<p> <span class = keyword> Function</span> uge cmp2op
+<p> <span class = keyword> Function</span> ult cmp2op
+<p> <span class = keyword> Function</span> ule cmp2op
+<p> <span class = keyword> Function</span> sgt cmp2op
+<p> <span class = keyword> Function</span> sge cmp2op
+<p> <span class = keyword> Function</span> slt cmp2op
+<p> <span class = keyword> Function</span> sle cmp2op
+<p> <span class = keyword> Function</span> decode(code:cmp2op) seq.word<hr id ="ptr" >
+<h2> <span class = keyword> module</span> ptr </h2>
+<br> Module ptr is used in modules:  bitcast object01 taublockseq tausupport
+<br> defines types:  ptr
+<p> Export type:ptr<hr id ="taublockseq" >
+<h2> <span class = keyword> module</span> taublockseq.T </h2>
+<br> defines types:  blockseq
+<p> Export type:blockseq.T
+<p> Export type:seq.T {From seq.T}
+<p> <span class = keyword> Function</span> blocksize:T int
+<p> <span class = keyword> Function</span> blockseqtype:T int
+<p> <span class = keyword> Function</span> _(a:blockseq.T, i:int) T
+<p> <span class = keyword> Function</span> blockit3(s:seq.T) seq.T
+<p> <span class = keyword> Function</span> blockit2(s:seq.T, ds:int) seq.T<hr id ="bitcast" >
+<h2> <span class = keyword> module</span> bitcast.T </h2><hr id ="tausupport" >
+<h2> <span class = keyword> module</span> tausupport </h2>
+<br> Module tausupport is used in modules:  bitstream impDependent object01
+<br> defines types:  packed2 packed3 packed4 packed5 packed6 typename
+<p> Export type:packed2
+<p> Export type:packed3
+<p> Export type:packed4
+<p> Export type:packed5
+<p> Export type:packed6
+<p> Export type:typename
+<p> <span class = keyword> Export</span> decode(encoding.seq.char) seq.char <span class = comment > {From encoding.seq.char} </span>
+<p> Export type:encodingpair.seq.char {From encoding.seq.char}
+<p> <span class = keyword> Export</span> encode(seq.char) encoding.seq.char <span class = comment > {From encoding.seq.char} </span>
+<p> Export type:encodingpair.typename {From encoding.typename}
+<p> Export type:ptr {From ptr}
+<p> <span class = keyword> Export</span> blockseqtype:byte int <span class = comment > {From taublockseq.byte} </span>
+<p> <span class = keyword> Export</span> _(blockseq.int, int) int <span class = comment > {From taublockseq.int} </span>
+<p> <span class = keyword> Export</span> blockseqtype:int int <span class = comment > {From taublockseq.int} </span>
+<p> <span class = keyword> Export</span> _(blockseq.packed2, int) packed2 <span class = comment > {From taublockseq.packed2} </span>
+<p> <span class = keyword> Export</span> _(blockseq.packed3, int) packed3 <span class = comment > {From taublockseq.packed3} </span>
+<p> <span class = keyword> Export</span> _(blockseq.packed4, int) packed4 <span class = comment > {From taublockseq.packed4} </span>
+<p> <span class = keyword> Export</span> _(blockseq.packed5, int) packed5 <span class = comment > {From taublockseq.packed5} </span>
+<p> <span class = keyword> Export</span> _(blockseq.packed6, int) packed6 <span class = comment > {From taublockseq.packed6} </span>
+<p> <span class = keyword> Export</span> _(blockseq.ptr, int) ptr <span class = comment > {From taublockseq.ptr} </span>
+<p> <span class = keyword> Export</span> _(blockseq.real, int) real <span class = comment > {From taublockseq.real} </span>
+<p> <span class = keyword> Function</span> blockIt(s:seq.int) seq.int
+<p> <span class = keyword> Function</span> blockIt(s:seq.ptr) seq.ptr
+<p> <span class = keyword> Function</span> blockIt(s:seq.real) seq.real
+<p> <span class = keyword> Function</span> blockIt(s:seq.packed2) seq.packed2
+<p> <span class = keyword> Function</span> blockIt(s:seq.packed3) seq.packed3
+<p> <span class = keyword> Function</span> blockIt(s:seq.packed4) seq.packed4
+<p> <span class = keyword> Function</span> blockIt(s:seq.packed5) seq.packed5
+<p> <span class = keyword> Function</span> blockIt(s:seq.packed6) seq.packed6
+<p> <span class = keyword> Function</span> deepcopy(a:int) int
+<p> <span class = keyword> Function</span> deepcopy(a:real) real
+<p> <span class = keyword> Function</span> encodingno(name:seq.word) int
+<p> <span class = keyword> Function</span> outofbounds seq.word
+<p> <span class = keyword> Function</span> blockIt(s:seq.byte) seq.byte
+<p> <span class = keyword> Function</span> toseqseqbyte(b:seq.bits, bytestowrite:int) seq.seq.byte
+<p> <span class = keyword> Function</span> toseqseqbyte(s:seq.byte) seq.seq.byte
+<p> <span class = keyword> Function</span> cat(obj1:ptr, obj2:ptr, typ:word) ptr
+<p> <span class = keyword> Function</span> packobject(typ:word, obj:ptr) ptr 

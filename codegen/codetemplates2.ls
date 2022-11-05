@@ -54,7 +54,9 @@ Export firstvar(a:match5) int
 
 Export functype(m:match5) llvmtype {From codetemplates}
 
-Export length(match5) int {no of instruction that return results} {From codetemplates}
+Export length(match5) int
+{no of instruction that return results}
+{From codetemplates}
 
 Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
 
@@ -78,7 +80,8 @@ Export symboltableentry(name:seq.word, type:llvmtype) slot {From codetemplates}
 
 Export tollvmtype(typedict, symbol) llvmtype {From codetemplates}
 
-Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc {From codetemplates}
+Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
+{From codetemplates}
 
 Export constdata seq.slot {From persistant}
 
@@ -89,9 +92,9 @@ Function profiletype llvmtype array(-3, i64)
 Function stepone(alltypes:typedict, prgX:set.symdef, libname:word, isbase:boolean) steponeresult
 let discard1 = initmap5
 for used = empty:seq.symbol
-, crecord = empty:seq.symdef
-, indefines = empty:seq.symdef
-, cc ∈ toseq.prgX
+ , crecord = empty:seq.symdef
+ , indefines = empty:seq.symdef
+ , cc ∈ toseq.prgX
 do
  let firstsym = sym.cc
  let code = code.cc
@@ -99,12 +102,12 @@ do
   let lastsym = last.code
   let sd = 
    symdef(firstsym
-   , if isSequence.lastsym then [Lit.0, Lit.nopara.lastsym] + code >> 1
-   else
-    assert isRecord.lastsym report "nnn $(code)"
-    code >> 1
-   , 0
-   )
+    , if isSequence.lastsym then
+     [Lit.0, Lit.nopara.lastsym] + code >> 1
+    else
+     assert isRecord.lastsym report "nnn $(code)"
+     code >> 1
+    , 0)
   next(used + toseq.asset.code.sd, crecord + sd, indefines)
  else if isInternal.firstsym then
   if {firstsym is external call} paragraphno.cc = -1 then
@@ -113,13 +116,13 @@ do
   else if not.isbase then
    let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname))
    next(used, crecord, indefines)
-  else next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
+  else
+   next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
  else if isGlobal.firstsym then
   let discard5 = 
    addtemplate(firstsym
-   , 1
-   , GEP(r.1, i64, slot.global([merge("$$" + toword.paragraphno.cc)], i64, C64.0))
-   )
+    , 1
+    , GEP(r.1, i64, slot.global([merge("$$" + toword.paragraphno.cc)], i64, C64.0)))
   next(used, crecord, indefines)
  else if libname = library.module.firstsym ∨ paragraphno.cc ≤ 0 then
   next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
@@ -135,8 +138,8 @@ do
   /for (entrypointsym)
  let discard100 = uses(alltypes, asset.used, crecord, prgX, alltypes, libname)
  steponeresult(indefines
- , symboltableentry([mangledname(prgX, entrypointsym, libname)], function.[ptr.i64, i64, ptr.i64])
- ))
+  , symboltableentry([mangledname(prgX, entrypointsym, libname)], function.[ptr.i64, i64, ptr.i64]))
+)
 
 function declare(alltypes:typedict, prgX:set.symdef, ele2:symbol, libname:word) int
 let name = mangledname(prgX, ele2, libname)
@@ -145,25 +148,24 @@ let discard5 = call(alltypes, ele2, "CALL"_1, name)
 0
 
 Function uses(alltypes:typedict
-, used1:set.symbol
-, isrecordconstant:seq.symdef
-, extnames:set.symdef
-, typedict:typedict
-, libname:word
-) int
+ , used1:set.symbol
+ , isrecordconstant:seq.symdef
+ , extnames:set.symdef
+ , typedict:typedict
+ , libname:word) int
 for acc = empty:match5, ele ∈ toseq.used1 do
  if isconst.ele then
   if isFref.ele then
    let basesym = basesym.ele
    let functyp = ptr.tollvmtype(typedict, basesym)
    addtemplate(Fref.basesym
-   , 0
-   , emptyinternalbc
-   , "ACTARG"_1
-   , ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym, libname)], functyp))
-   )
+    , 0
+    , emptyinternalbc
+    , "ACTARG"_1
+    , ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym, libname)], functyp)))
   else if isrecordconstant.ele then acc else buildconst(ele, alltypes)
- else if isspecial.ele then buildspecial(ele, alltypes)
+ else if isspecial.ele then
+  buildspecial(ele, alltypes)
  else if isBuiltin.ele then
   if wordname.ele = "createthreadY"_1 then
    let rt = parameter.para.module.ele
@@ -172,9 +174,12 @@ for acc = empty:match5, ele ∈ toseq.used1 do
      l + tollvmtype(alltypes, e)
     /for (l + tollvmtype(alltypes, rt))
    addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, l)
-  else acc
- else if isInternal.ele ∧ internalidx.ele = 1 then call(alltypes, ele, "CALL"_1, name.ele)
- else acc
+  else
+   acc
+ else if isInternal.ele ∧ internalidx.ele = 1 then
+  call(alltypes, ele, "CALL"_1, name.ele)
+ else
+  acc
 /for (processconst(isrecordconstant, alltypes))
 
 type steponeresult is defines:seq.symdef, entrypoint:slot
@@ -191,72 +196,76 @@ for notprocessed = empty:seq.symdef, xx ∈ toprocess do
   if defined then
    let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
    notprocessed
-  else notprocessed + xx)
+  else
+   notprocessed + xx
+ )
 /for (
  if length.encodingdata:match5 = initvalue then
   assert isempty.notprocessed report "processconst problem"
   0
- else processconst(notprocessed, alltypes))
+ else
+  processconst(notprocessed, alltypes)
+)
 
 Function internalidx(s:symbol) int
-{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2
- getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding
- getinstance"}
+{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint
+ getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted
+ addencoding getinstance"}
 let l = 
  ["stacktrace"
- , "not boolean"
- , "intpart real"
- , "getseqtype ptr"
- , "getseqlength ptr"
- , "casttoreal int"
- , "toreal int"
- , "toint byte"
- , "toint bit"
- , "representation real"
- , "* real real"
- , "/ real real"
- , "+real real"
- , "-real real"
- , ">1 real real"
- , "* int int"
- , "/ int int"
- , "+int int"
- , "-int int"
- , ">1 int int"
- , "> int int"
- , "= boolean boolean"
- , "= int int"
- , "= real real"
- , "<< bits int"
- , ">> bits int"
- , "⊻ bits bits"
- , "∨ bits bits"
- , "∧ bits bits"
- , "abort real seq.word"
- , "abort int seq.word"
- , "abort boolean seq.word"
- , "abort ptr seq.word"
- , "set ptr int"
- , "set ptr real"
- , "set ptr ptr"
- ]
+  , "not boolean"
+  , "intpart real"
+  , "getseqtype ptr"
+  , "getseqlength ptr"
+  , "casttoreal int"
+  , "toreal int"
+  , "toint byte"
+  , "toint bit"
+  , "representation real"
+  , "* real real"
+  , "/ real real"
+  , "+real real"
+  , "-real real"
+  , ">1 real real"
+  , "* int int"
+  , "/ int int"
+  , "+int int"
+  , "-int int"
+  , ">1 int int"
+  , "> int int"
+  , "= boolean boolean"
+  , "= int int"
+  , "= real real"
+  , "<< bits int"
+  , ">> bits int"
+  , "⊻ bits bits"
+  , "∨ bits bits"
+  , "∧ bits bits"
+  , "abort real seq.word"
+  , "abort int seq.word"
+  , "abort boolean seq.word"
+  , "abort ptr seq.word"
+  , "set ptr int"
+  , "set ptr real"
+  , "set ptr ptr"]
 let idx = findindex(l, [name.s] + %(types.s >> 1))
 if idx ≤ length.l then idx + 1 else 1
 
 Function mangledname(extname:set.symdef, s:symbol, library:word) word
 let b = getSymdef(extname, s)
 assert not.isempty.b
-report "Mangled Name problem $(s)" + library
-+ for txt = "", sd ∈ toseq.extname do
- txt + "/br" + %.sym.sd + library.module.sym.sd
-/for (txt + stacktrace)
-if paragraphno.b_1 = -1 then name.s
+report
+ "Mangled Name problem $(s)" + library
+ + for txt = "", sd ∈ toseq.extname do
+  txt + "/br" + %.sym.sd + library.module.sym.sd
+ /for (txt + stacktrace)
+if paragraphno.b_1 = -1 then
+ name.s
 else
  merge.[if paragraphno.b_1 ≥ 0 ∨ isInternal.s then library.module.s else library
- , "$"_1
- , "$"_1
- , toword.abs.paragraphno.b_1
- ]
+  , "$"_1
+  , "$"_1
+  , toword.abs.paragraphno.b_1]
 
 Function addtype(a:mytype) int
 addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do
@@ -269,10 +278,9 @@ addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtype.@e /f
 Function addsymbol(a:symbol) int
 let t = privatefields.a
 addobject.[addwordseq.worddata.a
-, wordref.library.module.a
-, wordref.name.module.a
-, addtype.para.module.a
-, addtypeseq.types.a
-, addint.t_1
-, addint.t_2
-] 
+ , wordref.library.module.a
+ , wordref.name.module.a
+ , addtype.para.module.a
+ , addtypeseq.types.a
+ , addint.t_1
+ , addint.t_2] 

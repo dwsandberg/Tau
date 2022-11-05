@@ -16,15 +16,14 @@ function subseq(a:UTF8, i:int, j:int) UTF8 UTF8.subseq(toseqbyte.a, i, j)
 
 Function testjulian boolean
 [tojulian(2000, 1, 1)
-, tojulian(1999, 1, 1)
-, tojulian(1987, 1, 27)
-, tojulian(1987, 6, 19)
-, tojulian(1988, 1, 27)
-, tojulian(1988, 6, 19)
-, tojulian(1900, 1, 1)
-, tojulian(1600, 1, 1)
-, tojulian(1600, 12, 31)
-]
+ , tojulian(1999, 1, 1)
+ , tojulian(1987, 1, 27)
+ , tojulian(1987, 6, 19)
+ , tojulian(1988, 1, 27)
+ , tojulian(1988, 6, 19)
+ , tojulian(1900, 1, 1)
+ , tojulian(1600, 1, 1)
+ , tojulian(1600, 12, 31)]
 = [2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
 
 Function tojulian(year:int, month:int, day:int) int
@@ -73,10 +72,11 @@ fromJuliantointseq(t / (24 * 60 * 60)) + [hours, minutes, seconds]
 
 Function print(ts:timestamp) seq.word
 let d = decompose.ts
-[merge.[toword.d_1, "-"_1, toword.d_2, "-"_1, toword.d_3
-, "."_1, toword.d_4, ":"_1, toword.d_5, ":"_1
-, toword.d_6]
-]
+[
+ merge.[toword.d_1, "-"_1, toword.d_2, "-"_1, toword.d_3
+  , "."_1, toword.d_4, ":"_1, toword.d_5, ":"_1
+  , toword.d_6]
+ ]
 
 Builtin currenttime timestamp {OPTION STATE}
 

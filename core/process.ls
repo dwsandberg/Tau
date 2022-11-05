@@ -25,8 +25,10 @@ if aborted.p then
  if isempty.msg.p then
   let h = toseqbyte.header.p
   towords.UTF8.subseq(h, 1, findindex(h, tobyte.10))
- else msg.p
-else "normal exit"
+ else
+  msg.p
+else
+ "normal exit"
 
 Function result(p:process.T) T
 assert not.aborted.p report "no result of aborted process"

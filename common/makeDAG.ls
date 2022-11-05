@@ -13,11 +13,10 @@ use standard
 Function makeDAG(g:graph.T) graph.T
 {Turn directed graph into DAG by reversing arcs}
 make(g
-, empty:seq.arc.T
-, ordernodes(g, empty:set.T, empty:seq.T, empty:seq.T)
-, empty:set.T
-, 1
-)
+ , empty:seq.arc.T
+ , ordernodes(g, empty:set.T, empty:seq.T, empty:seq.T)
+ , empty:set.T
+ , 1)
 
 function make(g:graph.T, reversed:seq.arc.T, l:seq.T, nodes:set.T, i:int) graph.T
 if i > length.l then
@@ -27,11 +26,12 @@ else
  let n = l_i
  let succs = successors(g, n)
  make(g
- , for acc = reversed, @e ∈ toseq.arcstosuccessors(g, n) do acc + filter(nodes, @e) /for (acc)
- , l
- , nodes + n
- , i + 1
- )
+  , for acc = reversed, @e ∈ toseq.arcstosuccessors(g, n) do
+   acc + filter(nodes, @e)
+  /for (acc)
+  , l
+  , nodes + n
+  , i + 1)
 
 function filter(n:set.T, a:arc.T) seq.arc.T
 if head.a ∈ n then [a] else empty:seq.arc.T
@@ -47,6 +47,6 @@ let a = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sources2(g, 
 let d = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sinks2(g, b, @e) /for (acc)
 if cardinality.a + cardinality.d = 0 then
  let u = nodes.g \ b
- if isempty.u then first + last
- else ordernodes(g, b + u_1, first + u_1, last)
-else ordernodes(g, b ∪ a ∪ d, first + toseq.a, toseq.d + last) 
+ if isempty.u then first + last else ordernodes(g, b + u_1, first + u_1, last)
+else
+ ordernodes(g, b ∪ a ∪ d, first + toseq.a, toseq.d + last) 

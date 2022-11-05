@@ -68,7 +68,10 @@ Function initwordref(baselibwords:seq.seq.char) int
 for acc = 0, @e ∈ baselibwords do
  max(acc, valueofencoding.asencoding.encodeword.@e)
 /for (
- for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc) do valueofencoding.encode.word3.k /for (loadbcwords))
+ for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc) do
+  valueofencoding.encode.word3.k
+ /for (loadbcwords)
+)
 
 Function wordstoadd(baselibwords:seq.seq.char) seq.encoding.word3
 let have = for acc = empty:set.encoding.word3, @e ∈ baselibwords do acc + encode.word3.@e /for (acc)
@@ -76,10 +79,14 @@ let used = for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc 
 toseq(used \ have)
 
 Function commonwords(wordstoadd:seq.encoding.word3) seq.byte
-for out = emptyUTF8, w ∈ wordstoadd do out + chars.decode.w + bcwordsep /for (toseqbyte.out)
+for out = emptyUTF8, w ∈ wordstoadd do
+ out + chars.decode.w + bcwordsep
+/for (toseqbyte.out)
 
 Function bytes(i:int) seq.byte
-for acc = empty:seq.byte, shift ∈ arithseq(8, 8, 0) do acc + tobyte.toint(tobits.i >> shift ∧ 0xFF) /for (acc)
+for acc = empty:seq.byte, shift ∈ arithseq(8, 8, 0) do
+ acc + tobyte.toint(tobits.i >> shift ∧ 0xFF)
+/for (acc)
 
 Function loadbcwords int
 let b = getbcwords
@@ -88,7 +95,8 @@ for acc = empty:seq.char, c ∈ decodeUTF8.UTF8.b do
   let discard0 = encodeword.acc
   let discard = encode.word3.acc
   empty:seq.char
- else acc + c
+ else
+  acc + c
 /for (0)
 
 Function addliblib(libname:word, name:int, wordstoadd:seq.encoding.word3, more:seq.int) int
@@ -96,7 +104,9 @@ Function addliblib(libname:word, name:int, wordstoadd:seq.encoding.word3, more:s
 let wordreps2 = 
  for acc = [toint.C64.0, toint.C64.length.wordstoadd], w ∈ wordstoadd do
   let s = tointseq.chars.decode.w
-  for acc2 = [toint.C64.0, toint.C64.length.s], ch ∈ s do acc2 + toint.C64.ch /for (acc + addobject.acc2)
+  for acc2 = [toint.C64.0, toint.C64.length.s], ch ∈ s do
+   acc2 + toint.C64.ch
+  /for (acc + addobject.acc2)
  /for (addobject.acc)
 addobject2("liblib" + libname, [name, wordreps2] + more)
 
@@ -104,9 +114,8 @@ function addobject2(name:seq.word, data:seq.int) int
 let objtype = array(length.data, i64)
 let ll = 
  global(name
- , objtype
- , AGGREGATE.for acc = empty:seq.slot, @e ∈ data do acc + asi64.slot.@e /for (acc)
- )
+  , objtype
+  , AGGREGATE.for acc = empty:seq.slot, @e ∈ data do acc + asi64.slot.@e /for (acc))
 toint.CGEP(slot.ll, 0)
 
 Function global(name:seq.word, type:llvmtype, init:slot) int

@@ -1,0 +1,34 @@
+<!doctype html> <meta charset =" UTF-8" ><style><!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}span.literal {color:red ;} span.comment {color:green ;}span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style>Module enumerate
+<p> use standard
+<p>
+<p> enumerationtype = numbers data = ? one two three four five
+<p> enumerationtype = byte decodename = twodecode flags = nodecs withvalues data = 0 two0 2 two1 4 two2 8 two3 10 two4 20 two5
+<p> The data below this line was auto generated.
+<p>_________________________________________
+<p> type numbers is toint:int
+<p> Export toint (numbers) int
+<p> Export numbers (i:int) numbers
+<p> Export type:numbers
+<p> <span class = keyword> Function</span> =(a:numbers, b:numbers) boolean toint.a = toint.b
+<p> Function one numbers numbers.1
+<p> Function two numbers numbers.2
+<p> Function three numbers numbers.3
+<p> Function four numbers numbers.4
+<p> Function five numbers numbers.5
+<p> <span class = keyword> Function</span> decode(code:numbers) seq.word
+<br> <span class = keyword> let</span> discard = [one, two, three, four, five]
+<br> <span class = keyword> let</span> i = toint.code
+<br> <span class = keyword> if</span> between(i + 1, 1, 6) <span class = keyword> then</span> <span class = block > <span class = keyword> let</span> r = [<span class = literal > "? one two three four five" </span>_(i + 1)]
+<br> <span class = keyword> if</span> r ≠ <span class = literal > "?" </span> <span class = keyword> then</span> r <span class = keyword> else</span> <span class = literal > "numbers." </span> + toword.i </span> <span class = keyword> else</span> <span class = block > <span class = literal > "numbers." </span> + toword.i </span>
+<p>
+<p> Function two0 byte byte.0
+<p> Function two1 byte byte.2
+<p> Function two2 byte byte.4
+<p> Function two3 byte byte.8
+<p> Function two4 byte byte.16
+<p> Function two5 byte byte.32
+<p> <span class = keyword> Function</span> twodecode(code:byte) seq.word
+<br> <span class = keyword> let</span> discard = [two0, two1, two2, two3, two4, two5]
+<br> <span class = keyword> let</span> i = toint.code
+<br> <span class = keyword> if</span> between(i + 1, 1, 33) <span class = keyword> then</span> <span class = block > <span class = keyword> let</span> r = <span class = block > [<span class = block > <span class = literal > "two0 ? two1 ? two2 ? ? ? two3 ? ? ? ? ? ? ? two4 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? two5" </span>
+<br> _(i + 1)] </span> </span> <span class = keyword> if</span> r ≠ <span class = literal > "?" </span> <span class = keyword> then</span> r <span class = keyword> else</span> <span class = literal > "byte." </span> + toword.i </span> <span class = keyword> else</span> <span class = block > <span class = literal > "byte." </span> + toword.i </span> 

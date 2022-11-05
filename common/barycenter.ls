@@ -35,7 +35,8 @@ function baryinfo(g:graph.T, layers:seq.seq.T, i:int, result:seq.seq.T) seq.seq.
 if i < length.layers then
  let new = baryinfo(g, result_i, layers_(i + 1))
  baryinfo(g, layers, i + 1, result + new)
-else result
+else
+ result
 
 Function decreasecrosses(g:graph.T, layers:seq.seq.T) seq.seq.T
 baryinfo(g, layers, 1, [layers_1]) 

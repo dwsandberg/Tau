@@ -35,11 +35,15 @@ Function wordencodingtoword(i:int) word word.to:encoding.seq.char(i)
 
 Function encodeword(a:seq.char) word {OPTION NOINLINE COMPILETIME} word.encode.a
 
-Function decodeword(w:word) seq.char {OPTION NOINLINE COMPILETIME} decode.asencoding.w
+Function decodeword(w:word) seq.char
+{OPTION NOINLINE COMPILETIME}
+decode.asencoding.w
 
 Function hash(a:word) int hash.asencoding.a
 
-Function =(a:word, b:word) boolean {OPTION COMPILETIME} asencoding.a = asencoding.b
+Function =(a:word, b:word) boolean
+{OPTION COMPILETIME}
+asencoding.a = asencoding.b
 
 Function >1(a:word, b:word) ordering asencoding.a >1 asencoding.b
 
@@ -53,7 +57,8 @@ encodeword.for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e /for (acc)
 type alphaword is toword:word
 
 Function toalphaseq(a:seq.word) seq.alphaword
-{This is just a type change and the compiler recognizes this and does not generate code}
+{This is just a type change and the compiler recognizes this and does not generate code
+ }
 for acc = empty:seq.alphaword, @e ∈ a do acc + alphaword.@e /for (acc)
 
 Function ?alpha(a:char, b:char) ordering a >1 b
@@ -84,10 +89,15 @@ let validhex = decodeword.first."0123456789ABCDEFabcdef" + nbspchar
 if length.l > 2 ∧ l_1 = char1."0" ∧ l_2 ∈ decodeword.first."xX" then
  if for acc = true, @e ∈ l << 2 do acc ∧ binarysearch(validhex, @e) > 0 /for (acc) then
   "INTEGER"_1
- else "ILLEGAL"_1
+ else
+  "ILLEGAL"_1
 else
  let i = if length.l > 1 ∧ l_1 = char1."-" then 2 else 1
- if not.between(toint.l_i, 48, 57) then "WORD"_1
- else if for acc = true, @e ∈ l << (i - 1) do acc ∧ binarysearch(validdigits, @e) > 0 /for (acc) then
+ if not.between(toint.l_i, 48, 57) then
+  "WORD"_1
+ else if for acc = true, @e ∈ l << (i - 1) do
+  acc ∧ binarysearch(validdigits, @e) > 0
+ /for (acc) then
   "INTEGER"_1
- else "ILLEGAL"_1 
+ else
+  "ILLEGAL"_1 

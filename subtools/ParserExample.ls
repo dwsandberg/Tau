@@ -30,15 +30,17 @@ give the result of" Value of the sum of 3 4 5 is 12".The grammar was produced wi
 
 function sampleparse(input:seq.word) int
 for lrpart = push(empty:stack.stkele, stkele(startstate, ATTR.0))
-, idx = 1
-, this ∈ input + "#"
+ , idx = 1
+ , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate
 do
  {lexical analysis is done here}
  {Assume the input is only integers}
  let tokenno = 
-  if findindex(tokenlist, this) > length.tokenlist then findindex(tokenlist, "I"_1)
-  else findindex(tokenlist, "#"_1)
+  if findindex(tokenlist, this) > length.tokenlist then
+   findindex(tokenlist, "I"_1)
+  else
+   findindex(tokenlist, "#"_1)
  let attribute = ATTR.if this ∈ {end marked} "#" then 0 else toint.this
  next(step(lrpart, input, attribute, tokenno, idx), idx + 1)
 /for (val.attribute.undertop(lrpart, 1))
@@ -47,8 +49,10 @@ function step(stk:stack.stkele, input:seq.word, attrib:ATTR, tokenno:int, place:
 let stateno = stateno.top.stk
 let actioncode = actiontable_(tokenno + length.tokenlist * stateno)
 if actioncode > 0 then
- if stateno = finalstate then stk
- else push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
+ if stateno = finalstate then
+  stk
+ else
+  push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
 else
  assert actioncode < 0 report "ERROR"
  let ruleno = -actioncode
@@ -64,10 +68,12 @@ This part is generated with LR1 command (with the exception of the action header
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction) ATTR
 {Alphabet I # F G}
-if ruleno = {G F #} 1 then R_1
+if ruleno = {G F #} 1 then
+ R_1
 else if ruleno = {F F I} 2 then
  {The left side of the grammar rule is F and the right side is F I} ATTR(val.R_1 + val.R_2)
-else if ruleno = {F I} 3 then R_1
+else if ruleno = {F I} 3 then
+ R_1
 else
  {ruleno}
  assert false report "invalid rule number" + toword.ruleno

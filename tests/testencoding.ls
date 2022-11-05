@@ -52,25 +52,27 @@ for acc = empty:seq.seq.word, @e ∈ a do acc + body.@e /for (acc)
 Function testencoding seq.word
 {must export this module so encoding type can be figured out}
 let p = process.process1
-if aborted.p then "Failed encoding $(message.p)"
+if aborted.p then
+ "Failed encoding $(message.p)"
 else
  let s1 = list.result.p
  let z = for acc = 0, @e ∈ ["firstadd", "secondadd"] do acc + add.@e /for (acc)
  let s2 = list.result.process.process1
  let s3 = list.encodingdata:testrecord
- check([3 = deepcopytest.3
- , asset.[3, 7, 9] = deepcopytest.asset.[3, 7, 9]
- , deepcopytest.testdeep1 = testdeep1
- , s1 = ["A1", "B2", "C3", "D4", "E5"]
- , s2 = ["firstadd", "secondadd"] + s1
- , s3 = s2
- ]
- , "encoding"
- )
+ check(
+  [3 = deepcopytest.3
+   , asset.[3, 7, 9] = deepcopytest.asset.[3, 7, 9]
+   , deepcopytest.testdeep1 = testdeep1
+   , s1 = ["A1", "B2", "C3", "D4", "E5"]
+   , s2 = ["firstadd", "secondadd"] + s1
+   , s3 = s2]
+  , "encoding")
 
 Function process1 seq.testrecord
 let discard = 
- for acc = 0, @e ∈ ["A1", "B2", "C3", "D4", "E5"] do acc + add.@e /for (acc)
+ for acc = 0, @e ∈ ["A1", "B2", "C3", "D4", "E5"] do
+  acc + add.@e
+ /for (acc)
 encodingdata:testrecord
 
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char

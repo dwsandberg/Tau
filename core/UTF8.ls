@@ -38,40 +38,56 @@ Function periodchar char char.46
 
 Function nbspchar char {no break space character} char.160
 
-Function char1(s:seq.word) char {* First character of first word of s} first.decodeword.s_1
+Function char1(s:seq.word) char
+{* First character of first word of s}
+first.decodeword.s_1
 
 Function toUTF8(n:int) UTF8
 UTF8.if n < 0 then [tobyte.toint.hyphenchar] + toUTF8(n, 10) else toUTF8(-n, 10)
 
 function toUTF8(n:int, base:int) seq.byte
-{n should always be negative. This is to handle the smallest integer in the twos complement representation
- of integers}
-if base + n > 0 then [tobyte(48 - n)]
-else toUTF8(n / base, base) + tobyte(48 + n / base * base - n)
+{n should always be negative. This is to handle the smallest integer in the twos complement
+ representation of integers}
+if base + n > 0 then
+ [tobyte(48 - n)]
+else
+ toUTF8(n / base, base) + tobyte(48 + n / base * base - n)
 
 Function encodeUTF8(ch:char) UTF8
 {convert to UTF8 byte encoding of unicode character}
 let i = toint.ch
-UTF8.if i < 128 then [tobyte.i]
-else subUTF8(2, i / 64) + tobyte(128 + i mod 64)
+UTF8.if i < 128 then
+ [tobyte.i]
+else
+ subUTF8(2, i / 64) + tobyte(128 + i mod 64)
 
 function subUTF8(n:int, c:int) seq.byte
-if c < 2^(7 - n) then [tobyte(256 - 2^(8 - n) + c)]
-else subUTF8(n + 1, c / 64) + tobyte(128 + c mod 64)
+if c < 2^(7 - n) then
+ [tobyte(256 - 2^(8 - n) + c)]
+else
+ subUTF8(n + 1, c / 64) + tobyte(128 + c mod 64)
 
 Function decodeUTF8(b:UTF8) seq.char
 {converts UTF-8 encoded sequence into a sequence of chars}
 for state = 0, val = 0, result = empty:seq.int, x0 ∈ toseqbyte.b do
  let x = toint.x0
  if state = 0 then
-  if x < 128 then next(0, 0, result + x)
-  else if x < 224 then next(1, (x - 192) * 64, result)
-  else if x < 240 then next(2, (x - 224) * 64, result)
-  else if x < 248 then next(3, (x - 240) * 64, result)
-  else if x < 252 then next(4, (x - 248) * 64, result)
-  else next(5, (x - 252) * 64, result)
- else if state = 1 then next(0, 0, result + (x + val - 128))
- else next(state - 1, (val + (x - 128)) * 64, result)
+  if x < 128 then
+   next(0, 0, result + x)
+  else if x < 224 then
+   next(1, (x - 192) * 64, result)
+  else if x < 240 then
+   next(2, (x - 224) * 64, result)
+  else if x < 248 then
+   next(3, (x - 240) * 64, result)
+  else if x < 252 then
+   next(4, (x - 248) * 64, result)
+  else
+   next(5, (x - 252) * 64, result)
+ else if state = 1 then
+  next(0, 0, result + (x + val - 128))
+ else
+  next(state - 1, (val + (x - 128)) * 64, result)
 /for (tocharseq.result)
 
 Function toword(n:int) word
@@ -92,7 +108,8 @@ if length.s > 2 ∧ s_2 ∈ decodeword.first."Xx" then
   let validhex = decodeword.first."0123456789ABCDEFabcdef"
   let i0 = binarysearch(validhex, c)
   let i = if i0 > 16 then i0 - 6 else i0
-  if i > 0 then b << 4 ∨ bits(i - 1)
+  if i > 0 then
+   b << 4 ∨ bits(i - 1)
   else
    assert c ∈ [char1."x", char1."X", nbspchar]
    report "invalid hex digit" + encodeword.s
@@ -103,7 +120,8 @@ else
  let val = 
   for val = 0, c ∈ s do
    let i = binarysearch(validdigits, c)
-   if i > 0 then val * 10 - (i - 1)
+   if i > 0 then
+    val * 10 - (i - 1)
    else
     assert c ∈ [char1."-", nbspchar] report "invalid digit" + encodeword.s + stacktrace
     val
@@ -112,11 +130,13 @@ else
  if val = 0 ∨ s_1 = char1."-" then val else-val
 
 Function tointseq(a:seq.char) seq.int
-{This is just a type change and the compiler recognizes this and does not generate code}
+{This is just a type change and the compiler recognizes this and does not generate code
+ }
 for acc = empty:seq.int, @e ∈ a do acc + toint.@e /for (acc)
 
 Function tocharseq(a:seq.int) seq.char
-{This is just a type change and the compiler recognizes this and does not generate code}
+{This is just a type change and the compiler recognizes this and does not generate code
+ }
 for acc = empty:seq.char, @e ∈ a do acc + char.@e /for (acc)
 
 Function toUTF8(s:seq.word) UTF8 {OPTION INLINE} toUTF8(s, false)
@@ -124,8 +144,8 @@ Function toUTF8(s:seq.word) UTF8 {OPTION INLINE} toUTF8(s, false)
 Function toUTF8(s:seq.word, escapehtml:boolean) UTF8
 {OPTION INLINE}
 {nospace means add no space before word}
-{if the first character of a multi-character word is char.0 then the character is discarded.This is
- to allow format with format meaning to be escaped.}
+{if the first character of a multi-character word is char.0 then the character is
+ discarded. This is to allow format with format meaning to be escaped.}
 for result = emptyUTF8, nospace = true, this ∈ s do
  let chars = decodeword.this
  if length.chars = 1 then
@@ -137,23 +157,30 @@ for result = emptyUTF8, nospace = true, this ∈ s do
   else if ch ∈ decodeword.merge."([{$" then
    {space before but nospace after}
    next(if nospace then result + chars else result + char.32 + chars, true)
-  else if ch = char.8 then next(result, true)
+  else if ch = char.8 then
+   next(result, true)
   else
    let d = 
-    if not.escapehtml then [ch]
-    else if ch = char1."<" then decodeword.first."&lt"
+    if not.escapehtml then
+     [ch]
+    else if ch = char1."<" then
+     decodeword.first."&lt"
     else if ch = char1."&" then decodeword.first."&amp" else [ch]
    next(if nospace then result + d else result + char.32 + d, false)
- else if this ∈ ". : " then {no space before or after} next(result + chars, true)
+ else if this ∈ ". : " then
+  {no space before or after} next(result + chars, true)
  else
   let result0 = if nospace then result else result + char.32
   let chars2 = 
-   if subseq(chars, 1, 1) = [char.0] then result0 + chars << 1
-   else if not.escapehtml then result0 + chars
+   if subseq(chars, 1, 1) = [char.0] then
+    result0 + chars << 1
+   else if not.escapehtml then
+    result0 + chars
    else
     for acc = result0, c ∈ chars do
      acc
-     + if c = char1."<" then decodeword.first."&lt"
+     + if c = char1."<" then
+      decodeword.first."&lt"
      else if c = char1."&" then decodeword.first."&amp" else [c]
     /for (acc)
   next(chars2, false)

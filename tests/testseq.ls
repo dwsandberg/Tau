@@ -78,8 +78,10 @@ if "FAIL"_1 ∉ all then "PASS testseq" else "FAIL testseq $(all)"
 Function sparsecheck seq.word
 let b = 
  for acc = sparseseq.101
- , @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
- do check(acc, @e) /for (acc)
+  , @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
+ do
+  check(acc, @e)
+ /for (acc)
 "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int
@@ -92,7 +94,8 @@ assert subseq(c, i, i + length.r - 1) = r report "FAIL3"
 c
 
 function random(s:seq.int, i:int, result:seq.seq.int) seq.seq.int
-if i > length.s then result
+if i > length.s then
+ result
 else
  let len = s_i mod 5 + 2
  random(s, i + len, result + subseq(s, i, i + len - 1)) 

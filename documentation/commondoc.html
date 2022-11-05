@@ -1,0 +1,102 @@
+<!doctype html> <meta charset =" UTF-8" ><style><!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}span.literal {color:red ;} span.comment {color:green ;}span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style><a href ="#common$root" > common$root </a> <a href ="#common" > common </a> <a href ="#matrix" > matrix </a> <a href ="#point" > point </a> <a href ="#bandeskopf" > bandeskopf </a> <a href ="#uniqueids" > uniqueids </a> <a href ="#svg2graph" > svg2graph </a> <a href ="#makeDAG" > makeDAG </a> <a href ="#layergraph" > layergraph </a> <a href ="#barycenter" > barycenter </a> <a href ="#timestamp" > timestamp </a><hr id ="common$root" >
+<h2> <span class = keyword> module</span> common$root </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> common$EP(args:seq.word, input:seq.file) seq.file<hr id ="common" >
+<h2> <span class = keyword> module</span> common </h2>
+<br> Module common is used in modules:  common$root
+<br> defines types: 
+<p> <span class = keyword> Function</span> test(input:seq.file, o:seq.word) seq.file<hr id ="matrix" >
+<h2> <span class = keyword> module</span> matrix </h2>
+<br> defines types:  matrix
+<p> Export type:matrix
+<p> <span class = keyword> Function</span> transpose(a:matrix) matrix
+<p> <span class = keyword> Function</span> rotatex(a:real) matrix
+<p> <span class = keyword> Function</span> rotatey(a:real) matrix
+<p> <span class = keyword> Function</span> rotatez(a:real) matrix
+<p> <span class = keyword> Function</span> scale(p:point) matrix
+<p> <span class = keyword> Function</span> deg(d:real) real
+<p> <span class = keyword> Function</span> print(m:matrix) seq.word
+<p> <span class = keyword> Function</span> *(m:matrix, p:point) point
+<p> <span class = keyword> Function</span> translate(a:point) matrix
+<p> <span class = keyword> Function</span> *(a:matrix, b:matrix) matrix
+<p> <span class = keyword> Function</span> test seq.word
+<p> <span class = keyword> Function</span> identity matrix<hr id ="point" >
+<h2> <span class = keyword> module</span> point </h2>
+<br> Module point is used in modules:  matrix
+<br> defines types:  point
+<p> Export type:point
+<p> <span class = keyword> Export</span> w(a:point) real
+<p> <span class = keyword> Export</span> x(a:point) real
+<p> <span class = keyword> Export</span> y(a:point) real
+<p> <span class = keyword> Export</span> z(a:point) real
+<p> <span class = keyword> Export</span> point(real, real, real, real) point
+<p> <span class = keyword> Function</span> point(a:real, b:real, c:real) point
+<p> <span class = keyword> Function</span> +(a:point, b:point) point
+<p> <span class = keyword> Function</span> -(a:point, b:point) point
+<p> <span class = keyword> Function</span> -(b:point) point
+<p> <span class = keyword> Function</span> *(a:point, b:point) real
+<p> <span class = keyword> Function</span> *(a:real, b:point) point
+<p> <span class = keyword> Function</span> cross(a:point, b:point) point
+<p> <span class = keyword> Function</span> =(a:point, b:point) boolean
+<p> <span class = keyword> Function</span> >1(a:point, b:point) ordering
+<p> <span class = keyword> Function</span> print(p:point) seq.word
+<p> <span class = keyword> Function</span> length(a:point) real
+<p> <span class = keyword> Function</span> unit(a:point) point<hr id ="bandeskopf" >
+<h2> <span class = keyword> module</span> bandeskopf.T </h2>
+<br> defines types:  graphlayout nodeinfo
+<p> <span class = keyword> Export</span> g(graphlayout.T) graph.T
+<p> <span class = keyword> Export</span> nodeinfo(graphlayout.T) set.nodeinfo.T
+<p> <span class = keyword> Export</span> paths(graphlayout.T) seq.seq.T
+<p> Export type:nodeinfo.T
+<p> <span class = keyword> Export</span> n(nodeinfo.T) T
+<p> <span class = keyword> Export</span> seperation(nodeinfo.T) int
+<p> <span class = keyword> Export</span> x(nodeinfo.T) int
+<p> <span class = keyword> Export</span> y(nodeinfo.T) int
+<p> <span class = keyword> Function</span> >1(a:nodeinfo.T, b:nodeinfo.T) ordering
+<p> <span class = keyword> Function</span> layout(g:graph.T, allpaths:boolean) graphlayout.T
+<p> <span class = keyword> Function</span> nodeinfo(n:T, x:int, y:int) nodeinfo.T<hr id ="uniqueids" >
+<h2> <span class = keyword> module</span> uniqueids </h2>
+<br> Module uniqueids is used in modules:  svg2graph
+<br> defines types:  idrange
+<p> <span class = keyword> Function</span> requestids(no:int) int<hr id ="svg2graph" >
+<h2> <span class = keyword> module</span> svg2graph.T </h2>
+<br> defines types:  arcpath labeledarc hovertext
+<p> Export type:arcpath.T
+<p> <span class = keyword> Export</span> arc(arcpath.T) arc.T
+<p> <span class = keyword> Export</span> d(arcpath.T) seq.word
+<p> <span class = keyword> Export</span> from(arcpath.T) int
+<p> <span class = keyword> Export</span> arcpath(arc:arc.T, d:seq.word, from:int) arcpath.T
+<p> Export type:labeledarc.T
+<p> <span class = keyword> Export</span> label(a:labeledarc.T) seq.word
+<p> <span class = keyword> Function</span> arc(a:labeledarc.T) arc.T
+<p> <span class = keyword> Function</span> arc(a:T, b:T, label:seq.word) labeledarc.T
+<p> <span class = keyword> Function</span> >1(a:labeledarc.T, b:labeledarc.T) ordering
+<p> <span class = keyword> Function</span> >1(a:arcpath.T, b:arcpath.T) ordering
+<p> <span class = keyword> Function</span> addgroup(grp:seq.arcpath.T) seq.arcpath.T
+<p> <span class = keyword> Function</span> drawscript:T seq.word
+<p> <span class = keyword> Function</span> drawgraph(xxx:graph.T) seq.word
+<p> <span class = keyword> Function</span> drawgraph(arcs:seq.arc.T, include:set.T, exclude:set.T) seq.word
+<p> <span class = keyword> Function</span> drawgraph(xxx:graph.T, labels:set.labeledarc.T) seq.word<hr id ="makeDAG" >
+<h2> <span class = keyword> module</span> makeDAG.T </h2>
+<br> defines types: 
+<p> <span class = keyword> Function</span> makeDAG(g:graph.T) graph.T &lt*headercomment {Turn directed graph into DAG by reversing arcs} <span class = keyword> Function</span> sinks2(g:graph.T, b:set.T, n:T) set.T
+<p> <span class = keyword> Function</span> sources2(g:graph.T, b:set.T, n:T) set.T<hr id ="layergraph" >
+<h2> <span class = keyword> module</span> layergraph.T </h2>
+<br> defines types:  layeredgraph
+<p> <span class = keyword> Export</span> g(layeredgraph.T) graph.T
+<p> <span class = keyword> Export</span> layers(layeredgraph.T) seq.seq.T
+<p> <span class = keyword> Export</span> layeredgraph(g:graph.T, layers:seq.seq.T) layeredgraph.T
+<p> <span class = keyword> Function</span> layer(g:graph.T) layeredgraph.T &lt*headercomment {expect DAG as input} none &lthr id =" barycenter" > section <span class = keyword> module</span> barycenter.T defines types:  baryinfo
+<p> <span class = keyword> Function</span> >1(a:baryinfo.T, b:baryinfo.T) ordering
+<p> <span class = keyword> Function</span> decreasecrosses(g:graph.T, layers:seq.seq.T) seq.seq.T<hr id ="timestamp" >
+<h2> <span class = keyword> module</span> timestamp </h2>
+<br> defines types:  timestamp
+<p> Export type:timestamp
+<p> <span class = keyword> Function</span> testjulian boolean
+<p> <span class = keyword> Function</span> tojulian(year:int, month:int, day:int) int
+<p> <span class = keyword> Function</span> dayofyear(t:timestamp) int
+<p> <span class = keyword> Function</span> fromJuliantointseq(dt:int) seq.int
+<p> <span class = keyword> Function</span> timestamplit(t:UTF8) timestamp <*headercomment {assumes t is in format 2019-12-12T12:48:11} <span class = keyword> Function</span> totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int) timestamp
+<p> <span class = keyword> Function</span> decompose(ts:timestamp) seq.int <*headercomment {returns sequence of year, month, day, hour, minute, second} <span class = keyword> Function</span> print(ts:timestamp) seq.word
+<p> <span class = keyword> Function</span> asseconds(t:timestamp) int
+<p> <span class = keyword> Function</span> totimestamp(seconds:int) timestamp 

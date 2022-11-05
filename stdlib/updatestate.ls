@@ -51,17 +51,18 @@ for acc = "", a ∈ breakparagraph.data.first.input do
  else
   for txt = "", have = "", lastbreak = 0, p ∈ a do
    if p ∈ "+=" then
-    next(if p ∈ "+" then txt + "/br+"
-    else txt >> 1 + "/br" + last.txt + p
-    , have
-    , 0
-    )
+    next(
+     if p ∈ "+" then
+      txt + "/br+"
+     else
+      txt >> 1 + "/br" + last.txt + p
+     , have
+     , 0)
    else
     let addbreak = lastbreak > 10 ∧ last.txt ∈ "."
     next(if addbreak then txt + "/br" + space + p else txt + p
-    , if p ∈ "+=" then have + p else have
-    , if addbreak then 0 else lastbreak + 1
-    )
+     , if p ∈ "+=" then have + p else have
+     , if addbreak then 0 else lastbreak + 1)
   /for (acc + "/p" + txt)
 /for ([file(o, acc)])
 
@@ -75,21 +76,27 @@ type result is arcs:seq.arc.filename, defs2:set.cmdpara
 
 function tofilename(u:UTF8) filename
 let t = break(tobyte.toint.char1."/", toseqbyte.u)
-filename(if length.t > 1 then "+$(towords.UTF8(toseqbyte.u >> (length.last.t + 1)))"
-else "+.ls" /if
+filename(if length.t > 1 then
+ "+$(towords.UTF8(toseqbyte.u >> (length.last.t + 1)))"
+else
+ "+.ls"
+/if
 + towords.UTF8.last.t)
 
 function substitute(s:seq.word, b:seq.word, replacement:seq.word) seq.word
 let i = findindex(s, last.b)
-if i > length.s then s
+if i > length.s then
+ s
 else if subseq(s, i - length.b + 1, i) = b then
  subseq(s, 1, i - length.b) + replacement + substitute(s << i, b, replacement)
-else subseq(s, 1, i) + substitute(s << i, b, replacement)
+else
+ subseq(s, 1, i) + substitute(s << i, b, replacement)
 
 Function updatestate2(input:seq.file, o:seq.word, builddir:seq.word) seq.file
 let lines = toseq(asset.breaklines.data.first.input ∩ asset.breaklines.data.input_2)
 let unchanged = 
- if isempty.lines then empty:seq.filename
+ if isempty.lines then
+  empty:seq.filename
  else
   let i = findindex(toseqbyte.first.lines, tobyte.32)
   for txt = empty:seq.filename, line ∈ lines do
@@ -108,33 +115,36 @@ let out =
  /for (
   for acc = acc2 + "/br # remove outdated files", dated ∈ toseq.outdated do
    acc + "/br rm $(space)-f" + fullname.dated
-  /for (createorder(subgraph(g, outdated), defs2.r, acc)))
+  /for (createorder(subgraph(g, outdated), defs2.r, acc))
+ )
 [file(o, out)
-, file("+tmp changed.html", %.changed)
-, file("+tmp unchanged.html", %.unchanged)
-, file("+tmp sinks.html", %.sinks.g)
-]
+ , file("+tmp changed.html", %.changed)
+ , file("+tmp unchanged.html", %.unchanged)
+ , file("+tmp sinks.html", %.sinks.g)]
 
 function buildgraph(inputs:seq.file, builddir:seq.word) result
 let allfile = for acc = empty:seq.seq.word, f ∈ inputs do acc + breakparagraph.data.f /for (acc)
 for acc = empty:seq.arc.filename
-, defs2 = empty:set.cmdpara
-, defines = empty:set.defines
-, aaa ∈ allfile
+ , defs2 = empty:set.cmdpara
+ , defines = empty:set.defines
+ , aaa ∈ allfile
 do
  let aa = substitute(aaa, "+$build", builddir)
- if first.aa ∈ "comment" then next(acc, defs2, defines)
+ if first.aa ∈ "comment" then
+  next(acc, defs2, defines)
  else if first.aa ∈ "define" then
   next(acc
-  , defs2
-  , for newcmds = defines, cmd = "", w ∈ aa << 1 + "define" do
-   if w ∈ "define" then
-    {defines x lib}
-    if length.cmd = 2 then next(newcmds + defines(cmd_1, cmd_2, [cmd_1]), "")
-    else next(newcmds + defines(cmd_1, cmd_2, cmd << 2), "")
-   else next(newcmds, cmd + w)
-  /for (newcmds)
-  )
+   , defs2
+   , for newcmds = defines, cmd = "", w ∈ aa << 1 + "define" do
+    if w ∈ "define" then
+     {defines x lib}
+     if length.cmd = 2 then
+      next(newcmds + defines(cmd_1, cmd_2, [cmd_1]), "")
+     else
+      next(newcmds + defines(cmd_1, cmd_2, cmd << 2), "")
+    else
+     next(newcmds, cmd + w)
+   /for (newcmds))
  else
   let cmd0 = first.aa
   let bb = lookup(defines, defines(cmd0, cmd0, ""))
@@ -146,16 +156,18 @@ do
   let tmp2 = getfilenames(builddir + cmdlib + subseq(aa, 2, length.aa - length.rest + 3))
   let tail = tmp2_2
   let filenames = [tmp2_1] + tmp2 << 2
-  next(for arcs = acc, fn ∈ filenames do
-   arcs + arc(tail, fn)
-  /for (
-   if cmd ∈ "makelib" then
-    arcs + arc(changeext(tail, "libsrc"), tail)
-    + arc(changeext(tail, "libinfo"), tail)
-   else arcs)
-  , defs2 + cmdpara(tail, filenames, rest, bb_1)
-  , defines
-  )
+  next(
+   for arcs = acc, fn ∈ filenames do
+    arcs + arc(tail, fn)
+   /for (
+    if cmd ∈ "makelib" then
+     arcs + arc(changeext(tail, "libsrc"), tail)
+     + arc(changeext(tail, "libinfo"), tail)
+    else
+     arcs
+   )
+   , defs2 + cmdpara(tail, filenames, rest, bb_1)
+   , defines)
 /for (result(acc, defs2))
 
 function createorder(g:graph.filename, defs:set.cmdpara, out:seq.word) seq.word
@@ -167,14 +179,13 @@ else
  for txt = out, p ∈ if isempty.sinks then toseq.nodes.g else sinks do
   let cmdpara = 
    lookup(defs
-   , cmdpara(p, empty:seq.filename, empty:seq.word, defines("noop"_1, "noop"_1, ""))
-   )
+    , cmdpara(p, empty:seq.filename, empty:seq.word, defines("noop"_1, "noop"_1, "")))
   if isempty.cmdpara then txt else txt + tosetvars(cmdpara_1, p)
  /for (
   createorder(subgraph(g, nodes.g \ asset.sinks)
-  , defs
-  , txt + "/br #________________"
-  ))
+   , defs
+   , txt + "/br #________________")
+ )
 
 Function >1(a:filename, b:filename) ordering
 alphaword.name.a >1 alphaword.name.b ∧ alphaword.ext.a >1 alphaword.ext.b
@@ -188,17 +199,17 @@ let eq = [encodeword.[char.8], "="_1, encodeword.[char.8]]
 let node = fullname.fn
 let parts = print.parts.cmdpara
 let cmd = cmd.cmdpara
-if lib.cmd ∈ "shell" then "/br $(cmds.cmd + parts << 1) >" + node
+if lib.cmd ∈ "shell" then
+ "/br $(cmds.cmd + parts << 1) >" + node
 else if cmds.cmd = "makelib" then
  for depends = ""
- , libinfo = ""
- , ccode = "void init_libs () {"
- , u ∈ reverse.extractValue(data.cmdpara, "uses")
+  , libinfo = ""
+  , ccode = "void init_libs () {"
+  , u ∈ reverse.extractValue(data.cmdpara, "uses")
  do
   next(depends + fullname.filename."+$build $(u).$libtype"
-  , if isempty.libinfo then "$(u).libinfo" else libinfo + u
-  , "void init_$(u) () ; $(ccode) init_$(u) () ;"
-  )
+   , if isempty.libinfo then "$(u).libinfo" else libinfo + u
+   , "void init_$(u) () ; $(ccode) init_$(u) () ;")
  /for (
   let out = changeext(fn, "libsrc")
   "
@@ -208,7 +219,8 @@ else if cmds.cmd = "makelib" then
    /br libexe $(lib.cmd) makebitcode+$build $([name.out] + "." + ext.out + libinfo)
    /br dependlibs $(eq + dq.depends)
    /br ccode $(eq + dq.ccode)
-   /br linklibrary $(name.fn)")
+   /br linklibrary $(name.fn)"
+ )
 else
  "
   /p # $(dq.[node])

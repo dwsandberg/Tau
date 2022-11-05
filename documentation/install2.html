@@ -1,0 +1,55 @@
+<!doctype html> <meta charset =" UTF-8" ><style><!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}span.literal {color:red ;} span.comment {color:green ;}span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style><script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).getBBox () ;
+arcs.forEach (function (idval, index) {if (index > 0) {
+let element = document.getElementById (idval) ; let d ="M"+(bb.x+bb.width)+","+(bb.y+bb.height)+element.getAttribute ("d").substring (5) ; element.setAttribute ("d", d) ;}}) ;} </script>
+<style>.arcs {fill:none ; stroke:black ; stroke-width:.07 ;}.nodes {font-size:.03em; stroke-width:.1 ;} svg g:hover text {opacity:1;} svg g:hover rect {opacity:1;} </style>
+<svg id ="svg10" dqns ="http://www.w3.org/2000/svg" width ="100%" viewBox ="5.0 -1 29.00 22.90" onload ="[[52, 53, 54, 55], [56, 57, 58, 59, 60], [61, 62, 63, 64], [65, 66], [67, 68, 69], [71, 72, 73], [74, 75, 76, 77, 78, 79], [80, 81, 82, 83, 84, 85], [87, 88, 89, 90], [91, 92], [94, 95], [96, 97], [98, 99, 100, 101]].forEach (shiftstart)" > <text id ="52" class ="nodes" x ="6.000" y ="1.600" > real </text>
+<path id ="53" class ="arcs" d ="M 0 0 L 12.000 0.800 L 18.000 0.800 L 24.000 0.800" ></path>
+<path id ="54" class ="arcs" d ="M 0 0 L 12.000 2.400 L 18.000 12.000" ></path>
+<path id ="55" class ="arcs" d ="M 0 0 L 12.000 1.600 L 18.000 1.600 L 24.000 15.200" ></path>
+<text id ="56" class ="nodes" x ="12.000" y ="6.400" > words </text>
+<path id ="57" class ="arcs" d ="M 0 0 L 18.000 5.600" ></path>
+<path id ="58" class ="arcs" d ="M 0 0 L 18.000 12.000" ></path>
+<path id ="59" class ="arcs" d ="M 0 0 L 18.000 6.400 L 24.000 15.200" ></path>
+<path id ="60" class ="arcs" d ="M 0 0 L 18.000 7.200" ></path>
+<text id ="61" class ="nodes" x ="6.000" y ="4.000" > process </text>
+<path id ="62" class ="arcs" d ="M 0 0 L 12.000 4.800 L 18.000 4.800 L 24.000 0.800" ></path>
+<path id ="63" class ="arcs" d ="M 0 0 L 12.000 4.000 L 18.000 12.000" ></path>
+<path id ="64" class ="arcs" d ="M 0 0 L 12.000 3.200 L 18.000 3.200 L 24.000 15.200" ></path>
+<text id ="65" class ="nodes" x ="12.000" y ="20.800" > set </text>
+<path id ="66" class ="arcs" d ="M 0 0 L 18.000 20.800 L 24.000 15.200" ></path>
+<text id ="67" class ="nodes" x ="18.000" y ="5.600" > encoding </text>
+<path id ="68" class ="arcs" d ="M 0 0 L 24.000 0.800" ></path>
+<path id ="69" class ="arcs" d ="M 0 0 L 24.000 15.200" ></path>
+<text id ="70" class ="nodes" x ="24.000" y ="0.800" > bits </text>
+<text id ="71" class ="nodes" x ="18.000" y ="12.000" > UTF8 </text>
+<path id ="72" class ="arcs" d ="M 0 0 L 24.000 0.800" ></path>
+<path id ="73" class ="arcs" d ="M 0 0 L 24.000 15.200" ></path>
+<text id ="74" class ="nodes" x ="6.000" y ="10.400" > standard </text>
+<path id ="75" class ="arcs" d ="M 0 0 L 12.000 6.400" ></path>
+<path id ="76" class ="arcs" d ="M 0 0 L 12.000 12.800 L 18.000 12.000" ></path>
+<path id ="77" class ="arcs" d ="M 0 0 L 12.000 8.800 L 18.000 8.800 L 24.000 15.200" ></path>
+<path id ="78" class ="arcs" d ="M 0 0 L 12.000 12.000 L 18.000 7.200" ></path>
+<path id ="79" class ="arcs" d ="M 0 0 L 12.000 15.200" ></path>
+<text id ="80" class ="nodes" x ="6.000" y ="18.400" > file </text>
+<path id ="81" class ="arcs" d ="M 0 0 L 12.000 18.400 L 18.000 18.400 L 24.000 0.800" ></path>
+<path id ="82" class ="arcs" d ="M 0 0 L 12.000 20.000 L 18.000 12.000" ></path>
+<path id ="83" class ="arcs" d ="M 0 0 L 12.000 17.200" ></path>
+<path id ="84" class ="arcs" d ="M 0 0 L 12.000 19.200 L 18.000 19.200 L 24.000 15.200" ></path>
+<path id ="85" class ="arcs" d ="M 0 0 L 12.000 15.200" ></path>
+<text id ="86" class ="nodes" x ="18.000" y ="16.800" > stack </text>
+<text id ="87" class ="nodes" x ="12.000" y ="17.200" > format </text>
+<path id ="88" class ="arcs" d ="M 0 0 L 18.000 12.000" ></path>
+<path id ="89" class ="arcs" d ="M 0 0 L 18.000 16.800" ></path>
+<path id ="90" class ="arcs" d ="M 0 0 L 18.000 17.600 L 24.000 15.200" ></path>
+<text id ="91" class ="nodes" x ="6.000" y ="20.800" > graph </text>
+<path id ="92" class ="arcs" d ="M 0 0 L 12.000 20.800" ></path>
+<text id ="93" class ="nodes" x ="24.000" y ="15.200" > otherseq </text>
+<text id ="94" class ="nodes" x ="18.000" y ="7.200" > xxhash </text>
+<path id ="95" class ="arcs" d ="M 0 0 L 24.000 0.800" ></path>
+<text id ="96" class ="nodes" x ="6.000" y ="21.600" > sparseseq </text>
+<path id ="97" class ="arcs" d ="M 0 0 L 12.000 21.600 L 18.000 21.600 L 24.000 15.200" ></path>
+<text id ="98" class ="nodes" x ="12.000" y ="15.200" > textio </text>
+<path id ="99" class ="arcs" d ="M 0 0 L 18.000 16.000 L 24.000 0.800" ></path>
+<path id ="100" class ="arcs" d ="M 0 0 L 18.000 12.000" ></path>
+<path id ="101" class ="arcs" d ="M 0 0 L 18.000 15.200 L 24.000 15.200" ></path>
++</svg> 

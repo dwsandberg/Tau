@@ -15,40 +15,40 @@ use sparseseq.word
 Function enumerate(input:seq.file, o:seq.word) seq.file
 let message = "The data below this line was auto generated."
 for data = ""
-, auto = ""
-, continue = true
-, p ∈ breakparagraph.data.first.input
+ , auto = ""
+ , continue = true
+ , p ∈ breakparagraph.data.first.input
 while continue
 do
- if p = message then next(data, auto, false)
+ if p = message then
+  next(data, auto, false)
  else if subseq(p, 1, 2) = "enumerationtype =" then
   next(data + "/p" + p
-  , auto
-  + enumerate(extractValue(p, "enumerationtype")
-  , extractValue(p, "data")
-  , "withvalues"_1 ∈ extractValue(p, "flags")
-  , "nodecs"_1 ∈ extractValue(p, "flags")
-  , extractValue(p, "decodename")
-  )
-  , true
-  )
+   , auto
+   + enumerate(extractValue(p, "enumerationtype")
+    , extractValue(p, "data")
+    , "withvalues"_1 ∈ extractValue(p, "flags")
+    , "nodecs"_1 ∈ extractValue(p, "flags")
+    , extractValue(p, "decodename"))
+   , true)
  else
-  next(data + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if
-  + "/p"
-  , auto
-  , true
-  )
+  next(
+   data + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if
+   + "/p"
+   , auto
+   , true)
 /for (
- [file(filename.o
- , data + "/p" + message
- + "/p_________________________________________"
- + auto >> 1
- )
- ])
+ [
+  file(filename.o
+   , data + "/p" + message
+   + "/p_________________________________________"
+   + auto >> 1)
+  ]
+)
 
 * The /keyword enumeration cmd is used to generate code in a module for enumeration types instead of
 creating the code by hand. If the following in a file named enum.ls it will generate two enumeration
-types and operation on them.
+types and operations on them.
 
 *____________________
 
@@ -78,23 +78,28 @@ let codes =
   for acc = sparseseq."?"_1, state = 1, code = first.codes0, w ∈ codes0 << 1 do
    if state = 1 then
     next(replaceS(acc, toint.merge("0x" + code) + 1, [w]), 0, code)
-   else next(acc, 1, w)
+   else
+    next(acc, 1, w)
   /for (for txt = "", e ∈ acc do txt + e /for (txt))
- else codes0
-if nodefs then ""
+ else
+  codes0
+if nodefs then
+ ""
 else
  "
   /p type $(type) is toint:int
   /p Export toint ($(type)) int
   /p Export $(type) (i:int) $(type)
   /p Export type:$(type)
-  /p $(pretty."Function = (a:$(type), b:$(type)) boolean toint.a = toint.b")" /if
+  /p $(pretty."Function = (a:$(type), b:$(type)) boolean toint.a = toint.b")"
+/if
 + for acc = "", list = "let discard = [", i ∈ arithseq(length.codes, 1, 1) do
- if codes_i = "?"_1 then next(acc, list)
+ if codes_i = "?"_1 then
+  next(acc, list)
  else
-  next(acc + "/p Function" + codes_i + type + type + "." + toword(i - 1)
-  , list + codes_i + ","
-  )
+  next(
+   acc + "/p Function" + codes_i + type + type + "." + toword(i - 1)
+   , list + codes_i + ",")
 /for (
  acc + "/p"
  + pretty("Function $(if isempty.decodename then "decode" else decodename) (code:$(type)) seq.word
@@ -103,4 +108,5 @@ else
  + ") then let r = [$(dq.codes)_(i+1)]"
  + "if r ≠ $(dq."?") then r else $(dq(type + "."))+toword.i else $(dq(type + "
   ."))+toword.i")
- + "/p") 
+ + "/p"
+) 

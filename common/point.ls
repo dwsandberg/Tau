@@ -35,15 +35,16 @@ Function *(a:real, b:point) point point(a * x.b, a * y.b, a * z.b, 1.0)
 
 Function cross(a:point, b:point) point
 point(y.a * z.b - z.a * y.b
-, z.a * x.b - x.a * z.b
-, x.a * y.b - y.a * x.b
-)
+ , z.a * x.b - x.a * z.b
+ , x.a * y.b - y.a * x.b)
 
 Function =(a:point, b:point) boolean x.a = x.b ∧ y.a = y.b ∧ z.a = z.b
 
 Function >1(a:point, b:point) ordering
-if (x.a >1 x.b) = LT then LT
-else if (x.a >1 x.b) = GT then GT
+if (x.a >1 x.b) = LT then
+ LT
+else if (x.a >1 x.b) = GT then
+ GT
 else if (y.a >1 y.b) = LT then LT else if (y.a >1 y.b) = GT then GT else z.a >1 z.b
 
 Function print(p:point) seq.word

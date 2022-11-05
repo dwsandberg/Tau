@@ -427,60 +427,61 @@ Function i64extend32s byte byte.196
 Function decodeop(code:byte) seq.word
 let discard = 
  [unreachable, block, loop, END, br
- , brif, return, call, callindirect, drop
- , select, localget, localset, localtee, globalget
- , globalset, i32load, i64load, f32load, f64load
- , i32load8s, i32load8u, i32load16s, i32load16u, i64load8s
- , i64load8u, i64load16s, i64load16u, i64load32s, i64load32u
- , i32store, i64store, f32store, f64store, i32store8
- , i32store16, i64store8, i64store16, i64store32, memorysize
- , memorygrow, i32const, i64const, f32const, f64const
- , i32eqz, i32eq, i32ne, i32lts, i32ltu
- , i32gts, i32gtu, i32les, i32leu, i32ges
- , i32geu, i64eqz, i64eq, i64ne, i64lts
- , i64ltu, i64gts, i64gtu, i64les, i64leu
- , i64ges, i64geu, f32eq, f32ne, f32lt
- , f32gt, f32le, f32ge, f64eq, f64ne
- , f64lt, f64gt, f64le, f64ge, i32clz
- , i32ctz, i32popcnt, i32add, i32sub, i32mul
- , i32divs, i32divu, i32rems, i32remu, i32and
- , i32or, i32xor, i32shl, i32shrs, i32shru
- , i32rotl, i32rotr, i64clz, i64ctz, i64popcnt
- , i64add, i64sub, i64mul, i64divs, i64divu
- , i64rems, i64remu, i64and, i64or, i64xor
- , i64shl, i64shrs, i64shru, i64rotl, i64rotr
- , f32abs, f32neg, f32ceil, f32floor, f32trunc
- , f32nearest, f32sqrt, f32add, f32sub, f32mul
- , f32div, f32min, f32max, f32copysign, f64abs
- , f64neg, f64ceil, f64floor, f64trunc, f64nearest
- , f64sqrt, f64add, f64sub, f64mul, f64div
- , f64min, f64max, f64copysign, i32wrapi64, i32truncf32s
- , i32truncf32u, i32truncf64s, i32truncf64u, i64extendi32s, i64extendi32u
- , i64truncf32s, i64truncf32u, i64truncf64s, i64truncf64u, f32converti32s
- , f32converti32u, f32converti64s, f32converti64u, f32demotef64, f64converti32s
- , f64converti32u, f64converti64s, f64converti64u, f64promotef32, i32reinterpretf32
- , i64reinterpretf64, f32reinterpreti32, f64reinterpreti64, i32extend8s, i32extend16s
- , i64extend8s, i64extend16s, i64extend32s]
+  , brif, return, call, callindirect, drop
+  , select, localget, localset, localtee, globalget
+  , globalset, i32load, i64load, f32load, f64load
+  , i32load8s, i32load8u, i32load16s, i32load16u, i64load8s
+  , i64load8u, i64load16s, i64load16u, i64load32s, i64load32u
+  , i32store, i64store, f32store, f64store, i32store8
+  , i32store16, i64store8, i64store16, i64store32, memorysize
+  , memorygrow, i32const, i64const, f32const, f64const
+  , i32eqz, i32eq, i32ne, i32lts, i32ltu
+  , i32gts, i32gtu, i32les, i32leu, i32ges
+  , i32geu, i64eqz, i64eq, i64ne, i64lts
+  , i64ltu, i64gts, i64gtu, i64les, i64leu
+  , i64ges, i64geu, f32eq, f32ne, f32lt
+  , f32gt, f32le, f32ge, f64eq, f64ne
+  , f64lt, f64gt, f64le, f64ge, i32clz
+  , i32ctz, i32popcnt, i32add, i32sub, i32mul
+  , i32divs, i32divu, i32rems, i32remu, i32and
+  , i32or, i32xor, i32shl, i32shrs, i32shru
+  , i32rotl, i32rotr, i64clz, i64ctz, i64popcnt
+  , i64add, i64sub, i64mul, i64divs, i64divu
+  , i64rems, i64remu, i64and, i64or, i64xor
+  , i64shl, i64shrs, i64shru, i64rotl, i64rotr
+  , f32abs, f32neg, f32ceil, f32floor, f32trunc
+  , f32nearest, f32sqrt, f32add, f32sub, f32mul
+  , f32div, f32min, f32max, f32copysign, f64abs
+  , f64neg, f64ceil, f64floor, f64trunc, f64nearest
+  , f64sqrt, f64add, f64sub, f64mul, f64div
+  , f64min, f64max, f64copysign, i32wrapi64, i32truncf32s
+  , i32truncf32u, i32truncf64s, i32truncf64u, i64extendi32s, i64extendi32u
+  , i64truncf32s, i64truncf32u, i64truncf64s, i64truncf64u, f32converti32s
+  , f32converti32u, f32converti64s, f32converti64u, f32demotef64, f64converti32s
+  , f64converti32u, f64converti64s, f64converti64u, f64promotef32, i32reinterpretf32
+  , i64reinterpretf64, f32reinterpreti32, f64reinterpreti64, i32extend8s, i32extend16s
+  , i64extend8s, i64extend16s, i64extend32s]
 let i = toint.code
 if between(i + 1, 1, 197) then
  let r = 
-  ["unreachable ? block loop ? ? ? ? ? ? ? END br brif ? return call callindirect ? ? ? ? ? ? ? ? drop
-   select ? ? ? ? localget localset localtee globalget globalset ? ? ? i32load i64load f32load f64load i32load8s
-   i32load8u i32load16s i32load16u i64load8s i64load8u i64load16s i64load16u i64load32s i64load32u i32store
-   i64store f32store f64store i32store8 i32store16 i64store8 i64store16 i64store32 memorysize memorygrow
-   i32const i64const f32const f64const i32eqz i32eq i32ne i32lts i32ltu i32gts i32gtu i32les i32leu i32ges
-   i32geu i64eqz i64eq i64ne i64lts i64ltu i64gts i64gtu i64les i64leu i64ges i64geu f32eq f32ne f32lt f32gt
-   f32le f32ge f64eq f64ne f64lt f64gt f64le f64ge i32clz i32ctz i32popcnt i32add i32sub i32mul i32divs
-   i32divu i32rems i32remu i32and i32or i32xor i32shl i32shrs i32shru i32rotl i32rotr i64clz i64ctz i64popcnt
-   i64add i64sub i64mul i64divs i64divu i64rems i64remu i64and i64or i64xor i64shl i64shrs i64shru i64rotl
-   i64rotr f32abs f32neg f32ceil f32floor f32trunc f32nearest f32sqrt f32add f32sub f32mul f32div f32min
-   f32max f32copysign f64abs f64neg f64ceil f64floor f64trunc f64nearest f64sqrt f64add f64sub f64mul f64div
-   f64min f64max f64copysign i32wrapi64 i32truncf32s i32truncf32u i32truncf64s i32truncf64u i64extendi32s
-   i64extendi32u i64truncf32s i64truncf32u i64truncf64s i64truncf64u f32converti32s f32converti32u f32converti64s
-   f32converti64u f32demotef64 f64converti32s f64converti32u f64converti64s f64converti64u f64promotef32
-   i32reinterpretf32 i64reinterpretf64 f32reinterpreti32 f64reinterpreti64 i32extend8s i32extend16s i64extend8s
-   i64extend16s i64extend32s"
-  _(i + 1)
-  ]
+  [
+   "unreachable ? block loop ? ? ? ? ? ? ? END br brif ? return call callindirect ? ? ? ? ? ? ? ? drop
+    select ? ? ? ? localget localset localtee globalget globalset ? ? ? i32load i64load f32load f64load i32load8s
+    i32load8u i32load16s i32load16u i64load8s i64load8u i64load16s i64load16u i64load32s i64load32u i32store
+    i64store f32store f64store i32store8 i32store16 i64store8 i64store16 i64store32 memorysize memorygrow
+    i32const i64const f32const f64const i32eqz i32eq i32ne i32lts i32ltu i32gts i32gtu i32les i32leu i32ges
+    i32geu i64eqz i64eq i64ne i64lts i64ltu i64gts i64gtu i64les i64leu i64ges i64geu f32eq f32ne f32lt f32gt
+    f32le f32ge f64eq f64ne f64lt f64gt f64le f64ge i32clz i32ctz i32popcnt i32add i32sub i32mul i32divs
+    i32divu i32rems i32remu i32and i32or i32xor i32shl i32shrs i32shru i32rotl i32rotr i64clz i64ctz i64popcnt
+    i64add i64sub i64mul i64divs i64divu i64rems i64remu i64and i64or i64xor i64shl i64shrs i64shru i64rotl
+    i64rotr f32abs f32neg f32ceil f32floor f32trunc f32nearest f32sqrt f32add f32sub f32mul f32div f32min
+    f32max f32copysign f64abs f64neg f64ceil f64floor f64trunc f64nearest f64sqrt f64add f64sub f64mul f64div
+    f64min f64max f64copysign i32wrapi64 i32truncf32s i32truncf32u i32truncf64s i32truncf64u i64extendi32s
+    i64extendi32u i64truncf32s i64truncf32u i64truncf64s i64truncf64u f32converti32s f32converti32u f32converti64s
+    f32converti64u f32demotef64 f64converti32s f64converti32u f64converti64s f64converti64u f64promotef32
+    i32reinterpretf32 i64reinterpretf64 f32reinterpreti32 f64reinterpreti64 i32extend8s i32extend16s i64extend8s
+    i64extend16s i64extend32s"
+   _(i + 1)]
  if r ≠ "?" then r else "byte." + toword.i
-else "byte." + toword.i 
+else
+ "byte." + toword.i 
