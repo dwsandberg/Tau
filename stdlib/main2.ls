@@ -183,10 +183,11 @@ for acc = empty:seq.symdef, sd ∈ toseq.prg.m do
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
   acc
  else
-  acc + symdef(sym.sd, removeFref.getCode(libcode, sym.sd), paragraphno.sd)
+  acc
+  + symdef4(sym.sd, removeFref.getCode(libcode, sym.sd), paragraphno.sd, getOptionsBits.sd)
 /for (
  for acc2 = acc, sd2 ∈ toseq(libcode \ asset.acc) do
-  acc2 + symdef(sym.sd2, removeFref.code.sd2, 0)
+  acc2 + symdef4(sym.sd2, removeFref.getCode(libcode, sym.sd2), 0, getOptionsBits.sd2)
  /for (
   midpoint("X", asset.acc2, empty:set.symdef, emptytypedict, libmods.m, empty:seq.seq.word)
  )

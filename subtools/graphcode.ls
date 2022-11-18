@@ -2,7 +2,7 @@ Module graphcode
 
 use standard
 
-use symbol
+use symbol2
 
 use graph.symbol
 

@@ -49,10 +49,7 @@ Export constdata seq.slot {From persistant}
 Export type:symbol {From symbol}
 
 Function tollvmtype(alltypes:typedict, s:symbol) llvmtype
-if s = Optionsym then
- function.[i64, i64, i64, i64]
-else
- function.tollvmtypelist(alltypes, s)
+function.tollvmtypelist(alltypes, s)
 
 function tollvmtypelist(alltypes:typedict, s:symbol) seq.llvmtype
 assert resulttype.s ≠ typeT report "TTT $(s)"

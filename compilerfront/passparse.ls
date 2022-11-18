@@ -75,8 +75,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
   let symsrc = src_(paragraphno.p)
   if first.symsrc ∈ "Builtin builtin" then
    if issimple.module.sym.p then
-    acc
-    + symdef(sym.p, addcommentoptions(symsrc, nopara.sym.p, empty:seq.symbol), paragraphno.p)
+    acc + symdef4(sym.p, empty:seq.symbol, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
    else
     let sym = sym.p
     acc
@@ -96,7 +95,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
   else
    assert first.symsrc ∈ "Function function" report symsrc
    let b = parse(symsrc, partdict, z)
-   acc + symdef(sym.p, addcommentoptions(symsrc, nopara.sym.p, code.b), paragraphno.p)
+   acc + symdef4(sym.p, code.b, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
  /for (prg + acc)
 /for (prg)
 
@@ -105,24 +104,24 @@ for prg = prgin, m ∈ toseq.modlist do
  for acc = prg, p ∈ srclink.m do
   let symsrc = src_(paragraphno.p)
   if first.symsrc ∈ "Export" then
-   symdef(sym.p, addcommentoptions(symsrc, nopara.sym.p, getCode(acc, sym.p)), paragraphno.p)
+   symdef4(sym.p, getCode(acc, sym.p), paragraphno.p, commentoptions(symsrc, nopara.sym.p))
    ∪ acc
   else
    acc
  /for (acc)
 /for (prg)
 
-function addcommentoptions(s:seq.word, nopara:int, code:seq.symbol) seq.symbol
+function commentoptions(s:seq.word, nopara:int) seq.word
 let s0 = s << if nopara = 0 then 0 else findindex(s, ")"_1)
 let s1 = s0 << findindex(s0, "{"_1)
 if isempty.s1 ∨ first.s1 ∉ "OPTION" then
- code
+ ""
 else
  for acc = "", w ∈ s1
  while w ∉ "{}"
  do
   if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE" then acc + w else acc
- /for (if isempty.acc then code else addoption(code, acc))
+ /for (acc)
 
 Function buildrequires(prg:seq.symdef) set.symdef
 let g3 = newgraph.abstractarcs.prg
@@ -142,24 +141,4 @@ else
   let newlist = if isunbound.head.a then list0 + head.a else list0
   let newacc = if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list, 0) else acc
   next(newacc, tail.a, newlist)
- /for (if isempty.list then acc else acc + symdef(last, list, 0))
-
-Function prescan2(s:seq.symdef) seq.symdef
-{removes name from locals and change length and getseqtype to GetSeqLength and GetSeqType
- }
-for acc = empty:seq.symdef, p ∈ s do
- for result = empty:seq.symbol, sym ∈ code.p do
-  if islocal.sym then
-   result + Local.value.sym
-  else if isdefine.sym then
-   result + Define.value.sym
-  else
-   result
-   + if isBuiltin.sym then
-    if name.sym ∈ "length" then
-     GetSeqLength
-    else if name.sym ∈ "getseqtype" then GetSeqType else sym
-   else
-    sym
- /for (acc + symdef(sym.p, result, 0))
-/for (acc) 
+ /for (if isempty.list then acc else acc + symdef(last, list, 0)) 

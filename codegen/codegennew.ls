@@ -70,12 +70,10 @@ for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ tos
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
   next(profilearcs, addresses)
  else
-  let options = getoption.code.sd
   next(
-   if "PROFILE"_1 ∈ options then
+   if isPROFILE.sd then
     for txt = profilearcs, sym2 ∈ toseq.asset.code.sd do
-     if isconstantorspecial.sym2 ∨ sym2 = sym.sd
-     ∨ name.module.sym2 ∈ "$base $for builtin internal" then
+     if isconstantorspecial.sym2 ∨ sym2 = sym.sd ∨ name.module.sym2 ∈ "builtin internal" then
       txt
      else
       txt + [sym.sd, sym2]
@@ -106,12 +104,12 @@ for acc = empty:set.symdef, sd ∈ toseq.prg.m do
  for acc2 = empty:seq.symbol, sy ∈ code.sd do
   acc2 + clearrequiresbit.replacestar(sy, baselib, libname)
  /for (
+  let newsym = replacestar(sym.sd, baselib, libname)
   acc
-  + symdef(replacestar(sym.sd, baselib, libname)
-   , acc2
-   , if isInternal.sym.sd then
-    -internalidx.sym.sd
-   else if library.module.sym.sd ∈ "*" then abs.paragraphno.sd else paragraphno.sd)
+  + if isInternal.sym.sd then
+   symdef4(newsym, acc2, internalidx.sym.sd, "ThisLibrary $(getOptions.sd)")
+  else
+   symdef4(newsym, acc2, externalNo.sd, getOptionsBits.sd)
  )
 /for (midpoint("X", acc, templates.m, typedict.m, libmods.m, src.m))
 
@@ -150,7 +148,12 @@ let bodies =
     acc2 + Local.e9
    /for (acc2 + if name.sym.@e ∈ "stacktrace" then stacktracesymbol else sym.@e)
   acc
-  + addfuncdef(geninfo, if isInternal.sym.@e then symdef(sym.@e, internalbody, paragraphno.@e) else @e)
+  + addfuncdef(geninfo
+   , if isInternal.sym.@e then
+    symdef4(sym.@e, internalbody, externalNo.@e, "ThisLibrary $(getOptions.@e)")
+   else
+    @e
+   )
  /for (acc)
 let f2 = 
  modulerecord([merge("init_" + libname)]
@@ -265,8 +268,7 @@ function addfuncdef(geninfo:geninfo, sd:symdef) internalbc
 let e = findtemplate.sym.sd
 assert not.isempty.e report "LL addfuncdef $(sym.sd)"
 let m = e_1
-let options = getoption.code.sd
-let code = removeoptions.code.sd
+let code = code.sd
 assert not.isempty.code report "codegen with no definition $(sym.sd) in" + library.module.sym.sd
 let nopara = arg.m
 let linit = 
@@ -276,7 +278,7 @@ let linit =
   , nopara + 1
   , empty:stack.int
   , empty:stack.Lcode2)
-let xx = if "PROFILE"_1 ∈ options then enableprofile.geninfo else geninfo
+let xx = if isPROFILE.sd then enableprofile.geninfo else geninfo
 let r = for l = linit, s ∈ code do processnext(l, sym.sd, xx, s) /for (l)
 BLOCKCOUNT(1, noblocks.r) + code.r + RET(r(regno.r + 1), slot.top.args.r)
 

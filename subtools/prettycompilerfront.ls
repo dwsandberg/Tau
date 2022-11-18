@@ -28,8 +28,6 @@ use seq.rename
 
 use standard
 
-use symbol
-
 use set.arc.symbol
 
 use graph.symbol
@@ -211,14 +209,12 @@ do
   /for (files + file(o, summary))
 )
 
-* The /keyword transform cmd takes a list of input source files. For each module in the input a pretty printed 
-file is  in the directory <Tau>/tmp    Addition parameters allows for different
-variants. 
-<* block    transform helloworld/helloworld.ls
+* The /keyword transform cmd takes a list of input source files. For each module in the input a pretty
+printed file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block
+transform helloworld/helloworld.ls
 /br transform helloworld/helloworld.ls flags = reorguse
 /br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit
-/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse
-*>
+/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse *>
 
 * This first variant does not require the source to be sematicaly correct but the syntax must be correct
 . It does not change the order of the paragraphs. 
@@ -229,10 +225,10 @@ variants.
 * The third is like the first but requires correct semantics. This allows some additional transformations
 such as" not (a = b)" to become" a /ne b"
 
-* If the parameter " flags = html" is used, an html file is produced with an index of modules. This option
-is useful for examining source code. For example </ block transform htmlcode+built core.libsrc flags
-= html*> If the option" flags = html noindex" is used then no index is included. This final form
-is useful for producing documentation with imbedded Tau code.
+* If the parameter" flags = html" is used, an html file is produced with an index of modules. This
+option is useful for examining source code. For example </ block transform htmlcode+built core.libsrc
+flags = html*> If the option" flags = html noindex" is used then no index is included. This final
+form is useful for producing documentation with imbedded Tau code.
 
 Function unusedsymbols(input:seq.file
  , o:seq.word
@@ -307,9 +303,10 @@ let out =
 
 type result2 is internaluse:set.symbol, externaluse:set.symbol
 
-* The /keyword unusedsymbols cmd analyzes code for unused functions. It forms the function call graph for the program. It then looks for any any sources
-in the call graph that are not the entry point of the program and lists them. Any functions that are
-generated from type definitions are also removed. 
+* The /keyword unusedsymbols cmd analyzes code for unused functions. It forms the function call graph
+for the program. It then looks for any any sources in the call graph that are not the entry point of
+the program and lists them. Any functions that are generated from type definitions are also removed
+. 
 /p The behavior can be modified with flags. If the flag /keyword all is included the all unused functions
 are listed and not just the roots. If the flag /keyword generated is included only the symbols generated
 from type definitions are included. If the flag /keyword excessExports is included symbols exported
@@ -362,7 +359,7 @@ let acc4 =
       newpara + plist_i + ","
      /for (newname.first.hasrename + if isempty.newpara then "" else "($(newpara >> 1)")
    let c = if isempty.hasrename then code.sd else code.sd << 1
-   let tmp = if Optionsym = last.c then c >> 2 else c
+   let tmp = c
    let newtext = 
     [src2_1] + newheader + %.resulttype.sym.sd
     + for acc = "", stk = empty:stack.seq.word, last = c_1, sym ∈ tmp << 1 do
@@ -463,17 +460,19 @@ else if nopara.sym = 2 ∧ name.sym ∈ "$" then
   else
    args_1 >> 1 + "$" + "(" + args_2 + ")" + dq
  push(pop(stk, 2), new)
-else if name.sym = "forexp"_1 ∧ length.toseq.stk ≥ nopara.sym then
+else if name.sym ∈ "$fortext" then
  let args = top(stk, nopara.sym)
- let k = (nopara.sym - 3) / 2
+ let whileexp = args_(length.args - 3)
  push(pop(stk, nopara.sym)
-  , for acc6 = "for", i ∈ arithseq(k, 1, 1) do
-   acc6 + args_(i + k) + if i = k then "∈" else "=" /if + args_i
-   + ","
+  , for acc6 = "for", i = 1, name ∈ top.stk do
+   next(
+    acc6 + name + if i = length.top.stk then "∈" else "=" /if + args_i
+    + ","
+    , i + 1)
   /for (
-   let whileexp = args_(length.args - 1)
+   assert true report acc6 + "-1:$(length.args - 1)-2:$(args_(length.args - 2)) while $(whileexp)"
    acc6 >> 1 + if whileexp = "true" then "" else "while $(whileexp)" /if
-   + "do $(args_(length.args - 2)) /for ($(last.args))"
+   + "do $(args_(length.args - 2)) /for ($(args_(length.args - 1)))"
   ))
 else if length.toseq.stk ≥ nopara.sym then
  if isSequence.sym then

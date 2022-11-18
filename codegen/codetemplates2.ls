@@ -110,7 +110,7 @@ do
     , 0)
   next(used + toseq.asset.code.sd, crecord + sd, indefines)
  else if isInternal.firstsym then
-  if {firstsym is external call} paragraphno.cc = -1 then
+  if {firstsym is external call} externalNo.cc = 1 ∧ isThisLibrary.cc then
    let discard5 = call(alltypes, firstsym, "CALL"_1, name.firstsym)
    next(used, crecord, indefines)
   else if not.isbase then
@@ -122,9 +122,9 @@ do
   let discard5 = 
    addtemplate(firstsym
     , 1
-    , GEP(r.1, i64, slot.global([merge("$$" + toword.paragraphno.cc)], i64, C64.0)))
+    , GEP(r.1, i64, slot.global([merge("$$" + toword.externalNo.cc)], i64, C64.0)))
   next(used, crecord, indefines)
- else if libname = library.module.firstsym ∨ paragraphno.cc ≤ 0 then
+ else if libname = library.module.firstsym ∨ isThisLibrary.cc ∨ externalNo.cc = 0 then
   next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
  else
   {not define in this library}
@@ -259,13 +259,16 @@ report
  + for txt = "", sd ∈ toseq.extname do
   txt + "/br" + %.sym.sd + library.module.sym.sd
  /for (txt + stacktrace)
-if paragraphno.b_1 = -1 then
+if externalNo.b_1 = 1 ∧ isThisLibrary.b_1 then
  name.s
 else
- merge.[if paragraphno.b_1 ≥ 0 ∨ isInternal.s then library.module.s else library
+ merge.[
+  if isInternal.s then
+   library.module.s
+  else if isThisLibrary.b_1 then library else library.module.s
   , "$"_1
   , "$"_1
-  , toword.abs.paragraphno.b_1]
+  , toword.externalNo.b_1]
 
 Function addtype(a:mytype) int
 addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do

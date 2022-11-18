@@ -31,12 +31,13 @@ module referenced by the module in the /keyword use clauses. The /keyword exclud
 modules to ignore in the use clauses.The /keyword include option restricts the modules considered to
 those listed.
 
-* Examples:<* block /br > usegraph /so+built core.libsrc <* none <a href ="../Tools/install1.html" > Result
-</a> *>
-/br  > usegraph /so+built core.libsrc exclude = seq standard <* none <a href ="../Tools/install2.html" >
-Result </a> *>
-/br  > usegraph /so  +built core.libsrc include = UTF8 words  standard textio   exclude= seq standard  <* none <a href ="../Tools/install3.html" > Result </a> *>
-/br  > usegraph /so +core UTF8.ls textio words   standard   encoding xxhash  exclude= seq standard *>
+* Examples:<* block
+/br > usegraph /so+built core.libsrc <* none <a href ="../Tools/install1.html" > Result </a> *>
+/br > usegraph /so+built core.libsrc exclude = seq standard <* none <a href ="../Tools/install2
+.html" > Result </a> *>
+/br > usegraph /so+built core.libsrc include = UTF8 words standard textio exclude = seq standard
+<* none <a href ="../Tools/install3.html" > Result </a> *>
+/br > usegraph /so+core UTF8.ls textio words standard encoding xxhash exclude = seq standard *>
 
 * The last two examples give the same result. The first excludes modules from consideration and the
 second only includes source files of modules that should be included. 
@@ -74,8 +75,8 @@ the modules to be document if the option is not empty.
 * If a paragraph in the library is of the form:* usegraph exclude <list of modules> include <list of
 modules> then a use graph will be construction including and excluding the modules listed. Both the
 exclude and include are optional, but for a large library should be used to restrict the size of the graph
-. The use graph below was created using the line <* block 
-* usegraph exclude standard seq set UTF8 stack graph otherseq *>
+. The use graph below was created using the line <* block * usegraph exclude standard seq set UTF8
+stack graph otherseq *>
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 

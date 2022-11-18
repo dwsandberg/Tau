@@ -62,15 +62,12 @@ for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
    , data)
  else
   next(mp, data + [tobyte.10, tobyte.10] + data.i)
-/for (
- let allsrc = breakparagraph.data
- compilerfront2:T(option, breakparagraph.data, mp)
-)
+/for (compilerfront2:T(option, breakparagraph.data, mp))
 
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint) midpoint
 {OPTION PROFILE}
 let m = compilerfront3(option, allsrc, libinfo)
-if first.option.m ∈ "library text pass1 pass1a" then
+if first.option.m ∈ "library text pass1 pass1a prebind" then
  m
 else
  let libname = extractValue(first.allsrc, "Library")_1
@@ -87,11 +84,12 @@ Function pass2:T(librarymap:seq.word, knownsymbols0:set.symdef, t:typedict, opti
 {OPTION PROFILE}
 let knownsymbols = 
  for acc2 = empty:set.symdef, pele0 ∈ toseq.knownsymbols0 do
+  let code = code.pele0
   acc2
-  + if isempty.code.pele0 then
+  + if isempty.code then
    pele0
   else
-   for acc = [first.code.pele0], last = first.code.pele0, c ∈ code.pele0 << 1 do
+   for acc = [first.code], last = first.code, c ∈ code << 1 do
     next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
    /for (symdef(sym.pele0, acc, paragraphno.pele0))
  /for (acc2)
@@ -119,20 +117,14 @@ function subpass2:T(option:seq.word
 {OPTION PROFILE}
 for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
- let fullcode = code.pele
- let options = getoption.fullcode
- let code = removeoptions.fullcode
- if isempty.code ∨ "VERYSIMPLE"_1 ∈ options ∨ "INLINE"_1 ∈ options then
+ let code = code.pele
+ if isempty.code ∨ isVERYSIMPLE.pele ∨ isINLINE.pele then
   next(big, small, pele ∪ core)
- else if "COMPILETIME"_1 ∈ options then
-  let code4 = firstopt:T(librarymap, core, s, fullcode, options, true, typedict)
-  next(big, small, symdef(s, code4, paragraphno.pele) ∪ core)
+ else if isCOMPILETIME.pele then
+  next(big, small, firstopt:T(librarymap, core, pele, true, typedict) ∪ core)
  else if length.code < 30 then
-  let t = firstopt:T(librarymap, core, s, fullcode, options, true, typedict)
-  if "INLINE"_1 ∈ getoption.t then
-   next(big, small, symdef(s, t, paragraphno.pele) ∪ core)
-  else
-   next(big, symdef(s, t, paragraphno.pele) ∪ small, core)
+  let t = firstopt:T(librarymap, core, pele, true, typedict)
+  if isINLINE.t then next(big, small, t ∪ core) else next(big, t ∪ small, core)
  else
   next(big + pele, small, core)
 /for (
@@ -145,29 +137,19 @@ for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toproce
 Function additionalpass:T(librarymap:seq.word, p:seq.symdef, start:set.symdef, typedict:typedict) set.symdef
 {OPTION PROFILE}
 for acc = start, prgele ∈ p do
- let code3 = code.prgele
- let sym3 = sym.prgele
- if isempty.code3 then
+ if isempty.code.prgele then
   prgele ∪ acc
  else
-  symdef(sym3
-   , firstopt:T(librarymap, acc, sym3, code3, getoption.code3, false, typedict)
-   , paragraphno.prgele)
-  ∪ acc
+  firstopt:T(librarymap, acc, prgele, false, typedict) ∪ acc
 /for (acc)
 
-Function firstopt:T(librarymap:seq.word
- , p:set.symdef
- , s:symbol
- , code:seq.symbol
- , options:seq.word
- , first:boolean
- , typedict:typedict) seq.symbol
+function firstopt:T(librarymap:seq.word, p:set.symdef, sd:symdef, first:boolean, typedict:typedict) symdef
+let s = sym.sd
 let pdict = 
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1) do
   pmap + localmap2(parano, [Local.parano])
  /for (pmap)
-let a = xxx:T(librarymap, p, removeoptions.code, s, pdict, typedict)
+let a = xxx:T(librarymap, p, code.sd, s, pdict, typedict)
 let t = 
  if first then
   a
@@ -177,9 +159,10 @@ let t =
   expandresult(nextvar.a, t2, flags.a)
  else
   a
+let options = getOptions.sd
 let newoptions1 = 
  if between(length.code.t, 1, 21) ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t
- ∧ "NOINLINE"_1 ∉ options then
+ ∧ not.isNOINLINE.sd then
   if isverysimple(nopara.s, code.t) then "INLINE VERYSIMPLE" else "INLINE"
  else
   ""
@@ -190,7 +173,7 @@ let newoptions =
   options
  else
   toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
-if newoptions = "" then code.t else code.t + Words.newoptions + Optionsym
+symdef4(sym.sd, code.t, paragraphno.sd, newoptions)
 
 function xxx:T(librarymap:seq.word
  , p:set.symdef
@@ -295,13 +278,13 @@ do
    next(flags, result >> 2 + newcode, nextvar, map)
   else
    next(flags, result >> 1 + Define.nextvar + newcode, nextvar + 1, map)
- else if wordname.sym ∈ "forexp" ∧ isBuiltin.sym then
+ else if name.sym ∈ "checkfornoop" ∧ module.sym = internalmod then
   let noop = forexpisnoop(sym, result)
   if not.isempty.noop then
    next(flags, noop, nextvar, map)
   else
    next(flags ∨ Hasfor, result + sym, nextvar, map)
- else if wordname.sym ∈ "indexseq45" ∧ isInternal.sym then
+ else if wordname.sym ∈ "indexseq45 next idxNB" ∧ isInternal.sym then
   next(flags ∨ Hasfor, result + sym, nextvar, map)
  else if sym = self then
   next(flags ∨ Callself, result + sym, nextvar, map)
@@ -316,8 +299,8 @@ do
     next(flags, result + sym, nextvar, map)
  else
   let nopara = nopara.sym
-  let dd = getCode(p, sym)
-  let options = getoption.dd
+  let b = getSymdef(p, sym)
+  let options = if isempty.b then "" else getOptions.b_1
   let compiletime = 
    if first."COMPILETIME" ∉ options ∧ (name.sym ∉ "_" ∨ nopara ≠ 2) then
     empty:seq.symbol
@@ -331,14 +314,14 @@ do
    let newresult = checkemptycat:T(sym, result)
    if not.isempty.newresult then
     next(flags, newresult, nextvar, map)
-   else if first."VERYSIMPLE" ∈ options then
-    next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
-   else if "INLINE"_1 ∉ options then
-    let newflags = if "STATE"_1 ∈ options ∨ isGlobal.sym then State ∨ flags else flags
-    next(newflags, result + sym, nextvar, map)
    else
-    let code = removeoptions.dd
-    if isempty.code then
+    let code = if isempty.b then empty:seq.symbol else code.b_1
+    if first."VERYSIMPLE" ∈ options then
+     next(flags, result + code << nopara.sym, nextvar, map)
+    else if "INLINE"_1 ∉ options then
+     let newflags = if "STATE"_1 ∈ options ∨ isGlobal.sym then State ∨ flags else flags
+     next(newflags, result + sym, nextvar, map)
+    else if isempty.code then
      next(flags, result + sym, nextvar, map)
     else if length.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then
      {function just returns result} next(flags, result, nextvar, map)

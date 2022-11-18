@@ -153,10 +153,7 @@ if isempty.r then "PASS testopt" else "testopt $(r)"
 
 Function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int) seq.word
 let name = merge("optest" + toword.no)
-let code = 
- for acc = "", p ∈ p2 do
-  if name = name.sym.p then %.removeoptions.code.p else acc
- /for (acc)
+let code = for acc = "", p ∈ p2 do if name = name.sym.p then %.code.p else acc /for (acc)
 if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1, "") then
  ""
 else

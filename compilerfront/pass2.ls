@@ -66,48 +66,86 @@ function isconstorlocal(p:seq.symbol) boolean
 length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
 Function expandforexp(code:seq.symbol, nextvarin:int) seq.symbol
-for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
- if isBuiltin.sym ∧ wordname.sym = "forexp"_1 then
-  let f = forexpcode(sym, result, nextvar)
-  next(code.f, nextvar.f)
- else if isInternal.sym ∧ wordname.sym ∈ "indexseq45" then
+for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
+ if sym = Exit ∧ module.last = internalmod ∧ name.last ∈ "next" then
+  next(acc >> 1 + continue.nopara.last, nextvar, sym)
+ else if not.isInternal.sym then
+  next(acc + sym, nextvar, sym)
+ else if wordname.sym ∈ "indexseq45 idxNB" then
   let theseqtype = (paratypes.sym)_1
-  let t = backparse2(result, length.result, 2, empty:seq.int)
-  let index = subseq(result, t_2, length.code)
-  let theseq = subseq(result, t_1, t_2 - 1)
-  let theseq2 = if isconstorlocal.theseq then first.theseq else Local(nextvar + 1)
+  let seqtype = Local.nextvar
   let newcode = 
-   subseq(result, 1, t_1 - 1)
-   + if isconstorlocal.theseq then empty:seq.symbol else theseq + Define(nextvar + 1) /if
-   + [theseq2, GetSeqType, Define.nextvar]
-   + index
-   + [Lit.1, PlusOp, Define(nextvar + 2)]
-   + indexseqcode(Local.nextvar, theseq2, Local(nextvar + 2), theseqtype, true)
-  next(newcode, nextvar + 3)
+   if isconstorlocal.[acc_(length.acc - 1)] ∧ isconstorlocal.[last.acc] then
+    let index = last.acc
+    let theseq = acc_(length.acc - 1)
+    acc >> 2
+    + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
+   else
+    let t = backparse2(acc, length.acc, 2, empty:seq.int)
+    let index0 = subseq(acc, t_2, length.acc)
+    let theseq0 = subseq(acc, t_1, t_2 - 1)
+    let theseq = if isconstorlocal.theseq0 then first.theseq0 else Local(nextvar + 1)
+    let index = if isconstorlocal.index0 then first.index0 else Local(nextvar + 2)
+    subseq(acc, 1, t_1 - 1)
+    + if isconstorlocal.theseq0 then empty:seq.symbol else theseq0 + Define.value.theseq /if
+    + if isconstorlocal.index0 then empty:seq.symbol else index0 + Define.value.index /if
+    + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
+  next(newcode, nextvar + 3, sym)
  else
-  next(result + sym, nextvar)
-/for (result)
+  next(if name.sym ∈ "checkfornoop" then acc else acc + sym, nextvar, sym)
+/for (acc)
 
-Function forexpisnoop(forsym:symbol, code:seq.symbol) seq.symbol
-let len = length.code + 1
-if nopara.forsym = 7 ∧ length.code > 4 ∧ first.paratypes.forsym = resulttype.forsym
-∧ code_(len - 2) = Littrue
-∧ isseq.resulttype.last.code
-∧ wordname.code_(len - 3) = "+"_1
-∧ name.module.code_(len - 3) ∈ "seq"
-∧ isSequence.code_(len - 4)
-∧ nopara.code_(len - 4) = 1
-∧ last.code = code_(len - 8)
-∧ last.code = code_(len - 6)
-∧ code_(len - 7) = code_(len - 5) then
- let t2 = backparse2(code, length.code - 8, 2, empty:seq.int)
- let initacc = subseq(code, t2_1, t2_2 - 1)
- if length.initacc = 1 ∧ isrecordconstant.initacc_1 ∧ isempty.seqelements.initacc_1 then
-  subseq(code, 1, t2_1 - 1) + subseq(code, t2_2, length.code - 8)
- else
-  empty:seq.symbol
-else
+use stack.seq.symbol
+
+use otherseq.mytype
+
+Function forexpisnoop(sym:symbol, acc:seq.symbol) seq.symbol
+let masteridx = value.acc_(length.acc - 4)
+let cat = acc_(length.acc - 5)
+let pcat = paratypes.cat
+let adj = if pcat_1 = pcat_2 then length.acc - 1 else length.acc
+if adj < length.acc ∧ not.isSequence.acc_(length.acc - 6)
+∨ adj = length.acc ∧ parameter.pcat_1 ≠ pcat_2 then
  empty:seq.symbol
+else
+ let acc6 = acc_(adj - 6)
+ let acc7 = acc_(adj - 7)
+ let adj2 = 
+  if subseq(acc, adj - 11, adj - 10) = [Littrue, Br2(2, 2)] then
+   adj - 12
+  else
+   adj - 10
+ if adj2 - 14 < 0 then
+  empty:seq.symbol
+ else
+  let acc9 = acc_(adj - 9)
+  let loop = acc_(adj2 - 8)
+  let getlength = acc_(adj2 - 11)
+  let seq = acc_(adj2 - 12)
+  let empty = acc_(adj2 - 13)
+  if islocal.acc7 ∧ islocal.acc6 ∧ value.acc7 = masteridx - 1
+  ∧ value.acc6 = masteridx + 1
+  ∧ value.acc7 = masteridx - 1
+  ∧ isloopblock.loop
+  ∧ getlength = GetSeqLength then
+   if islocal.seq ∧ isrecordconstant.empty ∧ isSequence.first.fullconstantcode.empty
+   ∧ nopara.first.fullconstantcode.empty = 0 then
+    subseq(acc, 1, adj2 - 14) + seq
+   else
+    let theseqtype = first.paratypes.loop
+    if %.parameter.theseqtype ∈ ["packed2", "ptr"] then
+     {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
+    else
+     subseq(acc, 1, adj2 - 12)
+     + symbol(moduleref("* seq", parameter.theseqtype)
+      , "+"
+      , theseqtype
+      , theseqtype
+      , theseqtype)
+  else
+   {assert not (islocal.acc7 ∧ islocal.acc6 ∧ value.acc7 = masteridx-1 ∧ value.acc6 = masteridx+1 ∧ value
+    .acc7 = masteridx-1) report" X"+%.acc+" /p"+%.subseq (acc, 1, adj2)}
+   empty:seq.symbol
 
 function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqtype:mytype, boundscheck:boolean) seq.symbol
 {seqtype will be a basetype}
@@ -120,10 +158,21 @@ let elementtype =
   typeptr
 let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte
 let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
-[Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)]
+[theseq
+ , GetSeqType
+ , Define.value.seqtype
+ , Start.elementtype
+ , seqtype
+ , Lit.1
+ , GtOp
+ , Br2(1, 2)]
 + [theseq, masteridx, callidx, Exit]
 + if boundscheck then
  [masteridx
+  , Lit.0
+  , GtOp
+  , Br2(1, 2)
+  , masteridx
   , theseq
   , GetSeqLength
   , GtOp
@@ -149,80 +198,6 @@ else
  , Exit
  , EndBlock]
 
-function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int) expandresult
-let t = backparse2(code, length.code, 5, empty:seq.int) << 1
-let endexp = subseq(code, last.t, length.code)
-let exitexp = subseq(code, t_(length.t - 1), last.t - 1)
-let bodyexp = subseq(code, t_(length.t - 2), t_(length.t - 1) - 1)
-let endofsymbols = t_(length.t - 2) - 1
-let startofsymbols = endofsymbols - (nopara.forsym - 3) / 2 + 1
-let syms = subseq(code, startofsymbols, endofsymbols)
-let tmp = 
- for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do
-  next(acc + Local(nextvar + i - 1), i + 1)
- /for (acc)
-let masteridx = Local(value.last.tmp + 1)
-let seqelement = Local(value.masteridx + 1)
-let nextvar1 = value.seqelement + 1
-let Defineseqelement = Define.value.seqelement
-let newsyms = tmp + seqelement
-let theseqtype = (paratypes.forsym)_(length.newsyms)
-let t1 = (paratypes.forsym)_(length.paratypes.forsym - 3)
-let elementtype = if isseq.t1 then typeptr else t1
-{let theseqtype = seqof.elementtype}
-let theseq = Local.nextvar1
-let totallength = Local(nextvar1 + 1)
-let seqtype = Local(nextvar1 + 2)
-let Defineseqtype = Define(nextvar1 + 2)
-let firstpart = 
- subseq(code, 1, startofsymbols - 1)
- + [Define.nextvar1
-  , theseq
-  , GetSeqLength
-  , Define(nextvar1 + 1)
-  , theseq
-  , GetSeqType
-  , Defineseqtype
-  , Lit.1]
- + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint
-  , nextvar
-  , resulttype.forsym)
- + {2 if masteridx > totallength then exit} [masteridx, totallength, GtOp]
- + Br2(2, 1)
- + {3 else let sequenceele = seq_(idx)}
- indexseqcode(seqtype, theseq, masteridx, theseqtype, false)
- + [Defineseqelement]
- + {3 while condition} replace$for(exitexp, newsyms, syms)
- + Br2(2, 1)
- + {4 exit loop} replace$for(endexp, newsyms, syms)
- + Exit
-let bodyexp2 = replace$for(bodyexp, newsyms, syms)
-let continue2 = [masteridx, Lit.1, PlusOp, continue.length.syms]
-let lastpart = 
- if length.syms = 2 then
-  bodyexp2 + continue2
- else if inModFor.last.bodyexp2 then
-  {case where there is only one next expression in for expression} bodyexp2 >> 1 + continue2
- else if name.last.bodyexp2 ∈ "assert" then
-  {case where the body of the export is reduced to a assert} bodyexp2 >> 1
-  + abortsymbol.resulttype.forsym
-  + Exit
- else
-  {replace exits in body with a continue or abortsymbol}
-  let assert2 = [abortsymbol.resulttype.forsym, Exit]
-  let locs = exitlocations(bodyexp2, length.bodyexp2 - 1, empty:seq.int)
-  {first item in locs is start of block and the rest are exits}
-  for acc = subseq(bodyexp2, 1, first.locs - 1)
-   , last = first.locs + 1
-   , i ∈ locs << 1
-  do
-   next(
-    acc + subseq(bodyexp2, last, i - 2)
-    + if inModFor.bodyexp2_(i - 1) then continue2 else assert2
-    , i + 1)
-  /for (acc + subseq(bodyexp2, last, length.bodyexp2 - 1))
-expandresult(nextvar1 + 3, firstpart + lastpart + EndBlock, bits.0)
-
 function exitlocations(s:seq.symbol, i:int, result:seq.int) seq.int
 let sym = s_i
 if isstart.sym then
@@ -231,22 +206,6 @@ else if isblock.sym then
  exitlocations(s, matchblock(s, i - 1, 0) - 1, result)
 else
  exitlocations(s, i - 1, if isexit.sym then [i] + result else result)
-
-function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol) seq.symbol
-for acc = empty:seq.symbol, s ∈ code do
- acc
- + if inModFor.s then
-  let i = findindex(old, s)
-  if i ≤ length.new then
-   [new_i]
-  else
-   {this is for one of two cases
-    /br 1:a nested for and $for variable is from outer loop
-    /br 2:the next expresion}
-   [s]
- else
-  [s]
-/for (acc)
 
 function matchblock(s:seq.symbol, i:int, nest:int) int
 let sym = s_i

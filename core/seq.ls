@@ -26,9 +26,9 @@ Builtin packed(s:seq.T) seq.T
 
 Builtin empty:seq.T seq.T {empty seq}
 
-Builtin _(a:seq.T, i:index) T
+Builtin _(a:seq.T, c:int) T
 
-Function _(a:seq.T, c:int) T a_(toindex.c)
+Builtin idxNB(a:seq.T, i:int) T
 
 Function =(a:seq.T, b:seq.T) boolean
 for isequal = length.a = length.b, i = 1, e ∈ a
@@ -54,10 +54,10 @@ let i = ii + start.s
 let len = length.a.s
 if i > len then
  let x = to:pseq.T(b.s)
- if length.toseq.x = 0 then (b.s)_(index(i - len - 1)) else x_(i - len)
+ if length.toseq.x = 0 then idxNB(b.s, i - len) else x_(i - len)
 else
  let x = to:pseq.T(a.s)
- if length.toseq.x = 0 then (a.s)_(index(i - 1)) else x_i
+ if length.toseq.x = 0 then idxNB(a.s, i) else x_i
 
 Function ispseq(s:seq.T) boolean length.toseq.to:pseq.T(s) ≠ 0
 
@@ -82,7 +82,7 @@ else
 function catnonzero(a:seq.T, b:seq.T) seq.T
 let totallength = length.a + length.b
 if totallength = 2 then
- [a_(index.0), b_(index.0)]
+ [idxNB(a, 1), idxNB(b, 1)]
 else
  let ta = to:pseq.T(a)
  if length.toseq.ta = 0 then
@@ -126,18 +126,16 @@ else if adjfinish > 0 then
 else
  {all in part a} subseq(a.p, start.p + start, start.p + finish)
 
-Function last(a:seq.T) T a_(toindex.length.a)
+Function last(a:seq.T) T a_(length.a)
 
-Function first(a:seq.T) T a_(toindex.1)
+Function first(a:seq.T) T a_1
 
 Function isempty(a:seq.T) boolean length.a = 0
 
 Function <<(s:seq.T, i:int) seq.T
 {* removes i elements from beginning of s}
-assert i ≥ 0 report "FAIL <<"
 subseq(s, i + 1, length.s)
 
 Function >>(s:seq.T, i:int) seq.T
 {* removes i elements from end of s}
-assert i ≥ 0 report "FAIL >>"
 subseq(s, 1, length.s - i) 

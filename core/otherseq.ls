@@ -162,20 +162,24 @@ else
 Function binarysearch(s:seq.T, val:T) int
 {* binarysearch returns position in seq if found and the negation of the posistion if
  not found}
-binarysearch(s, 1, length.s, val)
+binarysearchNB(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T) int
+assert b > 0 ∧ a ≤ length.s report "out of bounds in binary search"
+binarysearchNB(s, b, a, val)
+
+Function binarysearchNB(s:seq.T, b:int, a:int, val:T) int
 if a < b then
  -(a + 1)
 else
  let p = (a + b) / 2
- let c = s_(toindex.p) >1 val
+ let c = idxNB(s, p) >1 val
  if c = EQ then
   p
  else if c = GT then
-  binarysearch(s, b, p - 1, val)
+  binarysearchNB(s, b, p - 1, val)
  else
-  binarysearch(s, p + 1, a, val)
+  binarysearchNB(s, p + 1, a, val)
 
 Function setinsert(s:seq.T, val:T) seq.T
 {* assumes s is sorted}

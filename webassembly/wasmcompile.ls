@@ -115,6 +115,8 @@ function dependentfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, 
 {Do not consider function indices less that idx}
 {get the symbols of functions that has been referenced but do not have a definition
  }
+{let dummy = 5}
+{???? dummy avoids bug in compiler.See addtypes function}
 let k = nobodies.idx
 if isempty.k then
  {no functions that do not have definitions} 0
@@ -125,7 +127,7 @@ else
   else if name.module.sym ∈ "$$record" then
    recordsymdef(alltypes, sym)
   else
-   let code = removeoptions.getCode(prg, sym)
+   let code = getCode(prg, sym)
    if isempty.code then
     let ele = lookup(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))
     if isempty.ele ∧ module.sym = internalmod ∧ name.sym ∉ "set" then

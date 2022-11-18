@@ -4,8 +4,6 @@ use UTF8
 
 use seq.char
 
-use seq.index
-
 use otherseq.int
 
 use textio
@@ -24,11 +22,7 @@ Export type:char
 
 Export toint(char) int
 
-Export type:index
-
 Export char(int) char
-
-Export index(int) index
 
 Export type:ordering
 
@@ -81,10 +75,6 @@ Export _(seq.char, int) char {From seq.char}
 Export empty:seq.char seq.char {From seq.char}
 
 Export subseq(seq.char, int, int) seq.char {From seq.char}
-
-Export +(seq.index, index) seq.index {From seq.index}
-
-Export empty:seq.index seq.index {From seq.index}
 
 Export type:seq.int {From seq.int}
 
@@ -312,14 +302,4 @@ Function =(a:char, b:char) boolean toint.a = toint.b
 
 Function >1(a:char, b:char) ordering toint.a >1 toint.b
 
-Function hash(a:char) int hash.toint.a
-
-type index is rep:int
-
-Function +(i:index, b:int) index index(rep.i + b)
-
-Function toindex(i:int) index
-assert i > 0 report "not an index $(stacktrace)"
-index(i - 1)
-
-Function toint(i:index) int rep.i + 1 
+Function hash(a:char) int hash.toint.a 

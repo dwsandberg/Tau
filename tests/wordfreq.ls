@@ -254,7 +254,7 @@ function testdata seq.seq.word
  , "function iscompound (bodyexp:seq.symbol) boolean {detects compound accumulator} let sym = bodyexp
   _(-3) isblock.last.bodyexp ∧ (wordname.sym = $(dq) next
   $(dq)_1 ∧ nopara.sym > 3 ∧ inModFor.sym ∨ {assert case} abstracttype.resulttype.sym = addabstract (typeref.
-  $(dq) $base internal internallib $(dq), typeT))"
+  $(dq) internal internallib $(dq), typeT))"
  , "function exitlocations (s:seq.symbol, i:int, result:seq.int) seq.int let sym = s_i if isstart.sym then
   [i]+result else if isblock.sym then exitlocations (s, matchblock (s, i-1, 0)-1, result) else exitlocations
   (s, i-1, if isexit.sym then [i]+result else result)"

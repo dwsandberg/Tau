@@ -36,20 +36,6 @@ function flatflds(a:typeentry) seq.mytype totypeseq.a << 1
 
 function typeentry(t:mytype, flat:seq.mytype) typeentry typeentry([t] + flat)
 
-Function addtypes(alltypes:typedict, syms:set.symbol) typedict
-let typesused = 
- for acc = empty:seq.mytype, sym ∈ toseq.syms do
-  if isstart.sym ∨ isSequence.sym then
-   acc + typesused.sym
-  else if isconst.sym ∨ isGlobal.sym ∨ isInternal.sym ∨ sym = Optionsym ∨ inModFor.sym
-  ∨ isspecial.sym then
-   acc
-  else if issimple.module.sym then acc else acc + para.module.sym /if + typesused.sym
- /for (acc)
-for acc = alltypes, d ∈ toseq.asset.typesused do
- if d = type? ∨ abstracttypename.d ∈ "$base" then acc else addtype(acc, d)
-/for (acc)
-
 Function addtype(alltypes:typedict, type:mytype) typedict
 if iscore4.type ∨ type = typeT then
  alltypes
@@ -115,7 +101,7 @@ for acc = "type $(type.h) is", z ∈ flatflds.h do acc + %.z + "," /for (acc >> 
 
 function checkflat(types:set.typeentry, unknown:seq.typeentry) checkflatresult2
 for known = types, notflat = empty:seq.typeentry, p ∈ unknown do
- if isflat.p ∨ abstracttypename.type.p = "$base"_1 ∨ type.p = type? then
+ if isflat.p ∨ type.p = type? then
   next(known + p, notflat)
  else
   let new = expandflat(p, types)

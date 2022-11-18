@@ -27,7 +27,7 @@ Function _(a:blockseq.T, i:int) T
 assert between(i, 1, length.toseq.a) report "out of bounds"
 let blksz = length.dummy.a
 let blk = getfld(a, (i - 1) / blksz + 2)
-blk_(toindex((i - 1) mod blksz + 1))
+blk_((i - 1) mod blksz + 1)
 
 Function blockit3(s:seq.T) seq.T
 let blksz = blocksize:T

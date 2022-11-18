@@ -91,5 +91,5 @@ for newprg = empty:seq.symdef, sd ∈ prg do
     else
      next(acc + sym, changed)
    /for (if changed then acc else code.sd)
-  newprg + symdef(sym.sd, newcode, paragraphno.sd)
+  newprg + symdef4(sym.sd, newcode, paragraphno.sd, getOptionsBits.sd)
 /for (newprg) 

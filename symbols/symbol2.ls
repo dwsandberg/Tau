@@ -16,6 +16,8 @@ use set.symdef
 
 use typedict
 
+Export replaceTsymbol(mytype, symbol) symbol
+
 Export type:midpoint
 
 Export libmods(m:midpoint) seq.modExports
@@ -109,10 +111,6 @@ Export deepcopySym(mytype) symbol {From symbol}
 Export isseq(mytype) boolean {From symbol}
 
 Export Record(seq.mytype) symbol {From symbol}
-
-Export getoption(seq.symbol) seq.word {From symbol}
-
-Export removeoptions(seq.symbol) seq.symbol {From symbol}
 
 Export Words(seq.word) symbol {From symbol}
 
@@ -224,7 +222,25 @@ Export symbol(modref, seq.word, seq.mytype, mytype) symbol {From symbol}
 
 Export type:symdef {From symbol}
 
-Export code(symdef) seq.symbol {From symbol}
+Export %(modref) seq.word
+
+Export isThisLibrary(sd:symdef) boolean
+
+Export externalNo(sd:symdef) int
+
+use bits
+
+Export symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:bits) symdef
+
+Export getOptionsBits(sd:symdef) bits
+
+Export >2(symbol, symbol) ordering
+
+Export getOptions(symdef) seq.word
+
+Export symdef4(symbol, seq.symbol, int, seq.word) symdef
+
+Export code(symdef) seq.symbol
 
 Export paragraphno(symdef) int {From symbol}
 
@@ -263,15 +279,11 @@ Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol
 
 Export NotOp symbol {From symbol}
 
-Export Optionsym symbol {From symbol}
-
 Export PlusOp symbol {From symbol}
 
 Export PreFref symbol {From symbol}
 
 Export Sequence(mytype, int) symbol {From symbol}
-
-Export addoption(seq.symbol, seq.word) seq.symbol {From symbol}
 
 Export getCode(set.symdef, symbol) seq.symbol {From symbol}
 

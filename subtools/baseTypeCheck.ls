@@ -51,11 +51,10 @@ function checkkind(s2:symdef, typedict:typedict) seq.word
 if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" ∨ isabstract.module.sym.s2 then
  ""
 else
- let codeonly = removeoptions.code.s2
+ let codeonly = code.s2
  if length.codeonly = 0 then
   ""
  else
-  {assert last.codeonly ≠ Optionsym report" more than one option symbol"}
   let localdict = 
    for acc = empty:set.typemap, @e ∈ arithseq(nopara.sym.s2, 1, 1) do
     typemap(@e, coretype((paratypes.sym.s2)_@e, typedict)) ∪ acc
@@ -140,8 +139,6 @@ for acc10 = "/p /p checkresults /p", h ∈ toseq.undefined do
  if isconst.h
  ∨ name.h = "createthreadY"_1
  ∧ isempty(asset.types.h \ asset.[typeint, typereal, typeptr]) then
-  acc10
- else if isBuiltin.h ∧ name.h ∈ "forexp" then
   acc10
  else if isabstract.module.h
  ∨ name.module.h ∈ "$int $define $local $sequence $for $words $loopblock $continue $br $global"

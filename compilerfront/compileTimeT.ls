@@ -38,10 +38,7 @@ else if name.ctsym ∈ "_" then
  let ptypes = paratypes.ctsym
  if isseq.ptypes_1 ∧ parameter.ptypes_1 ∈ [typeint, typeword, typechar] then
   let s = bitcast:seq.int(stk_1)
-  let idx = 
-   if ptypes_2 = typeint then
-    stk_2
-   else if ptypes_2 = typeref."index standard *" then stk_2 + 1 else 0
+  let idx = if ptypes_2 = typeint then stk_2 else 0
   if between(idx, 1, length.s) then
    tocode:T(s_idx, resulttype.ctsym, typedict)
   else

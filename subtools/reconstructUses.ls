@@ -20,8 +20,6 @@ use seq.sym/modref
 
 use set.sym/modref
 
-use symbol
-
 use seq.symbol
 
 use set.symbol

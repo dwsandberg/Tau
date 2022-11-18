@@ -224,7 +224,13 @@ else if op_1 = "$"_1 ∧ length.types.exp = 2 ∧ first.types.exp = seqof.typewo
  bindinfo(dict.R, newcode, [resulttype.f], "")
 else
  let f = lookupbysig(dict.R, op, types.exp, common, place, parsestk)
- bindinfo(dict.R, code.exp + f, [resulttype.f], "")
+ let tmp = 
+  if mode.common ∉ "text" ∧ op_1 = "next"_1 ∧ name.module.f ∈ "$for" then
+   code.exp + Local(toint.first.%.parameter.para.module.f + nopara.f) + Lit.1 + PlusOp
+   + symbol(internalmod, "next", paratypes.f + typeint, typeint)
+  else
+   code.exp + f
+ bindinfo(dict.R, tmp, [resulttype.f], "")
 
 function ifexp(R:reduction.bindinfo
  , ifpart:bindinfo
@@ -275,32 +281,27 @@ report
   , input
   , place
   , parsestk)
-let elesym = 
- symbol(moduleref("internallib $for", parameter.seqtype)
-  , elename
-  , empty:seq.mytype
-  , parameter.seqtype)
 {keep track so right next is used in nested fors}
-let basetype = typebase.place
+let oldnesting = lookupbysig(dict, "for")
+let dict0 = if isempty.oldnesting then dict else dict - oldnesting
+let basetype = typebase(cardinality.dict0 + 2)
 let resultsym = symbol(moduleref("internallib $for", basetype), "next", acctypes, basetype)
 let nestingsym = 
  symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
-let oldnesting = lookupbysig(dict, "for")
-let dict1 = if isempty.oldnesting then dict else dict - oldnesting /if + resultsym + nestingsym
-let accumulators = 
- for acc = empty:seq.symbol, i = 1, name ∈ accnames do
-  next(
-   acc
-   + symbol(moduleref("internallib $for", acctypes_i)
-    , [name]
-    , empty:seq.mytype
-    , acctypes_i)
-   , i + 1)
- /for (acc)
-bindinfo(dict1 ∪ asset(accumulators + elesym)
- , code + accumulators + elesym
- , acctypes + seqtype
- , elename)
+let dict1 = dict0 + resultsym + nestingsym
+for accdict = dict1, i = 1, name ∈ accnames do
+ next(accdict + Local(name, acctypes_i, cardinality.accdict), i + 1)
+/for (
+ let masteridx = cardinality.accdict
+ bindinfo(
+  accdict + Local(toword.masteridx, seqtype, masteridx)
+  + Local(elename_1, parameter.seqtype, masteridx + 1)
+  + Local(toword(masteridx + 2), typeint, masteridx + 2)
+  + Local(toword(masteridx + 3), typeint, masteridx + 3)
+  , code
+  , acctypes + parameter.seqtype
+  , accnames + elename)
+)
 
 function lookupbysig(dict:symboldict, name:seq.word) set.symbol
 lookupbysig(dict, symbol(internalmod, name, typeint))
@@ -329,18 +330,53 @@ let checktypes =
   "while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place, parsestk)
 let resulttype = first.types.endexp
-let sym = 
- symbol(builtinmod.typeint
-  , "forexp"
-  , types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
-  + typeboolean
-  + resulttype
-  , resulttype)
 let newcode = 
- code.vars + code.forbody
- + if tokentext.exitexp = "for" then [Littrue] else code.exitexp /if
- + code.endexp
- + sym
+ if mode.input ∈ "text" then
+  code.vars + if tokentext.exitexp = "for" then [Littrue] else code.exitexp /if
+  + code.forbody
+  + code.endexp
+  + Words.tokentext.vars
+  + symbol(internalmod
+   , "$fortext"
+   , types.vars + typeboolean + (types.forbody)_1 + resulttype + seqof.typeword
+   , resulttype)
+ else
+  let forbodytype = resulttype.lookupbysig(dict.vars, "for")_1
+  let firstvar = toint.first.%.parameter.forbodytype
+  let masteridx = Local(firstvar + length.types.vars - 1)
+  let continue = 
+   if length.types.vars = 2 then
+    [masteridx, Lit.1, PlusOp, continue.length.types.vars]
+   else
+    [Exit]
+  let theseq = Local(value.masteridx + 2)
+  let totallength = Local(value.masteridx + 3)
+  let theseqtype = last.types.vars
+  code.vars + Define.value.theseq + theseq + GetSeqLength + Define.value.totallength
+  + Lit.1
+  + Loopblock(types.vars >> 1 + typeint, firstvar, resulttype)
+  + {2 if masteridx > totallength then exit} [masteridx, totallength, GtOp]
+  + Br2(2, 1)
+  + {3 else let sequenceele = seq_(idx)} theseq
+  + masteridx
+  + symbol(builtinmod.typeint, "idxNB", seqof.theseqtype, typeint, theseqtype)
+  + Define(value.masteridx + 1)
+  + {3 while condition} if tokentext.exitexp = "for" then [Littrue] else code.exitexp /if
+  + Br2(2, 1)
+  + code.endexp
+  + Exit
+  + code.forbody
+  + continue
+  + if length.types.vars = 2 ∧ tokentext.exitexp = "for" ∧ islocal.first.code.forbody
+  ∧ value.first.code.forbody = firstvar then
+   let last = last.code.forbody
+   if name.last ∈ "+" ∧ name.module.last ∈ "seq"
+   ∧ para.module.last = parameter.first.types.forbody then
+    [EndBlock, symbol(internalmod, "checkfornoop", resulttype, resulttype)]
+   else
+    [EndBlock]
+  else
+   [EndBlock]
 bindinfo(dict, newcode, [resulttype], "")
 
 function action(ruleno:int

@@ -117,10 +117,11 @@ done.
 /br • /strong pass1a Like pass1 with Compiler options on Export statements added. 
 /br • /strong pass2 After some optimization
 /br • /strong all Just before code generation. *>
-/br ○ /strong out The option out determines what will be output. <* block • sym Just the symbol names
+/br ○ /strong out The option out determines what will be output. <* block • sym Just the symbol
+names
 /br • symdefs The symbol definitions. The format is the symbol followed by a post order transversal
 of the call tree.
-/br • symdefgraph  For each symbol definition, the definition is presented as a call tree graph.
+/br • symdefgraph For each symbol definition, the definition is presented as a call tree graph.
 /br • calledby The option n is ignored in building a call graph. Then only the symbols that • call
 symbols in n directly or indirectly are included in the graph
 /br • calls The option n is ignored in building a call graph. Then only the symbols that • are called

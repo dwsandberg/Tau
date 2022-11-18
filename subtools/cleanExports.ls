@@ -8,7 +8,7 @@ use otherseq.mytype
 
 use standard
 
-use symbol
+/use symbol
 
 use seq.symbol
 

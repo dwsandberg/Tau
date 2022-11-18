@@ -20,6 +20,8 @@ use otherseq.word
 
 use set.word
 
+Export >2(symbol, symbol) ordering
+
 Export type:symbol
 
 Export module(symbol) modref
@@ -29,8 +31,6 @@ Export types(symbol) seq.mytype
 Export worddata(symbol) seq.word
 
 Export type:symdef
-
-Export code(sd:symdef) seq.symbol
 
 Export paragraphno(symdef) int
 
@@ -322,7 +322,7 @@ if issimplename.s then [name.s] else [name.s] + ":" + %.first.types.s
 
 Function %(s:symbol) seq.word
 if islocal.s then
- [merge(["%"_1] + wordname.s)]
+ "$(merge(["%"_1] + wordname.s))"
 else if name.module.s ∈ "$int $real" then
  [name.s]
 else if iswords.s then
@@ -340,7 +340,7 @@ else if not.isspecial.s then
  + fsig2(wordname.s, nametype.s, paratypes.s)
  + %.resulttype.s
 else if isdefine.s then
- "Define" + name.s
+ "Define $(name.s)"
 else if isstart.s then
  "Start ($(resulttype.s)) /br"
 else if isblock.s then
@@ -539,26 +539,6 @@ Function abortsymbol(typ:mytype) symbol
 let a = if isseq.typ then typeptr else typ
 symbol(builtinmod.a, "assert", seqof.typeword, a)
 
-Function getoption(code:seq.symbol) seq.word
-if length.code < 2 ∨ last.code ≠ Optionsym then
- empty:seq.word
-else
- worddata.code_(length.code - 1)
-
-Function removeoptions(code:seq.symbol) seq.symbol
-if length.code > 0 ∧ last.code = Optionsym then
- subseq(code, 1, length.code - 2)
-else
- code
-
-Function addoption(code:seq.symbol, option:seq.word) seq.symbol
-let current = asset.getoption.code
-let new = current ∪ asset.option
-if cardinality.new = cardinality.current then
- code
-else
- removeoptions.code + Words.toseq.new + Optionsym
-
 Function nametype(sym:symbol) seq.mytype
 if issimplename.sym then empty:seq.mytype else [first.types.sym]
 
@@ -612,15 +592,74 @@ let kind2 =
  else if isencoding.fldtype ∨ fldtype = typeword then typeint else fldtype
 symbol(builtinmod.kind2, "fld", typeptr, typeint, kind2)
 
-type symdef is sym:symbol, code:seq.symbol, paragraphno:int
+type symdef is sym:symbol, code:seq.symbol, bits:bits
+
+function symdef(sym:symbol, code:seq.symbol, pno:int) symdef symdef(sym, code, bits.pno)
+
+Function paragraphno(sd:symdef) int toint(0xFFFFFFFFFFFF ∧ bits.sd)
+
+Function externalNo(sd:symdef) int toint(0xFFFFFFFFFFFF ∧ bits.sd)
 
 Function >1(a:symdef, b:symdef) ordering sym.a >1 sym.b
 
 Function getSymdef(a:set.symdef, sym:symbol) set.symdef
 lookup(a, symdef(sym, empty:seq.symbol, 0))
 
+function ThisLibrary bits 0x1000000000000
+
+function PROFILE bits 0x2000000000000
+
+function STATE bits 0x4000000000000
+
+function COMPILETIME bits 0x8000000000000
+
+function NOINLINE bits 0x10000000000000
+
+function INLINE bits 0x20000000000000
+
+function VERYSIMPLE bits 0x40000000000000
+
+Function isThisLibrary(sd:symdef) boolean (bits.sd ∧ ThisLibrary) ≠ 0x0
+
+Function isPROFILE(sd:symdef) boolean (bits.sd ∧ PROFILE) ≠ 0x0
+
+Function isCOMPILETIME(sd:symdef) boolean (bits.sd ∧ COMPILETIME) ≠ 0x0
+
+Function isINLINE(sd:symdef) boolean (bits.sd ∧ INLINE) ≠ 0x0
+
+Function isNOINLINE(sd:symdef) boolean (bits.sd ∧ NOINLINE) ≠ 0x0
+
+Function isVERYSIMPLE(sd:symdef) boolean (bits.sd ∧ VERYSIMPLE) ≠ 0x0
+
+function A1(opts:seq.word) bits
+for acc = 0x0, w ∈ opts do
+ let i = findindex("ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE", w)
+ acc ∨ 0x1 << (47 + i)
+/for (acc)
+
+Function symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:seq.word) symdef
+symdef(sym, code, bits.paragraphno ∨ A1.options)
+
+Function symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:bits) symdef
+symdef(sym, code, bits.paragraphno ∨ options ∧ 0xFFFF000000000000)
+
+Function getOptions(sd:symdef) seq.word
+for result = ""
+ , acc = bits.sd >> 48
+ , w ∈ "ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE"
+do
+ if (acc ∧ 0x1) = 0x1 then
+  next(result + w, acc >> 1)
+ else
+  next(result, acc >> 1)
+/for (result)
+
+Function getOptionsBits(sd:symdef) bits bits.sd
+
+Export code(symdef) seq.symbol
+
 Function getCode(a:set.symdef, sym:symbol) seq.symbol
-let b = lookup(a, symdef(sym, empty:seq.symbol, 0))
+let b = getSymdef(a, sym)
 if isempty.b then empty:seq.symbol else code.b_1
 
 Function symconst(i:int, hasfref:boolean) symbol
