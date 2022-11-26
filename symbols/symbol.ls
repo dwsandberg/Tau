@@ -44,9 +44,9 @@ Export type:modref {From mytype}
 
 Export %(modref) seq.word {From mytype}
 
-Export isabstract(modref) boolean {From mytype}
+Export isAbstract(modref) boolean {From mytype}
 
-Export issimple(modref) boolean {From mytype}
+Export isSimple(modref) boolean {From mytype}
 
 Export library(modref) word {From mytype}
 
@@ -64,7 +64,7 @@ Export abstracttype(mytype) mytype {From mytype}
 
 Export abstracttypename(mytype) word {From mytype}
 
-Export isabstract(m:mytype) boolean {From mytype}
+Export isAbstract(m:mytype) boolean {From mytype}
 
 Export parameter(mytype) mytype {From mytype}
 
@@ -149,7 +149,7 @@ let flags = flags.s ∧ (bits.-1 ⊻ requiresbit)
 if flags = flags.s then s else symbol(worddata.s, module.s, types.s, raw.s, flags)
 
 Function =(a:symbol, b:symbol) boolean
-worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1 ∧ module.a = module.b
+types.a >> 1 = types.b >> 1 ∧ worddata.a = worddata.b ∧ module.a = module.b
 ∧ ((flags.a ⊻ flags.b) ∧ (simplenamebit ∨ frefbit ∨ unboundbit)) = 0x0
 
 Function >1(a:symbol, b:symbol) ordering
@@ -211,7 +211,7 @@ else
   /for (newtypes)
  let newmodule = replaceT(with, module.sym)
  let newhash = 
-  if true ∨ not.isunbound.sym ∨ isabstract.newmodule then
+  if true ∨ not.isunbound.sym ∨ isAbstract.newmodule then
    flags.sym
   else
    (unboundbit ⊻ bits.-1) ∧ flags.sym
@@ -257,7 +257,7 @@ Function isdefine(s:symbol) boolean name.module.s ∈ "$define"
 
 Function isbr(s:symbol) boolean name.module.s ∈ "$br"
 
-Function isexit(s:symbol) boolean name.module.s ∈ "$exitblock"
+Function isExit(s:symbol) boolean name.module.s ∈ "$exitblock"
 
 Function value(sym:symbol) int toint.raw.sym
 
@@ -265,7 +265,7 @@ Function nopara(s:symbol) int
 if isconst.s ∨ islocal.s ∨ isFref.s then
  0
 else if isspecial.s ∧ name.module.s ∉ "$record $loopblock" then
- if isdefine.s ∨ isbr.s ∨ isexit.s then
+ if isdefine.s ∨ isbr.s ∨ isExit.s then
   1
  else
   assert name.module.s ∈ "$continue $sequence" report "CHeKC $(s)"
@@ -345,7 +345,7 @@ else if isstart.s then
  "Start ($(resulttype.s)) /br"
 else if isblock.s then
  "EndBlock /br"
-else if isexit.s then
+else if isExit.s then
  "Exit /br"
 else if isbr.s then
  "Br2 (" + toword.brt.s + "," + toword.brf.s + ") /br"
@@ -505,9 +505,6 @@ Function isconstantorspecial(s:symbol) boolean isconst.s ∨ isspecial.s
 
 Function Local(i:int) symbol Local(toword.i, typeint, i)
 
-Function Optionsym symbol
-symbol(internalmod, "option", typeint, seqof.typeword, typeint)
-
 Function Define(i:int) symbol Define(toword.i, i)
 
 Function Define(name:word, i:int) symbol
@@ -542,7 +539,9 @@ symbol(builtinmod.a, "assert", seqof.typeword, a)
 Function nametype(sym:symbol) seq.mytype
 if issimplename.sym then empty:seq.mytype else [first.types.sym]
 
-Function PreFref symbol symbol(internalmod, "PreFref", typeptr)
+Function PreFref symbol
+{symbol (internalmod," PreFref", typeptr)}
+symbol(internalmod, "PreFref", empty:seq.mytype, typeptr, specialbit)
 
 Function Local(name:word, type:mytype, parano:int) symbol
 symbolZ(moduleref."internallib $local"
@@ -609,15 +608,15 @@ function ThisLibrary bits 0x1000000000000
 
 function PROFILE bits 0x2000000000000
 
-function STATE bits 0x4000000000000
+Function STATE bits 0x4000000000000
 
-function COMPILETIME bits 0x8000000000000
+Function COMPILETIME bits 0x8000000000000
 
-function NOINLINE bits 0x10000000000000
+Function NOINLINE bits 0x10000000000000
 
 function INLINE bits 0x20000000000000
 
-function VERYSIMPLE bits 0x40000000000000
+Function VERYSIMPLE bits 0x40000000000000
 
 Function isThisLibrary(sd:symdef) boolean (bits.sd ∧ ThisLibrary) ≠ 0x0
 
@@ -630,6 +629,8 @@ Function isINLINE(sd:symdef) boolean (bits.sd ∧ INLINE) ≠ 0x0
 Function isNOINLINE(sd:symdef) boolean (bits.sd ∧ NOINLINE) ≠ 0x0
 
 Function isVERYSIMPLE(sd:symdef) boolean (bits.sd ∧ VERYSIMPLE) ≠ 0x0
+
+Function hasState(sd:symdef) boolean (bits.sd ∧ STATE) ≠ 0x0
 
 function A1(opts:seq.word) bits
 for acc = 0x0, w ∈ opts do

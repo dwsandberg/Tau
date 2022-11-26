@@ -76,8 +76,8 @@ Function testprocess seq.word
 let z = subseq("f red green", 2, 3)
 let y = 
  [not.isprefix("out of bounds", "out")
-  , isprefix("not an index", message.process.testout.0)
-  , isprefix("not an index", message.process.testout.-10)
+  , isprefix("out of bounds", message.process.testout.0)
+  , isprefix("out of bounds", message.process.testout.-10)
   , isprefix("out of bounds", message.process.testout.4)
   , isprefix("invalid digit", message.process.toint."0A"_1)
   , message.process.testout.1 = "normal exit"

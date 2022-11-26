@@ -326,7 +326,7 @@ do
   {BlockBr}
   assert top.typestk = i32 report "BR type check fail $(printcode.curblk) /br $(code)"
   next(pop.typestk, push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
- else if sym = Exit then
+ else if isExit.sym then
   assert top.typestk = top.pop.typestk
   report
    "Exit type problem STK:$(for l = "", e ∈ toseq.typestk do l + %.e /for (l))
@@ -349,7 +349,7 @@ do
   let blockcode = 
    for acc = empty:seq.byte, i = 1, a ∈ blks << 1 do
     let z = 
-     if sym.a = Exit then
+     if  isExit.sym.a then
       code.a + brX(length.blks - i - if isloop then 0 else 1 /if)
      else if iscontinue.sym.a then
       code.a + setloopvar + br + LEBu(length.blks - 1 - i)

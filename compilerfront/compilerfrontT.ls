@@ -72,11 +72,14 @@ if first.option.m ∈ "library text pass1 pass1a prebind" then
 else
  let libname = extractValue(first.allsrc, "Library")_1
  let librarymap = [libname, first."*"]
- let prg5 = pass2:T(librarymap, prg.m, typedict.m, option) ∪ templates.m
- if option = "all" then
+ let prg = if "xxx"_1 ∈ option then GG.hasstate.prg.m else prg.m
+ let prg5 = pass2:T(librarymap, prg, typedict.m, option) ∪ templates.m
+ if "bitcode"_1 ∈ option then
   prepareback(prg5, m, libinfo)
  else
   midpoint(option, prg5, typedict.m, libmods.m, src.m)
+
+use opt
 
 unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict) seq.symbol
 
@@ -91,14 +94,13 @@ let knownsymbols =
   else
    for acc = [first.code], last = first.code, c ∈ code << 1 do
     next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
-   /for (symdef(sym.pele0, acc, paragraphno.pele0))
+   /for (symdef4(sym.pele0, acc, paragraphno.pele0, getOptions.pele0))
  /for (acc2)
-if option = "addpass" then
+if "addpass"_1 ∈ option then
  additionalpass:T(librarymap, toseq.knownsymbols, knownsymbols, t)
 else
  let k = 
-  subpass2:T(option
-   , librarymap
+  subpass2:T(librarymap
    , empty:seq.symdef
    , empty:set.symdef
    , asset.renumberconstants.toseq.knownsymbols
@@ -107,8 +109,7 @@ else
   ∪ constantsymbols
  k
 
-function subpass2:T(option:seq.word
- , librarymap:seq.word
+function subpass2:T(librarymap:seq.word
  , bigin:seq.symdef
  , corein:set.symdef
  , toprocess:set.symdef
@@ -131,7 +132,7 @@ for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toproce
  if length.toseq.corein = length.toseq.core then
   additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict)
  else
-  subpass2:T(option, librarymap, big, core, small, count + 1, typedict)
+  subpass2:T(librarymap, big, core, small, count + 1, typedict)
 )
 
 Function additionalpass:T(librarymap:seq.word, p:seq.symdef, start:set.symdef, typedict:typedict) set.symdef
@@ -155,7 +156,7 @@ let t =
   a
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
   let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a) else code.a
-  let t2 = if Callself ∈ flags.a then optB(ty, s, reorgwhen) else ty
+  let t2 = if Callself ∈ flags.a then mergeblocks(ty, s) else ty
   expandresult(nextvar.a, t2, flags.a)
  else
   a
@@ -182,7 +183,7 @@ function xxx:T(librarymap:seq.word
  , pdict:set.localmap2
  , typedict:typedict) expandresult
 let a = scancode:T(librarymap, p, code, nopara.s + 1, pdict, s, typedict)
-let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1, reorgwhen) else code.a
+let new = if Hasmerge ∈ flags.a then mergeblocks(code.a, Lit.1) else code.a
 if length.code = length.new ∧ length.code > 20 ∨ new = code then
  expandresult(nextvar.a, new, flags.a)
 else
@@ -217,46 +218,37 @@ do
      , result + Define.nextvar
      , nextvar + 1
      , localmap2(thelocal, [Local.nextvar]) ∪ map)
-  else if isbr.sym then
-   let hasnot = last.result = NotOp
-   let sym1 = if hasnot then Br2(brf.sym, brt.sym) else sym
-   let result1 = if hasnot then result >> 1 else result
-   let newsym = 
-    if last.result1 = Litfalse then
-     Br2(brf.sym1, brf.sym1)
-    else if last.result1 = Littrue then Br2(brt.sym1, brt.sym1) else sym1
-   next(if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge ∨ flags else flags
-    , result1 + newsym
-    , nextvar
-    , map)
-  else if sym = Exit ∧ isblock.last.result then
-   next(flags ∨ Hasmerge, result + sym, nextvar, map)
-  else if isloopblock.sym then
-   let nopara = nopara.sym
-   let addlooplocals = 
-    for pmap = map, parano = 1, e ∈ constantseq(10000, 1)
-    while parano ≤ nopara
-    do
-     next(localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap
-      , parano + 1)
-    /for (pmap)
-   next(flags
-    , result + Loopblock(paratypes.sym, nextvar, resulttype.sym)
-    , nextvar + nopara
-    , addlooplocals)
-  else if isRecord.sym ∨ isSequence.sym then
-   let nopara = nopara.sym
-   let args = subseq(result, len + 1 - nopara, len)
-   let constargs = for acc = true, @e ∈ args while acc do isconst.@e /for (acc)
-   if constargs then
-    next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
+  else
+   {if isbr.sym then let newsym = sym next (if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge
+    ∨ flags else flags, result+newsym, nextvar, map) else}
+   if  isExit.sym ∧ isblock.last.result then
+    next(flags ∨ Hasmerge, result + sym, nextvar, map)
+   else if isloopblock.sym then
+    let nopara = nopara.sym
+    let addlooplocals = 
+     for pmap = map, parano = 1, e ∈ constantseq(10000, 1)
+     while parano ≤ nopara
+     do
+      next(localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap
+       , parano + 1)
+     /for (pmap)
+    next(flags
+     , result + Loopblock(paratypes.sym, nextvar, resulttype.sym)
+     , nextvar + nopara
+     , addlooplocals)
+   else if isRecord.sym ∨ isSequence.sym then
+    let nopara = nopara.sym
+    let args = subseq(result, len + 1 - nopara, len)
+    let constargs = for acc = true, @e ∈ args while acc do isconst.@e /for (acc)
+    if constargs then
+     next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
+    else
+     next(flags, result + sym, nextvar, map)
+   else if islocal.sym then
+    let t = lookup(map, value.sym)
+    next(flags, result + if isempty.t then [sym] else value.t_1, nextvar, map)
    else
     next(flags, result + sym, nextvar, map)
-  else if islocal.sym then
-   let t = lookup(map, value.sym)
-   next(flags, result + if isempty.t then [sym] else value.t_1, nextvar, map)
-  else
-   next(flags, result + sym, nextvar, map)
  else if sym = NotOp ∧ last.result = NotOp then
   next(flags, result >> 1, nextvar, map)
  else if length.result > 2 ∧ isconst.last.result ∧ ismember.sym then
@@ -279,7 +271,7 @@ do
   else
    next(flags, result >> 1 + Define.nextvar + newcode, nextvar + 1, map)
  else if name.sym ∈ "checkfornoop" ∧ module.sym = internalmod then
-  let noop = forexpisnoop(sym, result)
+  let noop = forexpisnoop(self, result)
   if not.isempty.noop then
    next(flags, noop, nextvar, map)
   else

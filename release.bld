@@ -49,6 +49,7 @@ libsrc0 compilerfront.libsrc start.ls
 +compilerfront pretty.ls parse parsersupport 
 +compilerfront compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2  passparse passsymbol postbind symboldict
 compileTimeT object01 objectio LEBencoding
++opt opt
 
 libsrc0 codegen.libsrc start.ls
 +codegen persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants

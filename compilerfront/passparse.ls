@@ -26,7 +26,7 @@ function abstractarcs(s:seq.symdef) seq.arc.symbol
 for outer = empty:seq.arc.symbol, p ∈ s do
  let sym = sym.p
  for arcs = outer, codesym ∈ code.p do
-  if isspecial.codesym ∨ not.isabstract.module.codesym ∨ sym = codesym ∨ isBuiltin.codesym then
+  if isspecial.codesym ∨ not.isAbstract.module.codesym ∨ sym = codesym ∨ isBuiltin.codesym then
    arcs
   else if inModFor.codesym then
    if name.codesym ∈ "name for" then
@@ -74,7 +74,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
  for acc = empty:seq.symdef, p ∈ srclink.m do
   let symsrc = src_(paragraphno.p)
   if first.symsrc ∈ "Builtin builtin" then
-   if issimple.module.sym.p then
+   if isSimple.module.sym.p then
     acc + symdef4(sym.p, empty:seq.symbol, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
    else
     let sym = sym.p
@@ -104,7 +104,15 @@ for prg = prgin, m ∈ toseq.modlist do
  for acc = prg, p ∈ srclink.m do
   let symsrc = src_(paragraphno.p)
   if first.symsrc ∈ "Export" then
-   symdef4(sym.p, getCode(acc, sym.p), paragraphno.p, commentoptions(symsrc, nopara.sym.p))
+   let sd = getSymdef(acc, sym.p)
+   if isempty.sd then
+    symdef4(sym.p, empty:seq.symbol, 0, commentoptions(symsrc, nopara.sym.p))
+   else
+    symdef4(sym.p
+     , code.sd_1
+     , paragraphno.sd_1
+     , commentoptions(symsrc, nopara.sym.p) + getOptions.sd_1)
+   /if
    ∪ acc
   else
    acc

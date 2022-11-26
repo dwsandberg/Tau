@@ -179,7 +179,7 @@ else
      else
       next(newdict4, cache, nextvar, map, result2 + sym)
     else
-     let newdict3 = if issimple.module.symx then newdict4 else addtype(newdict4, para.module.symx)
+     let newdict3 = if isSimple.module.symx then newdict4 else addtype(newdict4, para.module.symx)
      if name.sym ∈ "primitiveadd primitive2add" ∧ isBuiltin.sym then
       let T = para.module.sym
       let encodingstatetype = addabstract(typeref."encodingstate encoding *", T)
@@ -277,7 +277,7 @@ else
    /for (
     postbindresult(newdict4
      , symdef4(symz, result2, 0, getOptionsBits.sd) ∪ prg.accZ
-     , if verysimpleinline(symz, result2) then
+     , if verysimpleinline(symz, result2) ∧ not.isNOINLINE.sd then
       inline.accZ + symdef(symz, result2, 0)
      else
       inline.accZ
@@ -366,7 +366,7 @@ else
    let typ = resulttype.sym
    if iscore4.typ ∨ isseq.typ ∨ isencoding.typ then
     Getfld.typ
-   else if isabstract.typ then
+   else if isAbstract.typ then
     sym
    else
     let a = flatflds(newdict3, typ)
@@ -383,7 +383,7 @@ else
   ]
 
 function instantiateTemplate(sym2:symbol, templates:set.symdef) symdef
-if issimple.module.sym2 then
+if isSimple.module.sym2 then
  symdef(sym2, empty:seq.symbol, 0)
 else
  let gx = findabstract(templates, sym2)

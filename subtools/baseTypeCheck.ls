@@ -48,7 +48,7 @@ else
  localtypes
 
 function checkkind(s2:symdef, typedict:typedict) seq.word
-if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" ∨ isabstract.module.sym.s2 then
+if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" ∨ isAbstract.module.sym.s2 then
  ""
 else
  let codeonly = code.s2
@@ -83,7 +83,7 @@ else
     let no = nopara.s
     let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
     next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), loc, false)
-   else if isexit.s then
+   else if isExit.s then
     assert top.stk = top.pop.stk ∨ top.stk = typeint ∧ top.pop.stk = typebyte
     report "exit type does not match block type $(top.stk) $(top.pop.stk)"
     next(pop.stk, localtypes, false)
@@ -140,7 +140,7 @@ for acc10 = "/p /p checkresults /p", h ∈ toseq.undefined do
  ∨ name.h = "createthreadY"_1
  ∧ isempty(asset.types.h \ asset.[typeint, typereal, typeptr]) then
   acc10
- else if isabstract.module.h
+ else if isAbstract.module.h
  ∨ name.module.h ∈ "$int $define $local $sequence $for $words $loopblock $continue $br $global"
  ∨ name.h ∈ "]"
  ∨ isunbound.h

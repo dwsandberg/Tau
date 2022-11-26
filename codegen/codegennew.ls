@@ -67,7 +67,7 @@ use seq.encoding.word3
 Function compilerback(m:midpoint, baselibwords:seq.seq.char, outname:filename) seq.file
 {OPTION PROFILE}
 for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
- if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
+ if isAbstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
   next(profilearcs, addresses)
  else
   next(

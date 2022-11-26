@@ -139,7 +139,7 @@ do
     , true)
   let modname = 
    if first.input ∈ "Builtin builtin" then
-    if issimple.modname.common then internalmod else modname.common
+    if isSimple.modname.common then internalmod else modname.common
    else
     modname.common
   let sym = 
@@ -241,7 +241,7 @@ do
    , allsrc)
  let allmods = resolveexports(modlist + lastpass, 100000, allsrc)
  for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m2 ∈ toseq.allmods do
-  if isabstract.modname.m2 then
+  if isAbstract.modname.m2 then
    next(abstract + m2, simple)
   else
    next(abstract, simple + m2)
@@ -255,7 +255,7 @@ type prg6 is code:set.symdef
  , abstract:seq.passsymbols
 
 Function flds(isseq:boolean, binfotext:seq.word, modname:modref, name:word, typs:seq.mytype) seq.symdef
-let recordtype = if issimple.modname then first.typs else addabstract(first.typs, typeT)
+let recordtype = if isSimple.modname then first.typs else addabstract(first.typs, typeT)
 if not.isseq ∧ length.typs = 2 then
  let typ = recordtype
  if iscore4.typ then
@@ -417,7 +417,7 @@ for syms = defines.this, requires = empty:set.symdef, i = 0, u ∈ toseq.uses.th
  if isempty.a then
   assert mode ∉ "body" report "Cannot find module" + name.u
   {needed for when modset passsymbols are not yet created} next(syms, requires, 0)
- else if not.isabstract.modname.a_1 then
+ else if not.isAbstract.modname.a_1 then
   next(syms ∪ exports.a_1, requires, 0)
  else
   let r = 
@@ -463,7 +463,7 @@ type findabstractresult is sd:symdef, modpara:mytype
 function solveT(a:mytype, b:mytype) mytype
 if a = typeT then
  b
-else if isabstract.a ∧ abstracttypename.a = abstracttypename.b then
+else if isAbstract.a ∧ abstracttypename.a = abstracttypename.b then
  solveT(parameter.a, parameter.b)
 else
  type?
@@ -485,5 +485,5 @@ passsymbols(modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empty
 Function >1(a:passsymbols, b:passsymbols) ordering module.a >1 module.b
 
 function checkwellformed(sym:symbol) boolean
-not.issimple.module.sym
-= for acc = false, t ∈ types.sym while not.acc do isabstract.t /for (acc) 
+not.isSimple.module.sym
+= for acc = false, t ∈ types.sym while not.acc do isAbstract.t /for (acc) 

@@ -138,7 +138,7 @@ let entrypointname = [merge(Library + "$EP")]
  , "function entrypoint2 (args0:UTF8) UTF8 let args = towords.args0 finishentry.
   $(entrypointname) (args, getfiles.args)"]
 
-function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:filename) seq.file
+function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:filename, options:seq.word) seq.file
 {OPTION PROFILE}
 let libname = extractValue(first.allsrc, "Library")
 let uses = extractValue(first.allsrc, "uses")
@@ -150,13 +150,14 @@ let entrymod =
   ["Module $(entrypointname)"
    , "use standard"
    , "Function entrypoint (args:UTF8) UTF8 args"]
-let m = starmap.compilerfront2:callconfig("all", allsrc + entrymod, dependentlibs)
+let m = 
+ starmap.compilerfront2:callconfig("bitcode $(options)", allsrc + entrymod, dependentlibs)
 let m2 = outlib.m
 let dp = if isempty.uses then uses else [last.uses]
 let files = compilerback(m, dependentwords.dp, outname)
 files + file(changeext(outname, "libinfo"), outbytes:midpoint([m2]))
 
-Function makebitcode(input:seq.file) seq.file
+Function makebitcode(input:seq.file, options:seq.word) seq.file
 let info = breakparagraph.data.first.input
 let libname = extractValue(first.info, "Library")
 let outname = filename."+$(dirpath.fn.first.input + libname).bc"
@@ -170,7 +171,7 @@ let dep =
    , libmods.mp + libmods.new
    , empty:seq.seq.word)
  /for (mp)
-let p = process.subcompilelib(info, dep, outname)
+let p = process.subcompilelib(info, dep, outname, options)
 if aborted.p then
  [file("error.html", "COMPILATION ERROR in libray:$(libname) /br $(message.p)")]
 else
@@ -180,7 +181,7 @@ function outlib(m:midpoint) midpoint
 let libname = extractValue(first.src.m, "Library")
 let libcode = asset.libcode.m
 for acc = empty:seq.symdef, sd ∈ toseq.prg.m do
- if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
+ if isAbstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
   acc
  else
   acc

@@ -90,18 +90,18 @@ let t = first.typerep.m
 modref(library.t, modname.t, parameter.m)
 
 Function abstractmod(m:modref) modref
-if issimple.m ∨ para.m = typeT then m else modref(library.m, name.m, typeT)
+if isSimple.m ∨ para.m = typeT then m else modref(library.m, name.m, typeT)
 
-Function isabstract(m:modref) boolean not.isempty.typerep.para.m ∧ isabstract.para.m
+Function isAbstract(m:modref) boolean not.isempty.typerep.para.m ∧ isAbstract.para.m
 
-Function issimple(m:modref) boolean isempty.typerep.para.m
+Function isSimple(m:modref) boolean isempty.typerep.para.m
 
 Function parameter(t:mytype) mytype mytype(typerep.t << 1)
 
-Function isabstract(a:mytype) boolean last.typerep.a = first.typerep.typeT
+Function isAbstract(a:mytype) boolean last.typerep.a = first.typerep.typeT
 
 Function replaceT(with:mytype, m:mytype) mytype
-if isabstract.m then mytype(typerep.m >> 1 + typerep.with) else m
+if isAbstract.m then mytype(typerep.m >> 1 + typerep.with) else m
 
 Function replaceT(m:modref, t:mytype) modref
 modref(library.m, name.m, replaceT(para.m, t))
@@ -122,10 +122,10 @@ Function >1(a:mytype, b:mytype) ordering typerep.a >1 typerep.b
 Function >2(a:mytype, b:mytype) ordering typerep.a >2 typerep.b
 
 Function %(s:modref) seq.word
-if issimple.s then [name.s] else [name.s, "."_1] + %.para.s
+if isSimple.s then [name.s] else [name.s, "."_1] + %.para.s
 
 Function replaceT(with:mytype, m:modref) modref
-if issimple.m ∨ not.isabstract.para.m then
+if isSimple.m ∨ not.isAbstract.para.m then
  m
 else
  modref(library.m, name.m, mytype(typerep.para.m >> 1 + typerep.with))

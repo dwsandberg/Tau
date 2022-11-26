@@ -242,7 +242,7 @@ let m = compilerFront:callconfig("text", input)
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for (uses)
 let templates = 
  for acc = templates.m, sym ∈ toseq.dict do
-  if isabstract.module.sym ∧ isempty.getCode(templates.m, sym) then
+  if isAbstract.module.sym ∧ isempty.getCode(templates.m, sym) then
    acc + symdef(sym, empty:seq.symbol, 0)
   else
    acc
@@ -327,7 +327,7 @@ for acc = empty:seq.rename, r ∈ renames do
   acc
  else if sym.r = s then
   acc + r
- else if not.isabstract.module.sym.r ∨ name.module.sym.r ≠ name.module.s then
+ else if not.isAbstract.module.sym.r ∨ name.module.sym.r ≠ name.module.s then
   acc
  else if replaceTsymbol(para.module.s, sym.r) = s then
   assert true report "M $(s) $(r)"
@@ -336,8 +336,28 @@ for acc = empty:seq.rename, r ∈ renames do
   acc
 /for (acc)
 
+use otherseq.rename
+
 function totext(result1:midpoint, renames:seq.rename) seq.seq.word
-let src = src.result1
+let src = 
+ if isempty.renames then
+  src.result1
+ else
+  for acc = empty:seq.seq.word, p ∈ src.result1 do
+   acc
+   + if length.p > 2 ∧ first.p ∈ "Export" then
+    for found = "", r ∈ renames
+    while isempty.found
+    do
+     if p_2 = name.sym.r ∧ name.module.sym.r ∈ p then
+      {???? need to handle reorder of parameter and check to see of no of parameters match}
+      "Export $(newname.r) $(p << 2)"
+     else
+      ""
+    /for (if isempty.found then p else found)
+   else
+    p
+  /for (acc)
 let acc4 = 
  for acc4 = src, sd ∈ toseq.prg.result1 do
   if paragraphno.sd = 0 then
@@ -403,7 +423,7 @@ do
 /for (acc)
 
 function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename) stack.seq.word
-if isstart.sym ∨ isexit.sym ∨ isbr.sym then
+if isstart.sym ∨ isExit.sym ∨ isbr.sym then
  stk
 else if name.module.sym ∈ "$int" then
  push(stk, [name.sym])

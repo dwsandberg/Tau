@@ -22,6 +22,8 @@ use symbol2
 
 use set.symdef
 
+use otherseq.symbol
+
 Function front(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
  , mods:seq.word, ~mods:seq.word, within:boolean, out:seq.word) seq.file
 let names = n
@@ -43,7 +45,9 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
    for txt = "", i ∈ selected do txt + "/p" + %.sym.i /for (txt)
   else if out = "symdef" then
    for txt = "", sd1 ∈ selected do
-    txt + "/p" + %.sym.sd1 + %.code.sd1
+    let kk = getOptions.sd1
+    txt + "/p" + %.sym.sd1 + if isempty.kk then "" else "OPTIONS:$(kk)" /if
+    + %.code.sd1
    /for (txt)
   else if out = "symdefgraph" then
    for txt = "", sd1 ∈ selected do

@@ -78,7 +78,7 @@ for acc = first.libmods.m, md ∈ libmods.m do
 
 function exports(m:midpoint, modr:modref) seq.symbol
 let mr = lookupModule(m, name.modr)
-if issimple.modr then
+if isSimple.modr then
  exports.mr
 else
  for acc = empty:seq.symbol, sym ∈ exports.mr do
@@ -102,7 +102,7 @@ else
  {find symbols referenced in expanding templates}
  let uses6 = uses5 ∪ requires(uses5, templates.m, dict, false)
  let thismodule = 
-  if isabstract.module.first.exports then
+  if isAbstract.module.first.exports then
    moduleref("*" + modname, typeT)
   else
    moduleref("*" + modname)
@@ -138,7 +138,7 @@ function chooseUses(uses:seq.modref
 {first make sure the parameter of the uses are included in the module}
 let in = 
  for acc = empty:set.mytype, u ∈ uses do
-  if issimple.u ∨ para.u ∈ [typeint, typeT] then acc else acc + para.u
+  if isSimple.u ∨ para.u ∈ [typeint, typeT] then acc else acc + para.u
  /for (for new = unhandled, t ∈ toseq.acc do new + inModule(exported, deepcopySym.t) /for (new))
 {now try and resolve unhandled module sets}
 for acc = empty:set.set.modref, newuses = asset.uses, u ∈ toseq.in do
@@ -171,7 +171,7 @@ function >1(a:set.modref, b:set.modref) ordering toseq.a >1 toseq.b
 function inModule(exported:set.sym/modref, sym:symbol) set.modref
 let t = toseq.findelement2(exported, sym/modref(sym, internalmod))
 let tmp = 
- if not.isempty.t ∨ issimple.module.sym then
+ if not.isempty.t ∨ isSimple.module.sym then
   t
  else
   for acc2 = t, sm ∈ toseq.exported do
@@ -184,7 +184,7 @@ for acc = empty:set.modref, e ∈ tmp do acc + in.e /for (acc)
 
 Function requires(uses5:set.symbol, templates:set.symdef, dict:set.symbol, addtemplate:boolean) set.symbol
 for acc = empty:seq.symbol, sym ∈ toseq.uses5 do
- if isconstantorspecial.sym ∨ name.module.sym ∈ "$for internal" ∨ issimple.module.sym then
+ if isconstantorspecial.sym ∨ name.module.sym ∈ "$for internal" ∨ isSimple.module.sym then
   acc
  else
   for acc2 = empty:seq.symbol, sd ∈ toseq.templates do

@@ -483,7 +483,7 @@ if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0)
    sprintf(name,"%s/%sbcword",argv[1]+12,tmp);
       bcwords=empty; BT * data2;
      if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
-       fprintf(stderr, "failed to load %s \n",name); exit(1);}
+       fprintf(stderr, "failed to load  %s \n",name); exit(1);}
     else   if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
      {
     bcwords=(long long *) filedata; 
@@ -526,7 +526,7 @@ if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0)
      
  BT getmachineinfo(processinfo PD) 
 {  BT a = myalloc(PD,2);
-   IDXUC(a,0)=tobyteseq(PD,/* "x86_64-apple-macosx10.15.0" */ "arm64-apple-macosx11.0.0");
+   IDXUC(a,0)=tobyteseq(PD,/* "x86_64-apple-macosx10.15.0" */ "arm64-apple-macosx13.0.0");
    IDXUC(a,1)=tobyteseq(PD,"e-m:o-i64:64-f80:128-n8:16:32:64-S128");
    return a;
  }

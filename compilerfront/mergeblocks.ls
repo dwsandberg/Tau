@@ -1,26 +1,228 @@
 Module mergeblocks
 
-use otherseq.casenode
-
-use encoding.seq.char
-
-use seq.int
-
-use set.int
-
-use stack.int
-
 use standard
-
-use symbol
-
-use otherseq.symbol
 
 use symbol2
 
-use words
+use seq.symbol
 
-type ggg is code:seq.symbol, stk:stack.int
+use seq.seq.symbol
+
+use set.symdef
+
+use mergeblocks
+
+use symbol
+
+use otherseq.seq.symbol
+
+use otherseq.int
+
+Function noDebug boolean false
+
+function reduceBr(code:seq.symbol, t:int, f:int) seq.symbol
+if isempty.code then
+ [Br2(t, f)]
+else
+ let last = last.code
+ if last = NotOp then
+  reduceBr(code >> 1, f, t)
+ else if last = Littrue then
+  code + Br2(t, t)
+ else if last = Litfalse then code + Br2(f, f) else code + Br2(t, f)
+
+Function mergeblocks(code:seq.symbol, self:symbol) seq.symbol
+for partstart = 1
+ , parts = empty:seq.seq.symbol
+ , skip = false
+ , idx = 1
+ , sy ∈ code
+do
+ if isstartorloop.sy ∨ isExit.sy ∨ isbr.sy ∨ iscontinue.sy then
+  let thispart = 
+   if isbr.sy then
+    reduceBr(subseq(code, partstart, idx - 1), brt.sy, brf.sy)
+   else
+    subseq(code, partstart, idx)
+  next(idx + 1
+   , if skip then
+    parts
+   else if not.isempty.parts ∧ last.last.parts = Words."MORE" then
+    parts >> 1 + (last.parts >> 1 + thispart)
+   else
+    parts + thispart
+   , false
+   , idx + 1)
+ else if sy ≠ EndBlock then
+  next(partstart, parts, false, idx + 1)
+ else
+  let lookAhead = if idx < length.code then code_(idx + 1) else Lit.0
+  let lp = laststart.parts
+  if lookAhead ∈ [Exit, EndBlock] ∧ isstart.last.parts_lp then
+   let endpart = [parts_lp >> 1 + parts_(lp + 1)] + parts << (lp + 1)
+   let adjustpart = parts >> (length.endpart + 1)
+   next(idx + 1, adjust(adjustpart, endpart), isExit.lookAhead, idx + 1)
+  else if isbr.lookAhead ∧ isstart.last.parts_lp then
+   let br = code_(idx + 1)
+   let replaceExit = 
+    for acc = empty:seq.seq.symbol
+     , amount = 0
+     , map = empty:seq.int
+     , p ∈ reverse(parts << lp)
+    do
+     if length.p = 2 ∧ isExit.last.p ∧ first.p ∈ [Littrue, Litfalse] then
+      next(acc, amount, [amount + if first.p = Littrue then brt.br else brf.br] + map)
+     else if last.p = EndBlock then
+      next([p] + acc, amount + 1, [0] + map)
+     else
+      let newend = 
+       if isExit.last.p then
+        Br2(brt.br + amount, brf.br + amount)
+       else
+        assert noDebug ∨ isbr.last.p report "Fail merge $(last.p) $(%n.parts)"
+        Br2(newTarget(map, brt.last.p), newTarget(map, brf.last.p))
+      next([p >> 1 + newend] + acc, amount + 1, [0] + map)
+    /for (acc)
+   let endpart = [parts_lp >> 1 + first.replaceExit] + replaceExit << 1
+   let adjustpart = parts >> (length.parts - lp + 1)
+   next(idx + 1, adjust(adjustpart, endpart), true, idx + 1)
+  else
+   let partstomerge = parts << (laststart.parts - 1)
+   let atend = if idx = length.code ∧ lp = 1 ∧ isstart.last.parts_lp then self else Lit.0
+   let newparts = parts >> length.partstomerge + (parts2code(partstomerge, atend) + Words."MORE")
+   next(idx + 1, newparts, false, idx + 1)
+/for (
+ if isempty.parts then
+  code
+ else
+  assert noDebug ∨ length.parts = 1 report "XXX"
+  first.parts >> 1 + subseq(code, partstart, length.code)
+)
+
+use set.int
+
+function parts2code(parts:seq.seq.symbol, self:symbol) seq.symbol
+assert noDebug ∨ length.parts > 2 ∧ isstartorloop.last.first.parts ∧ isbr.last.parts_2
+report "FAIL merge 1"
+let x = parts_2_(length.parts_2 - 1)
+if x ∈ [Littrue, Litfalse] then
+ let target = 2 + if x = Littrue then brt.last.parts_2 else brf.last.parts_2
+ let combined = parts_2 >> 2 + parts_target
+ if isExit.last.parts_target then
+  parts_1 >> 1 + combined >> 1
+ else
+  parts2code([parts_1] + combined + parts << target, self)
+else
+ let removeTailR = not.isconst.self ∧ isstart.last.first.parts
+ for used = empty:set.int
+  , pass = empty:set.int
+  , cnt = 1
+  , tailR = empty:set.int
+  , p ∈ parts
+ do
+  if isbr.last.p ∧ (cnt = 2 ∨ cnt ∈ used) then
+   if length.p = 2 ∧ first.p = Littrue then
+    next(used + (brt.last.p + cnt), pass + cnt, cnt + 1, tailR)
+   else if length.p = 2 ∧ first.p = Litfalse then
+    next(used + (brf.last.p + cnt), pass + cnt, cnt + 1, tailR)
+   else
+    next(used + (brt.last.p + cnt) + (brf.last.p + cnt), pass, cnt + 1, tailR)
+  else if removeTailR ∧ isExit.last.p ∧ self = p_(length.p - 1) then
+   next(used, pass, cnt + 1, tailR + cnt)
+  else
+   next(used, pass, cnt + 1, tailR)
+ /for (
+  if cardinality.used = length.parts - 2 ∧ isempty.tailR then
+   for acc = empty:seq.symbol, p2 ∈ parts do acc + p2 /for (acc + EndBlock)
+  else if toseq.pass = [2] ∧ cardinality.used = 1 ∧ isstart.last.first.parts then
+   parts_1 >> 1 + parts_(used_1) >> 1
+  else
+   let map = 
+    for acc = [1, 2], adjust = 0, i ∈ toseq(used \ pass) do
+     let diff = i - length.acc - 1
+     next(acc + constantseq(diff, 0) + [i - adjust - diff], adjust + diff)
+    /for (acc)
+   for acc = empty:seq.symbol, count = 2, p2 ∈ subseq(parts, 2, length.map) do
+    let newpos = map_count
+    if newpos = 0 then
+     next(acc, count + 1)
+    else
+     let endsym = last.p2
+     if not.isbr.endsym then
+      if count ∈ tailR then
+       next(acc + (p2 >> 2 + continue.nopara.self), count + 1)
+      else
+       next(acc + p2, count + 1)
+     else
+      let t = map_followpass(brt.endsym + count, pass, parts) - newpos
+      let f = map_followpass(brf.endsym + count, pass, parts) - newpos
+      if t = brt.endsym ∧ f = brf.endsym then
+       next(acc + p2, count + 1)
+      else
+       next(acc + (p2 >> 1 + Br2(t, f)), count + 1)
+   /for (
+    if isempty.tailR then
+     first.parts + acc + EndBlock
+    else
+     {finish up removing tail Recursion}
+     for plist = empty:seq.symbol, e2 ∈ arithseq(nopara.self, 1, 1) do
+      plist + Local.e2
+     /for (
+      assert noDebug ∨ isstart.last.first.parts report "FAIL Merge 2 $(parts)"
+      plist + Loopblock(paratypes.self, nopara.self + 1, resulttype.self)
+      + adjustvar(first.parts >> 1 + acc, nopara.self)
+      + EndBlock
+     )
+   )
+ )
+
+function adjustvar(s:seq.symbol, delta:int) seq.symbol
+for acc = empty:seq.symbol, a ∈ s do
+ if islocal.a then
+  acc + Local(value.a + delta)
+ else if isdefine.a then
+  acc + Define(value.a + delta)
+ else if isloopblock.a then
+  acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)
+ else
+  acc + a
+/for (acc)
+
+function followpass(i:int, pass:set.int, parts:seq.seq.symbol) int
+if i ∉ pass then
+ i
+else
+ let p = parts_i
+ followpass(i + if first.p = Littrue then brt.p_2 else brf.p_2, pass, parts)
+
+function newTarget(map:seq.int, t:int) int
+let tmp = map_t
+for acc = if tmp = 0 then 1 else map_t, e ∈ subseq(map, 1, t - 1) do
+ if e = 0 then acc + 1 else acc
+/for (acc)
+
+use otherseq.word
+
+function laststart(parts:seq.seq.symbol) int
+for acc = length.parts, e ∈ reverse.parts while not.isstartorloop.last.e do acc - 1 /for (acc)
+
+function adjust(parts:seq.seq.symbol, endpart:seq.seq.symbol) seq.seq.symbol
+let amount = length.endpart - 1
+for acc = empty:seq.seq.symbol, jumppast = 2, p ∈ reverse.parts
+while not.isstartorloop.last.p
+do
+ let b = last.p
+ let adjustBr = 
+  if isbr.b then
+   let t = if brt.b < jumppast then 0 else amount
+   let f = if brf.b < jumppast then 0 else amount
+   if t + f = 0 then p else p >> 1 + Br2(brt.b + t, brf.b + f)
+  else
+   p
+ next([adjustBr] + acc, jumppast + 1)
+/for (parts >> length.acc + acc + endpart)
+
+use stack.int
 
 function countnodes2(s:stack.int) int if top.s = 2 then 1 else 1 + countnodes2.pop.s
 
@@ -35,354 +237,7 @@ do
   let blkno = countnodes2.stk + 1
   next(brt.sym > 0 ∧ brf.sym > 0
    , push(stk, max(blkno + max(brt.sym, brf.sym), top.stk)))
- else if isexit.sym ∨ iscontinue.sym then
+ else if isExit.sym ∨ iscontinue.sym then
   next(valid, push(stk, top.stk))
  else if isstartorloop.sym then next(valid, push(stk, 2)) else next(valid, stk)
-/for (valid)
-
-function ghj(code:seq.symbol, stk:stack.int, label:int, replace:int) seq.symbol
-if top.stk < 0 then
- code
-else
- let sym = code_(top.stk)
- let newcode = 
-  if isbr.sym ∧ (label = brt.sym ∨ label = brf.sym) then
-   replace(code
-    , top.stk
-    , Br2(if label = brt.sym then replace else brt.sym
-     , if label = brf.sym then replace else brf.sym)
-    )
-  else
-   code
- ghj(newcode, pop.stk, label + 1, replace + 1)
-
-type casenode is key:symbol, nodeno:int, brt:int
-
-function keyvalue(n:casenode) int
-let s = key.n
-if isword.s then valueofencoding.asencoding.wordname.s else value.s
-
-function >1(a:casenode, b:casenode) ordering keyvalue.a >1 keyvalue.b
-
-type repos is case:casenode, kind:word, branch:int
-
-type reorgresult is code:seq.symbol, offset:int
-
-function reorg(sorted:seq.casenode, brf:int, var:symbol, nodes:seq.int, nodeno:int) reorgresult
-{brf is absolute}
-if length.sorted < 4 then
- {rechain}
- let new = 
-  for acc = empty:seq.symbol, off = nodeno - (length.sorted - 1), c ∈ sorted >> 1 do
-   next(acc + [var, key.c, EqOp, Br2(brt.c - off, 1)], off + 1)
-  /for (
-   let last = last.sorted
-   let brt = brt.last - nodeno
-   acc + [var, key.last, EqOp, Br2(brt, brf - nodeno)]
-  )
- reorgresult(new, nodeno - length.sorted)
-else
- {split in two}
- let mid = length.sorted / 2
- let m = sorted_mid
- let lastpart = reorg(subseq(sorted, mid + 1, length.sorted), brf, var, nodes, nodeno)
- let firstpart = reorg(subseq(sorted, 1, mid - 1), brf, var, nodes, offset.lastpart)
- let new = 
-  [var, key.m, GtOp, Br2(offset.lastpart - offset.firstpart + 2, 1)]
-  + [var, key.m, EqOp, Br2(brt.m - offset.firstpart, 1)]
-  + code.firstpart
-  + code.lastpart
- reorgresult(new, offset.firstpart - 2)
-
-function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.int, nextvar:int, reorgwhen:int) seq.symbol
-for cases = empty:seq.casenode
- , last = -nodes_1
- , nodeno = 2
- , nextcase = 0
- , first = empty:seq.symbol
- , eqivs = empty:seq.symbol
- , e ∈ nodes << 1
-do
- if nodeno ∉ casenodes then
-  next(cases, e, nodeno + 1, nextcase - 1, first, eqivs)
- else
-  let sym = code_e
-  let brt = brt.sym + nodeno
-  if isempty.first then
-   let b = subseq(code, last + 1, e - 3)
-   if length.b > 2 ∧ islocal.last.b ∧ b_(length.b - 1) = Define.value.last.b then
-    next(cases + casenode(code_(e - 2), nodeno, brt)
-     , e
-     , nodeno + 1
-     , brf.sym
-     , subseq(code, last + 1, e - 5)
-     , [last.b])
-   else
-    next(cases + casenode(code_(e - 2), nodeno, brt)
-     , e
-     , nodeno + 1
-     , brf.sym
-     , b
-     , empty:seq.symbol)
-  else if nextcase = 1
-  ∧ (subseq(code, last + 1, e - 3) = first
-  ∨ last = e - 4 ∧ code_(e - 3) ∈ eqivs) then
-   next(cases + casenode(code_(e - 2), nodeno, brt)
-    , e
-    , nodeno + 1
-    , brf.sym
-    , first
-    , eqivs)
-  else if nextcase = 1 ∧ islocal.code_(e - 3)
-  ∧ Define.value.code_(e - 3) = code_(e - 4)
-  ∧ subseq(code, last + 1, e - 5) = first then
-   next(cases + casenode(code_(e - 2), nodeno, brt)
-    , e
-    , nodeno + 1
-    , brf.sym
-    , first
-    , eqivs + code_(e - 3))
-  else if length.cases < reorgwhen then
-   next([casenode(code_(e - 2), nodeno, brt)]
-    , e
-    , nodeno + 1
-    , brf.sym
-    , subseq(code, last + 1, e - 3)
-    , empty:seq.symbol)
-  else
-   next(cases, e, nodeno + 1, nextcase - 1, first, eqivs)
-/for (
- if length.cases < reorgwhen then
-  removedead(code, nodes, dead)
- else
-  let testvar = 
-   if length.first = 1 then first_1 else if isempty.eqivs then Local.nextvar else eqivs_1
-  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.value.testvar
-  let t = 
-   reorg(sort.cases
-    , nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases))
-    , testvar
-    , nodes
-    , nodeno.first.cases - 1)
-  let nonewnodes = length.code.t / 4
-  let locnode = nodeno.first.cases - 1
-  let nodesBeforeStartOfCase = subseq(nodes, 1, locnode)
-  let newcasecode = settestvar + code.t
-  let loc = abs.nodes_locnode
-  let newcode = 
-   subseq(adjustbr(code, subseq(nodes, 1, locnode + 1), nonewnodes), 1, loc)
-   + newcasecode
-   + subseq(code, loc + 1, length.code)
-  let newnodes = 
-   for l = nodesBeforeStartOfCase + arithseq(nonewnodes, 4, loc + length.settestvar + 4)
-    , n ∈ nodes << locnode
-   do
-    l + [length.newcasecode + n]
-   /for (l)
-  let newunreached = 
-   for
-    l = for x = empty:seq.int, y ∈ dead do
-     x + if y < locnode then y else nonewnodes + y
-    /for (x)
-    , n ∈ cases
-   do
-    let n2 = nodeno.n + nonewnodes
-    if isempty.l then
-     [n2]
-    else if last.l > n2 then
-     l + n2
-    else if n2 > first.l then
-     [n2] + l
-    else
-     for l2 = [first.l], lastx = first.l, n3 ∈ l << 1 do
-      next(if between(n2, n3, lastx) then l2 + n2 + n3 else l2 + n3, n3)
-     /for (l2)
-   /for (l)
-  {nodes_node.first.cases} removedead(newcode, newnodes, newunreached)
-)
-
-function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int) seq.symbol
-for unreached = empty:seq.int
- , multpred = empty:seq.int
- , cases = empty:seq.int
- , targets = asset.[2]
- , count = 2
- , n ∈ nodes << 1
-do
- let sym = code_n
- if count ∉ targets then
-  next([count] + unreached, multpred, cases, targets, count + 1)
- else if not.isbr.sym then
-  next(unreached, multpred, cases, targets, count + 1)
- else
-  {isbr}
-  let t = count + brt.sym
-  let f = count + brf.sym
-  let c = if t ∈ targets then 1 else 0 /if + if f ∈ targets then 2 else 0
-  let newcases = 
-   if n ∉ multpred ∧ code_(n - 1) = EqOp ∧ isconst.code_(n - 2) then
-    cases + count
-   else
-    cases
-  let newtargets = 
-   if c = 0 then
-    targets + t + f
-   else if c = 1 then targets + f else if c = 2 then targets + t else targets
-  let newmultpred = 
-   if c = 0 then
-    multpred
-   else if c = 1 then
-    multpred + t
-   else if c = 2 then multpred + f else multpred + t + f
-  next(unreached, newmultpred, newcases, newtargets, count + 1)
-/for (
- if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes) then
-  {just two active nodes which must be a branch follow by an exit.so remove block}
-  let blkstart = -first.nodes
-  let secondnode = code_(nodes_2)
-  let firstpart = subseq(code, blkstart + 1, nodes_2 - 1)
-  let firstpart1 = 
-   if length.firstpart = 1 ∧ (isconst.firstpart_1 ∨ islocal.firstpart_1) then
-    empty:seq.symbol
-   else
-    firstpart + Define.100000
-  subseq(code, 1, blkstart - 1) + firstpart1
-  + subseq(code, nodes_(1 + brt.secondnode) + 1, nodes_(2 + brt.secondnode) - 1)
- else if length.cases < reorgwhen then
-  removedead(code, nodes, unreached)
- else
-  findcases(code, nodes, cases, unreached, nextvar, reorgwhen)
-)
-
-function removedead(code:seq.symbol, nodes:seq.int, dead:seq.int) seq.symbol
-{nodes in dead are in descending order}
-for newcode = code, n ∈ dead do
- adjustbr(subseq(newcode, 1, nodes_(n - 1)), subseq(nodes, 2, n - 1),-1)
- + subseq(newcode, nodes_n + 1, length.code)
-/for (newcode + EndBlock)
-
-Function optB(s:seq.symbol, self:symbol, reorgwhen:int) seq.symbol
-for acc = empty:seq.symbol
- , stk = empty:stack.int
- , nextvar = length.s
- , lastsymbol = Lit.0
- , sym ∈ s
-do
- if (lastsymbol = Littrue ∨ lastsymbol = Litfalse) ∧ isbr.sym
- ∧ top.stk = length.acc - 1 then
-  {patch previous br's so they skip over this block}
-  next(ghj(acc, stk, 1, 1 + if lastsymbol = Littrue then brt.sym else brf.sym) + sym
-   , push(stk, length.acc + 1)
-   , nextvar
-   , sym)
- else if isblock.sym then
-  next(acc, stk, nextvar, sym)
- else if not.isblock.lastsymbol then
-  next(acc + sym, newstk(sym, stk, acc), nextvar, sym)
- else
-  {lastsymbol isblock}
-  let noblocks = countnodes.stk
-  let nodes = top(stk, noblocks)
-  let stk1 = pop(stk, noblocks)
-  let blkstart = -first.nodes
-  if isloopblock.acc_blkstart ∨ sym ≠ Exit ∧ not.isbr.sym then
-   let code0 = unreached(acc, nodes, nextvar, reorgwhen)
-   next(code0 + sym, newstk(sym, stk1, code0), nextvar + 1, sym)
-  else if isbr.sym then
-   {adjust br in enclosing block}
-   let code0 = adjustbr(acc, top(stk1, countnodes.stk1 - 1), noblocks - 2)
-   {remove start of block}
-   let code1 = 
-    subseq(code0, 1,-first.nodes - 1) + subseq(code0,-first.nodes + 1, length.code0)
-   {replace exit by br sym}
-   let t = 
-    for code2 = code1, stk2 = stk1, adjust = noblocks - 2, n1 ∈ nodes << 1 do
-     let n = n1 - 1
-     next(
-      if code2_n = Exit then
-       if top.stk2 = n - 2 ∧ code2_(n - 1) = Littrue then
-        let code3 = ghj(code2, stk2, 1, brt.sym + adjust + 1)
-        replace(code3, n, Br2(brt.sym + adjust, brt.sym + adjust))
-       else if top.stk2 = n - 2 ∧ code2_(n - 1) = Litfalse then
-        let code3 = ghj(code2, stk2, 1, brf.sym + adjust + 1)
-        replace(code3, n, Br2(brf.sym + adjust, brf.sym + adjust))
-       else
-        replace(code2, n, Br2(brt.sym + adjust, brf.sym + adjust))
-      else
-       code2
-      , push(stk2, n)
-      , adjust - 1)
-    /for (ggg(code2, stk2))
-   next(code.t, stk.t, nextvar, sym)
-  else
-   assert sym = Exit report "Expected Exit"
-   {adjust br in enclosing block}
-   let code0 = adjustbr(acc, top(stk1, countnodes.stk1 - 1), noblocks - 2)
-   {remove start of block}
-   let code1 = 
-    subseq(code0, 1,-first.nodes - 1) + subseq(code0,-first.nodes + 1, length.code0)
-   {build new stk}
-   let stk2 = for stk2 = stk1, n ∈ nodes << 1 do push(stk2, n - 1) /for (stk2)
-   next(code1, stk2, nextvar, sym)
-/for (
- if isblock.lastsymbol then
-  if not.isconst.self ∧ first.toseq.stk = -1 then
-   tailR(acc + lastsymbol, self, stk)
-  else
-   unreached(acc, toseq.stk, nextvar, reorgwhen)
- else
-  acc
-)
-
-function newstk(sym:symbol, stk:stack.int, acc:seq.symbol) stack.int
-if isstartorloop.sym then
- push(stk,-length.acc - 1)
-else if isexit.sym ∨ iscontinue.sym ∨ isbr.sym then push(stk, length.acc + 1) else stk
-
-function tailR(code:seq.symbol, self:symbol, stk:stack.int) seq.symbol
-let l = 
- for l = empty:seq.int, ss ∈ toseq.stk do
-  if ss > 0 ∧ code_ss = Exit ∧ code_(ss - 1) = self then
-   [ss] + l
-  else
-   l
- /for (l)
-if isempty.l then
- code
-else
- let nopara = nopara.self
- let plist = for acc = empty:seq.symbol, e2 ∈ arithseq(nopara, 1, 1) do acc + Local.e2 /for (acc)
- let code2 = 
-  for code2 = code, i ∈ l do
-   subseq(code2, 1, i - 2) + continue.nopara + subseq(code2, i + 1, length.code2)
-  /for (code2)
- plist + Loopblock(paratypes.self, nopara + 1, resulttype.self)
- + adjustvar(code2 << 1, nopara)
-
-function adjustvar(s:seq.symbol, delta:int) seq.symbol
-for acc = empty:seq.symbol, a ∈ s do
- if islocal.a then
-  acc + Local(value.a + delta)
- else if isdefine.a then
-  acc + Define(value.a + delta)
- else if isloopblock.a then
-  acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)
- else
-  acc + a
-/for (acc)
-
-function adjustbr(code:seq.symbol, nodestoadjust:seq.int, adjust:int) seq.symbol
-{if branch target is not in nodestoadjust then it is adjusted}
-{nodes to adjust does not include block start node}
-for acc = code, blockcount = length.nodestoadjust, i ∈ nodestoadjust do
- let sym = acc_i
- if isbr.sym ∧ (brt.sym > blockcount ∨ brf.sym > blockcount) then
-  let newt = if brt.sym > blockcount then brt.sym + adjust else brt.sym
-  let newf = if brf.sym > blockcount then brf.sym + adjust else brf.sym
-  assert between(i, 1, length.acc) report "problem adjust $(i) $(code)"
-  next(replace(acc, i, Br2(newt, newf)), blockcount - 1)
- else
-  next(acc, blockcount - 1)
-/for (acc)
-
-function countnodes(s:stack.int) int if top.s < 0 then 1 else 1 + countnodes.pop.s 
+/for (valid) 

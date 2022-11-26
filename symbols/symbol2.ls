@@ -46,7 +46,7 @@ Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modE
 
 Export type:modref {From mytype}
 
-Export isabstract(modref) boolean {From mytype}
+Export isAbstract(modref) boolean {From mytype}
 
 Export library(modref) word {From mytype}
 
@@ -164,7 +164,7 @@ Export iscontinue(symbol) boolean {From symbol}
 
 Export isdefine(symbol) boolean {From symbol}
 
-Export isexit(symbol) boolean {From symbol}
+Export isExit(symbol) boolean {From symbol}
 
 Export islocal(symbol) boolean {From symbol}
 
@@ -229,6 +229,8 @@ Export isThisLibrary(sd:symdef) boolean
 Export externalNo(sd:symdef) int
 
 use bits
+
+Export isNOINLINE(sd:symdef) boolean
 
 Export symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:bits) symdef
 

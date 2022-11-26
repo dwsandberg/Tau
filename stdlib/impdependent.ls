@@ -191,7 +191,7 @@ Function getfiles(args:seq.word) seq.file
 for acc = empty:seq.file, fn ∈ getfilenames(args << 1) do
  let a = getbytefile2.tocstr.fullname.fn
  assert not.aborted.a report "Error openning file:" + fullname.fn
- acc + file(fn, result.merge(a, result.a + body2.a, empty:seq.byte))
+ acc + file(fn, result.a + body2.a)
 /for (acc)
 
 builtin createfile3(data:seq.seq.byte, filename:seq.byte) int

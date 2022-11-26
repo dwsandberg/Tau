@@ -211,12 +211,15 @@ else if cmds.cmd = "makelib" then
    , if isempty.libinfo then "$(u).libinfo" else libinfo + u
    , "void init_$(u) () ; $(ccode) init_$(u) () ;")
  /for (
+  let opts = extractValue(data.cmdpara, "options")
+  let options = if isempty.opts then opts else "options = $(opts)"
   let out = changeext(fn, "libsrc")
   "
    /p #makelibrary $(name.fn)
    /br libexe $(lib.cmd) libsrc $(parts << 1) $(data.cmdpara) o = $("+$(dirpath.out
    )" + name.out + ".libsrc")
    /br libexe $(lib.cmd) makebitcode+$build $([name.out] + "." + ext.out + libinfo)
+   $(options)
    /br dependlibs $(eq + dq.depends)
    /br ccode $(eq + dq.ccode)
    /br linklibrary $(name.fn)"

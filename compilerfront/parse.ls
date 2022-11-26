@@ -137,7 +137,7 @@ report
 let discard = 
  for acc = 0, sym2 ∈ requires(dict, f_1) do
   let xxx = lookupbysig(dict, sym2)
-  assert not.isempty.xxx ∨ isabstract.module.f_1
+  assert not.isempty.xxx ∨ isAbstract.module.f_1
   report errormessage("using symbol $(f_1) requires unbound $(sym2)", common, place, parsestk)
   0
  /for (0)
@@ -226,7 +226,7 @@ else
  let f = lookupbysig(dict.R, op, types.exp, common, place, parsestk)
  let tmp = 
   if mode.common ∉ "text" ∧ op_1 = "next"_1 ∧ name.module.f ∈ "$for" then
-   code.exp + Local(toint.first.%.parameter.para.module.f + nopara.f) + Lit.1 + PlusOp
+   code.exp + Local(toint.first.%.parameter.para.module.f + nopara.f + 4)
    + symbol(internalmod, "next", paratypes.f + typeint, typeint)
   else
    code.exp + f
@@ -292,12 +292,13 @@ let dict1 = dict0 + resultsym + nestingsym
 for accdict = dict1, i = 1, name ∈ accnames do
  next(accdict + Local(name, acctypes_i, cardinality.accdict), i + 1)
 /for (
- let masteridx = cardinality.accdict
+ let lastidx = cardinality.accdict
  bindinfo(
-  accdict + Local(toword.masteridx, seqtype, masteridx)
-  + Local(elename_1, parameter.seqtype, masteridx + 1)
-  + Local(toword(masteridx + 2), typeint, masteridx + 2)
-  + Local(toword(masteridx + 3), typeint, masteridx + 3)
+  accdict + Local(toword.lastidx, seqtype, lastidx)
+  + Local(elename_1, parameter.seqtype, lastidx + 1)
+  + Local(toword(lastidx + 2), typeint, lastidx + 2)
+  + Local(toword(lastidx + 3), typeint, lastidx + 3)
+  + Local(toword(lastidx + 4), typeint, lastidx + 4)
   , code
   , acctypes + parameter.seqtype
   , accnames + elename)
@@ -343,28 +344,44 @@ let newcode =
  else
   let forbodytype = resulttype.lookupbysig(dict.vars, "for")_1
   let firstvar = toint.first.%.parameter.forbodytype
-  let masteridx = Local(firstvar + length.types.vars - 1)
-  let continue = 
-   if length.types.vars = 2 then
-    [masteridx, Lit.1, PlusOp, continue.length.types.vars]
-   else
-    [Exit]
-  let theseq = Local(value.masteridx + 2)
-  let totallength = Local(value.masteridx + 3)
+  let lastidx = Local(firstvar + length.types.vars - 1)
+  let theseq = Local(value.lastidx + 2)
+  let totallength = Local(value.lastidx + 3)
+  let masterindex = Local(value.lastidx + 4)
   let theseqtype = last.types.vars
-  code.vars + Define.value.theseq + theseq + GetSeqLength + Define.value.totallength
-  + Lit.1
-  + Loopblock(types.vars >> 1 + typeint, firstvar, resulttype)
-  + {2 if masteridx > totallength then exit} [masteridx, totallength, GtOp]
-  + Br2(2, 1)
-  + {3 else let sequenceele = seq_(idx)} theseq
-  + masteridx
-  + symbol(builtinmod.typeint, "idxNB", seqof.theseqtype, typeint, theseqtype)
-  + Define(value.masteridx + 1)
-  + {3 while condition} if tokentext.exitexp = "for" then [Littrue] else code.exitexp /if
-  + Br2(2, 1)
-  + code.endexp
-  + Exit
+  let reverse = name.last.code.vars ∈ "reverse" ∧ name.module.last.code.vars ∈ "otherseq"
+  let continue = if length.types.vars = 2 then [masterindex, continue.length.types.vars] else [Exit]
+  let setElement = 
+   [lastidx
+    , if reverse then Lit.-1 else Lit.1
+    , PlusOp
+    , Define.value.masterindex
+    , {let sequenceele = seq_(idx)} theseq
+    , masterindex
+    , symbol(builtinmod.typeint, "idxNB", seqof.theseqtype, typeint, theseqtype)
+    , Define(value.lastidx + 1)]
+  let header = 
+   if reverse then
+    code.vars >> 1 + Define.value.theseq + theseq + GetSeqLength
+    + Define.value.totallength
+    + totallength
+    + Lit.1
+    + PlusOp
+    + Loopblock(types.vars >> 1 + typeint, firstvar, resulttype)
+    + [lastidx, Lit.1, EqOp]
+   else
+    code.vars + Define.value.theseq + theseq + GetSeqLength + Define.value.totallength
+    + Lit.0
+    + Loopblock(types.vars >> 1 + typeint, firstvar, resulttype)
+    + [lastidx, totallength, EqOp]
+  header
+  + if tokentext.exitexp = "for" then
+   [Br2(1, 2)] + code.endexp + Exit + setElement
+  else
+   [Br2(2, 1)] + setElement + {3 while condition} code.exitexp + Br2(2, 1)
+   + code.endexp
+   + Exit
+  /if
   + code.forbody
   + continue
   + if length.types.vars = 2 ∧ tokentext.exitexp = "for" ∧ islocal.first.code.forbody
@@ -420,7 +437,7 @@ else if ruleno = {HH W NM T} 12 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_2, R_3)
 else if ruleno = {HH W NM is FP} 13 then
  let tp = 
-  resolvetype(if isabstract.modname.common then tokentext.R_2 + ".T" else tokentext.R_2
+  resolvetype(if isAbstract.modname.common then tokentext.R_2 + ".T" else tokentext.R_2
    , common
    , place
    , parsestk)

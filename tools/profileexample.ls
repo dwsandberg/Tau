@@ -17,7 +17,7 @@ use profile
 use standard
 
 Function testprofile(input:seq.file, o:seq.word) seq.file
-let discard = makebitcode.input
+let discard = makebitcode(input, "")
 [file(o, profileresults."time")]
 
 Function testprofile2(input:seq.file, o:seq.word) seq.file

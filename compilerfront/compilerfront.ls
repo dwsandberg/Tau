@@ -95,6 +95,8 @@ passsymbols(modname.a
  /for (types)
  , empty:seq.symdef)
 
+use otherseq.word
+
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint) midpoint
 assert not.isempty.allsrc report "empty source"
 let lib0 = extractValue(first.allsrc, "Library library")
@@ -109,7 +111,7 @@ else
    let tmp = 
     for tmp = empty:set.mytype, t ∈ types.libinfo do
      let mt = abstractModref.first.t
-     let mt2 = if isabstract.mt then replaceT(parameter.first.t, mt) else mt
+     let mt2 = if isAbstract.mt then replaceT(parameter.first.t, mt) else mt
      if mt2 = modname.m then tmp + first.t else tmp
     /for (tmp)
    acc + passtypes(modname.m, tmp, typedict.m)
@@ -130,7 +132,9 @@ else
  let prgb = if option = "text" then prga else prescan2(prga, typedict)
  let requireUnbound = buildrequires(prgb + toseq.code.t5 + toseq.prg.libinfo)
  let prg = compile(allmods, asset.simple.t5, lib, allsrc, option = "text", requireUnbound)
- let prg10 = asset(prgb + toseq.code.t5 + toseq.prg.libinfo + prescan2(prg, typedict))
+ let prg10 = 
+  asset(prgb + toseq.code.t5 + toseq.prg.libinfo
+  + if option = "text" then prg else prescan2(prg, typedict) /if)
  if option = "text" then
   for acc = empty:set.symdef, sd ∈ toseq.prg10 do
    if library.module.sym.sd = lib then acc + sd else acc
@@ -146,14 +150,14 @@ else
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do
     if name.module.f ∉ exports then
      acc
-    else if issimple.module.f then
+    else if isSimple.module.f then
      acc + toseq.exports.f
     else
      for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f do
       acc2 + getCode(prg10, sym)
      /for (
       for acc3 = acc, sym2 ∈ toseq.asset.acc2 do
-       if isabstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2 ∨ inModFor.sym2 then
+       if isAbstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2 ∨ inModFor.sym2 then
         acc3
        else
         acc3 + sym2
@@ -184,7 +188,7 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
  if name.module.m2 ∉ exports then
   acc
  else
-  let d2 = if isabstract.module.m2 then defines.m2 ∪ exports.m2 else exports.m2
+  let d2 = if isAbstract.module.m2 then defines.m2 ∪ exports.m2 else exports.m2
   let exps = 
    for acc3 = empty:seq.symbol, e ∈ toseq.d2 do
     if isunbound.e then acc3 else acc3 + e
@@ -213,7 +217,7 @@ function close(prg:set.symdef, toprocess:set.symbol, processed:set.symbol, len:i
 let toexport = toprocess \ processed
 for new = empty:seq.symbol, sym ∈ toseq.toexport do
  let code = getCode(prg, sym)
- if len > 0 ∧ length.code ≥ len ∧ not.isabstract.module.sym then
+ if len > 0 ∧ length.code ≥ len ∧ not.isAbstract.module.sym then
   new
  else
   for acc = new, sym2 ∈ code do
@@ -241,7 +245,7 @@ let libextnames =
  /for (asset.acc)
 let tmp = 
  for acc = empty:seq.symbol, sym ∈ toseq.roots.oldmods do
-  if not.isabstract.module.sym ∧ not.isInternal.sym then acc + Fref.sym else acc
+  if not.isAbstract.module.sym ∧ not.isInternal.sym then acc + Fref.sym else acc
  /for (Constant2(acc + Sequence(typeint, length.acc)))
 let maybereferenced0 = close(prg10, roots.oldmods + tmp, empty:set.symbol, 0)
 let symdict = symboldict(maybereferenced0, empty:seq.commoninfo)
@@ -259,13 +263,13 @@ let divide =
  do
   let sym = clearrequiresbit.sym1
   let dup = 
-   if not.isunbound.sym ∨ isabstract.module.sym then
+   if not.isunbound.sym ∨ isAbstract.module.sym then
     false
    else
     for acc = true, x ∈ toseq.lookupbysig(symdict, sym) while acc do isunbound.x /for (not.acc)
   if dup then
    next(addresses, other, dupsyms + sym)
-  else if isabstract.module.sym ∨ isconst.sym ∨ isBuiltin.sym ∨ isGlobal.sym then
+  else if isAbstract.module.sym ∨ isconst.sym ∨ isBuiltin.sym ∨ isGlobal.sym then
    next(addresses, other + sym, dupsyms)
   else
    next(addresses + sym, other, dupsyms)
@@ -285,7 +289,7 @@ do
  if not.isrecordconstant.sym ∧ isconstantorspecial.sym then
   next(prgX, prgA, idx)
  else
-  let abstract = isabstract.module.sym
+  let abstract = isAbstract.module.sym
   let new = 
    if isGlobal.sym then
     [symdef(sym, empty:seq.symbol, idx)]
@@ -361,7 +365,7 @@ for acc = empty:seq.symdef, sym ∈ toseq.toexport do
   let sd = getSymdef(prg, sym)
   if isempty.sd then
    acc + symdef(sym, empty:seq.symbol, 0)
-  else if isabstract.module.sym then
+  else if isAbstract.module.sym then
    acc + sd_1
   else
    let code = code.sd_1
