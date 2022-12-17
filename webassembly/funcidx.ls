@@ -89,8 +89,7 @@ else
  for acc = "func (", e ∈ subseq(val.w, 3, nopara + 2) do
   acc + %.wtype.e
  /for (
-  acc + ")"
-  + if (val.w)_(nopara + 3) = tobyte.1 then %.wtype.last.val.w else "void"
+  acc + ")" + if (val.w)_(nopara + 3) = tobyte.1 then %.wtype.last.val.w else "void"
  )
 
 Function printtypeidx(i:int) seq.word
@@ -119,6 +118,8 @@ addorder.wtype([tobyte.0x60] + LEBu.length.paras
 function %(f:wfunc) seq.word
 let p = process.printfunc.f
 if aborted.p then message.p else result.p
+
+use otherseq.int
 
 Function createwasm(imports:seq.seq.byte
  , exports:seq.seq.byte
@@ -160,6 +161,9 @@ for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode d
   for txt = "Successful compile /p", p2 ∈ importfuncs do
    txt + %.p2 + "typeidx =" + printtypeidx.typeidx.p2 + "/br"
   /for (txt)
+  + for txt = "", cnt = 2, f ∈ funcrefs do
+   next(txt + "$(cnt):$(f)", cnt + 1)
+  /for ("tableelements $(txt) /br")
   + for txt = ""
    , offset = length.beforecode + length.LEBu.length.codevector + 1
    , p2 ∈ funcswithcode
@@ -182,9 +186,7 @@ for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode d
    /for (acc)]
  if info then
   [file(fn, total)
-   , file(filename("+$(dirpath.fn)" + merge([name.fn] + "info") + ".html")
-    , forlater)
-   ]
+   , file(filename("+$(dirpath.fn)" + merge([name.fn] + "info") + ".html"), forlater)]
  else
   [file(fn, total)]
 )
@@ -253,20 +255,14 @@ let t =
   if a = e then found + e else found
  /for (found)
 assert name.sym.a ∉ "intpart" ∨ not.isempty.t
-report
- "KKK $(sym.a) $(for txt = ">>>", b ∈ s do txt + %.sym.b + "
-  /br" /for (txt))"
+report "KKK $(sym.a) $(for txt = ">>>", b ∈ s do txt + %.sym.b + "/br" /for (txt))"
 t
 
 Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte, funcidx:int) wfunc
 wfunc(sym
  , code
  , funcidx
- , if inmodule(sym, "core32") then
-  typeidx32(alltypes, sym)
- else
-  typeidx64(alltypes, sym)
- )
+ , if inmodule(sym, "core32") then typeidx32(alltypes, sym) else typeidx64(alltypes, sym))
 
 Function inmodule(sym:symbol, modname:seq.word) boolean name.module.sym ∈ modname
 
@@ -312,7 +308,8 @@ do
 Function Wcall(sym:symbol) seq.byte [call] + LEBu.funcidx.sym
 
 Function globalspace int
-let t = 208
+{???? needs adjustment}
+let t = 25 * 24
 assert t mod 8 = 0 report "globalspace must be multiple of 8"
 t
 
@@ -331,12 +328,12 @@ for acc = empty:seq.symbol, w ∈ s do
  acc + wordconst.w
 /for (Constant2(acc + Sequence(seqof.typeint, length.acc)))
 
-Function initialwordlocations seq.int
-for acc2 = empty:seq.int, p ∈ encodingdata:word5 do
+Function initialwordconst symbol
+for acc2 = empty:seq.symbol, p ∈ encodingdata:word5 do
  for acc = empty:seq.symbol, c ∈ chars.p do
   acc + Lit.toint.c
- /for (acc2 + getoffset.Constant2(acc + Sequence(seqof.typeint, length.acc)))
-/for (acc2)
+ /for (acc2 + Constant2(acc + Sequence(seqof.typeint, length.acc)))
+/for (Constant2(acc2 + Sequence(seqof.seqof.typeint, length.acc2)))
 
 ________________
 
@@ -379,15 +376,12 @@ for acc = constantseq(globalspace / 8, 0), p ∈ encodingdata:datax do
 /for (acc)
 
 Function allocateconstspace(globalname:word, elements:seq.int) int
-let d = encode.datax(globalname, elements)
-for offset = globalspace, p ∈ encoding:seq.encodingpair.datax
-while code.p ≠ d
-do
- offset + 8 * length.elements.data.p
+let k = addorder.datax(globalname, elements)
+for offset = globalspace, p ∈ subseq(encodingdata:datax, 1, k - 1) do
+ offset + 8 * length.elements.p
 /for (offset)
 
-/Function constintseq (elements:seq.int) int allocateconstspace ("."_1, [0, length.elements]+elements
-)
+/Function constintseq (elements:seq.int) int allocateconstspace ("."_1, [0, length.elements]+
 
 function constantcode(s:symbol) seq.symbol
 let code1 = fullconstantcode.s
@@ -400,8 +394,7 @@ Function getoffset(const:symbol) int
 let elements = 
  for elements = empty:seq.int, sym ∈ constantcode.const do
   elements
-  + if inmodule(sym, "$real") ∨ inmodule(sym, "$int")
-  ∨ inmodule(sym, "$boolean") then
+  + if inmodule(sym, "$real") ∨ inmodule(sym, "$int") ∨ inmodule(sym, "$boolean") then
    value.sym
   else if sym = Littrue then
    1

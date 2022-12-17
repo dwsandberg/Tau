@@ -4,6 +4,8 @@ use bits
 
 use seq.int
 
+use otherseq.mytype
+
 use seq.mytype
 
 use standard
@@ -11,6 +13,8 @@ use standard
 use symbol
 
 use otherseq.symbol
+
+use stack.seq.symbol
 
 use symbol2
 
@@ -65,11 +69,9 @@ type expandresult is nextvar:int, code:seq.symbol, flags:bits
 function isconstorlocal(p:seq.symbol) boolean
 length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
-Function expandforexp(code:seq.symbol, nextvarin:int) seq.symbol
+Function expandIndex(code:seq.symbol, nextvarin:int) seq.symbol
 for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
- if  isExit.sym ∧ module.last = internalmod ∧ name.last ∈ "next" then
-  next(acc >> 1 + continue.nopara.last, nextvar, sym)
- else if not.isInternal.sym then
+ if not.isInternal.sym then
   next(acc + sym, nextvar, sym)
  else if wordname.sym ∈ "indexseq45 idxNB" then
   let theseqtype = (paratypes.sym)_1
@@ -78,8 +80,7 @@ for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
    if isconstorlocal.[acc_(length.acc - 1)] ∧ isconstorlocal.[last.acc] then
     let index = last.acc
     let theseq = acc_(length.acc - 1)
-    acc >> 2
-    + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
+    acc >> 2 + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
    else
     let t = backparse2(acc, length.acc, 2, empty:seq.int)
     let index0 = subseq(acc, t_2, length.acc)
@@ -95,83 +96,81 @@ for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
   next(if name.sym ∈ "checkfornoop" then acc else acc + sym, nextvar, sym)
 /for (acc)
 
-use stack.seq.symbol
-
-use otherseq.mytype
-
 Function forexpisnoop(sym:symbol, acc:seq.symbol) seq.symbol
-if length.acc < 26 then
- empty:seq.symbol
-else if acc_(length.acc - 1) ≠ continue.2 then
+let len = length.acc
+assert acc_(len - 1) = continue.2 ∧ nopara.acc_(len - 3) = 2 ∧ len ≥ 24
+report "SDF $(len) $(sym) $(acc)"
+let loop = acc_(len - 21)
+if not(isloopblock.loop ∧ isSequence.acc_(len - 4)) then
  empty:seq.symbol
 else
- let masteridx = acc_(length.acc - 2)
- let cat = acc_(length.acc - 3)
+ let masteridx = acc_(len - 2)
+ let cat = acc_(len - 3)
  let pcat = paratypes.cat
- if length.pcat ≠ 2 then
-  empty:seq.symbol
- else
-  let adj = if pcat_1 = pcat_2 then length.acc - 1 else length.acc
-  if adj < length.acc ∧ not.isSequence.acc_(length.acc - 4)
-  ∨ adj = length.acc ∧ parameter.pcat_1 ≠ pcat_2 then
-   empty:seq.symbol
-  else
-   let element = acc_(adj - 4)
-   let theacc = acc_(adj - 5)
-   let loop = acc_(adj - 20)
-   let getseqlength = acc_(adj - 23)
-   let theseq = acc_(adj - 24)
-   let empty = acc_(adj - 25)
-   if islocal.element ∧ value.element = value.masteridx + 1 ∧ islocal.theseq
-   ∧ isloopblock.loop
-   ∧ getseqlength = GetSeqLength
-   ∧ firstvar.loop = value.theacc then
-    {assert name.sym /in" tointseq towordseq toalphaseq % function hash breakcommas typerecords constantrecords
-     AGGREGATE buildargs alphasort findelement2 profilecall tocharseq inrec asseqseqmytype" report" as"
-     +%.sym+%.acc}
-    if islocal.theseq ∧ isrecordconstant.empty ∧ isSequence.first.fullconstantcode.empty
-    ∧ nopara.first.fullconstantcode.empty = 0 then
-     subseq(acc, 1, adj - 26) + theseq
-    else
-     let theseqtype = first.paratypes.loop
-     if %.parameter.theseqtype ∈ ["packed2", "ptr"] then
-      {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
-     else
-      subseq(acc, 1, adj - 24)
-      + symbol(moduleref("* seq", parameter.theseqtype)
-       , "+"
-       , theseqtype
-       , theseqtype
-       , theseqtype)
+ assert parameter.pcat_1 ≠ pcat_2 report "XXX"
+ {assert name.sym /nin" type" /or %.resulttype.sym /in [" seq.word"," seq.mytype"," seq.symbol
+  "] report" CHECK"+%.sym+%.acc}
+ let element = acc_(len - 5)
+ let theacc = acc_(len - 6)
+ let theseq = acc_(len - 10)
+ if islocal.element ∧ value.element = value.masteridx + 1 ∧ firstvar.loop = value.theacc then
+  let empty = if isrecordconstant.theseq then acc_(len - 23) else acc_(len - 26)
+  let isempty = 
+   isrecordconstant.empty ∧ isSequence.first.fullconstantcode.empty
+   ∧ nopara.first.fullconstantcode.empty = 0
+  {assert name.sym /in" tointseq towordseq toalphaseq % function hash breakcommas typerecords constantrecords
+   AGGREGATE buildargs alphasort findelement2 profilecall tocharseq inrec asseqseqmytype" report" as"
+   +%.sym+%.acc}
+  {assert name.sym ∉" testr" report" kkk"+%.acc}
+  let seqlen = 
+   if isrecordconstant.theseq then
+    Lit.nopara.last.fullconstantcode.theseq
    else
-    empty:seq.symbol
+    Local(firstvar.loop - 1)
+  let a = symbol(internalmod, "idxNB", paratypes.loop, parameter.first.paratypes.loop)
+  let shouldbe = 
+   [Local(firstvar.loop + 1)
+    , seqlen
+    , EqOp
+    , Br2(1, 2)
+    , theacc
+    , Exit
+    , Local(firstvar.loop + 1)
+    , Lit.1
+    , PlusOp
+    , Define.value.masteridx
+    , theseq
+    , masteridx
+    , a]
+   + Define.value.element
+   + theacc
+   + element
+  assert subseq(acc, len - 20, len - 5) = shouldbe
+  report "$(theseq) shouldbe $(sym) $(acc) /p $(shouldbe)"
+  if isrecordconstant.theseq ∧ isempty then
+   subseq(acc, 1, len - 24) + theseq
+  else if islocal.theseq ∧ isempty then
+   subseq(acc, 1, len - 27) + theseq
+  else
+   let theseqtype = first.paratypes.loop
+   if %.parameter.theseqtype ∈ ["packed2", "ptr"] then
+    {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
+   else
+    subseq(acc, 1, len - 1 - 24)
+    + symbol(moduleref("* seq", parameter.theseqtype), "+", theseqtype, theseqtype, theseqtype)
+ else
+  empty:seq.symbol
 
-if length.acc < 9 then empty:seq.symbol else let masteridx = value.acc_(length.acc-4) let cat = acc
-_(length.acc-5) let pcat = paratypes.cat if length.pcat /ne 2 then empty:seq.symbol else let adj = if
-pcat_1 = pcat_2 then length.acc-1 else length.acc if adj < length.acc ∧ not.isSequence.acc_(length
-.acc-6) ∨ adj = length.acc ∧ parameter.pcat_1 ≠ pcat_2 then empty:seq.symbol else let acc6 = acc
-_(adj-6) let acc7 = acc_(adj-7) let adj2 = if subseq (acc, adj-11, adj-10) = [Littrue, Br2 (2, 2)] then
-adj-12 else adj-10 if adj2-14 < 0 then empty:seq.symbol else let acc9 = acc_(adj-9) let loop
-= acc_(adj2-8) let getlength = acc_(adj2-11) let seq = acc_(adj2-12) let empty = acc_(adj2-13
-) if islocal.acc7 ∧ islocal.acc6 ∧ value.acc7 = masteridx-1 ∧ value.acc6 = masteridx+1 ∧ value.acc7
-= masteridx-1 ∧ isloopblock.loop ∧ getlength = GetSeqLength then if islocal.seq ∧ isrecordconstant
-.empty ∧ isSequence.first.fullconstantcode.empty ∧ nopara.first.fullconstantcode.empty = 0 then subseq
-(acc, 1, adj2-14)+seq else let theseqtype = first.paratypes.loop if %.parameter.theseqtype ∈ [" packed2
-"," ptr"] then {???? hack! should at least check to see if cat is defined.} empty:seq.symbol else
-subseq (acc, 1, adj2-12)+symbol (moduleref (" * seq", parameter.theseqtype),"+", theseqtype, theseqtype
-, theseqtype) else {assert not (islocal.acc7 ∧ islocal.acc6 ∧ value.acc7 = masteridx-1 ∧ value.acc6 =
-masteridx+1 ∧ value.acc7 = masteridx-1) report" X"+%.acc+" /p"+%.subseq (acc, 1, adj2)} empty
-:seq.symbol
-
-function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqtype:mytype, boundscheck:boolean) seq.symbol
+function indexseqcode(seqtype:symbol
+ , theseq:symbol
+ , masteridx:symbol
+ , xtheseqtype:mytype
+ , boundscheck:boolean) seq.symbol
 {seqtype will be a basetype}
 let seqparameter = parameter.xtheseqtype
 let theseqtype = seqof.seqparameter
 let elementtype = 
- if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then
-  seqparameter
- else
-  typeptr
+ if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then seqparameter else typeptr
 let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte
 let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
 [theseq
@@ -254,10 +253,7 @@ else
   backparse2(s, args_1, no, result)
  else if isblock.s_i then
   let b = matchblock(s, i - 1, 0)
-  if b = 1 then
-   [b] + result
-  else
-   backparse2(s, b - 1, no - 1, [b] + result)
+  if b = 1 then [b] + result else backparse2(s, b - 1, no - 1, [b] + result)
  else
   let nopara = nopara.s_i
   let first = 

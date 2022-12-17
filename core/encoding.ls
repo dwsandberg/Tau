@@ -1,12 +1,18 @@
 Module encoding.T
 
+use bitcast.einfo.T
+
 use seq.encodingpair.T
 
 use otherseq.seq.encodingpair.T
 
+use bitcast.encodingstate.T
+
 use seq.T
 
 use bits
+
+use ptr
 
 use standard
 
@@ -14,60 +20,52 @@ Export type:encoding.T
 
 Export valueofencoding(a:encoding.T) int
 
-Export type:encodingpair.T
-
-Export code(a:encodingpair.T) encoding.T
-
-Export data(a:encodingpair.T) T
-
-Export hash(a:encodingpair.T) int
-
 type encoding is valueofencoding:int
 
 Function to:encoding.T(i:int) encoding.T encoding.i
 
-type encodingstate is encodingno:int
+type encodingstate is all:seq.encodingpair.T
  , length:int
  , encodetable:seq.seq.encodingpair.T
- , decodetable:seq.seq.encodingpair.T
- , all:seq.encodingpair.T
- , lastadd:int
+ , lastadd:encoding.T
 
-function encodingstate(encodingno:int
- , length:int
- , encodetable:seq.seq.encodingpair.T
- , all:seq.encodingpair.T
- , lastadd:int) encodingstate.T
-encodingstate(0, length, encodetable, encodetable, all, lastadd)
+Export type:encodingstate.T
 
-/function_(e:encodingstate.T, i:int) T data.(all.e)_i
+Export length(encodingstate.T) int
 
-type encodingpair is code:encoding.T, data:T, hash:int
+Function startInParent:T boolean
+let inst = getinstance3:T
+if length.fromindirect.state.inst > 0 then
+ false
+else
+ let discard = finishStart.encodingnumber.inst
+ true
 
-Function encodingpair(code:encoding.T, data:T) encodingpair.T
-encodingpair(code, data, hash.data)
+builtin finishStart(eno:int) einfo.T
 
-Function =(a:encodingpair.T, b:encodingpair.T) boolean
+Function empty:encodingstate.T encodingstate.T
+let x = constantseq(4, empty:seq.encodingpair.T)
+encodingstate(empty:seq.encodingpair.T, 0, x, to:encoding.T(0))
+
+type encodingpair is data:T, code:encoding.T, hash:int
+
+function =(a:encodingpair.T, b:encodingpair.T) boolean
 hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b ∧ data.a = data.b
 
 unbound hash(T) int
 
 unbound =(T, T) boolean
 
-/Function empty:encodingstate.T encodingstate.T let x = constantseq (4, empty:seq.encodingpair.T) encodingstate
-(0, 0, x, x, empty:seq.encodingpair.T, 0)
-
 Function lastadded(h:encodingstate.T) encoding.T code.last.all.h
 
 function notsamehash:T(a:int, b:int, mask:bits) boolean
 (bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
-/Function add (h:encodingstate.T, datav:T)
+builtin deepcopy(T) T
 
-Function add(h:encodingstate.T, v:encodingpair.T) encodingstate.T addencoding(h, data.v)
-
-Function addencoding(h:encodingstate.T, datav:T) encodingstate.T
+Function addencoding(h:encodingstate.T, data:T) encodingstate.T
 {this is the add that is called by primitiveadd}
+let datav = deepcopy.data
 let hashv = hash.datav
 let tablesize = length.encodetable.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
@@ -75,14 +73,11 @@ let dataindex = toint(tobits.hashv ∧ mask) + 1
 let existingcode = lookuprep(datav, (encodetable.h)_dataindex)
 if not.isempty.existingcode then
  {already present}
- let c = valueofencoding.code.existingcode_1
- if lastadd.h = c then
-  h
- else
-  encodingstate(encodingno.h, length.h, encodetable.h, decodetable.h, all.h, c)
+ let c = code.existingcode_1
+ if lastadd.h = c then h else encodingstate(all.h, length.h, encodetable.h, c)
 else
  let code = to:encoding.T(length.all.h + 1)
- let p = encodingpair(code, datav, hashv)
+ let p = encodingpair(datav, code, hashv)
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
  let listencode = 
   for acc = [p], e ∈ (encodetable.h)_dataindex do
@@ -90,73 +85,50 @@ else
   /for (acc)
  let newencode = replace(encodetable.h, dataindex, listencode)
  if 3 * length.h > 2 * tablesize then
-  encodingstate(encodingno.h
+  encodingstate(all.h + p
    , length.h + 1
    , newencode + newencode + newencode + newencode
-   , decodetable.h
-   , all.h + p
-   , valueofencoding.code.p)
+   , code.p)
  else
-  encodingstate(encodingno.h
-   , length.h + 1
-   , newencode
-   , decodetable.h
-   , all.h + p
-   , valueofencoding.code.p)
-
-Function addencodingpairs(l:seq.encodingpair.T) int
-let inst = getinstance:encodingstate.T
-for acc = 0, @e ∈ l do acc + primitive2add(encodingno.inst, data.@e) /for (acc)
+  encodingstate(all.h + p, length.h + 1, newencode, code.p)
 
 Function addencodings(l:seq.T) int
-let inst = getinstance:encodingstate.T
-for acc = 0, @e ∈ l do acc + primitive2add(encodingno.inst, @e) /for (acc)
-
-Function lookupencodingpair(t:encoding.T) seq.encodingpair.T
-let inst = getinstance:encodingstate.T
-decode(inst, t)
-
-/Function encodingnumber:T int encodingno.getinstance:encodingstate.T
+let inst = getinstance3:T
+for acc = to:encoding.T(0), @e ∈ l do primitiveadd(inst, @e) /for (0)
 
 Function decode(t:encoding.T) T
-let a = lookupencodingpair.t
-assert length.a = 1 report "no such encoding" + toword.valueofencoding.t + stacktrace
-data.a_1
+let h = encodingstate.getinstance3:T
+assert between(valueofencoding.t, 1, length.all.h)
+report "no such encoding" + toword.valueofencoding.t + stacktrace
+data.(all.h)_(valueofencoding.t)
 
-builtin getinstance:encodingstate.T encodingstate.T
+type einfo is state:indirect.encodingstate.T, encodingnumber:int, allocatein:ptr
 
-builtin primitiveadd(encodingnumber:int, s:encodingpair.T) int
+function encodingstate(e:einfo.T) encodingstate.T fromindirect.state.e
 
-builtin primitive2add(encodingnumber:int, s:T) int
+builtin getinstance3:T einfo.T
 
-Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
+Function add1encoding(p:ptr, data:T) encoding.T
+{???? ptr time is used instead of einfo since einfo is also defined in encodingsupport}
+let e = bitcast:einfo.T(p)
+let t = addencoding(fromindirect.state.e, data)
+let discard = set(toptr.e, toptr.t)
+lastadd.t
+
+builtin primitiveadd(e:einfo.T, s:T) encoding.T
 
 type e3 is sequence, data:seq.encodingpair.T
 
 function _(a:e3.T, i:int) T data.(data.a)_i
 
 Function encodingdata:T seq.T
-let t = all.getinstance:encodingstate.T
+let t = all.encodingstate.getinstance3:T
 toseq.e3(length.t, t)
 
 Function encode(t:T) encoding.T
-let instance = getinstance:encodingstate.T
-let r = lookuprep(t, instance)
-if isempty.r then
- to:encoding.T(
-  if true then
-   primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t))
-  else
-   primitive2add(encodingno.instance, t)
-  )
-else
- code.r_1
-
-function decode(h:encodingstate.T, t:encoding.T) seq.encodingpair.T
-if between(valueofencoding.t, 1, length.all.h) then
- [(all.h)_(valueofencoding.t)]
-else
- empty:seq.encodingpair.T
+let instance = getinstance3:T
+let r = lookuprep(t, encodingstate.instance)
+if isempty.r then primitiveadd(instance, t) else code.r_1
 
 Function =(a:encoding.T, b:encoding.T) boolean valueofencoding.a = valueofencoding.b
 
@@ -173,14 +145,13 @@ for acc = empty:seq.encodingpair.T, e ∈ s do
 /for (acc)
 
 Function findencode(t:T) seq.T
-let r = lookuprep(t, getinstance:encodingstate.T)
+let r = lookuprep(t, encodingstate.getinstance3:T)
 if isempty.r then empty:seq.T else [data.r_1]
 
 Function addorder(t:T) int valueofencoding.encode.t
 
 function analyze(t:encodingstate.T) seq.word
-"numele =" + toword.length.all.t + "encodecounts"
-+ counts(encodetable.t, 1, 0, 0, 0)
+"numele =" + toword.length.all.t + "encodecounts" + counts(encodetable.t, 1, 0, 0, 0)
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int) seq.word
 if i > length.s then

@@ -37,8 +37,7 @@ Function breakparagraph(a:seq.byte) seq.seq.word
 breakparagraph(UTF8.a, 1, 1, empty:seq.seq.word)
 
 function blankline(a:UTF8, i:int) int
-{returns 0 if no new line is found before next non white char otherwise returns index
- of newline}
+{returns 0 if no new line is found before next non white char otherwise returns index of newline}
 if i > length.a then
  i
 else
@@ -71,9 +70,9 @@ else
  breakparagraph(u, i + 1, last, result)
 
 Function classifychar seq.word
-"0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0
- $(dq) 0 0 0 0 0 () 0+,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [
- 0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 {0} 0 0"
+"0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0 $(dq)
+ 0 0 0 0 0 () 0+,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 [0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 {0} 0 0"
 
 Function towords(a:UTF8) seq.word towords.decodeUTF8.a
 

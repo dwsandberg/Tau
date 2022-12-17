@@ -130,8 +130,8 @@ else
  [result.p]
 
 function buildargcode(sym:symbol, typedict:typedict) int
-{needed because the call interface implementation for reals is different than other
- types is some implementations}
+{needed because the call interface implementation for reals is different than other types is some implementations
+ }
 for acc = 1, typ ∈ paratypes.sym + resulttype.sym do
  acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0
 /for (acc)

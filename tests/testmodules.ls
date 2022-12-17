@@ -95,12 +95,12 @@ let g =
  newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6)
   , arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
 let r = 
- print.g + "transversal" + print.sinksfirst.g + "Suc"
- + print.toseq.successors(g, n2)
+ print.g + "transversal" + print.sinksfirst.g + "Suc" + print.toseq.successors(g, n2)
  + "sinks"
  + print.sinks(g, asset.[n5])
 r
-= "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8, 2, 1, 3] Suc [4] sinks [4, 7, 8]"
+= "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8, 2, 1, 3] Suc [4]
+ sinks [4, 7, 8]"
 
 function t506 boolean
 let g = newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4)]
@@ -115,9 +115,7 @@ function print(a:arc.int) seq.word "(" + toword.tail.a + toword.head.a + ")"
 function t508 boolean
 let s = 
  for acc = constantseq(100, 0)
-  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001) do
-   acc + (e mod 100 + 1)
-  /for (acc)
+  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001) do acc + (e mod 100 + 1) /for (acc)
  do
   replace(acc, i, acc_i + 1)
  /for (acc)
@@ -159,4 +157,5 @@ check(
   , %(0xD687F000 ⊻ 0x0FE00000) = "0000 0000 D967 F000"]
  , "bits")
 
-function rotl32(x:bits, n:int) bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n)) 
+function rotl32(x:bits, n:int) bits
+bits.4294967295 ∧ (x << n ∨ x >> (32 - n)) 

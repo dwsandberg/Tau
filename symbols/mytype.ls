@@ -103,8 +103,7 @@ Function isAbstract(a:mytype) boolean last.typerep.a = first.typerep.typeT
 Function replaceT(with:mytype, m:mytype) mytype
 if isAbstract.m then mytype(typerep.m >> 1 + typerep.with) else m
 
-Function replaceT(m:modref, t:mytype) modref
-modref(library.m, name.m, replaceT(para.m, t))
+Function replaceT(m:modref, t:mytype) modref modref(library.m, name.m, replaceT(para.m, t))
 
 Function =(a:typedef, b:typedef) boolean
 name.a = name.b ∧ modname.a = modname.b ∧ library.a = library.b
@@ -177,8 +176,7 @@ Function typebase(i:int) mytype
 mytype.[typedef("$base"_1, "internal"_1, "internallib"_1)
  , typedef(toword.i, "internal"_1, "internallib"_1)]
 
-Function internalmod(s:seq.word) modref
-modref("internallib"_1, "."_1, noparameter)
+Function internalmod(s:seq.word) modref modref("internallib"_1, "."_1, noparameter)
 
 Function seqof(base:mytype) mytype mytype(typerep.typeref."seq seq *" + typerep.base)
 
@@ -212,7 +210,12 @@ do
   assert cardinality(knownmods + newmod) = cardinality.knownmods + 1
   report "Duplicate module name:$(m)"
   if mref = internalmod then
-   next(knownmods + newmod, s, empty:set.mytype, empty:seq.seq.word, empty:seq.seq.word, newmod)
+   next(knownmods + newmod
+    , s
+    , empty:set.mytype
+    , empty:seq.seq.word
+    , empty:seq.seq.word
+    , newmod)
   else
    let p2 = 
     resolve(s
@@ -272,8 +275,7 @@ else
   next(cnt + length.unresolvedexports.p + length.unresolveduses.p
    , acc + resolve(s1, knownmods, p))
  /for (
-  assert countin ≠ cnt
-  report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for (acc2)
+  assert countin ≠ cnt report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for (acc2)
   R(acc, knownmods, cnt)
  )
 
@@ -324,8 +326,7 @@ else
   empty:seq.mytype
  else
   let a = 
-   findelement2(knowntypes
-    , mytype([typedef(ref_1, "internal"_1, "."_1)] + typerep.typeT))
+   findelement2(knowntypes, mytype([typedef(ref_1, "internal"_1, "."_1)] + typerep.typeT))
   if cardinality.a ≠ 1 then
    empty:seq.mytype
   else if ref_2 = "."_1 then

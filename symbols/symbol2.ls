@@ -276,8 +276,7 @@ Export Littrue symbol {From symbol}
 
 Export Local(name:word, type:mytype, parano:int) symbol {From symbol}
 
-Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol
-{From symbol}
+Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol {From symbol}
 
 Export NotOp symbol {From symbol}
 
@@ -329,7 +328,11 @@ midpoint(""
  , empty:seq.modExports
  , empty:seq.seq.word)
 
-Function midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word) midpoint
+Function midpoint(option:seq.word
+ , prg:set.symdef
+ , typedict:typedict
+ , libmods:seq.modExports
+ , src:seq.seq.word) midpoint
 midpoint(option, prg, empty:set.symdef, typedict, libmods, src)
 
 type midpoint is option:seq.word

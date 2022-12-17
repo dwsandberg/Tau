@@ -41,8 +41,8 @@ for outer = empty:seq.arc.symbol, p ∈ s do
 function removesinks(sinkstokeep:set.symbol, g:graph.symbol, toprocess:seq.symbol) seq.arc.symbol
 {removes sinks that are not unbound and parameter of module is typeT}
 {do a transitiveClosure and only keep arcs whose head is a sink}
-{looking for relation of function to the unbound functions it can call.This are not
- quite yet that relation. }
+{looking for relation of function to the unbound functions it can call.This are not quite yet that relation
+ . }
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess do
  if isunbound.n ∨ para.module.n ≠ typeT then
   next(keep + n, pred, g2)
@@ -80,9 +80,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
     let sym = sym.p
     acc
     + symdef(sym.p
-     , for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1) do
-      code + Local.@e
-     /for (code)
+     , for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1) do code + Local.@e /for (code)
      + [
       if issimplename.sym then
        symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
@@ -136,17 +134,25 @@ let g3 = newgraph.abstractarcs.prg
 {graph g3 has three kinds of sinks.
  /br 1:is unbound and module parameter is T
  /br 2:is not unbound and module parameter is T
- /br 3:module parameter is not T examples:otherseq.T:= (T, T) boolean ; otherseq.T:step (arithmeticseq.T
- ) T ; otherseq.sparseele.T:binarysearch (seq.sparseele.T)}
+ /br 3:module parameter is not T examples:otherseq.T:= (T, T) boolean ; otherseq.T:step (arithmeticseq
+ .T) T ; otherseq.sparseele.T:binarysearch (seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 {change many-to-one relation defined by arcs in g4 into format of set.symdef}
 if isempty.arcs.g4 then
  empty:set.symdef
 else
- for acc = empty:set.symdef, last = Lit.0, list = empty:seq.symbol, a ∈ toseq.arcs.g4 do
+ for acc = empty:set.symdef
+  , last = Lit.0
+  , list = empty:seq.symbol
+  , a ∈ toseq.arcs.g4
+ do
   let list0 = if last ≠ tail.a then empty:seq.symbol else list
   let newlist = if isunbound.head.a then list0 + head.a else list0
-  let newacc = if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list, 0) else acc
+  let newacc = 
+   if last ≠ tail.a then
+    if isempty.list then acc else acc + symdef(last, list, 0)
+   else
+    acc
   next(newacc, tail.a, newlist)
  /for (if isempty.list then acc else acc + symdef(last, list, 0)) 

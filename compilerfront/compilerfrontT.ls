@@ -26,6 +26,8 @@ use seq.modExports
 
 use seq.mytype
 
+use opt
+
 use pass2
 
 use standard
@@ -54,11 +56,7 @@ for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
  if ext.fn.i ∈ "libinfo" then
   let new = first.inbytes:midpoint(data.i)
   next(
-   midpoint(""
-    , prg.mp ∪ prg.new
-    , emptytypedict
-    , libmods.mp + libmods.new
-    , empty:seq.seq.word)
+   midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
    , data)
  else
   next(mp, data + [tobyte.10, tobyte.10] + data.i)
@@ -78,8 +76,6 @@ else
   prepareback(prg5, m, libinfo)
  else
   midpoint(option, prg5, typedict.m, libmods.m, src.m)
-
-use opt
 
 unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict) seq.symbol
 
@@ -155,7 +151,7 @@ let t =
  if first then
   a
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
-  let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a) else code.a
+  let ty = if Hasfor ∈ flags.a then expandIndex(code.a, nextvar.a) else code.a
   let t2 = if Callself ∈ flags.a then mergeblocks(ty, s) else ty
   expandresult(nextvar.a, t2, flags.a)
  else
@@ -221,7 +217,7 @@ do
   else
    {if isbr.sym then let newsym = sym next (if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge
     ∨ flags else flags, result+newsym, nextvar, map) else}
-   if  isExit.sym ∧ isblock.last.result then
+   if isExit.sym ∧ isblock.last.result ∨ isbr.sym ∧ isconst.last.result then
     next(flags ∨ Hasmerge, result + sym, nextvar, map)
    else if isloopblock.sym then
     let nopara = nopara.sym
@@ -276,7 +272,7 @@ do
    next(flags, noop, nextvar, map)
   else
    next(flags ∨ Hasfor, result + sym, nextvar, map)
- else if wordname.sym ∈ "indexseq45 next idxNB" ∧ isInternal.sym then
+ else if wordname.sym ∈ "indexseq45 idxNB" ∧ isInternal.sym then
   next(flags ∨ Hasfor, result + sym, nextvar, map)
  else if sym = self then
   next(flags ∨ Callself, result + sym, nextvar, map)

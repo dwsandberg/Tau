@@ -147,10 +147,7 @@ do
     let name = text.b
     if name = "true" then
      Littrue
-    else if name = "false" then
-     Litfalse
-    else
-     symbol(modname, text.b, types.b >> 1, last.types.b)
+    else if name = "false" then Litfalse else symbol(modname, text.b, types.b >> 1, last.types.b)
    else
     symbol4(modname
      , first.text.b
@@ -159,8 +156,8 @@ do
      , last.types.b)
   assert checkwellformed.sym
   report
-   "Must use type T in function name or parameters in parameterized module and T cannot be used in non
-    -parameterized module $(input)"
+   "Must use type T in function name or parameters in parameterized module and T cannot be used in non-
+    parameterized module $(input)"
   if first.input = "unbound"_1 then
    next(typeflds
     , paragraphno + 1
@@ -203,9 +200,7 @@ do
   let b = 
    parse(
     symboldict(empty:set.symbol
-     , [commoninfo(input, modname.common, lib.common, types.common + typeseqdec, "symbol"_1)
-      ]
-     )
+     , [commoninfo(input, modname.common, lib.common, types.common + typeseqdec, "symbol"_1)])
     , false)
   let typs = types.b
   let typesym = {deepcopy is used to represent type} deepcopySym.first.typs
@@ -240,7 +235,10 @@ do
    , passsymbols(modname.common, uses, asset.defines, exports, unresolvedexports, types.common, text)
    , allsrc)
  let allmods = resolveexports(modlist + lastpass, 100000, allsrc)
- for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m2 ∈ toseq.allmods do
+ for abstract = empty:seq.passsymbols
+  , simple = empty:seq.passsymbols
+  , m2 ∈ toseq.allmods
+ do
   if isAbstract.modname.m2 then
    next(abstract + m2, simple)
   else
@@ -313,14 +311,8 @@ else
      , 0)
     ]
    + if name = "seq"_1 then
-    [
-     symdef(symbol(builtinmod.typeint, "length", recordtype, typeint)
-      , [Local.1, GetSeqLength]
-      , 0)
-     , symdef(symbol(builtinmod.typeint, "getseqtype", recordtype, typeint)
-      , [Local.1, GetSeqType]
-      , 0)
-     ]
+    [symdef(symbol(builtinmod.typeint, "length", recordtype, typeint), [Local.1, GetSeqLength], 0)
+     , symdef(symbol(builtinmod.typeint, "getseqtype", recordtype, typeint), [Local.1, GetSeqType], 0)]
    else
     empty:seq.symdef
   else
@@ -335,8 +327,7 @@ function fldsym(modname:modref
  , unknownsize:seq.symbol) symdef
 let fldsym = symbol(modname, [name], objecttype, fldtype)
 symdef(fldsym
- , [Local.1, Lit.knownsize] + unknownsize
- + Getfld.if isseq.fldtype then typeptr else fldtype
+ , [Local.1, Lit.knownsize] + unknownsize + Getfld.if isseq.fldtype then typeptr else fldtype
  , 0)
 
 function knownsize(fldtype:mytype) int
@@ -397,8 +388,7 @@ else
  for cnt = 0, acc = empty:set.passsymbols, p ∈ toseq.s1 do
   next(cnt + cardinality.unresolvedexports.p, acc + resolve(s1, p, allsrc))
  /for (
-  assert countin ≠ cnt
-  report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for (acc2)
+  assert countin ≠ cnt report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for (acc2)
   resolveexports(acc, cnt, allsrc)
  )
 
@@ -407,8 +397,7 @@ let txt = for acc = "", t ∈ toseq.unresolvedexports.p do acc + %.t /for (acc)
 if isempty.txt then "" else "module $(modname.p) contains unresolved exports:$(txt) /br"
 
 Function parse(input:seq.word, p:partdict, c:commoninfo) bindinfo
-parse(symboldict(syms.p, req.p, [commoninfo(input, modname.c, lib.c, types.c, mode.c)])
- , false)
+parse(symboldict(syms.p, req.p, [commoninfo(input, modname.c, lib.c, types.c, mode.c)]), false)
 
 Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef, mode:word) partdict
 {bug here should not need i = 0 in forloop}
@@ -479,11 +468,15 @@ type passsymbols is modname:modref
  , srclink:seq.symdef
 
 Function passsymbols(modname:modref) passsymbols
-passsymbols(modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empty:set.symbol
- , empty:set.mytype, empty:seq.symdef)
+passsymbols(modname
+ , empty:set.modref
+ , empty:set.symbol
+ , empty:set.symbol
+ , empty:set.symbol
+ , empty:set.mytype
+ , empty:seq.symdef)
 
 Function >1(a:passsymbols, b:passsymbols) ordering module.a >1 module.b
 
 function checkwellformed(sym:symbol) boolean
-not.isSimple.module.sym
-= for acc = false, t ∈ types.sym while not.acc do isAbstract.t /for (acc) 
+not.isSimple.module.sym = for acc = false, t ∈ types.sym while not.acc do isAbstract.t /for (acc) 

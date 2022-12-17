@@ -92,14 +92,16 @@ let discard100 =
   , handleerrorfunc.alltypes
   , reclaimspacefunc.alltypes
   , allocatefunc.alltypes
-  , getinstancefunc.alltypes
   , addencodingfunc.alltypes]
+let initprofile0 = getSymdef(prg4, symbol(moduleref."* XYZ", "initProfile", typeptr))
+{assert isempty.initprofile0 report" XXX"+%.sym.initprofile0_1+for txt ="", sd /in toseq.prg4
+ do if name.sym.sd /in" initProfile" then txt+%.sym.sd else txt /for (txt)}
+let initprofile = if isempty.initprofile0 then empty:set.symbol else asset.[sym.initprofile0_1]
 {define depended functions}
 let discardt = dependentfunc(alltypes, knownfuncs, prg4, length.imports + 1)
 {define function to initialize words}
 let startfuncidx = funcidx.symbol(moduleref."* core", "initwords3", typeint)
-let mustbedonelast = 
- addf(alltypes, symbol(moduleref."* core", "initwords3", typeint), initwordsbody)
+let mustbedonelast = addf(alltypes, symbol(moduleref."* core", "initwords3", typeint), initwordsbody.initprofile)
 {create the wasm file}
 assert startfuncidx < length.encodingdata:wfunc
 report "internal error:startfuncidx exceeds number of functions"
@@ -111,12 +113,11 @@ createwasm(imp
  , filename.o
  , info)
 
+use set.symbol
+
 function dependentfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, idx:int) int
 {Do not consider function indices less that idx}
-{get the symbols of functions that has been referenced but do not have a definition
- }
-{let dummy = 5}
-{???? dummy avoids bug in compiler.See addtypes function}
+{get the symbols of functions that has been referenced but do not have a definition}
 let k = nobodies.idx
 if isempty.k then
  {no functions that do not have definitions} 0
@@ -289,10 +290,7 @@ do
     , curblk + cc + Wcallindirect.typeindex([i64, i64], f64)
     , l2)
   else
-   next(pop.typestk
-    , blkstk
-    , curblk + cc + Wcallindirect.typeindex([i64, i64], i64)
-    , l2)
+   next(pop.typestk, blkstk, curblk + cc + Wcallindirect.typeindex([i64, i64], i64), l2)
  else if isloopblock.sym then
   let locals = 
    for acc = localtypes, varno = firstvar.sym, t ∈ paratypes.sym do
@@ -318,10 +316,7 @@ do
    , empty:seq.byte
    , localtypes)
  else if iscontinue.sym then
-  next(pop(typestk, nopara.sym)
-   , push(blkstk, blkele(curblk, sym))
-   , empty:seq.byte
-   , localtypes)
+  next(pop(typestk, nopara.sym), push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
  else if isbr.sym then
   {BlockBr}
   assert top.typestk = i32 report "BR type check fail $(printcode.curblk) /br $(code)"
@@ -349,7 +344,7 @@ do
   let blockcode = 
    for acc = empty:seq.byte, i = 1, a ∈ blks << 1 do
     let z = 
-     if  isExit.sym.a then
+     if isExit.sym.a then
       code.a + brX(length.blks - i - if isloop then 0 else 1 /if)
      else if iscontinue.sym.a then
       code.a + setloopvar + br + LEBu(length.blks - 1 - i)
@@ -374,8 +369,7 @@ do
   let t = addlocal(localtypes, wordname.sym, top.typestk)
   next(pop.typestk, blkstk, curblk + Wdefine.no.getlocalinfo(t, wordname.sym), t)
  else if wordname.sym = "createthreadY"_1 ∧ inmodule(sym, "builtin") then
-  let typeidx = 
-   typeindex(top(typestk, nopara.sym - 3), wtype64(alltypes, parameter.para.module.sym))
+  let typeidx = typeindex(top(typestk, nopara.sym - 3), wtype64(alltypes, parameter.para.module.sym))
   let sym2 = symbol(internalmod, [merge("processX" + toword.typeidx)], typeptr, typeint)
   let l1 = addlocal(localtypes, "tmp1"_1, i64)
   let nocopy = 
@@ -397,9 +391,9 @@ do
   let paratypes = for acc = empty:seq.wtype, @e ∈ paratypes.sym do acc + wtype64(alltypes, @e) /for (acc)
   assert paratypes = top(typestk, length.paratypes)
   report
-   "type missmatch $(sym) $(for acc = "
-    ", @e ∈ top(typestk, length.paratypes) do acc + %.@e /for (acc)) / $(for acc = "
-    ", @e ∈ paratypes do acc + %.@e /for (acc))
+   "type missmatch $(sym)
+    $(for acc = "", @e ∈ top(typestk, length.paratypes) do acc + %.@e /for (acc)) /
+    $(for acc = "", @e ∈ paratypes do acc + %.@e /for (acc))
     /br $(for acc = "", @e ∈ code do acc + %.@e /for (acc))"
   let ele = lookup2(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))
   let this = 

@@ -73,8 +73,8 @@ for map = map0, todo = empty:seq.symdef, sd ∈ prg do
  else
   assert length.todo < length.prg
   report
-   "ill formed program $(for txt = "", sd2 ∈ todo do txt + "
-    /p" + %.sym.sd2 + %.code.sd2 /for (txt))"
+   "ill formed program
+    $(for txt = "", sd2 ∈ todo do txt + "/p" + %.sym.sd2 + %.code.sd2 /for (txt))"
   map(map, todo)
 )
 

@@ -108,8 +108,7 @@ else
     let parakinds = for acc = empty:seq.mytype, @e ∈ paratypes.s do acc + coretype(@e, typedict) /for (acc)
     assert check5(top(stk, nopara.s), parakinds)
     report
-     "
-      /br symbol type missmatch for $(s)
+     "/br symbol type missmatch for $(s)
       /br stktop $(top(stk, nopara.s))
       /br parabasetypes $(parakinds)"
     next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
@@ -137,8 +136,7 @@ let undefined =
  /for (uses \ defines \ asset.knownsym)
 for acc10 = "/p /p checkresults /p", h ∈ toseq.undefined do
  if isconst.h
- ∨ name.h = "createthreadY"_1
- ∧ isempty(asset.types.h \ asset.[typeint, typereal, typeptr]) then
+ ∨ name.h = "createthreadY"_1 ∧ isempty(asset.types.h \ asset.[typeint, typereal, typeptr]) then
   acc10
  else if isAbstract.module.h
  ∨ name.module.h ∈ "$int $define $local $sequence $for $words $loopblock $continue $br $global"
@@ -148,11 +146,7 @@ for acc10 = "/p /p checkresults /p", h ∈ toseq.undefined do
   acc10
  else
   acc10 + %.h + "/br"
-/for (
- "CheckResult:$(if isempty.acc10 then "OK" else acc10 + "
-  /p end checkresults
-  /p")"
-)
+/for ("CheckResult:$(if isempty.acc10 then "OK" else acc10 + "/p end checkresults /p")")
 
 function knownsym seq.symbol
 let typecstr = typeref."cstr fileio."

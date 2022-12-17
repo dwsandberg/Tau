@@ -1,22 +1,28 @@
 Module mergeblocks
 
-use standard
+use otherseq.int
 
-use symbol2
+use set.int
 
-use seq.symbol
-
-use seq.seq.symbol
-
-use set.symdef
+use stack.int
 
 use mergeblocks
 
+use standard
+
 use symbol
+
+use seq.symbol
 
 use otherseq.seq.symbol
 
-use otherseq.int
+use seq.seq.symbol
+
+use symbol2
+
+use set.symdef
+
+use otherseq.word
 
 Function noDebug boolean false
 
@@ -98,8 +104,6 @@ do
   assert noDebug ∨ length.parts = 1 report "XXX"
   first.parts >> 1 + subseq(code, partstart, length.code)
 )
-
-use set.int
 
 function parts2code(parts:seq.seq.symbol, self:symbol) seq.symbol
 assert noDebug ∨ length.parts > 2 ∧ isstartorloop.last.first.parts ∧ isbr.last.parts_2
@@ -201,8 +205,6 @@ for acc = if tmp = 0 then 1 else map_t, e ∈ subseq(map, 1, t - 1) do
  if e = 0 then acc + 1 else acc
 /for (acc)
 
-use otherseq.word
-
 function laststart(parts:seq.seq.symbol) int
 for acc = length.parts, e ∈ reverse.parts while not.isstartorloop.last.e do acc - 1 /for (acc)
 
@@ -222,9 +224,8 @@ do
  next([adjustBr] + acc, jumppast + 1)
 /for (parts >> length.acc + acc + endpart)
 
-use stack.int
-
-function countnodes2(s:stack.int) int if top.s = 2 then 1 else 1 + countnodes2.pop.s
+function countnodes2(s:stack.int) int
+if top.s = 2 then 1 else 1 + countnodes2.pop.s
 
 Function valid(s:seq.symbol) boolean
 for valid = true, stk = empty:stack.int, sym ∈ s

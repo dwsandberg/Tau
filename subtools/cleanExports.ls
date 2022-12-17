@@ -8,8 +8,6 @@ use otherseq.mytype
 
 use standard
 
-/use symbol
-
 use seq.symbol
 
 use symbol2
@@ -38,10 +36,7 @@ else
  for name = [s_2, s_3, s_4], last = s_4, w ∈ s << 4
  while last ∉ "("
  do
-  if w ∈ "." ∨ last ∈ "." then
-   next(name + w, w)
-  else
-   next(name, "("_1)
+  if w ∈ "." ∨ last ∈ "." then next(name + w, w) else next(name, "("_1)
  /for (name)
 
 function >2(a:myExport, b:myExport) ordering modname.a >1 modname.b
@@ -53,10 +48,7 @@ modname.a >1 modname.b ∧ key.a >1 key.b ∧ keyx.sym.a >1 keyx.sym.a
 function keyx(s:symbol) seq.word
 if nopara.s = 1 then
  [merge.%.first.paratypes.s] + if name.s ∈ "type" then "a" else "b"
-else if name.s = first.%.resulttype.s then
- [merge.%.resulttype.s] + "c"
-else
- "zzzz d"
+else if name.s = first.%.resulttype.s then [merge.%.resulttype.s] + "c" else "zzzz d"
 
 Function fix(m:midpoint) seq.word %n.toseq.manageExports.m
 
@@ -118,8 +110,7 @@ do
     if getExportName.p = fullname.sym then
      if clean = %(",", paratypes.sym) >> 1 then
       let md = %.module.sym
-      acc5
-      + myExport(modname, sym, if first.md = modname then "0" else md, p, pno + 1)
+      acc5 + myExport(modname, sym, if first.md = modname then "0" else md, p, pno + 1)
      else
       acc5
     else

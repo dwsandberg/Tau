@@ -110,21 +110,18 @@ else if start = finish + 1 then
 else if start + 1 ≥ finish then
  if start = finish then [s_start] else [s_start, s_finish]
 else
- let x = to:pseq.T(s)
- if length.toseq.x = 0 then
+ let p = to:pseq.T(s)
+ if length.toseq.p = 0 then
   toseq.pseq(finish - start + 1, s, s, start - 1)
  else
-  subseq(x, start, finish)
-
-function subseq(p:pseq.T, start:int, finish:int) seq.T
-let adjstart = start + start.p - length.a.p
-let adjfinish = start.p + finish - length.a.p
-if adjstart > 0 then
- {all in part b} subseq(b.p, adjstart, adjfinish)
-else if adjfinish > 0 then
- subseq(a.p, start.p + start, length.a.p) + subseq(b.p, 1, adjfinish)
-else
- {all in part a} subseq(a.p, start.p + start, start.p + finish)
+  let adjstart = start + start.p - length.a.p
+  let adjfinish = start.p + finish - length.a.p
+  if adjstart > 0 then
+   {all in part b} subseq(b.p, adjstart, adjfinish)
+  else if adjfinish > 0 then
+   subseq(a.p, start.p + start, length.a.p) + subseq(b.p, 1, adjfinish)
+  else
+   {all in part a} subseq(a.p, start.p + start, start.p + finish)
 
 Function last(a:seq.T) T a_(length.a)
 

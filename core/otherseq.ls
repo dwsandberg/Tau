@@ -24,15 +24,11 @@ Export +(a:seq.T, b:seq.T) seq.T {From seq.T}
 
 Export +(l:seq.T, a:T) seq.T {From seq.T}
 
-Export <<(s:seq.T, i:int) seq.T
-{* removes i elements from beginning of s}
-{From seq.T}
+Export <<(s:seq.T, i:int) seq.T {* removes i elements from beginning of s} {From seq.T}
 
 Export =(a:seq.T, b:seq.T) boolean {From seq.T}
 
-Export >>(s:seq.T, i:int) seq.T
-{* removes i elements from end of s}
-{From seq.T}
+Export >>(s:seq.T, i:int) seq.T {* removes i elements from end of s} {From seq.T}
 
 Export _(a:seq.T, c:int) T {From seq.T}
 
@@ -47,9 +43,7 @@ Export subseq(s:seq.T, start:int, finish:int) seq.T {From seq.T}
 Export ∈(a:T, s:seq.T) boolean {From seq.T}
 
 Function reverse(s:seq.T) seq.T
-for acc = empty:seq.T, @e ∈ arithseq(length.s, 0 - 1, length.s) do
- acc + s_@e
-/for (acc)
+for acc = empty:seq.T, @e ∈ arithseq(length.s, 0 - 1, length.s) do acc + s_@e /for (acc)
 
 type cseq is sequence, element:T
 
@@ -61,8 +55,7 @@ type cseq2 is sequence, patternlen:int, elements:seq.T
 
 Function _(s:cseq2.T, i:int) T (elements.s)_((i - 1) mod patternlen.s + 1)
 
-Function constantseq(len:int, element:seq.T) seq.T
-toseq.cseq2(len, length.element, element)
+Function constantseq(len:int, element:seq.T) seq.T toseq.cseq2(len, length.element, element)
 
 Function replace(s:seq.T, index:int, value:T) seq.T
 if not.ispseq.s then
@@ -136,8 +129,7 @@ Function sort(a:seq.T) seq.T
 if length.a < 2 then
  a
 else
- merge(sort.subseq(a, 1, length.a / 2)
-  , sort.subseq(a, length.a / 2 + 1, length.a))
+ merge(sort.subseq(a, 1, length.a / 2), sort.subseq(a, length.a / 2 + 1, length.a))
 
 Function merge(a:seq.T, b:seq.T) seq.T
 {* combines sorted seq}
@@ -160,8 +152,7 @@ else
  [a_i] + submerge(a, b, i + 1, j)
 
 Function binarysearch(s:seq.T, val:T) int
-{* binarysearch returns position in seq if found and the negation of the posistion if
- not found}
+{* binarysearch returns position in seq if found and the negation of the posistion if not found}
 binarysearchNB(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T) int
@@ -176,18 +167,12 @@ else
  let c = idxNB(s, p) >1 val
  if c = EQ then
   p
- else if c = GT then
-  binarysearchNB(s, b, p - 1, val)
- else
-  binarysearchNB(s, p + 1, a, val)
+ else if c = GT then binarysearchNB(s, b, p - 1, val) else binarysearchNB(s, p + 1, a, val)
 
 Function setinsert(s:seq.T, val:T) seq.T
 {* assumes s is sorted}
 let i = binarysearch(s, val)
-if i > 0 then
- s
-else
- subseq(s, 1,-i - 1) + [val] + subseq(s,-i, length.s)
+if i > 0 then s else subseq(s, 1,-i - 1) + [val] + subseq(s,-i, length.s)
 
 Function setdelete(s:seq.T, val:T) seq.T
 {* assumes s is sorted}
@@ -209,15 +194,22 @@ Function break(w:T, a:seq.T) seq.seq.T break(w, empty:seq.T, a)
 Function break(seperator:T, quotes:seq.T, a:seq.T) seq.seq.T
 let b = 
  for acc = empty:seq.int, i = 1, e ∈ a do
-  next(acc + if e ∈ ([seperator] + quotes) then [i] else empty:seq.int, i + 1)
+  next(acc + if e ∈ ([seperator] + quotes) then [i] else empty:seq.int
+   , i + 1)
  /for (acc)
 if isempty.b then
  [a]
 else
  break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
 
-function break(str:seq.T, currentquote:T, seperator:T, a:seq.T, b:seq.int
- , j:int, start:int, result:seq.seq.T) seq.seq.T
+function break(str:seq.T
+ , currentquote:T
+ , seperator:T
+ , a:seq.T
+ , b:seq.int
+ , j:int
+ , start:int
+ , result:seq.seq.T) seq.seq.T
 if j > length.b then
  result + (str + subseq(a, start, length.a))
 else
@@ -258,8 +250,7 @@ else
 Function suffix(s:seq.T, len:int) seq.T subseq(s, length.s - len - 1, length.s)
 
 Function findindex(s:seq.T, w:T) int
-{result > length.s when element is not found.Otherwise results is location in sequence
- }
+{result > length.s when element is not found.Otherwise results is location in sequence}
 for i = 1, e ∈ s while e ≠ w do i + 1 /for (i)
 
 ________________________

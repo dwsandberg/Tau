@@ -72,11 +72,7 @@ function createfunc(R:reduction.bindinfo
  , functypebind:bindinfo) bindinfo
 let paralist = if mode.common ∈ "symbol" then types.PL else empty:seq.mytype
 let returntype = resolvetype(text.functypebind, common, place, parsestk)
-let newdict = 
- if mode.common ∈ "symbol" then
-  dict.R
- else
-  addparameters(PL, common, place, parsestk)
+let newdict = if mode.common ∈ "symbol" then dict.R else addparameters(PL, common, place, parsestk)
 if length.funcname > 1 then
  bindinfo(newdict
   , empty:seq.symbol
@@ -87,6 +83,9 @@ else
 
 function errormessage(message:seq.word, common:commoninfo, place:int, parsestk:stack.stkele.bindinfo) seq.word
 errormessage:bindinfo(message, input.common, place, parsestk)
+
+function errormessage(message:seq.word, input:seq.word, place:int, parsestk:stack.stkele.bindinfo) seq.word
+errormessage:bindinfo(message, input, place, parsestk)
 
 function addparameters(b:bindinfo, common:commoninfo, place:int, parsestk:stack.stkele.bindinfo) symboldict
 for flds = dict.b, idx = 1, paratype ∈ types.b do
@@ -121,16 +120,16 @@ let f =
 assert not.isempty.f
 report
  errormessage(
-  "cannot find 1 $(fixNM.name) ($(for acc = "", @e ∈ paratypes do acc + %.@e + "
-   ," /for (acc >> 1)))"
+  "cannot find 1 $(fixNM.name) (
+   $(for acc = "", @e ∈ paratypes do acc + %.@e + "," /for (acc >> 1)))"
   , common
   , place
   , parsestk)
 assert cardinality.f = 1
 report
  errormessage(
-  "found more than one $(for acc = "", @e ∈ toseq.f do acc + library.module.@e + "
-   ." + %.@e /for (acc))"
+  "found more than one
+   $(for acc = "", @e ∈ toseq.f do acc + library.module.@e + "." + %.@e /for (acc))"
   , common
   , place
   , parsestk)
@@ -145,8 +144,7 @@ f_1
 
 function bindlit(R:reduction.bindinfo) bindinfo
 let chars = decodeword.first.text.R_1
-let rt = 
- if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx" then typebits else typeint
+let rt = if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx" then typebits else typeint
 bindinfo(dict.R
  , [
   if mode.common.dict.R = "text"_1 then
@@ -162,15 +160,9 @@ let op = tokentext.R_2
 let dict = dict.R_1
 let types = types.R_1 + types.R_3
 if op = "∧" ∧ types = [typeboolean, typeboolean] ∧ mode.input ∈ "body" then
- bindinfo(dict
-  , ifthenelse(code.R_1, code.R_3, [Litfalse], typeboolean)
-  , [typeboolean]
-  , "")
+ bindinfo(dict, ifthenelse(code.R_1, code.R_3, [Litfalse], typeboolean), [typeboolean], "")
 else if op = "∨" ∧ types = [typeboolean, typeboolean] ∧ mode.input ∈ "body" then
- bindinfo(dict
-  , ifthenelse(code.R_1, [Littrue], code.R_3, typeboolean)
-  , [typeboolean]
-  , "")
+ bindinfo(dict, ifthenelse(code.R_1, [Littrue], code.R_3, typeboolean), [typeboolean], "")
 else
  let f = 
   if op = "≠" then
@@ -210,8 +202,7 @@ if op_1 = "process"_1 ∧ length.types.exp = 1 then
   , [processtype]
   , "")
 else if op_1 = "$"_1 ∧ length.types.exp = 2 ∧ first.types.exp = seqof.typeword then
- let f = 
-  lookupbysig(dict.R, "+", [seqof.typeword, seqof.typeword], common, place, parsestk)
+ let f = lookupbysig(dict.R, "+", [seqof.typeword, seqof.typeword], common, place, parsestk)
  let newcode = 
   if (types.exp)_2 = seqof.typeword then
    code.exp + f
@@ -224,13 +215,7 @@ else if op_1 = "$"_1 ∧ length.types.exp = 2 ∧ first.types.exp = seqof.typewo
  bindinfo(dict.R, newcode, [resulttype.f], "")
 else
  let f = lookupbysig(dict.R, op, types.exp, common, place, parsestk)
- let tmp = 
-  if mode.common ∉ "text" ∧ op_1 = "next"_1 ∧ name.module.f ∈ "$for" then
-   code.exp + Local(toint.first.%.parameter.para.module.f + nopara.f + 4)
-   + symbol(internalmod, "next", paratypes.f + typeint, typeint)
-  else
-   code.exp + f
- bindinfo(dict.R, tmp, [resulttype.f], "")
+ bindinfo(dict.R, code.exp + f, [resulttype.f], "")
 
 function ifexp(R:reduction.bindinfo
  , ifpart:bindinfo
@@ -240,8 +225,7 @@ function ifexp(R:reduction.bindinfo
  , place:int
  , parsestk:stack.stkele.bindinfo) bindinfo
 assert (types.ifpart)_1 = typeboolean
-report
- errormessage("cond of if must be boolean but is $((types.ifpart)_1)", input, place, parsestk)
+report errormessage("cond of if must be boolean but is $((types.ifpart)_1)", input, place, parsestk)
 assert types.thenpart = types.elsepart
 report errormessage("then and else types are different", input, place, parsestk)
 bindinfo(dict.R
@@ -249,11 +233,12 @@ bindinfo(dict.R
  , types.thenpart
  , "")
 
-function addpara(dict:symboldict, name:seq.word, typ:bindinfo, place:int, parsestk:stack.stkele.bindinfo) bindinfo
-bindinfo(dict
- , empty:seq.symbol
- , [resolvetype(tokentext.typ, common.dict, place, parsestk)]
- , name)
+function addpara(dict:symboldict
+ , name:seq.word
+ , typ:bindinfo
+ , place:int
+ , parsestk:stack.stkele.bindinfo) bindinfo
+bindinfo(dict, empty:seq.symbol, [resolvetype(tokentext.typ, common.dict, place, parsestk)], name)
 
 function addpara(dict:symboldict
  , name:seq.word
@@ -286,8 +271,7 @@ let oldnesting = lookupbysig(dict, "for")
 let dict0 = if isempty.oldnesting then dict else dict - oldnesting
 let basetype = typebase(cardinality.dict0 + 2)
 let resultsym = symbol(moduleref("internallib $for", basetype), "next", acctypes, basetype)
-let nestingsym = 
- symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
+let nestingsym = symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
 let dict1 = dict0 + resultsym + nestingsym
 for accdict = dict1, i = 1, name ∈ accnames do
  next(accdict + Local(name, acctypes_i, cardinality.accdict), i + 1)
@@ -350,7 +334,7 @@ let newcode =
   let masterindex = Local(value.lastidx + 4)
   let theseqtype = last.types.vars
   let reverse = name.last.code.vars ∈ "reverse" ∧ name.module.last.code.vars ∈ "otherseq"
-  let continue = if length.types.vars = 2 then [masterindex, continue.length.types.vars] else [Exit]
+  let continue = if length.types.vars = 2 then [masterindex, continue.2] else [Exit]
   let setElement = 
    [lastidx
     , if reverse then Lit.-1 else Lit.1
@@ -388,7 +372,8 @@ let newcode =
   ∧ value.first.code.forbody = firstvar then
    let last = last.code.forbody
    if name.last ∈ "+" ∧ name.module.last ∈ "seq"
-   ∧ para.module.last = parameter.first.types.forbody then
+   ∧ para.module.last = parameter.first.types.forbody
+   ∧ not.reverse then
     [EndBlock, symbol(internalmod, "checkfornoop", resulttype, resulttype)]
    else
     [EndBlock]
@@ -401,12 +386,12 @@ function action(ruleno:int
  , place:int
  , R:reduction.bindinfo
  , parsestk:stack.stkele.bindinfo) bindinfo
-{Alphabet.= ():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist
- while /for W do wl wlend T X F2 A E FP NM L D F F1 G HH}
-{RulePrecedence | HH HH comment | comment | let | assert | if | for | W | wl | I | [
- | $wordlist | (| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E >
- E | E E = E | = | > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then E else E /if | /if | E if E then
- E else E | E assert E report D E | A W = E | E let A E | D E |}
+{Alphabet.= ():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while
+ /for W do wl wlend T X F2 A E FP NM L D F F1 G HH}
+{RulePrecedence | HH HH comment | comment | let | assert | if | for | W | wl | I | [| $wordlist | (
+ | E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E = E |
+ = | > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then E else E /if | /if | E if E then E else E | E
+ assert E report D E | A W = E | E let A E | D E |}
 let common = common.dict.R
 if ruleno = {F HH E} 1 then
  addbody(R, common, place, parsestk)
@@ -531,10 +516,7 @@ else if ruleno = {E assert E report D E} 43 then
   + code.R_4
   + assertsym
   + Exit
-  + if mode.common ∈ "text" then
-   symbol(internalmod, "report", typeint)
-  else
-   EndBlock
+  + if mode.common ∈ "text" then symbol(internalmod, "report", typeint) else EndBlock
   , types.R_5
   , "")
 else if ruleno = {E I} 44 then

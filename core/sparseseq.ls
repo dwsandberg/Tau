@@ -65,5 +65,4 @@ else
  if lastend < start.e then
   a + e
  else
-  a >> 1
-  * sparseele(start.last, subseq(edata.last, 1, start.e - start.last) + edata.e) 
+  a >> 1 * sparseele(start.last, subseq(edata.last, 1, start.e - start.last) + edata.e) 

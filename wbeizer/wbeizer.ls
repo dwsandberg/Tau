@@ -6,8 +6,6 @@ use standard
 
 use webIO
 
-
-
 /em grp1  is a group that contains circles that represent the control points.
 /br /em grp1 also has a attribute data-segments that contains the number of biezer curves in path.
 /br /em lines is a path that conects the control points.
@@ -75,4 +73,27 @@ let d2 = "M" + c1 + "C" + c2 + c3 + c4
 setAttribute("lines", "d", lines2)
 + setAttribute("curve", "d", d2)
 
-Function Bcubic int intpart.drawcubic  
+Function Bcubic int 
+let d1=setElementValue("xx",test)
+intpart.drawcubic  
+
+use XYA
+
+
+Module XYA
+
+use ptr
+
+use standard
+
+use bitcast.int
+
+type parc  is caller:int, callee:int, counts:int, clocks:int, space:int, unused:int
+
+use seq.parc 
+
+Function test seq.word %.length.profileData 
+
+Function initProfile ptr   toptr(0)
+
+Function profileData seq.parc  {OPTION NOINLINE} empty:seq.parc 

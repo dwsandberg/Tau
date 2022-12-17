@@ -75,13 +75,12 @@ for acc = 0, @e ∈ baselibwords do
 
 Function wordstoadd(baselibwords:seq.seq.char) seq.encoding.word3
 let have = for acc = empty:set.encoding.word3, @e ∈ baselibwords do acc + encode.word3.@e /for (acc)
-let used = for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for (acc)
+let used = 
+ for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for (acc)
 toseq(used \ have)
 
 Function commonwords(wordstoadd:seq.encoding.word3) seq.byte
-for out = emptyUTF8, w ∈ wordstoadd do
- out + chars.decode.w + bcwordsep
-/for (toseqbyte.out)
+for out = emptyUTF8, w ∈ wordstoadd do out + chars.decode.w + bcwordsep /for (toseqbyte.out)
 
 Function bytes(i:int) seq.byte
 for acc = empty:seq.byte, shift ∈ arithseq(8, 8, 0) do

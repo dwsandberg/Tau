@@ -88,8 +88,7 @@ function check(s:seq.int, r:seq.int) seq.int
 let i = r_1 mod 30 + 1
 let c = replaceS(s, i, r)
 assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, length.s)) report "FAIL1"
-assert subseq(s, i + length.r, length.r) = subseq(c, i + length.r, length.r)
-report "FAIL2"
+assert subseq(s, i + length.r, length.r) = subseq(c, i + length.r, length.r) report "FAIL2"
 assert subseq(c, i, i + length.r - 1) = r report "FAIL3"
 c
 

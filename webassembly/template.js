@@ -189,7 +189,7 @@ function finaljsHTTP(data,nobits ){
 , sqrt:arg =>    Math.sqrt(arg)  
 , arcsin:arg =>   Math.asin(arg)  
 , arccos:arg =>    Math.acos(arg) 
-
+, clock:function(){return performance.now()}
 , callprocess:function(wrapper, args){ 
   try { return exports.processbody(wrapper, args); } 
   catch(err){ 
@@ -203,7 +203,7 @@ function finaljsHTTP(data,nobits ){
 
 , setelementvalue:function  (id ,textin ){
   let text=asjsstring(textin); 
-//  console.log("SETELEMENT"+text);   
+  console.log("SETELEMENT"+text);   
   let  z = document.getElementById(asjsstring( id )); 
   let  kind = z.tagName; 
   if(kind=="TEXTAREA" || kind=="SELECT" )z.value =  text.trim();
@@ -221,8 +221,7 @@ function finaljsHTTP(data,nobits ){
   let  kind=z.tagName ;
   let  r=(kind=="TEXTAREA"  )? z.value:
          (kind=="INPUT")?   ( ( z.type=="checkbox")?   z.checked :  z.value):
-         (kind=="SELECT")? z.value: 
-          z.innerHTML ; 
+         (kind=="SELECT")? z.value:   z.innerHTML ; 
   return jsstring2UTF8bytes(r); 
 }
 
@@ -240,7 +239,12 @@ function finaljsHTTP(data,nobits ){
     }
   else 
     for( i=0; i <  myArr.length; i++)  { 
-      result+=element.getAttribute( myArr[i].trim() )+" ";
+       let t=myArr[i].trim()
+       if (t=="textContent"){
+          console.log("SDF"+element.textContent);
+        result+=element.textContent+" "; }
+       else 
+      result+=element.getAttribute( t )+" ";
     }
     return jsstring2UTF8bytes(result); 
 }

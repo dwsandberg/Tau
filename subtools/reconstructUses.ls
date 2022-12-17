@@ -34,9 +34,7 @@ function %(a:seq.word) seq.word a
 
 Function exportedmodref(m:midpoint) set.sym/modref
 for acc = empty:set.sym/modref, md ∈ libmods.m do
- for acc2 = acc, sym ∈ exports.md do
-  acc2 + sym/modref(fixLengthSym.sym, modname.md)
- /for (acc2)
+ for acc2 = acc, sym ∈ exports.md do acc2 + sym/modref(fixLengthSym.sym, modname.md) /for (acc2)
 /for (acc)
 
 type sym/modref is sym:symbol, in:modref
@@ -61,10 +59,7 @@ for acc = empty:seq.symbol, t ∈ toseq.usestypes do
 
 Function fixLengthSym(sym:symbol) symbol
 if isBuiltin.sym ∧ name.sym = first."length" then
- symbol(moduleref("* seq", parameter.first.paratypes.sym)
-  , "length"
-  , paratypes.sym
-  , typeint)
+ symbol(moduleref("* seq", parameter.first.paratypes.sym), "length", paratypes.sym, typeint)
 else
  sym
 
@@ -81,11 +76,13 @@ let mr = lookupModule(m, name.modr)
 if isSimple.modr then
  exports.mr
 else
- for acc = empty:seq.symbol, sym ∈ exports.mr do
-  acc + replaceTsymbol(para.modr, sym)
- /for (acc)
+ for acc = empty:seq.symbol, sym ∈ exports.mr do acc + replaceTsymbol(para.modr, sym) /for (acc)
 
-Function reconstruceUses(m:midpoint, modname:word, dict:set.symbol, exported:set.sym/modref, olduses:seq.seq.word) set.modref
+Function reconstruceUses(m:midpoint
+ , modname:word
+ , dict:set.symbol
+ , exported:set.sym/modref
+ , olduses:seq.seq.word) set.modref
 let md = lookupModule(m, modname)
 let exports = fixLengthSym.exports.md
 if isempty.exports then
@@ -161,8 +158,9 @@ for acc = empty:set.set.modref, newuses = asset.uses, u ∈ toseq.in do
  else if cardinality.newuses > cardinality.asset.uses then
   chooseUses(toseq.newuses, acc, modname, olduses, exported)
  else
-  {assert modname ∈" callconfig impDependent typedict compileTimeT symbol2" ∨ isempty.acc report for txt
-   =" HNBH"+modname, x ∈ toseq.acc do txt+" /br $(toseq.x)" /for (txt)+" olduses"+%n.olduses}
+  {assert modname ∈" callconfig impDependent typedict compileTimeT symbol2" ∨ isempty.acc report for
+   txt =" HNBH"+modname, x ∈ toseq.acc do txt+"
+   /br $(toseq.x)" /for (txt)+" olduses"+%n.olduses}
   toseq.newuses
 )
 
@@ -207,8 +205,7 @@ if subseq(modtext, i + 1, i + 1) = "*"
  i + includecomment(modtext << i)
 else if subseq(modtext, i + 1, i + 1) = "/keyword"
 ∧ subseq(modtext, i + 2, i + 2)
-∈ ["Function", "type", "function", "Export", "unbound"
- , "Builtin", "builtin"]
+∈ ["Function", "type", "function", "Export", "unbound", "Builtin", "builtin"]
 ∨ subseq(modtext, i + 1, i + 1) = "Export" then
  i
 else

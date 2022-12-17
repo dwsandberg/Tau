@@ -58,15 +58,12 @@ check(
   , print(5, tan(pi / 4.0)) = "1.00000"
   , print(5, arcsin.sin.0.5) = "0.50000"
   , print(5, arccos.cos.0.5) = "0.50000"
-  , print(3, for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e /for (acc))
-  = "38.000"
+  , print(3, for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e /for (acc)) = "38.000"
   , "23.45000-18.45000" = print(5, 23.45) + print(5, 5.0 - 23.45)
   ,-2^4 = -16
   , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
   = "1 C addcomma function i int merge s segment seq seq toword toword word"
-  , for acc = ""
-   , @e ∈ alphasort.["z b", "a b", "a a", "test 23", "test 20"]
-  do
+  , for acc = "", @e ∈ alphasort.["z b", "a b", "a a", "test 23", "test 20"] do
    acc + @e + "/"
   /for (acc >> 1)
   = "a a / a b / test 20 / test 23 / z b"]
@@ -131,11 +128,7 @@ else
  let a = i / 2
  {intpart.sqrt.toreal.i}
  let b = (a + i / a) / 2
- for acc = true, f ∈ arithseq(a, 2, 3)
- while acc ∧ f ≤ b
- do
-  i mod f ≠ 0
- /for (acc)
+ for acc = true, f ∈ arithseq(a, 2, 3) while acc ∧ f ≤ b do i mod f ≠ 0 /for (acc)
 
 _________________
 

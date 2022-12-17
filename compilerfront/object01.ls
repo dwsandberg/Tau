@@ -78,8 +78,7 @@ function int0 int 2
 function real0 int 4
 
 Function fix5(a0:seq.seq.mytype) seq.seq.mytype
-{if length.root = 2 ∧ isseq.root_2 then [[root_2, parameter.root_2]]+a0 else
- }
+{if length.root = 2 ∧ isseq.root_2 then [[root_2, parameter.root_2]]+a0 else}
 let root = first.a0
 let a = [root, [typeint], [typeword], [typereal]] + a0 << 1
 let singlerow = 
@@ -158,7 +157,11 @@ if patternidx < 0 ∨ length.pattern = 1 ∧ first.pattern < 0 then
 else
  hjk(pattern, [buildrecord, patternidx], finished0, inobj, allpatterns)
 
-function hjk(fldtypes:seq.int, start:seq.int, finished0:seq.seq.int, obj:ptr, allpatterns:seq.seq.int) seq.seq.int
+function hjk(fldtypes:seq.int
+ , start:seq.int
+ , finished0:seq.seq.int
+ , obj:ptr
+ , allpatterns:seq.seq.int) seq.seq.int
 for acc = start
  , idx = if first.start = buildseq then 2 else 0
  , stkcount = 0
@@ -211,11 +214,7 @@ function buildtblseq int {5 rectyp elements of record} 5
 
 Function inrec(inrecs:seq.seq.int) ptr
 let allpatterns = 
- for idx = 0, pat ∈ inrecs
- while first.pat ≠ -1
- do
-  idx + 1
- /for (subseq(inrecs, 1, idx))
+ for idx = 0, pat ∈ inrecs while first.pat ≠ -1 do idx + 1 /for (subseq(inrecs, 1, idx))
 for stk = empty:stack.ptr
  , map = empty:seq.int
  , rec ∈ inrecs << (length.allpatterns + 1)
@@ -240,8 +239,8 @@ do
      else
       blksize / packedsize * packedsize
     let obj = allocatespace(min(length.fldtypes, myblksz) + 2)
-    for p = set(set(obj, if packedsize = 1 then 0 else 1)
-     , min(seqlen, myblksz / packedsize))
+    for
+     p = set(set(obj, if packedsize = 1 then 0 else 1), min(seqlen, myblksz / packedsize))
      , i = 4
      , m = 0
      , objs = empty:seq.ptr

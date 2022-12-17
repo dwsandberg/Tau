@@ -108,10 +108,7 @@ else if nobits = Reloc then
  addvbr6(result, offset - signedvalue.valx)
 else if nobits = Firstpara then
  addvbr6(result, toint.bits.valx)
-else if nobits = Relocsigned then
- addvbrsigned6(result, offset - signedvalue.valx)
-else
- result
+else if nobits = Relocsigned then addvbrsigned6(result, offset - signedvalue.valx) else result
 
 function add(val:int, b:internalbc) internalbc
 if val < 32 then
@@ -180,9 +177,7 @@ Function BR(slot:slot, a1:int, a2:int, a3:slot) internalbc
 addstartbits(toint.BR, 3, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc))))
 
 Function ALLOCA(slot:slot, a1:llvmtype, a2:llvmtype, a3:slot, a4:int) internalbc
-addstartbits(toint.ALLOCA
- , 4
- , add(typ.a1, add(typ.a2, add(toint.a3, add(a4, emptyinternalbc)))))
+addstartbits(toint.ALLOCA, 4, add(typ.a1, add(typ.a2, add(toint.a3, add(a4, emptyinternalbc)))))
 
 Function BR(a1:int) internalbc addstartbits(toint.BR, 1, add(a1, emptyinternalbc))
 
@@ -205,48 +200,36 @@ addstartbits(toint.LOAD
  , addaddress(slot, a1, add(typ.a2, add(toint.align8, add(0, emptyinternalbc)))))
 
 Function CMP2(slot:slot, a1:slot, a2:slot, a3:int) internalbc
-addstartbits(toint.CMP2
- , 3
- , addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
+addstartbits(toint.CMP2, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
 Function BINOP(slot:slot, a1:slot, a2:slot, a3:binaryop) internalbc
-addstartbits(toint.BINOP
- , 3
- , addaddress(slot, a1, addaddress(slot, a2, add(toint.a3, emptyinternalbc))))
+addstartbits(toint.BINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(toint.a3, emptyinternalbc))))
 
 Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot) internalbc
-addstartbits(toint.CALL
- , 4
- , add(a1, add(a2, add(typ.a3, addaddress(slot, a4, emptyinternalbc)))))
+addstartbits(toint.CALL, 4, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, emptyinternalbc)))))
 
 Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot) internalbc
 addstartbits(toint.CALL
  , 5
- , add(a1
-  , add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc)))))
- )
+ , add(a1, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc))))))
 
 Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot) internalbc
 addstartbits(toint.CALL
  , 6
  , add(a1
   , add(a2
-   , add(typ.a3
-    , addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, emptyinternalbc))))
-   )
+   , add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, emptyinternalbc)))))
   )
  )
 
-Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot, a7:slot) internalbc
+Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot
+ , a5:slot, a6:slot, a7:slot) internalbc
 addstartbits(toint.CALL
  , 7
  , add(a1
   , add(a2
    , add(typ.a3
-    , addaddress(slot
-     , a4
-     , addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, emptyinternalbc))))
-    )
+    , addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, emptyinternalbc)))))
    )
   )
  )
@@ -368,8 +351,7 @@ else
 
 function addvbr6(b:bitstream, s:seq.int) bitstream addvbr6(bits.0, 0, bits.0, s, b, 1)
 
-Function addvbr6(b:bitstream, v:int) bitstream
-addvbr6(bits.0, 0, bits.0, [v], b, 1)
+Function addvbr6(b:bitstream, v:int) bitstream addvbr6(bits.0, 0, bits.0, [v], b, 1)
 
 Function addvbrsigned6(b:bitstream, val:int) bitstream
 if val < 0 then
@@ -436,8 +418,7 @@ let offset = length.constantrecords
 let a7 = for acc = a6.p, @e ∈ bodytxts do addbody(acc, offset, @e) /for (acc)
 {sym table}
 let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
-let a8 = 
- finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
+let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
 {finish module block} toseqseqbyte.finishblock(a8, length.h.p, MODABBREVLEN)
 
 Function llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int) seq.seq.byte
@@ -446,8 +427,7 @@ let offset = length.constantrecords
 let a7 = for acc = a6.p, @e ∈ bodies do addbody(acc, @e) /for (acc)
 {sym table}
 let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
-let a8 = 
- finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
+let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
 {finish module block} toseqseqbyte.finishblock(a8, length.h.p, MODABBREVLEN)
 
 type llvmpartial is a6:bitstream, h:bitstream
@@ -455,10 +435,7 @@ type llvmpartial is a6:bitstream, h:bitstream
 function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int) llvmpartial
 let offset = length.constantrecords
 let h = 
- addblockheader(
-  add(add(add(add(empty:bitstream, bits.66, 8), bits.67, 8), bits.192, 8)
-   , bits.222
-   , 8)
+ addblockheader(add(add(add(add(empty:bitstream, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
   , 2
   , toint.MODULE
   , MODABBREVLEN)
@@ -473,8 +450,7 @@ let a =
   )
 {type block}
 let typeheader = addblockheader(a, MODABBREVLEN, toint.TYPES, TYPEABBREVLEN)
-let a2 = 
- addrecords(typeheader, TYPEABBREVLEN, [[toint.NumEle, length.trecords]] + trecords)
+let a2 = addrecords(typeheader, TYPEABBREVLEN, [[toint.NumEle, length.trecords]] + trecords)
 let a3 = finishblock(a2, length.typeheader, TYPEABBREVLEN)
 {PARAGRPBLOCK}
 let pgh = addblockheader(a3, MODABBREVLEN, toint.PARAGRP, TYPEABBREVLEN)
@@ -494,9 +470,7 @@ let pge =
 {para block}
 let paraheader = addblockheader(pge, MODABBREVLEN, toint.PARA, TYPEABBREVLEN)
 let a4 = 
- finishblock(addrecords(paraheader, TYPEABBREVLEN, [[2, 0]])
-  , length.paraheader
-  , TYPEABBREVLEN)
+ finishblock(addrecords(paraheader, TYPEABBREVLEN, [[2, 0]]), length.paraheader, TYPEABBREVLEN)
 {def list}
 let a5 = addrecords(a4, MODABBREVLEN, deflist)
 {const block}
@@ -517,10 +491,7 @@ if ismoduleblock.l then
 else
  let newblock = islastmodule.z ∧ not.ismoduleblock.l
  let bits = 
-  if newblock then
-   addblockheader(bits.z, MODABBREVLEN, toint.CONSTANTS, TYPEABBREVLEN)
-  else
-   bits.z
+  if newblock then addblockheader(bits.z, MODABBREVLEN, toint.CONSTANTS, TYPEABBREVLEN) else bits.z
  let bits2 = 
   if lasttype.z = typ.l then
    bits

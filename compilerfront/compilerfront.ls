@@ -62,7 +62,11 @@ Export templates(midpoint) set.symdef {From symbol2}
 
 Export typedict(midpoint) typedict {From symbol2}
 
-Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word) midpoint
+Export midpoint(option:seq.word
+ , prg:set.symdef
+ , typedict:typedict
+ , libmods:seq.modExports
+ , src:seq.seq.word) midpoint
 {From symbol2}
 
 Export type:modExports {From symbol2}
@@ -95,8 +99,6 @@ passsymbols(modname.a
  /for (types)
  , empty:seq.symdef)
 
-use otherseq.word
-
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint) midpoint
 assert not.isempty.allsrc report "empty source"
 let lib0 = extractValue(first.allsrc, "Library library")
@@ -122,8 +124,7 @@ else
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
  let allmods = asset(abstract.t5 + simple.t5)
- let prga = 
-  compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
+ let prga = compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
  let typedict = 
   if option = "text" then
    emptytypedict

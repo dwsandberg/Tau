@@ -465,8 +465,8 @@ let i = toint.code
 if between(i + 1, 1, 197) then
  let r = 
   [
-   "unreachable ? block loop ? ? ? ? ? ? ? END br brif ? return call callindirect ? ? ? ? ? ? ? ? drop
-    select ? ? ? ? localget localset localtee globalget globalset ? ? ? i32load i64load f32load f64load i32load8s
+   "unreachable ? block loop ? ? ? ? ? ? ? END br brif ? return call callindirect ? ? ? ? ? ? ? ? drop select
+    ? ? ? ? localget localset localtee globalget globalset ? ? ? i32load i64load f32load f64load i32load8s
     i32load8u i32load16s i32load16u i64load8s i64load8u i64load16s i64load16u i64load32s i64load32u i32store
     i64store f32store f64store i32store8 i32store16 i64store8 i64store16 i64store32 memorysize memorygrow
     i32const i64const f32const f64const i32eqz i32eq i32ne i32lts i32ltu i32gts i32gtu i32les i32leu i32ges

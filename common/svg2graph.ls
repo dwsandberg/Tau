@@ -67,8 +67,7 @@ else
  let inc = 0.6
  let dd = d.first.grp
  let base = 
-  makereal.subseq(dd, length.dd - 3, length.dd)
-  - toreal(length.grp - 1) / 2.0 * inc
+  makereal.subseq(dd, length.dd - 3, length.dd) - toreal(length.grp - 1) / 2.0 * inc
  for acc = empty:seq.arcpath.T, new = base, q ∈ grp do
   next(acc + arcpath(arc.q, d.q >> 3 + print(3, new), 0), new + inc)
  /for (acc)
@@ -76,11 +75,12 @@ else
 Function drawscript:T seq.word
 "<script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).getBBox () ;
  /br arcs.forEach (function (idval, index) {if (index > 0) {
- /br let element = document.getElementById (idval) ; let d = $(dq."M")+(bb.x+bb.width)+$(dq."
- ,")+(bb.y+bb.height)+element.getAttribute ($(dq."d")).substring (5) ; element.setAttribute ($(dq."
- d"), d) ;}}) ;} </script>
- /br <style>.arcs {fill:none ; stroke:black ; stroke-width:.07 ;}.nodes {font-size:.03em; stroke
- -width:.1 ;} svg g:hover text {opacity:1;} svg g:hover rect {opacity:1;} </style>"
+ /br let element = document.getElementById (idval) ; let d = $(dq."M")+(bb.x+bb.width)+
+ $(dq.",")+(bb.y+bb.height)+element.getAttribute ($(dq."d")
+ ).substring (5) ; element.setAttribute ($(dq."d"), d) ;}}) ;} </script>
+ /br <style>.arcs {fill:none ; stroke:black ; stroke-width:.07 ;}.nodes {font-size:.03em;
+ stroke-width:.1 ;} svg g:hover text {opacity:1;} svg g:hover rect {opacity:1;} </style>
+ "
 + encodeword.[char.10]
 
 unbound node2text(T) seq.word
@@ -105,9 +105,7 @@ let arcpaths0 =
   let from = if length.a = 2 then x.lookup(nodeinfo.layout, nodeinfo(a_1, 0, 0))_1 else 0
   for d = "", from0 = 0, from1 = from, p ∈ a << 1 do
    let xy = lookup(nodeinfo.layout, nodeinfo(p, 0, 0))_1
-   next(
-    d + "L" + print(3, toreal.y.xy * scalex)
-    + print(3, toreal.x.xy * scaley)
+   next(d + "L" + print(3, toreal.y.xy * scalex) + print(3, toreal.x.xy * scaley)
     , from1
     , x.xy)
   /for (asset.[arcpath(arc(first.a, last.a), d, from0)] ∪ ap)
@@ -158,8 +156,8 @@ do
       if isempty.lab then
        ""
       else
-       "<text class = $(dq."nodes") > <textPath href = $(dq.[merge("
-        #" + toword.j)]) startOffset = $(dq."100%") text-anchor = $(dq."end") > <tspan dy = $(dq."-0.1") >
+       "<text class = $(dq."nodes") > <textPath href = $(dq.[merge("#" + toword.j)])
+        startOffset = $(dq."100%") text-anchor = $(dq."end") > <tspan dy = $(dq."-0.1") >
         $(label.lab_1) </tspan> </textPath> </text>"
        + encodeword.[char.10]
      else
@@ -184,11 +182,10 @@ do
   next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 /for (
  let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for (svg2)
- "
-  /br <* none $(drawscript:T) <svg id = $(dq."svg10") dqns = $(dq."http://www.w3.
-  org/2000/svg") width = $(dq."100%") viewBox = $(dq("5.0" + space + "-1" + print(2, maxx + 5.0)
- + print(2, maxy + 1.3))) onload = $(dq."[$(draw >> 1)].forEach (shiftstart)") >
-  $(txt + hovertxt)+</svg> *>"
+ "/br <* none $(drawscript:T) <svg id = $(dq."svg10") dqns = $(dq."http://www.w3.org/2000/svg")
+  width = $(dq."100%") viewBox =
+  $(dq("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.3)))
+  onload = $(dq."[$(draw >> 1)].forEach (shiftstart)") > $(txt + hovertxt)+</svg> *>"
 )
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
@@ -200,9 +197,10 @@ else if nodex.b = nodex.a ∨ nodey.b = nodey.b then EQ else GT
 
 function assvg(h:hovertext.T) seq.word
 "<g> <rect opacity = $(dq."0.0") x = $(dq.print(2, nodex.h)) y =
- $(dq.print(2, nodey.h - 0.5)) height = $(dq."0.5") width = $(dq."1") ></rect> <rect pointer-events =
- $(dq."none") fill = $(dq."white") opacity = $(dq."0.0") x = $(dq.print(2, nodex.h)) y =
- $(dq.print(2, nodey.h - 0.5)) height = $(dq."1") width = $(dq."
- 100") ></rect> <text pointer-events = $(dq."none") class = $(dq."nodes") x = $(dq.print(2, nodex.h)) y =
- $(dq.print(2, nodey.h)) opacity = $(dq."0.0") > $(text.h) </text> </g>"
+ $(dq.print(2, nodey.h - 0.5)) height = $(dq."0.5") width = $(dq."1")
+ ></rect> <rect pointer-events = $(dq."none") fill = $(dq."white") opacity = $(dq."0.0")
+ x = $(dq.print(2, nodex.h)) y = $(dq.print(2, nodey.h - 0.5)) height = $(dq."1") width =
+ $(dq."100") ></rect> <text pointer-events = $(dq."none") class = $(dq."nodes") x =
+ $(dq.print(2, nodex.h)) y = $(dq.print(2, nodey.h)) opacity = $(dq."0.0") > $(text.h)
+ </text> </g>"
 + encodeword.[char.10] 

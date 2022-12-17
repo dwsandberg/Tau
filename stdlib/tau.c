@@ -37,7 +37,6 @@ void assertexit(int b,char *message);
 
 #define blocksize 0xFFFFF
 #define noblocks 12000
-#define noencodings 40
 
 
 pthread_mutex_t sharedspace_mutex=PTHREAD_MUTEX_INITIALIZER;  //for shared space
@@ -47,13 +46,16 @@ static int alloccount=0;
 
 // myalloc does not zero memory so care is needed to initialize every fld when calling.
 
+// BT profiledata; 
+// BT profilevector;
+
 BT spacecount=0;
   
 
 BT allocatespace(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
    sp->nextone=sp->nextone+i*8;
     spacecount+=i;
-    if ((sp->nextone)>(sp->lastone) ){int k,x;   BT *b;
+     if ((sp->nextone)>(sp->lastone) ){int k,x;   BT *b;
         assertexit(i*8<blocksize,"too big an object");
        //  fprintf(stderr,"mem lock\n");
         assertexit(pthread_mutex_lock (&memmutex)==0,"lock fail");
@@ -87,63 +89,40 @@ void myfree(struct spaceinfo *sp) {int i; i =0;
 
 // start  encoding support
 
+struct encodingstate { BT * all;BT length;BT *table;BT last;};
+struct einfo {struct encodingstate *encodingstate;  BT eno; processinfo allocatein;   };
 
+BT currentprocess(processinfo  PD)  {
+return (BT)PD;}
 
-struct einfo {BT encodingstate;   processinfo allocatein;  };
-
-struct einfo * neweinfo(processinfo PD,BT encodingnumber){
-   static const BT x1[]={0,0};
-   static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
-    BT *emptyencodingstate=(BT *)myalloc(PD,6);
-    emptyencodingstate[0]=encodingnumber;
-    emptyencodingstate[1]=0;
-    emptyencodingstate[2]=(BT) empty4;
-    emptyencodingstate[3]=(BT) empty4;
-    emptyencodingstate[4]=(BT)x1;
-    emptyencodingstate[5]=(BT) 0;
-   struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
-   e->encodingstate=(BT)emptyencodingstate;
-   e->allocatein=PD ;
-   return e;
-}
-             
-struct einfo *staticencodings[noencodings];
-
-struct einfo  *startencoding(processinfo PD,BT no)
-{  // assign encoding number 
-   assertexit(no > 0 && no< noencodings,"invalid encoding number");
- struct einfo *e= PD->encodings[no];
- if (e==0) {
-   if  ( PD->newencodings==0 && PD != &sharedspace) 
-     { int i;
-       struct einfo ** cpy=  (struct einfo **) myalloc(PD,noencodings); 
-       for(i=0; i<noencodings ;i++)
-         cpy[i]=PD->encodings[i];
-       PD->encodings = cpy;
-       PD->newencodings=1;  
-       }
-  e = neweinfo(PD,no);
-  PD->encodings[no]=e;
- }
- return e;
- }
-
-BT getinstance(processinfo PD,BT  encodingnumber){ 
-   return startencoding(PD,encodingnumber)->encodingstate ;
-}
- 
- 
- 
-BT addencoding(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
- struct einfo *e=startencoding(PD, encodingnumber)  ;
+struct encodingstate * addencoding4(processinfo PD, struct einfo * e ,BT  data  
+,struct encodingstate * (*add2)(processinfo,struct einfo *,BT)
+){
   assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
-  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
-  e->encodingstate=newtable;
+  processinfo  allocatein=e->allocatein ;
+  struct encodingstate * newtable=(add2)(allocatein,e, data);
  assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
- // return  encoding
- return (( BT *) newtable)[5];
+ return ( newtable );
+}  
+
+struct encodingstate * addencoding5(processinfo PD, struct einfo * e ,BT * data  
+,struct encodingstate * (*add2)(processinfo,struct einfo *,BT)
+){
+  assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+  processinfo  allocatein=e->allocatein ;
+  struct encodingstate * newtable=(add2)(allocatein,e,* data);
+ assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+ return ( newtable );
 } 
+
+BT critical(processinfo PD,BT P1, BT P2,processinfo allocatein, BT   (*add2)(processinfo,BT,BT)
+)
+{ 
+ assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+   BT result=(add2)(allocatein,P1 ,P2);
+  assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+  return result;
+}
 
 // end of encoding support
 
@@ -175,9 +154,6 @@ BT initlib5(char * libname,BT  libdesc,BT initwordsfunc) {
 if ( loaded[1]==0 ){
   /* only needed when initializing base lib */
      
-    staticencodings[1]=neweinfo(&sharedspace,1);  // word encodings 
-    staticencodings[2]=neweinfo(&sharedspace,2); // encoding map for assigning encoding to an integer number
-
     addlibrarywords  = ( BT (* )(processinfo PD,BT   )) initwordsfunc; 
 addlibrarywords(&sharedspace,libdesc);
 } 
@@ -446,7 +422,9 @@ BT  tobyteseq ( processinfo PD,char *str) {
      return (BT) b;
 }
 
+struct einfo einit ={0,0};
 
+struct einfo *staticencodings[2];
 
 int main(int argc, char **argv)    {   int i=0,count; 
 
@@ -459,8 +437,10 @@ for(i=strlen(basedir)-1 ;i >=0 ;i--) if (basedir[i]=='/') {basedir[i]=0; break;}
 #endif  
            // initialize main process
     sharedspace.encodings = staticencodings;
-    for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
-    signal(SIGSEGV,fatal_error_signal);
+    sharedspace.lasteinfo = &einit;
+    sharedspace.encodings[0]=(struct einfo *)(0);
+    sharedspace.encodings[1]=(struct einfo *)(0);
+     signal(SIGSEGV,fatal_error_signal);
      signal(SIGBUS,fatal_error_signal);
     signal(SIGILL,fatal_error_signal);
  
@@ -531,7 +511,7 @@ if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0)
    return a;
  }
  
-
+BT clock2(processinfo PD)   { return (BT) clock();}
 
 BT currenttime() { 
      BT T1970=210866716800;

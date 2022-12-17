@@ -101,8 +101,8 @@ let i = toint.code
 if between(i + 1, 1, 45) then
  let r = 
   [
-   "? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ?
-    ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+   "? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL
+    ? ? ? ? ? ? ? ? GEP STORE"
    _(i + 1)]
  if r ≠ "?" then r else "instop." + toword.i
 else
@@ -140,8 +140,7 @@ let i = toint.code
 if between(i + 1, 1, 22) then
  let r = 
   [
-   "? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
-   _(i + 1)]
+   "? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"_(i + 1)]
  if r ≠ "?" then r else "typeop." + toword.i
 else
  "typeop." + toword.i
@@ -258,8 +257,8 @@ let i = toint.code
 if between(i + 1, 1, 23) then
  let r = 
   [
-   "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ?
-    ? ? ? ? ? ? CGEP ? CDATA"
+   "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ?
+    ? ? ? ? CGEP ? CDATA"
    _(i + 1)]
  if r ≠ "?" then r else "constop." + toword.i
 else
@@ -308,8 +307,7 @@ let i = toint.code
 if between(i + 1, 1, 12) then
  let r = 
   [
-   "trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
-   _(i + 1)]
+   "trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"_(i + 1)]
  if r ≠ "?" then r else "castop." + toword.i
 else
  "castop." + toword.i
@@ -407,8 +405,8 @@ let i = toint.code
 if between(i + 1, 1, 42) then
  let r = 
   [
-   "? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule
-    sgt sge slt sle"
+   "? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt
+    sge slt sle"
    _(i + 1)]
  if r ≠ "?" then r else "cmp2op." + toword.i
 else

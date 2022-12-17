@@ -47,9 +47,7 @@ for acc = graph(empty:set.arc.T, empty:set.arc.T, nodes), @e ∈ toseq.arcs.g do
 /for (acc)
 
 Function successors(g:graph.T, n:T) set.T
-for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do
- acc + head.@e
-/for (acc)
+for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do acc + head.@e /for (acc)
 
 Function arcstosuccessors(g:graph.T, n:T) set.arc.T findelement2(arcs.g, arc(n, n))
 

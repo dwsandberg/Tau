@@ -56,10 +56,7 @@ let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = empty:seq.hashelement.T, found = false, e ∈ (table.h)_dataindex do
  if data.e = ele then
   next(acc + e, true)
- else if notsamehash2(ele, hash, hash.e, mask) then
-  next(acc, found)
- else
-  next(acc + e, found)
+ else if notsamehash2(ele, hash, hash.e, mask) then next(acc, found) else next(acc + e, found)
 /for (
  let t = replace(table.h, dataindex, if found then acc else [hashelement(ele, hash)] + acc)
  hashset(if found then cardinality.h else cardinality.h + 1

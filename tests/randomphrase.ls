@@ -28,14 +28,14 @@ Function verbs seq.word
  winds works whips yells"
 
 Function nouns seq.word
-"ant bag cane daisy ear flower girl hat idol jam king ladder man napkin olive page queen river salt
- tire umbra vat walnut xray yam zoo apple bin bean brain boy bug effort empire cell chain city club cow
- cream editor cypress cup engine deck disk dragon duck dwarf dye echo egg elf expert face fox feast frog
- fur glass grave gym hog image ink igloo ale ice iron island jet arch job jig judge knob kayak kelp aunt
- awl lily lute lye ox outpost otter ostrich orchid onion omelet opera office ocean leaf orbit oar nymph
- nurse needle myth mica meat moon mug nipple noise owl pneumonia pepper phone pickle psalm python plate
- poetry prince puppy atom rabbit shrub sidewalk sound speaker rebel stone rock rug sun swan tomato acrobat
- train year wren uncle ash vole wind wench wheat wood"
+"ant bag cane daisy ear flower girl hat idol jam king ladder man napkin olive page queen river salt tire
+ umbra vat walnut xray yam zoo apple bin bean brain boy bug effort empire cell chain city club cow cream
+ editor cypress cup engine deck disk dragon duck dwarf dye echo egg elf expert face fox feast frog fur
+ glass grave gym hog image ink igloo ale ice iron island jet arch job jig judge knob kayak kelp aunt awl
+ lily lute lye ox outpost otter ostrich orchid onion omelet opera office ocean leaf orbit oar nymph nurse
+ needle myth mica meat moon mug nipple noise owl pneumonia pepper phone pickle psalm python plate poetry
+ prince puppy atom rabbit shrub sidewalk sound speaker rebel stone rock rug sun swan tomato acrobat train
+ year wren uncle ash vole wind wench wheat wood"
 
 Function adjectives seq.word
 "amber beautiful calm dim easy final gray half impure jumpy knotty large maroon navy orange part queenly

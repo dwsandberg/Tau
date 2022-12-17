@@ -54,7 +54,6 @@ cc bin/putfile.c -o bin/putfile.cgi
 echo " " > $build/start.ls
 } 
 
-
 if ! [ -e $build ] ; then 
 mkdir $build
  startfresh 

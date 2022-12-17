@@ -39,12 +39,8 @@ let z =
   , testerror(in
    , "<* literal then and else types are different *>"
    , "function f1 (a:int) int if true then true else 0")
-  , testerror(in
-   , "<* literal cond of if must be boolean but is int *>"
-   , "function f1 (a:int) int if 1 then 2 else 3")
-  , testerror(in
-   , "<* literal condition in assert must be boolean"
-   , "function f1 (a:int) int assert 1 report 2 3")
+  , testerror(in, "<* literal cond of if must be boolean but is int *>", "function f1 (a:int) int if 1 then 2 else 3")
+  , testerror(in, "<* literal condition in assert must be boolean", "function f1 (a:int) int assert 1 report 2 3")
   , testerror(in
    , "<* literal report in assert must be seq of word in:"
    , "function f1 (a:int) int assert true report 2 3")
@@ -66,13 +62,8 @@ let z =
 check(z, "test11a") + checkprec
 
 function testcomp2(in:seq.file, s:seq.word) seq.word
-let txt = 
- "Library = testcomp uses = stdlib exports = testit
-  /p module testit
-  /p use standard
-  /p $(s)"
-let p = 
- process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in << 1)
+let txt = "Library = testcomp uses = stdlib exports = testit /p module testit /p use standard /p $(s)"
+let p = process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in << 1)
 if aborted.p then
  message.p
 else
@@ -145,10 +136,7 @@ let x =
  for acc = "", i ∈ arithseq(length.y, 1, 1) do
   if y_i = b_i then acc else acc + toword.i
  /for (acc)
-if x = "" then
- "PASS $(testname)"
-else
- "<* literal FAILED *> test $(x) in $(testname)"
+if x = "" then "PASS $(testname)" else "<* literal FAILED *> test $(x) in $(testname)"
 
 function x(a:int) checkprec checkprec.[toword.a]
 

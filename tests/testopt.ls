@@ -137,9 +137,7 @@ let cl =
    /br EndBlock
    /br"]
 let r = 
- for acc = "", @e ∈ arithseq(length.cl, 1, 1) do
-  acc + getcode(p2, cl, @e)
- /for (acc)
+ for acc = "", @e ∈ arithseq(length.cl, 1, 1) do acc + getcode(p2, cl, @e) /for (acc)
  + if [40, 20, 30, 20]
  = [multitarget(4, true, false)
   , multitarget(4, false, false)
@@ -157,19 +155,17 @@ let code = for acc = "", p ∈ p2 do if name = name.sym.p then %.code.p else acc
 if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1, "") then
  ""
 else
- "/br <* literal FAILED *> test" + toword.no + "in optest /br" + code
- + "/p"
- + codelist_no
+ "/br <* literal FAILED *> test" + toword.no + "in optest /br" + code + "/p" + codelist_no
 
 +" /p diffs:"+sameto (code, codelist_no, 1,"")+" /p"+toseq.asset." a b c d xxx"
 
 function shuffletest(s:seq.word) boolean
 s
 ∈ [
- "17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4
-  3 113 5 4 117 3 5"
- , "17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113
-  5 4 117 3 5"
+ "17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4 3
+  113 5 4 117 3 5"
+ , "17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113 5 4
+  117 3 5"
  , "47 b xxx 62 xxx b 85 8 9 109 4 3 113 3 4"
  , "17 xxx c 32 xxx c 47 b xxx 62 c b 85 8 9 100 9 7 105 3 4 109 4 3"]
 

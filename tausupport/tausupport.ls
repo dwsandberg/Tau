@@ -16,6 +16,8 @@ use taublockseq.byte
 
 use encoding.seq.char
 
+use encodingsupport
+
 use bitcast.int
 
 use bitcast.seq.int
@@ -70,8 +72,6 @@ use taublockseq.real
 
 use standard
 
-use encoding.typename
-
 use words
 
 Export type:packed2
@@ -84,15 +84,11 @@ Export type:packed5
 
 Export type:packed6
 
-Export type:typename
-
 Export decode(encoding.seq.char) seq.char {From encoding.seq.char}
-
-Export type:encodingpair.seq.char {From encoding.seq.char}
 
 Export encode(seq.char) encoding.seq.char {From encoding.seq.char}
 
-Export type:encodingpair.typename {From encoding.typename}
+Export addencodings(seq.seq.char) int
 
 Export type:ptr {From ptr}
 
@@ -134,8 +130,7 @@ function set(i:ptr, b:packed2) ptr set(set(i, fld1.b), fld2.b)
 
 function set(i:ptr, b:packed3) ptr set(set(set(i, fld1.b), fld2.b), fld3.b)
 
-function set(i:ptr, b:packed4) ptr
-set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b)
+function set(i:ptr, b:packed4) ptr set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b)
 
 function set(i:ptr, b:packed5) ptr
 set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b)
@@ -163,14 +158,6 @@ Function deepcopy(a:int) int a
 
 Function deepcopy(a:real) real a
 
-type typename is name:seq.word
-
-function =(a:typename, b:typename) boolean name.a = name.b
-
-function hash(a:typename) int hash.name.a
-
-Function encodingno(name:seq.word) int addorder.typename.name + 2
-
 Builtin abort:ptr(seq.word) ptr
 
 Builtin abort:int(seq.word) int
@@ -194,9 +181,7 @@ else
  let noblks = (length.s + blksz - 1) / blksz
  let blkseq = allocatespace(noblks + 2)
  let discard = 
-  for acc = set(set(blkseq, blockseqtype:byte), length.s)
-   , @e ∈ arithseq(noblks, blksz, 1)
-  do
+  for acc = set(set(blkseq, blockseqtype:byte), length.s), @e ∈ arithseq(noblks, blksz, 1) do
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
   /for (acc)
  bitcast:seq.byte(blkseq)
@@ -255,4 +240,31 @@ else if typ ∈ "packed5" then
  toptr.blockIt.bitcast:seq.packed5(obj)
 else
  assert typ ∈ "packed6" report "packing not found" + typ
- toptr.blockIt.bitcast:seq.packed6(obj) 
+ toptr.blockIt.bitcast:seq.packed6(obj)
+
+Export geteinfo(gl:ptr, name:seq.word) einfo
+
+Export geteinfo2(int, int) einfo
+
+Export type:einfo
+
+Export evectorUpdate(b:ptr) ptr
+
+builtin clock2 int
+
+Function profileNR(time:int, p:ptr) ptr
+let p1 = set(p, fld:int(p, 0) + 1)
+set(p1, fld:int(p1, 0) + (clock2 - time))
+
+Function profileR(time:int, p:ptr) ptr
+let p1 = set(p, fld:int(p, 0) + 1)
+let p2 = set(p1, fld:int(p1, 0) + (clock2 - time))
+let p3 = set(p2, 0)
+set(p3, fld:int(p3, 0) - 1)
+
+/Function PROFILEDATA ptr {OPTION NOINLINE} profileDataGlobal:int
+
+Function profileRstart(p:ptr) int
+let nest = fld:int(p, 0)
+let p1 = set(p, nest + 1)
+if nest = 0 then clock2 else 0 

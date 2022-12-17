@@ -46,8 +46,7 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
   else if out = "symdef" then
    for txt = "", sd1 ∈ selected do
     let kk = getOptions.sd1
-    txt + "/p" + %.sym.sd1 + if isempty.kk then "" else "OPTIONS:$(kk)" /if
-    + %.code.sd1
+    txt + "/p" + %.sym.sd1 + if isempty.kk then "" else "OPTIONS:$(kk)" /if + %.code.sd1
    /for (txt)
   else if out = "symdefgraph" then
    for txt = "", sd1 ∈ selected do
@@ -70,43 +69,39 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
     /for (newgraph.acc)
    let g2 = 
     if out ∈ ["calls", "calledby"] then
-     assert not.isempty(nodes.g ∩ asset.root)
-     report "no intersection between symbols in option n and call graph"
+     assert not.isempty(nodes.g ∩ asset.root) report "no intersection between symbols in option n and call graph"
      subgraph(g, reachable(if out = "calledby" then complement.g else g, root))
     else
      g
    if out = "text" then
-    for txt = "txt", a ∈ toseq.arcs.g do
-     txt + "/br" + %.tail.a + %.head.a
-    /for (txt)
+    for txt = "txt", a ∈ toseq.arcs.g do txt + "/br" + %.tail.a + %.head.a /for (txt)
    else
     drawgraph.newgraph.toseq.arcs.g2
  [file(o, output)]
 )
 
-* The /keyword front command is a multiple purpose command. It outputs data from various stages of
-the compiler.
+* The /keyword front command is a multiple purpose command. It outputs data from various stages of the compiler
+.
 
 * One use is to figure out what functions are used between modules. The usegraph of the core functions
-indicates there are dependences between the modules texio, file and bits.To see the dependences use <*
-block front+built stdlib.libsrc mods = textio file bits format *> A graph will be display with the
-dependences between the modules. The nodes in the graph are the procedure names. Since a name does
-not uniquely identify a function hovering over the beginning of the name will pop up a more complete
-discription beginning with the name of the function. 
+indicates there are dependences between the modules texio, file and bits.To see the dependences use <* block front
++built stdlib.libsrc mods = textio file bits format *> A graph will be display with the dependences between
+the modules. The nodes in the graph are the procedure names. Since a name does not uniquely identify
+a function hovering over the beginning of the name will pop up a more complete discription beginning
+with the name of the function. 
 
 * The dependence on the module bits will not be displayed. If an earilier pass of the compiler is specified
-like this <* block front  +built stdlib.libsrc mods = textio file bits format pass = text *> then
-it will be displayed. 
-
-* The dependence with in the module textio can be seen with <* block front  +built stdlib.libsrc mods
-= textio pass = text flags = within *>
-
-* To see all the functions that call functions named /em breakparagraph in the library use <* block
-front  +built stdlib.libsrc n = breakparagraph pass = text out = calledby *>
-
-* This will list the function definitions in a package <* block front  +built stdlib.libsrc mods =
-textio out = symdef *> The format is the function followed by a post order transversal of the call tree
+like this <* block front  +built stdlib.libsrc mods = textio file bits format pass = text *> then it will be displayed
 . 
+
+* The dependence with in the module textio can be seen with <* block front  +built stdlib.libsrc mods = textio
+pass = text flags = within *>
+
+* To see all the functions that call functions named /em breakparagraph in the library use <* block front  +
+built stdlib.libsrc n = breakparagraph pass = text out = calledby *>
+
+* This will list the function definitions in a package <* block front  +built stdlib.libsrc mods = textio out
+= symdef *> The format is the function followed by a post order transversal of the call tree. 
 
 * The front command takes several parameters that control which functions are considered.
 /br ○ /strong n = a list of names of functions to include
@@ -121,8 +116,7 @@ done.
 /br • /strong pass1a Like pass1 with Compiler options on Export statements added. 
 /br • /strong pass2 After some optimization
 /br • /strong all Just before code generation. *>
-/br ○ /strong out The option out determines what will be output. <* block • sym Just the symbol
-names
+/br ○ /strong out The option out determines what will be output. <* block • sym Just the symbol names
 /br • symdefs The symbol definitions. The format is the symbol followed by a post order transversal
 of the call tree.
 /br • symdefgraph For each symbol definition, the definition is presented as a call tree graph.

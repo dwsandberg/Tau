@@ -54,9 +54,7 @@ Export firstvar(a:match5) int
 
 Export functype(m:match5) llvmtype {From codetemplates}
 
-Export length(match5) int
-{no of instruction that return results}
-{From codetemplates}
+Export length(match5) int {no of instruction that return results} {From codetemplates}
 
 Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
 
@@ -208,9 +206,9 @@ for notprocessed = empty:seq.symdef, xx ∈ toprocess do
 )
 
 Function internalidx(s:symbol) int
-{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint
- getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted
- addencoding getinstance"}
+{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2
+ getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding
+ getinstance"}
 let l = 
  ["stacktrace"
   , "not boolean"

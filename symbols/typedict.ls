@@ -63,25 +63,22 @@ else
    /for (
     assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
     report
-     "PROBLEM $(type) flat:$(for txt = "", g ∈ flatflds do txt + %.g /for (txt + "
-      /br")) $(acc)"
+     "PROBLEM $(type) flat:
+      $(for txt = "", g ∈ flatflds do txt + %.g /for (txt + "/br")) $(acc)"
     addtype(acc, type)
    )
 
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype) typedict
 let typesused = for acc = empty:seq.mytype, sym ∈ toseq.syms do acc + typesused.sym /for (acc)
 let typesyms = 
- for acc = empty:set.typeentry, tp ∈ types do
-  acc + typeentry(first.tp, tp << 1)
- /for (acc)
+ for acc = empty:set.typeentry, tp ∈ types do acc + typeentry(first.tp, tp << 1) /for (acc)
 for acc3 = toseq.typesyms, q ∈ toseq.asset.typesused do
  let z = typeentry(q, empty:seq.mytype)
  if z ∈ typesyms then acc3 else acc3 + z
 /for (resolvetypesize.acc3)
 
 function typesused(sym:symbol) seq.mytype
-{only includes parameter of seq and encoding and excludes types int, real, boolea, ptr
- , and T}
+{only includes parameter of seq and encoding and excludes types int, real, boolea, ptr, and T}
 for acc = empty:seq.mytype, t ∈ types.sym do
  let typ = if isseq.t ∨ isencoding.t then parameter.t else t
  if iscore4.typ ∨ typ = typeT then acc else acc + typ
@@ -92,8 +89,7 @@ let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5
 report
  "recursive type problem:
-  /br $(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "
-  /br" /for (acc10))"
+  /br $(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "/br" /for (acc10))"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d) /for (acc)
 
 function print2(h:typeentry) seq.word

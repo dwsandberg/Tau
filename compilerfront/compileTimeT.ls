@@ -71,9 +71,7 @@ else if typ = typeint ∨ typ = typebits ∨ typ = typechar then
 else if typ = typeboolean then
  [if r = 1 then Littrue else Litfalse]
 else if typ = seqof.typeword then
- for acc = "", @e ∈ bitcast:seq.int(toptr.r) do
-  acc + wordencodingtoword.@e
- /for ([Words.acc])
+ for acc = "", @e ∈ bitcast:seq.int(toptr.r) do acc + wordencodingtoword.@e /for ([Words.acc])
 else if typ = typereal then
  [Reallit.r]
 else

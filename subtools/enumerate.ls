@@ -14,10 +14,7 @@ use sparseseq.word
 
 Function enumerate(input:seq.file, o:seq.word) seq.file
 let message = "The data below this line was auto generated."
-for data = ""
- , auto = ""
- , continue = true
- , p ∈ breakparagraph.data.first.input
+for data = "", auto = "", continue = true, p ∈ breakparagraph.data.first.input
 while continue
 do
  if p = message then
@@ -33,8 +30,7 @@ do
    , true)
  else
   next(
-   data + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if
-   + "/p"
+   data + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if + "/p"
    , auto
    , true)
 /for (
@@ -46,9 +42,9 @@ do
   ]
 )
 
-* The /keyword enumeration cmd is used to generate code in a module for enumeration types instead of
-creating the code by hand. If the following in a file named enum.ls it will generate two enumeration
-types and operations on them.
+* The /keyword enumeration cmd is used to generate code in a module for enumeration types instead of creating
+the code by hand. If the following in a file named enum.ls it will generate two enumeration types and
+operations on them.
 
 *____________________
 
@@ -68,11 +64,15 @@ types and operations on them.
 * In the first enumeration type Each word in the data list is given a value starting with 0. The ?
 mark is a place holder for numbers that with not be include in the type.
 
-* The second example uses and existing data type byte. Because of this the /keyword nodecs flag is
-supplied which indicates the declaration of the type will not be generated. The flag /keyword withvalues
-indicates the data list contains the hex value of the constant follow by the name.
+* The second example uses and existing data type byte. Because of this the /keyword nodecs flag is supplied
+which indicates the declaration of the type will not be generated. The flag /keyword withvalues indicates the
+data list contains the hex value of the constant follow by the name.
 
-function enumerate(type:seq.word, codes0:seq.word, withvalues:boolean, nodefs:boolean, decodename:seq.word) seq.word
+function enumerate(type:seq.word
+ , codes0:seq.word
+ , withvalues:boolean
+ , nodefs:boolean
+ , decodename:seq.word) seq.word
 let codes = 
  if withvalues then
   for acc = sparseseq."?"_1, state = 1, code = first.codes0, w ∈ codes0 << 1 do
@@ -86,8 +86,7 @@ let codes =
 if nodefs then
  ""
 else
- "
-  /p type $(type) is toint:int
+ "/p type $(type) is toint:int
   /p Export toint ($(type)) int
   /p Export $(type) (i:int) $(type)
   /p Export type:$(type)
@@ -97,8 +96,7 @@ else
  if codes_i = "?"_1 then
   next(acc, list)
  else
-  next(
-   acc + "/p Function" + codes_i + type + type + "." + toword(i - 1)
+  next(acc + "/p Function" + codes_i + type + type + "." + toword(i - 1)
    , list + codes_i + ",")
 /for (
  acc + "/p"
@@ -106,7 +104,7 @@ else
   $(list >> 1)] let i = toint.code if between (i+1, 1,"
  + toword.length.codes
  + ") then let r = [$(dq.codes)_(i+1)]"
- + "if r ≠ $(dq."?") then r else $(dq(type + "."))+toword.i else $(dq(type + "
-  ."))+toword.i")
+ + "if r ≠ $(dq."?") then r else $(dq(type + "."))+toword.i else $(dq(type + "."))
+  +toword.i")
  + "/p"
 ) 

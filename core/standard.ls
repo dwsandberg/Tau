@@ -28,13 +28,9 @@ Export type:ordering
 
 Export type:UTF8 {From UTF8}
 
-Export toword(n:int) word
-{Covert integer to a single word. }
-{From UTF8}
+Export toword(n:int) word {Covert integer to a single word. } {From UTF8}
 
-Export toint(w:word) int
-{Convert an integer represented as a word to an int}
-{From UTF8}
+Export toint(w:word) int {Convert an integer represented as a word to an int} {From UTF8}
 
 Export length(seq.char) int
 
@@ -118,9 +114,7 @@ Export isempty(seq.word) boolean {From seq.word}
 
 Export last(s:seq.word) word {From seq.word}
 
-Export +(a:seq.word, b:seq.word) seq.word
-{OPTION COMPILETIME}
-{From seq.word}
+Export +(a:seq.word, b:seq.word) seq.word {OPTION COMPILETIME} {From seq.word}
 
 Export +(seq.word, word) seq.word {From seq.word}
 
@@ -130,9 +124,7 @@ Export <<(s:seq.word, i:int) seq.word
 
 Export =(seq.word, seq.word) boolean {From seq.word}
 
-Export >>(s:seq.word, i:int) seq.word
-{* removes i words from end of s}
-{From seq.word}
+Export >>(s:seq.word, i:int) seq.word {* removes i words from end of s} {From seq.word}
 
 Export _(seq.word, int) word {From seq.word}
 
@@ -150,15 +142,13 @@ Export alphasort(a:seq.seq.word) seq.seq.word {From words}
 
 Export alphasort(a:seq.word) seq.word {From words}
 
-Export merge(a:seq.word) word
-{make multiple words into a single word. }
-{From words}
+Export merge(a:seq.word) word {make multiple words into a single word. } {From words}
 
 Export type:word {From words}
 
 Export checkinteger(w:word) word
-{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out
- like an integer but has illegal characters in it. otherwise returns WORD. }
+{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out like an integer
+ but has illegal characters in it. otherwise returns WORD. }
 {From words}
 
 Export decodeword(w:word) seq.char {From words}
@@ -266,9 +256,7 @@ let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah))
 if test > 0 then test else test + mh
 
 Function randomseq(seed:int, length:int) seq.int
-for acc = [seed], @e ∈ constantseq(length - 1, 1) do
- acc + pseudorandom.last.acc
-/for (acc)
+for acc = [seed], @e ∈ constantseq(length - 1, 1) do acc + pseudorandom.last.acc /for (acc)
 
 Builtin randomint(i:int) seq.int
 
@@ -288,10 +276,7 @@ for acc = empty:seq.seq.word, i = 1, ele ∈ l + (length.s + 1) do
 /for (acc)
 
 Function extractValue(s:seq.word, name:seq.word) seq.word
-for value = ""
- , last = "="_1
- , p ∈ break(s + "? =", "=", false)
-do
+for value = "", last = "="_1, p ∈ break(s + "? =", "=", false) do
  next(if last ∈ name then value + p >> 1 else value
   , if isempty.p then "="_1 else last.p)
 /for (value)

@@ -69,10 +69,7 @@ else
   , "encoding")
 
 Function process1 seq.testrecord
-let discard = 
- for acc = 0, @e ∈ ["A1", "B2", "C3", "D4", "E5"] do
-  acc + add.@e
- /for (acc)
+let discard = for acc = 0, @e ∈ ["A1", "B2", "C3", "D4", "E5"] do acc + add.@e /for (acc)
 encodingdata:testrecord
 
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char

@@ -63,10 +63,9 @@ else if tp = ARRAY then
 else if tp = POINTER then
  "ptr.$(b_2)"
 else if tp = FUNCTION then
- "function ($(for acc = "", @e ∈ subseq(b, 3, length.a) do
-  acc + %.@e + ",
-   "
- /for (acc >> 1)))"
+ "function (
+  $(for acc = "", @e ∈ subseq(b, 3, length.a) do acc + %.@e + "," /for (acc >> 1))
+  )"
 else if tp = TVOID then "VOID" else if tp = DOUBLE then "double" else "?"
 
 Function typerecords seq.seq.int
@@ -138,8 +137,7 @@ slot.C(ptr.i64
 
 Function CGEPi8(p:slot, b:int) slot
 let t1 = consttype.p
-slot.C(ptr.i8
- , [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b])
+slot.C(ptr.i8, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b])
 
 /Function zeroinit (profiletype:llvmtype) int C (profiletype, [toint, CNULL])
 

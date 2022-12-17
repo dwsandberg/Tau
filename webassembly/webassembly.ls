@@ -41,6 +41,10 @@ for acc = empty:seq.byte, names = "parts =", f ∈ files do
   ]
 )
 
+use addprofile
+
+use set.symbol
+
 Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean) seq.file
 {problem is same symbol is used in different onclicks}
 let LF = [encodeword.[char.10]]
@@ -50,10 +54,15 @@ let info2 = breakparagraph.data.first.input2
 let libname = Library
 let libexports = exports + "SpecialExports" + "SpecialImports"
 let rcinfo = 
+ {addprofile. }
  compilerFront:callconfig("wasm"
-  , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")]
-  + input)
-for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo do
+  , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")] + input)
+let charseq = seqof.typeref."char standard *"
+for
+ syms2 = [symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint)]
+ , imports = empty:seq.symbol
+ , m ∈ libmods.rcinfo
+do
  if name.modname.m ∈ "SpecialImports" then
   next(syms2, imports + exports.m)
  else if name.modname.m ∈ libexports then
@@ -72,17 +81,21 @@ for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo d
     will waiting for a callback. javascript global inprogress counts the number of callbacks we are waiting
     for. if inprogress is zero then it is safe to reclaim space.}
    txt
-   + "function"
-   + f
-   + "{exports."
-   + f
-   + "; if (inprogress $(merge."= =") 0) exports.reclaimspace () ;} $(LF)"
+   + "function $(f) {exports.$(f) ; if (inprogress $(merge."= =") 0) exports.reclaimspace () ;}
+    $(LF)"
   /for (txt)
+ {assert false report for acc = empty:seq.symbol, sd /in toseq.prg.rcinfo do acc+sym.sd /for (%n
+  .acc)}
  let wasmfiles = 
-  wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2, o, imports, info)
+  wasmcompile(typedict.rcinfo
+   , asset.renumberconstants.toseq.prg.rcinfo
+   , toseq.asset.syms2
+   , o
+   , imports
+   , info)
  let script = 
-  {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template.js")+toseqbyte
-   .toUTF8." </script>" else}
+  {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template.js
+   ")+toseqbyte.toUTF8." </script>" else}
   toseqbyte.toUTF8."<script src = $(merge.dq."/webassembly/template.js") > </script>"
  for acc = wasmfiles, page ∈ input do
   if ext.fn.page ∉ "html" then
@@ -95,6 +108,8 @@ for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo d
     + toseqbyte.toUTF8(scriptstart + "$(LF) pageinit ($(merge.dq.libname), $(name.fn.page)) ; </script>"))
  /for (acc)
 )
+
+use otherseq.symbol
 
 Function doc seq.word
 "Steps to call function f1 as a process.

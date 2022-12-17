@@ -35,15 +35,11 @@ Function wordencodingtoword(i:int) word word.to:encoding.seq.char(i)
 
 Function encodeword(a:seq.char) word {OPTION NOINLINE COMPILETIME} word.encode.a
 
-Function decodeword(w:word) seq.char
-{OPTION NOINLINE COMPILETIME}
-decode.asencoding.w
+Function decodeword(w:word) seq.char {OPTION NOINLINE COMPILETIME} decode.asencoding.w
 
 Function hash(a:word) int hash.asencoding.a
 
-Function =(a:word, b:word) boolean
-{OPTION COMPILETIME}
-asencoding.a = asencoding.b
+Function =(a:word, b:word) boolean {OPTION COMPILETIME} asencoding.a = asencoding.b
 
 Function >1(a:word, b:word) ordering asencoding.a >1 asencoding.b
 
@@ -57,8 +53,7 @@ encodeword.for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e /for (acc)
 type alphaword is toword:word
 
 Function toalphaseq(a:seq.word) seq.alphaword
-{This is just a type change and the compiler recognizes this and does not generate code
- }
+{This is just a type change and the compiler recognizes this and does not generate code}
 for acc = empty:seq.alphaword, @e ∈ a do acc + alphaword.@e /for (acc)
 
 Function ?alpha(a:char, b:char) ordering a >1 b

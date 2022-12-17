@@ -65,11 +65,7 @@ for txt = "", useclauses = "", p ∈ aa do
   next(txt, useclauses)
  else
   next(
-   for para = ""
-    , name = ","_1
-    , last = ","_1
-    , type = ""
-    , w ∈ p << 9
+   for para = "", name = ","_1, last = ","_1, type = "", w ∈ p << 9
    while last ∉ ")"
    do
     if w ∈ ",)" then
@@ -97,7 +93,8 @@ for txt = "", useclauses = "", p ∈ aa do
    /p use file
    /p use seq.file
    /p use standard
-   /p $(useclauses) Function $(merge(libname + "$EP")) (args:seq.word, input:seq.file) seq.file
+   /p $(useclauses) Function $(merge(libname + "$EP"))
+   (args:seq.word, input:seq.file) seq.file
    /br let cmd = first.args
    /br $(txt << 2)
    /br else empty:seq.file"
@@ -135,8 +132,8 @@ let entrypointname = [merge(Library + "$EP")]
  , "use process.UTF8"
  , "Function entrypoint (args:UTF8) UTF8 let p = process.entrypoint2 (args) if aborted.p then finishentry
   .[file ($(dq."error.html"), message.p)] else result.p"
- , "function entrypoint2 (args0:UTF8) UTF8 let args = towords.args0 finishentry.
-  $(entrypointname) (args, getfiles.args)"]
+ , "function entrypoint2 (args0:UTF8) UTF8 let args = towords.args0 finishentry.$(entrypointname)
+  (args, getfiles.args)"]
 
 function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:filename, options:seq.word) seq.file
 {OPTION PROFILE}
@@ -147,11 +144,8 @@ let entrymod =
   entrypointmodule.libname
  else
   let entrypointname = [merge(libname + "$EP")]
-  ["Module $(entrypointname)"
-   , "use standard"
-   , "Function entrypoint (args:UTF8) UTF8 args"]
-let m = 
- starmap.compilerfront2:callconfig("bitcode $(options)", allsrc + entrymod, dependentlibs)
+  ["Module $(entrypointname)", "use standard", "Function entrypoint (args:UTF8) UTF8 args"]
+let m = starmap.compilerfront2:callconfig("bitcode $(options)", allsrc + entrymod, dependentlibs)
 let m2 = outlib.m
 let dp = if isempty.uses then uses else [last.uses]
 let files = compilerback(m, dependentwords.dp, outname)
@@ -165,11 +159,7 @@ let uses = extractValue(first.info, "uses")
 let dep = 
  for mp = empty:midpoint, i ∈ input << 1 do
   let new = first.inbytes:midpoint(data.i)
-  midpoint(""
-   , prg.mp ∪ prg.new
-   , emptytypedict
-   , libmods.mp + libmods.new
-   , empty:seq.seq.word)
+  midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
  /for (mp)
 let p = process.subcompilelib(info, dep, outname, options)
 if aborted.p then
@@ -184,14 +174,11 @@ for acc = empty:seq.symdef, sd ∈ toseq.prg.m do
  if isAbstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
   acc
  else
-  acc
-  + symdef4(sym.sd, removeFref.getCode(libcode, sym.sd), paragraphno.sd, getOptionsBits.sd)
+  acc + symdef4(sym.sd, removeFref.getCode(libcode, sym.sd), paragraphno.sd, getOptionsBits.sd)
 /for (
  for acc2 = acc, sd2 ∈ toseq(libcode \ asset.acc) do
   acc2 + symdef4(sym.sd2, removeFref.getCode(libcode, sym.sd2), 0, getOptionsBits.sd2)
- /for (
-  midpoint("X", asset.acc2, empty:set.symdef, emptytypedict, libmods.m, empty:seq.seq.word)
- )
+ /for (midpoint("X", asset.acc2, empty:set.symdef, emptytypedict, libmods.m, empty:seq.seq.word))
 )
 
 function removeFref(code:seq.symbol) seq.symbol

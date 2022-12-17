@@ -53,18 +53,12 @@ else
 function union(a:set.T, b:set.T) set.T
 if cardinality.b = 0 then
  a
-else if cardinality.b = 1 then
- a + b_1
-else
- set.union(toseq.a, toseq.b, 1, 1, empty:seq.T)
+else if cardinality.b = 1 then a + b_1 else set.union(toseq.a, toseq.b, 1, 1, empty:seq.T)
 
 Function ∪(a:set.T, b:set.T) set.T
 if cardinality.b = 0 then
  a
-else if cardinality.b = 1 then
- a + b_1
-else
- set.union(toseq.a, toseq.b, 1, 1, empty:seq.T)
+else if cardinality.b = 1 then a + b_1 else set.union(toseq.a, toseq.b, 1, 1, empty:seq.T)
 
 function union(a:seq.T, b:seq.T, i:int, j:int, result:seq.T) seq.T
 if i > length.a then
@@ -100,8 +94,7 @@ else if (a_i >1 b_j) = LT then
 else
  diff(a, b, i, j + 1)
 
-Function replace(a:set.T, b:set.T) set.T
-set.replace(toseq.a, toseq.b, 1, 1, empty:seq.T)
+Function replace(a:set.T, b:set.T) set.T set.replace(toseq.a, toseq.b, 1, 1, empty:seq.T)
 
 function replace(a:seq.T, b:seq.T, i:int, j:int, result:seq.T) seq.T
 {if in a and b then b else a}
@@ -177,7 +170,4 @@ else
  let c = s_p >2 val
  if c = EQ then
   p
- else if c = GT then
-  binarysearch2(s, b, p - 1, val)
- else
-  binarysearch2(s, p + 1, a, val) 
+ else if c = GT then binarysearch2(s, b, p - 1, val) else binarysearch2(s, p + 1, a, val) 

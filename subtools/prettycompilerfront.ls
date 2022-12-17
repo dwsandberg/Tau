@@ -147,13 +147,10 @@ do
           for uselist = empty:seq.seq.word, u ∈ uselist0 do
            uselist + ([rename(modrenames, u_2)] + u << 2)
           /for (uselist)
-        for newuses = "", ref ∈ sortuse(uselist, "") do
-         newuses + "/p /keyword use" + ref
-        /for (newuses)
+        for newuses = "", ref ∈ sortuse(uselist, "") do newuses + "/p /keyword use" + ref /for (newuses)
       let newexports = if moveexports then newtext(exportinfo, modname) else ""
       let idx = includecomment.modtext
-      "Module" + rename(modrenames, modname) + subseq(modtext, 3, idx - 1)
-      + newuses
+      "Module" + rename(modrenames, modname) + subseq(modtext, 3, idx - 1) + newuses
       + newexports
       + modtext << (idx - 1)
     next(txt + formatedModuleText, p, empty:seq.seq.word, pno + 1)
@@ -197,8 +194,7 @@ do
    + if moveexports then "moveexports" else "" /if
    + for txt2 = "", x ∈ input do txt2 + "/br" + fullname.fn.x /for (txt2)
   for files = empty:seq.file, summary = "inputs $(para) /p files created", M ∈ txt do
-   if subseq(M, 1, 1) ∉ ["Module", "module"]
-   ∨ char1."$" ∈ decodeword.M_2
+   if subseq(M, 1, 1) ∉ ["Module", "module"] ∨ char1."$" ∈ decodeword.M_2
    ∨ length.M < 2 then
     next(files, summary)
    else
@@ -209,9 +205,9 @@ do
   /for (files + file(o, summary))
 )
 
-* The /keyword transform cmd takes a list of input source files. For each module in the input a pretty
-printed file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block
-transform helloworld/helloworld.ls
+* The /keyword transform cmd takes a list of input source files. For each module in the input a pretty printed
+file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block transform helloworld/helloworld
+.ls
 /br transform helloworld/helloworld.ls flags = reorguse
 /br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit
 /br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse *>
@@ -303,14 +299,13 @@ let out =
 
 type result2 is internaluse:set.symbol, externaluse:set.symbol
 
-* The /keyword unusedsymbols cmd analyzes code for unused functions. It forms the function call graph
-for the program. It then looks for any any sources in the call graph that are not the entry point of
-the program and lists them. Any functions that are generated from type definitions are also removed
-. 
-/p The behavior can be modified with flags. If the flag /keyword all is included the all unused functions
-are listed and not just the roots. If the flag /keyword generated is included only the symbols generated
-from type definitions are included. If the flag /keyword excessExports is included symbols exported
-from a module but only used internally to that module are listed.
+* The /keyword unusedsymbols cmd analyzes code for unused functions. It forms the function call graph for the
+program. It then looks for any any sources in the call graph that are not the entry point of the program
+and lists them. Any functions that are generated from type definitions are also removed. 
+/p The behavior can be modified with flags. If the flag /keyword all is included the all unused functions are
+listed and not just the roots. If the flag /keyword generated is included only the symbols generated from type
+definitions are included. If the flag /keyword excessExports is included symbols exported from a module but
+only used internally to that module are listed.
 /p Here is an example <* block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common *>
 
 type rename is sym:symbol, newname:seq.word, paraorder:seq.int
@@ -415,10 +410,7 @@ do
   let t = 
    if subseq(p, 1, 1) ∈ ["/keyword", "use", "builtin", "Export"] then
     p
-   else if subseq(p, 1, 1) ∈ ["type", "Function", "function"] then
-    pretty.p
-   else
-    p
+   else if subseq(p, 1, 1) ∈ ["type", "Function", "function"] then pretty.p else p
   next(acc, modtext + t, beforeModule)
 /for (acc)
 
@@ -453,10 +445,7 @@ else if name.sym = "report"_1 ∧ length.toseq.stk ≥ 3 then
  let args = top(stk, 3)
  push(pop(stk, 3), "assert $(args_1) report ($(args_3)) ($(args_2))")
 else if sym
-= symbol(moduleref("* seq", typeword)
- , "+"
- , [seqof.typeword, seqof.typeword]
- , seqof.typeword)
+= symbol(moduleref("* seq", typeword), "+", [seqof.typeword, seqof.typeword], seqof.typeword)
 ∧ last.top.pop.stk ∈ dq
 ∧ top.pop.stk ≠ dq."$" then
  let args = top(stk, 2)
@@ -485,12 +474,12 @@ else if name.sym ∈ "$fortext" then
  let whileexp = args_(length.args - 3)
  push(pop(stk, nopara.sym)
   , for acc6 = "for", i = 1, name ∈ top.stk do
-   next(
-    acc6 + name + if i = length.top.stk then "∈" else "=" /if + args_i
-    + ","
+   next(acc6 + name + if i = length.top.stk then "∈" else "=" /if + args_i + ","
     , i + 1)
   /for (
-   assert true report acc6 + "-1:$(length.args - 1)-2:$(args_(length.args - 2)) while $(whileexp)"
+   assert true
+   report
+    acc6 + "-1:$(length.args - 1)-2:$(args_(length.args - 2)) while $(whileexp)"
    acc6 >> 1 + if whileexp = "true" then "" else "while $(whileexp)" /if
    + "do $(args_(length.args - 2)) /for ($(args_(length.args - 1)))"
   ))
@@ -524,7 +513,11 @@ function binaryops seq.word "=+_^∩ ∪ \-* / << >> > < ? >1 >2 ∈ mod ∧ ∨
 function addcommas(s:seq.seq.word) seq.word
 for acc2 = "", t ∈ s do acc2 + t + "," /for (acc2 >> 1)
 
-function closeuse(done:set.symbol, toprocess:set.symbol, prg:set.symdef, templates:set.symdef, dict:set.symbol) set.symbol
+function closeuse(done:set.symbol
+ , toprocess:set.symbol
+ , prg:set.symdef
+ , templates:set.symdef
+ , dict:set.symbol) set.symbol
 let new0 = for acc = empty:seq.symbol, sym ∈ toseq.toprocess do acc + getCode(prg, sym) /for (acc)
 let new1 = 
  for acc = empty:seq.symbol, sym ∈ toseq.asset.new0 do

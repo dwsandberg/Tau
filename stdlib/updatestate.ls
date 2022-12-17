@@ -51,11 +51,7 @@ for acc = "", a ∈ breakparagraph.data.first.input do
  else
   for txt = "", have = "", lastbreak = 0, p ∈ a do
    if p ∈ "+=" then
-    next(
-     if p ∈ "+" then
-      txt + "/br+"
-     else
-      txt >> 1 + "/br" + last.txt + p
+    next(if p ∈ "+" then txt + "/br+" else txt >> 1 + "/br" + last.txt + p
      , have
      , 0)
    else
@@ -161,8 +157,7 @@ do
     arcs + arc(tail, fn)
    /for (
     if cmd ∈ "makelib" then
-     arcs + arc(changeext(tail, "libsrc"), tail)
-     + arc(changeext(tail, "libinfo"), tail)
+     arcs + arc(changeext(tail, "libsrc"), tail) + arc(changeext(tail, "libinfo"), tail)
     else
      arcs
    )
@@ -195,7 +190,7 @@ function print(filenames:seq.filename) seq.word
 for f2 = "", n ∈ filenames do f2 + fullname.n /for (f2)
 
 function tosetvars(cmdpara:cmdpara, fn:filename) seq.word
-let eq = [encodeword.[char.8], "="_1, encodeword.[char.8]]
+let eq = "/nosp = /nosp"
 let node = fullname.fn
 let parts = print.parts.cmdpara
 let cmd = cmd.cmdpara
@@ -214,10 +209,9 @@ else if cmds.cmd = "makelib" then
   let opts = extractValue(data.cmdpara, "options")
   let options = if isempty.opts then opts else "options = $(opts)"
   let out = changeext(fn, "libsrc")
-  "
-   /p #makelibrary $(name.fn)
-   /br libexe $(lib.cmd) libsrc $(parts << 1) $(data.cmdpara) o = $("+$(dirpath.out
-   )" + name.out + ".libsrc")
+  "/p #makelibrary $(name.fn)
+   /br libexe $(lib.cmd) libsrc $(parts << 1) $(data.cmdpara) o =
+   $("+$(dirpath.out)" + name.out + ".libsrc")
    /br libexe $(lib.cmd) makebitcode+$build $([name.out] + "." + ext.out + libinfo)
    $(options)
    /br dependlibs $(eq + dq.depends)
@@ -225,10 +219,11 @@ else if cmds.cmd = "makelib" then
    /br linklibrary $(name.fn)"
  )
 else
- "
-  /p # $(dq.[node])
-  /br libexe $([lib.cmd] + cmds.cmd + parts << 1 + data.cmdpara
- + "o =+$(dirpath.fn + [name.fn, "."_1, ext.fn])")"
+ "/p # $(dq.[node])
+  /br libexe
+  $([lib.cmd] + cmds.cmd + parts << 1 + data.cmdpara
+ + "o =+$(dirpath.fn + [name.fn, "."_1, ext.fn])")
+  "
 
 type cmdpara is fn:filename, parts:seq.filename, data:seq.word, cmd:defines
 

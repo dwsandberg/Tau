@@ -16,14 +16,10 @@ use wasm2
 
 Function abortfunc symbol symbol(internalmod, "abortfunc", typereal, typereal)
 
-Function callprocessfunc symbol
-symbol(internalmod, "callprocess", typereal, typereal, typereal)
+Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
 Function knownWfunc(alltypes:typedict) seq.wfunc
-[
- wfunc(alltypes
-  , symbol(internalmod, "not", typeboolean, typeboolean)
-  , const32.1 + i32xor)
+[wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
  , wfunc(alltypes
   , symbol(internalmod, "getseqlength", typeptr, typeint)
   , [i32wrapi64, i64load, tobyte.3] + LEBu.8)
@@ -55,21 +51,15 @@ Function knownWfunc(alltypes:typedict) seq.wfunc
  , wfunc(alltypes, symbol(internalmod, "bitcast", seqof.typeint, typeptr), empty:seq.byte)
  , wfunc(alltypes, symbol(internalmod, "toreal", typeint, typereal), [f64converti64s])
  , wfunc(alltypes, symbol(internalmod, "intpart", typereal, typeint), [i64truncf64s])
- , wfunc(alltypes
-  , symbol(internalmod, "representation", typereal, typeint)
-  , [i64reinterpretf64])
- , wfunc(alltypes
-  , symbol(internalmod, "casttoreal", typeint, typereal)
-  , [f64reinterpreti64])
+ , wfunc(alltypes, symbol(internalmod, "representation", typereal, typeint), [i64reinterpretf64])
+ , wfunc(alltypes, symbol(internalmod, "casttoreal", typeint, typereal), [f64reinterpreti64])
  , wfunc(alltypes, symbol(internalmod, "+", typereal, typereal, typereal), [f64add])
  , wfunc(alltypes, symbol(internalmod, "-", typereal, typereal, typereal), [f64sub])
  , wfunc(alltypes, symbol(internalmod, "*", typereal, typereal, typereal), [f64mul])
  , wfunc(alltypes, symbol(internalmod, "/", typereal, typereal, typereal), [f64div])
  , wfunc(alltypes, symbol(internalmod, ">", typeint, typeint, typeboolean), [i64gts])
  , wfunc(alltypes, symbol(internalmod, "=", typeint, typeint, typeboolean), [i64eq])
- , wfunc(alltypes
-  , symbol(internalmod, "=", typeboolean, typeboolean, typeboolean)
-  , [i32eq])
+ , wfunc(alltypes, symbol(internalmod, "=", typeboolean, typeboolean, typeboolean), [i32eq])
  , wfunc(alltypes, symbol(internalmod, "+", typeint, typeint, typeint), [i64add])
  , wfunc(alltypes, symbol(internalmod, "-", typeint, typeint, typeint), [i64sub])
  , wfunc(alltypes, symbol(internalmod, "*", typeint, typeint, typeint), [i64mul])
@@ -170,12 +160,13 @@ Function knownWfunc(alltypes:typedict) seq.wfunc
  , wfunc(alltypes
   , symbol(internalmod, "idxseq", seqof.typereal, typeint, typereal)
   , const64.8 + [i64mul, i64add, i32wrapi64, f64load, tobyte.3] + LEBu.8)
- , wfunc(alltypes
-  , symbol(internalmod, "stacktrace", seqof.typeword)
-  , const64.getoffset.wordsconst."")
+ , wfunc(alltypes, symbol(internalmod, "stacktrace", seqof.typeword), const64.getoffset.wordsconst."")
  , wfunc(alltypes
   , symbol(internalmod, "randomint", typeint, seqof.typeint)
   , Wcall.symbol(moduleref."* SpecialExports", "randomintimp", typeint, seqof.typeint))
+ , wfunc(alltypes
+  , symbol(internalmod, "currentprocess", typeint)
+  , Gcurrentprocess + i64extendi32u)
  ]
 
 function typepackedseq2 mytype seqof.typeref."packed2 tausupport *"

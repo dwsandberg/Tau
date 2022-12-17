@@ -206,9 +206,7 @@ if with = typeT ∨ isconst.sym then
  sym
 else
  let newtypes = 
-  for newtypes = empty:seq.mytype, t ∈ types.sym do
-   newtypes + replaceT(with, t)
-  /for (newtypes)
+  for newtypes = empty:seq.mytype, t ∈ types.sym do newtypes + replaceT(with, t) /for (newtypes)
  let newmodule = replaceT(with, module.sym)
  let newhash = 
   if true ∨ not.isunbound.sym ∨ isAbstract.newmodule then
@@ -278,9 +276,7 @@ let fullname = if isempty.nametype then [name] else [name] + ":" + %.first.namet
 if length.paratypes = 0 then
  fullname
 else
- for acc = fullname + "(", t ∈ paratypes do
-  acc + %.t + ","
- /for (acc >> 1 + ")")
+ for acc = fullname + "(", t ∈ paratypes do acc + %.t + "," /for (acc >> 1 + ")")
 
 Function istype(s:symbol) boolean
 not.issimplename.s ∧ wordname.s = "type"_1 ∧ nopara.s = 1
@@ -297,14 +293,12 @@ symbolZ(moduleref."internallib $real"
  , constbit
  , tobits.i)
 
-Function Exit symbol
-symbol(moduleref."internallib $exitblock", "EXITBLOCK", type?, specialbit)
+Function Exit symbol symbol(moduleref."internallib $exitblock", "EXITBLOCK", type?, specialbit)
 
 Function Start(t:mytype) symbol
 symbol(moduleref("internallib $loopblock", t), "Start", t, specialbit)
 
-Function EndBlock symbol
-symbol(moduleref."internallib $block", "BLOCK", typeint, specialbit)
+Function EndBlock symbol symbol(moduleref."internallib $block", "BLOCK", typeint, specialbit)
 
 Function NotOp symbol symbol(internalmod, "not", typeboolean, typeboolean)
 
@@ -383,7 +377,12 @@ symbol(m, name, empty:seq.mytype, returntype, b)
 Function symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype) symbol
 symbol(module, name, paras, rt, 0x0)
 
-Function symbol(module:modref, name:seq.word, para:mytype, para2:mytype, para3:mytype, returntype:mytype) symbol
+Function symbol(module:modref
+ , name:seq.word
+ , para:mytype
+ , para2:mytype
+ , para3:mytype
+ , returntype:mytype) symbol
 symbol(module, name, [para, para2, para3], returntype)
 
 Function symbol(module:modref, name:seq.word, para:mytype, para2:mytype, returntype:mytype) symbol
@@ -418,8 +417,7 @@ Function Litfalse symbol symbol(internalmod, "false", typeboolean, constbit)
 Function continue(i:int) symbol
 symbol(moduleref."internallib $continue", [toword.i], type?, specialbit)
 
-Function Word(s:word) symbol
-symbol(moduleref."internallib $word", [s], typeword, constbit)
+Function Word(s:word) symbol symbol(moduleref."internallib $word", [s], typeword, constbit)
 
 Function isstartorloop(sym:symbol) boolean name.module.sym ∈ "$loopblock"
 
@@ -486,8 +484,7 @@ symbol4(moduleref("* seq", typeword)
  , [seqof.typeword]
  , seqof.typeword)
 
-Function makerealSymbol symbol
-symbol(moduleref."* real", "makereal", seqof.typeword, typereal)
+Function makerealSymbol symbol symbol(moduleref."* real", "makereal", seqof.typeword, typereal)
 
 Function indexsymbol(T:mytype) symbol
 symbol(moduleref("* seq", T), "_", seqof.T, typeint, T)
@@ -498,8 +495,7 @@ symbol(moduleref."* tausupport", "outofbounds", seqof.typeword)
 Function encodenosym symbol
 symbol(moduleref."* tausupport", "encodingno", seqof.typeword, typeint)
 
-Function blockitsymbol(T:mytype) symbol
-symbol(moduleref."* tausupport", "blockIt", T, T)
+Function blockitsymbol(T:mytype) symbol symbol(moduleref."* tausupport", "blockIt", T, T)
 
 Function isconstantorspecial(s:symbol) boolean isconst.s ∨ isspecial.s
 

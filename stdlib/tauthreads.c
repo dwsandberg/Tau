@@ -7,15 +7,15 @@ union cvt {double r;BT i;};
 #define asint(r) (((union cvt) (r)).i)
 
 void initprocessinfo(processinfo p,processinfo PD){
+   static BT emptyseq[2]={(BT) 0,(BT) 0};
     p->aborted = -1;
-    p->message =&(p->zero);
-    p->messageUTF8 =&(p->zero);
-    p->body2 =&(p->zero) ;
+    p->message =emptyseq;
+    p->messageUTF8 =emptyseq;
+    p->body2 =emptyseq ;
     p->body = &(p->seqtype) ;
     p->spawningprocess =PD;
     p->encodings = PD->encodings;
     p->pid = pthread_self ();
-     p->zero = 0;
     p->seqtype=0;
     p->seqlength=1;
     p->space.nextone =0;
@@ -24,7 +24,7 @@ void initprocessinfo(processinfo p,processinfo PD){
     p->error =0;
     p->profileindex = 0;
     p->freespace=1;
-    p->newencodings=0;
+    p->lasteinfo=PD->lasteinfo;
 }
 
 

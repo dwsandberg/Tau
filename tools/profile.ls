@@ -37,7 +37,9 @@ let a =
    if m = 0 ∨ m < max / 100 then
     next(acc0, max)
    else
-    next(acc0 + arc((symbolrefdecodeX.lib)_(caller.arc), (symbolrefdecodeX.lib)_(callee.arc), [toword.m])
+    next(
+     acc0
+     + arc((symbolrefdecodeX.lib)_(caller.arc), (symbolrefdecodeX.lib)_(callee.arc), [toword.m])
      , max(max, m))
   /for (arcs/max(acc0, max))
  /for (acc)

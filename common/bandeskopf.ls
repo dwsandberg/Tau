@@ -68,7 +68,13 @@ for acc = empty:seq.arc.T, @e ∈ arithseq(length.layers - 2, 1, 2) do
 function marklayer(g:graph.T, dummy:set.T, layers:seq.seq.T, l:int) seq.arc.T
 marklayer(g, dummy, layers_l, layers_(l + 1), 0, 0, 1)
 
-function marklayer(g:graph.T, dummy:set.T, upperlayer:seq.T, currentlayer:seq.T, k0:int, l:int, l1:int) seq.arc.T
+function marklayer(g:graph.T
+ , dummy:set.T
+ , upperlayer:seq.T
+ , currentlayer:seq.T
+ , k0:int
+ , l:int
+ , l1:int) seq.arc.T
 if l1 > length.currentlayer then
  crossings(g, upperlayer, k0, length.upperlayer + 1, currentlayer, l, l1)
 else
@@ -80,16 +86,21 @@ else
   crossings(g, upperlayer, k0, k1, currentlayer, l, l1)
   + marklayer(g, dummy, upperlayer, currentlayer, k1, l1, l1 + 1)
 
-function crossings(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l:int, l1:int) seq.arc.T
-{(k0, l) and (k1, l1) both inner.crossings of (k0, l) have been found for (?, j) for j< k0.find
- arcs (?, n) where n > l and n < l1 that cross (k0, l) or (k1, l1)}
+function crossings(g:graph.T
+ , upperlayer:seq.T
+ , k0:int
+ , k1:int
+ , currentlayer:seq.T
+ , l:int
+ , l1:int) seq.arc.T
+{(k0, l) and (k1, l1) both inner.crossings of (k0, l) have been found for (?, j) for j< k0.find arcs
+ (?, n) where n > l and n < l1 that cross (k0, l) or (k1, l1)}
 for acc = empty:seq.arc.T, @e ∈ arithseq(l1 - 1 - (l + 1) + 1, 1, l + 1) do
  acc + w1(g, upperlayer, k0, k1, currentlayer, @e)
 /for (acc)
 
 function w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:int) seq.arc.T
-{crossings of cross (k0, l) or (k1, l1) for arcs incident to l0 where l0 is between l and
- l1}
+{crossings of cross (k0, l) or (k1, l1) for arcs incident to l0 where l0 is between l and l1}
 for acc = empty:seq.arc.T, @e ∈ toseq.predecessors(g, currentlayer_l0) do
  acc + w1(upperlayer, k0, k1, currentlayer_l0, @e)
 /for (acc)
@@ -175,9 +186,9 @@ function assignvert(RtoL:boolean
  , q:nodeinfo.T
  , x:int
  , result:seq.nodeinfo.T) set.nodeinfo.T
-{look for other nodes in vertical assignment.Do this recursively to assign all nodes
- in vertical assignmentnodes collecting the max value of x in each layer Vertarcs always increate level
- by 1.The final value of x is assigned to all nodes in the vertical assignment}
+{look for other nodes in vertical assignment.Do this recursively to assign all nodes in vertical assignmentnodes
+ collecting the max value of x in each layer Vertarcs always increate level by 1.The final value of x
+ is assigned to all nodes in the vertical assignment}
 let lastassignedx = 
  if RtoL then
   for acc = x, @e ∈ toseq.assigned do min(acc, findx(RtoL, q, @e)) /for (acc)
@@ -270,8 +281,8 @@ function assignx(RtoL:boolean
  , assigned:set.nodeinfo.T
  , vertarcs:seq.arc.T
  , i:int) set.nodeinfo.T
-{assign x values.Direction can either be Right to left or left to Right.Negative x's
- are assign when RtoL '}
+{assign x values.Direction can either be Right to left or left to Right.Negative x's are assign when
+ RtoL '}
 if i > length.list then
  assigned
 else
@@ -323,10 +334,7 @@ let paths =
 graphlayout(g.lg, assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg), paths)
 
 function followpath(a:T, lg:graph.T, nodes:set.T) seq.T
-if a ∈ nodes then
- [a]
-else
- [a] + followpath(successors(lg, a)_1, lg, nodes)
+if a ∈ nodes then [a] else [a] + followpath(successors(lg, a)_1, lg, nodes)
 
 ________________
 

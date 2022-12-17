@@ -38,16 +38,14 @@ Function periodchar char char.46
 
 Function nbspchar char {no break space character} char.160
 
-Function char1(s:seq.word) char
-{* First character of first word of s}
-first.decodeword.s_1
+Function char1(s:seq.word) char {* First character of first word of s} first.decodeword.s_1
 
 Function toUTF8(n:int) UTF8
 UTF8.if n < 0 then [tobyte.toint.hyphenchar] + toUTF8(n, 10) else toUTF8(-n, 10)
 
 function toUTF8(n:int, base:int) seq.byte
-{n should always be negative. This is to handle the smallest integer in the twos complement
- representation of integers}
+{n should always be negative. This is to handle the smallest integer in the twos complement representation
+ of integers}
 if base + n > 0 then
  [tobyte(48 - n)]
 else
@@ -56,10 +54,7 @@ else
 Function encodeUTF8(ch:char) UTF8
 {convert to UTF8 byte encoding of unicode character}
 let i = toint.ch
-UTF8.if i < 128 then
- [tobyte.i]
-else
- subUTF8(2, i / 64) + tobyte(128 + i mod 64)
+UTF8.if i < 128 then [tobyte.i] else subUTF8(2, i / 64) + tobyte(128 + i mod 64)
 
 function subUTF8(n:int, c:int) seq.byte
 if c < 2^(7 - n) then
@@ -111,8 +106,7 @@ if length.s > 2 ∧ s_2 ∈ decodeword.first."Xx" then
   if i > 0 then
    b << 4 ∨ bits(i - 1)
   else
-   assert c ∈ [char1."x", char1."X", nbspchar]
-   report "invalid hex digit" + encodeword.s
+   assert c ∈ [char1."x", char1."X", nbspchar] report "invalid hex digit" + encodeword.s
    b
  /for (b)
 else
@@ -130,35 +124,33 @@ else
  if val = 0 ∨ s_1 = char1."-" then val else-val
 
 Function tointseq(a:seq.char) seq.int
-{This is just a type change and the compiler recognizes this and does not generate code
- }
+{This is just a type change and the compiler recognizes this and does not generate code}
 for acc = empty:seq.int, @e ∈ a do acc + toint.@e /for (acc)
 
 Function tocharseq(a:seq.int) seq.char
-{This is just a type change and the compiler recognizes this and does not generate code
- }
+{This is just a type change and the compiler recognizes this and does not generate code}
 for acc = empty:seq.char, @e ∈ a do acc + char.@e /for (acc)
 
-Function toUTF8(s:seq.word) UTF8 {OPTION INLINE} toUTF8(s, false)
+Function toUTF8(s:seq.word) UTF8 {OPTION INLINE} toUTF8(s, false, false)
 
-Function toUTF8(s:seq.word, escapehtml:boolean) UTF8
+Function escapeformat word merge("/" + "escapeformat")
+
+Function toUTF8(s:seq.word, escapehtml:boolean, spaceonly:boolean) UTF8
 {OPTION INLINE}
 {nospace means add no space before word}
-{if the first character of a multi-character word is char.0 then the character is
- discarded. This is to allow format with format meaning to be escaped.}
-for result = emptyUTF8, nospace = true, this ∈ s do
+{if the first character of a multi-character word is char.0 then the character is discarded. This
+ is to allow format with format meaning to be escaped.}
+for cmd = true ∧ not.spaceonly, result = emptyUTF8, nospace = true, this ∈ s do
  let chars = decodeword.this
  if length.chars = 1 then
   let ch = first.chars
   if ch ∈ (decodeword.merge."+-.:_^" + char.10 + char.32) then
-   {no space before or after} next(result + chars, true)
+   {no space before or after} next(cmd, result + chars, true)
   else if ch ∈ decodeword.merge.",]}) $(dq)" then
-   {no space before but space after} next(result + chars, false)
+   {no space before but space after} next(cmd, result + chars, false)
   else if ch ∈ decodeword.merge."([{$" then
    {space before but nospace after}
-   next(if nospace then result + chars else result + char.32 + chars, true)
-  else if ch = char.8 then
-   next(result, true)
+   next(cmd, if nospace then result + chars else result + char.32 + chars, true)
   else
    let d = 
     if not.escapehtml then
@@ -166,15 +158,26 @@ for result = emptyUTF8, nospace = true, this ∈ s do
     else if ch = char1."<" then
      decodeword.first."&lt"
     else if ch = char1."&" then decodeword.first."&amp" else [ch]
-   next(if nospace then result + d else result + char.32 + d, false)
+   next(cmd, if nospace then result + d else result + char.32 + d, false)
  else if this ∈ ". : " then
-  {no space before or after} next(result + chars, true)
+  {no space before or after} next(cmd, result + chars, true)
+ else if this ∈ "/ldq" ∧ cmd then
+  next(cmd, result + if nospace then [char1.dq] else [char.32, char1.dq], true)
+ else if this ∈ "/nosp" ∧ (cmd ∨ spaceonly) then
+  next(cmd, result, true)
+ else if this ∈ "/sp" ∧ (cmd ∨ spaceonly) then
+  if nospace ∨ last.toseqbyte.result = tobyte.32 then
+   next(cmd, result, true)
+  else
+   next(cmd, result + char.32, true)
+ else if this = escapeformat then
+  next(not.cmd, result, nospace)
  else
   let result0 = if nospace then result else result + char.32
   let chars2 = 
    if subseq(chars, 1, 1) = [char.0] then
     result0 + chars << 1
-   else if not.escapehtml then
+   else if not.escapehtml ∨ not.cmd then
     result0 + chars
    else
     for acc = result0, c ∈ chars do
@@ -183,5 +186,5 @@ for result = emptyUTF8, nospace = true, this ∈ s do
       decodeword.first."&lt"
      else if c = char1."&" then decodeword.first."&amp" else [c]
     /for (acc)
-  next(chars2, false)
+  next(cmd, chars2, false)
 /for (result) 

@@ -17,8 +17,10 @@ struct pinfo { BT aborted; //  if aborted then 1 else if success then 0
     BT * messageUTF8;  
     BT * body;  
     BT * body2;  
-        // space for a seq containing the result
-    BT  zero;
+    struct einfo **encodings;
+    struct einfo *lasteinfo;  
+    processinfo spawningprocess;
+       // space for a seq containing the result
     BT  seqtype;
     BT  seqlength;
     BT  seqelement;   
@@ -26,12 +28,9 @@ struct pinfo { BT aborted; //  if aborted then 1 else if success then 0
     jmp_buf env;
     BT error;
     pthread_t pid;
-    struct einfo **encodings;
-    processinfo spawningprocess;
     BT profileindex;
     BT (*finishprof)(BT idx,BT x);
     BT freespace;
-    BT newencodings;
      // info needed to create thread
     BT  deepcopyresult;
     BT  deepcopyseqword;

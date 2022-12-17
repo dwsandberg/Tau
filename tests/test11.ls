@@ -45,11 +45,10 @@ function t007 boolean [2, 3] = [2] + [3]
 function ff(seed:int, x:int) int
 if x = 1 then pseudorandom.seed else ff(pseudorandom.seed, x - 1)
 
-function t008 boolean
-{testing random number generator}
-1043618065 = ff(1, 10000)
+function t008 boolean {testing random number generator} 1043618065 = ff(1, 10000)
 
-function gen(n:int) seq.int if n = 1 then [n] else gen(n - 1) + [n * n]
+function gen(n:int) seq.int
+if n = 1 then [n] else gen(n - 1) + [n * n]
 
 function t009 boolean [1, 4, 9, 16, 25] = gen.5
 
@@ -61,16 +60,12 @@ function t010 boolean [5, 5, 2, 5, 5, 2, 3, 5, 5, 2, 5, 5, 2, 3, 4] = genb.4
 covert integer to sequence of digits
 
 function int2seq(n:int, b:int) seq.int
-if (n >1 b) = LT then
- [n]
-else
- int2seq(n / b, b) + [n - n / b * b]
+if (n >1 b) = LT then [n] else int2seq(n / b, b) + [n - n / b * b]
 
 function t011 boolean [2, 3, 9, 5] = int2seq(2395, 10)
 
 function t012 boolean
-[GT, GT, LT]
-= [[2, 8] >1 [2, 7], [3, 8] >1 [2, 8], [1, 8] >1 [2, 8]]
+[GT, GT, LT] = [[2, 8] >1 [2, 7], [3, 8] >1 [2, 8], [1, 8] >1 [2, 8]]
 
 function t013 boolean EQ = ([2, 8, 1] >1 [2, 8, 1])
 
@@ -88,17 +83,16 @@ function t016 boolean
 test on in
 
 function t017 boolean
-[true, true, false]
-= [2 ∈ [1, 2, 3], 3 ∈ [1, 2, 3], 5 ∈ [1, 2, 3]]
+[true, true, false] = [2 ∈ [1, 2, 3], 3 ∈ [1, 2, 3], 5 ∈ [1, 2, 3]]
 
-test of+using functional notation pretty printer messes up this example this should be 3 =+(1, 2).
+test of+using functional notation pretty printer messes up this example this should be 3 =+(1, 2
+).
 
 function t018 boolean 3 = 1 + 2
 
 function t019 boolean 1 = findindex([3], 3)
 
-function t020 boolean
-5 = findindex([2, 4, 3, 8, 1, 3] + constantseq(4, 1), 1)
+function t020 boolean 5 = findindex([2, 4, 3, 8, 1, 3] + constantseq(4, 1), 1)
 
 function t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)
 
@@ -143,15 +137,14 @@ function t036 boolean 10 = for acc = 0, e ∈ [1, 2, 3, 4] do acc + e /for (acc)
 
 function t037 boolean 24 = for acc = 1, e ∈ [1, 2, 3, 4] do acc * e /for (acc)
 
-function t038 boolean
+Function t038 boolean
 [1, 2, 3, 4] = for acc = empty:seq.int, e ∈ [1, 2, 3, 4] do acc + e /for (acc)
 
 function t039 boolean
 let a = 6 * 6
 a + a = 72
 
-function t040 boolean
-"a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, "k"_1)
+function t040 boolean "a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, "k"_1)
 
 function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, "k"_1)
 
@@ -182,8 +175,7 @@ function testset set.int asset.[2, 5, 6, 9, 12, 15, 35, 36]
 function >2(a:int, b:int) ordering a / 10 >1 b / 10
 
 function t046 boolean
-toseq.findelement2(testset, 36) = [35, 36]
-∧ toseq.findelement2(testset, 15) = [12, 15]
+toseq.findelement2(testset, 36) = [35, 36] ∧ toseq.findelement2(testset, 15) = [12, 15]
 
 type Tpair is a:int, b:seq.word
 
