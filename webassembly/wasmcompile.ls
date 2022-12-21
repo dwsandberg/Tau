@@ -93,12 +93,20 @@ let discard100 =
   , reclaimspacefunc.alltypes
   , allocatefunc.alltypes
   , addencodingfunc.alltypes]
-let initprofile0 = getSymdef(prg4, symbol(moduleref."* XYZ", "initProfile", typeptr))
-{assert isempty.initprofile0 report" XXX"+%.sym.initprofile0_1+for txt ="", sd /in toseq.prg4
- do if name.sym.sd /in" initProfile" then txt+%.sym.sd else txt /for (txt)}
-let initprofile = if isempty.initprofile0 then empty:set.symbol else asset.[sym.initprofile0_1]
+let initprofile0 = getSymdef(prg4, symbol(moduleref."* tausupport", "initProfile", typeptr))
+let initprofile = 
+ if isempty.initprofile0 then
+  empty:set.symbol
+ else
+  let i = funcidx.sym.initprofile0_1
+  asset.[sym.initprofile0_1]
 {define depended functions}
 let discardt = dependentfunc(alltypes, knownfuncs, prg4, length.imports + 1)
+ let elements=for acc = empty:seq.addrsym, p ∈ elementdata do 
+ acc +  addrsym(length.acc+2,funcidx2symbol( p))  /for (
+ topackedbyteobject.outbytes:addrsym(acc))
+ let discardff= addf(alltypes, symbol(internalmod, "vector2", seqof.typebyte),
+funcbody([i64],const64.allocateconstspace("."_1, elements) +return)  )
 {define function to initialize words}
 let startfuncidx = funcidx.symbol(moduleref."* core", "initwords3", typeint)
 let mustbedonelast = addf(alltypes, symbol(moduleref."* core", "initwords3", typeint), initwordsbody.initprofile)
@@ -108,12 +116,27 @@ report "internal error:startfuncidx exceeds number of functions"
 createwasm(imp
  , exp + exportmemory."memory"_1
  , dataseg
- , elementdata
  , startfuncidx
  , filename.o
  , info)
+ 
+ type addrsym is addr:int,sym:symbol
+ 
+ use objectio.addrsym
+ 
+ use seq.addrsym
 
 use set.symbol
+
+function topackedbyteobject(x:seq.byte) seq.int
+  for  acc=[  1,  length.x],acc2=0x0,  shift=0,  b /in x do
+      let newacc2=acc2 /or bits.toint.b << shift
+      if shift=56 then
+      next (acc+ toint.newacc2,0x0,0)
+      else 
+       next(acc,newacc2,shift+8)
+    /for(   (if shift > 0 then acc+ toint.acc2 else acc))
+
 
 function dependentfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, idx:int) int
 {Do not consider function indices less that idx}
@@ -131,7 +154,8 @@ else
    let code = getCode(prg, sym)
    if isempty.code then
     let ele = lookup(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))
-    if isempty.ele ∧ module.sym = internalmod ∧ name.sym ∉ "set" then
+    if isempty.ele ∧ module.sym = internalmod ∧ name.sym ∉ "set " then
+      if name.sym /in "vector2"     then notused else
      let c = decodeword.name.sym
      let d = decodeword.first."processX"
      assert subseq(c, 1, length.d) = d report "HHHX $(sym)"

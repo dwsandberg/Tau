@@ -1,8 +1,21 @@
 <!doctype html>
 <title> Beizer Cubic Curves </title>
 <meta charset="UTF-8">
+<script>
+function shiftstart(arcs) {
+    let bb = document.getElementById(arcs[0]).getBBox();
+    arcs.forEach(function(idval, index) {
+        if (index > 0) {
+            let element = document.getElementById(idval);
+            let d = "M" + (bb.x + bb.width) + "," + (bb.y + bb.height) + element.getAttribute("d").substring(5);
+            element.setAttribute("d", d);
+        }
+    });
+}
+</script>
 <h1> Beizer Cubic Curves  </h1>
-<p id=xx>
+ <button onclick=test345() >test</button>
+ <p id=xx>
 <p > 
 Dragging node will move node. 
 <p>

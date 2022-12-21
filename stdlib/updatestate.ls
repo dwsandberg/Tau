@@ -88,7 +88,8 @@ else if subseq(s, i - length.b + 1, i) = b then
 else
  subseq(s, 1, i) + substitute(s << i, b, replacement)
 
-Function updatestate2(input:seq.file, o:seq.word, builddir:seq.word) seq.file
+Function updatestate2(input:seq.file, o:seq.word, builddir:seq.word, debug:boolean) seq.file
+{???? different case in directory names causes confusion.}
 let lines = toseq(asset.breaklines.data.first.input ∩ asset.breaklines.data.input_2)
 let unchanged = 
  if isempty.lines then
@@ -113,10 +114,13 @@ let out =
    acc + "/br rm $(space)-f" + fullname.dated
   /for (createorder(subgraph(g, outdated), defs2.r, acc))
  )
-[file(o, out)
- , file("+tmp changed.html", %.changed)
- , file("+tmp unchanged.html", %.unchanged)
- , file("+tmp sinks.html", %.sinks.g)]
+if debug then
+ [file(o, out)
+  , file("+tmp changed.html", %n.changed)
+  , file("+tmp unchanged.html", %n.unchanged)
+  , file("+tmp sinks.html", %n.sinks.g)]
+else
+ [file(o, out)]
 
 function buildgraph(inputs:seq.file, builddir:seq.word) result
 let allfile = for acc = empty:seq.seq.word, f ∈ inputs do acc + breakparagraph.data.f /for (acc)

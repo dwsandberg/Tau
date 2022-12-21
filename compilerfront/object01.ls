@@ -325,6 +325,8 @@ for all = empty:seq.byte, rec ∈ data do
  )
 /for (LEBu.length.all + all)
 
+Function inrec(b:seq.byte) ptr inrec.decode2.b
+
 Function decode2(b:seq.byte) seq.seq.int
 let len = decodeLEBu(b, 1)
 let end = next.len + value.len

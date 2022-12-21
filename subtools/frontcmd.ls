@@ -22,8 +22,6 @@ use symbol2
 
 use set.symdef
 
-use otherseq.symbol
-
 Function front(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
  , mods:seq.word, ~mods:seq.word, within:boolean, out:seq.word) seq.file
 let names = n
@@ -32,8 +30,9 @@ let prg = prg.cf
 let ignorenames = isempty.names ∨ out ∈ ["calls", "calledby"]
 for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
  let ss = sym.sd
- if (isempty.mods ∧ not.isconstantorspecial.ss ∨ name.module.ss ∈ mods)
- ∧ (ignorenames ∨ name.ss ∈ names)
+ if isconstantorspecial.ss then
+  next(selected, root)
+ else if (isempty.mods ∨ name.module.ss ∈ mods) ∧ (ignorenames ∨ name.ss ∈ names)
  ∧ name.ss ∉ ~n
  ∧ name.module.ss ∉ ~mods then
   next(selected + sd, if name.ss ∈ names then root + ss else root)

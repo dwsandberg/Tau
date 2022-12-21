@@ -276,9 +276,9 @@ addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do
 Function addtypeseq(a:seq.mytype) int
 addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtype.@e /for (acc)
 
-Function addsymbol(a:symbol) int
+Function addsymbol(a:symbol) seq.int
 let t = privatefields.a
-addobject.[addwordseq.worddata.a
+[addwordseq.worddata.a
  , wordref.library.module.a
  , wordref.name.module.a
  , addtype.para.module.a

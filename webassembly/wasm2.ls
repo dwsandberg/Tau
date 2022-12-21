@@ -31,8 +31,8 @@ let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", se
 funcbody([i32, i64]
  , store(const32.0, empty, encodings) + store(const32.0, empty, thisencoding)
  + switchcontext.newcontext2.0
- + {if isempty.initprofile then empty:seq.byte else Wcall.initprofile_1+drop /if+}
- const64.getoffset.initialwordconst
+ + if isempty.initprofile then empty:seq.byte else Wcall.initprofile_1 + drop /if
+ + const64.getoffset.initialwordconst
  + Wcall.symboladdwords
  + Wdefine.1
  + switchcontext.newcontext2.0)

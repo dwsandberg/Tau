@@ -48,7 +48,7 @@ libsrc0 symbols.libsrc start.ls
 libsrc0 compilerfront.libsrc start.ls
 +compilerfront pretty.ls parse parsersupport 
 +compilerfront compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2  passparse passsymbol postbind symboldict
-compileTimeT object01 objectio LEBencoding
+compileTimeT object01 objectio LEBencoding addprofile
 +opt opt
 
 libsrc0 codegen.libsrc start.ls
@@ -59,31 +59,38 @@ libsrc0 tausupport.libsrc start.ls
 
 makelib0 stdlib1.lib core.libsrc symbols compilerfront codegen tausupport
 +stdlib updatestate.ls main2 callconfig impdependent.ls
-exports=midpoint   impDependent mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport  testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
+exports= impDependent mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport   textio  words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib1 stdlib2.lib core.libsrc symbols compilerfront codegen tausupport
 +stdlib updatestate.ls main2 callconfig impdependent.ls
-exports=midpoint  impDependent mytype UTF8  bits  ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
+exports=   impDependent mytype UTF8  bits  ptr encoding file format graph hashset 
+internalbc  llvm llvmconstants main2    otherseq pretty process real seq set 
+sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport   
+textio   words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib2 stdlib.lib 
 core.libsrc symbols compilerfront codegen tausupport
 +stdlib updatestate.ls main2 callconfig impdependent.ls
-exports=updatestate callconfig compilerfrontT midpoint  impDependent mytype UTF8  bits    encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport testall textio words xxhash compilerfront bitcast objectio object01 LEBencoding
+exports=updatestate callconfig compilerfrontT   impDependent mytype UTF8  bits   
+ encoding file format graph hashset internalbc  llvm llvmconstants main2  otherseq pretty
+  process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport
+   encodingsupport  textio words xxhash compilerfront bitcast 
+   objectio object01 LEBencoding
 
 libsrc subtools.libsrc +subtools baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses   taulextable frontcmd wordgraph enumerate
 graphcode ParserExample cleanExports exports=X
 
 makelib tools.lib common.lib subtools.libsrc
-+tools  profile.ls  profileexample
++tools  
 uses=common stdlib
-exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
+exports=baseTypeCheck doc genLR1 taulextable wordgraph
 
 makelib common.lib
 +common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter timestamp
 uses=stdlib
 exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common timestamp
 
-makelib common2.lib
+comment makelib common2.lib
 +common    point.ls 
 uses=stdlib
 exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common timestamp
@@ -94,14 +101,13 @@ makelib tests.lib
 +tests bug7.ls checking myseq point randomphrase test11 test20 testencoding testmodules testprocess testseq tree wordfreq testopt.
  ls test11a testall seq8  testpackedseq
 uses=stdlib
-exports=tests
+exports=testall
 
 makelib webassembly.lib
 +webassembly webassembly.ls funcidx knownWfunc printfunc wasm 
   wasm2 wasmcompile 
-+HelloWorld addprofile
 uses=stdlib
-exports=wasm wasm1 wasm2 wasmcompile webassembly
+exports=wasm  wasm2 wasmcompile webassembly
 
 libsrc webcore.libsrc core.libsrc tausupport
 +webassembly template.js
@@ -142,7 +148,7 @@ testall testall.html
 +tests opttests.ls
 +$build stdlib.libinfo
 
-front baseTypeCheck.html stdlib.libsrc
+comment front baseTypeCheck.html stdlib.libsrc
 out=baseTypeCheck
 
 front callgraphwithin.html tools.libsrc stdlib.libinfo common.
@@ -150,13 +156,16 @@ front callgraphwithin.html tools.libsrc stdlib.libinfo common.
 mods=taulextable
 flags=within
 
-  wasm wbeizer.wasm webcore.libsrc
+   wasm wbeizer.wasm webcore.libsrc symbols.libsrc 
+   +compilerfront object01.ls objectio LEBencoding
+   +subtools graphcode 
+   +common svg2graph uniqueids profile
 +wbeizer Bcubic.html Bquadratic wbeizer.ls
-exports=wbeizer XYA
+exports=wbeizer 
 Library=wbeizer
-flags=info
+flags=info profile
 
-  wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
+comment  wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
 +webtools webtools.ls  webtools.html
 +common svg2graph.ls uniqueids
 exports=webtools
@@ -166,5 +175,5 @@ flags=info
 
 prettybuild newrelease.bld +.bld  release.bld
 
-transform  pretty.html +built  stdlib.libsrc  common  tools   webassembly tests 
+comment transform  pretty.html +built  stdlib.libsrc  common  tools   webassembly tests 
 

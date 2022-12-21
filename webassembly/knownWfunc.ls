@@ -19,7 +19,11 @@ Function abortfunc symbol symbol(internalmod, "abortfunc", typereal, typereal)
 Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
 Function knownWfunc(alltypes:typedict) seq.wfunc
-[wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
+[wfunc(alltypes, symbol(internalmod, "spacecount", typeint), const64.0)
+ , wfunc(alltypes
+  , symbol(internalmod, "clock", typeint)
+  , Wcall.symbol(internalmod, "clockReal", typereal) + i64truncf64s)
+ , wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
  , wfunc(alltypes
   , symbol(internalmod, "getseqlength", typeptr, typeint)
   , [i32wrapi64, i64load, tobyte.3] + LEBu.8)

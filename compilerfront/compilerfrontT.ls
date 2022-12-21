@@ -2,6 +2,8 @@ Module compilerfrontT.T
 
 use compileTimeT.T
 
+use addprofile
+
 use bits
 
 use seq.byte
@@ -72,10 +74,11 @@ else
  let librarymap = [libname, first."*"]
  let prg = if "xxx"_1 ∈ option then GG.hasstate.prg.m else prg.m
  let prg5 = pass2:T(librarymap, prg, typedict.m, option) ∪ templates.m
+ let prg6 = if "profile"_1 ∈ option then addprofile.prg5 else prg5
  if "bitcode"_1 ∈ option then
-  prepareback(prg5, m, libinfo)
+  prepareback(prg6, m, libinfo)
  else
-  midpoint(option, prg5, typedict.m, libmods.m, src.m)
+  midpoint(option, prg6, typedict.m, libmods.m, src.m)
 
 unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict) seq.symbol
 

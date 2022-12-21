@@ -119,7 +119,7 @@ else
       if cardinality.k21 < 2 then
        k21
       else
-       for acc = empty:set.symbol, sy ∈ toseq.k21 do
+        for acc = empty:set.symbol, sy ∈ toseq.k21 do
         if isunbound.sy then acc else acc + sy
        /for (if isempty.acc then k21 else acc)
      if isempty.k2 then

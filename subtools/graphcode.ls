@@ -2,8 +2,6 @@ Module graphcode
 
 use standard
 
-use symbol2
-
 use graph.symbol
 
 use seq.symbol
@@ -11,6 +9,8 @@ use seq.symbol
 use set.symbol
 
 use svg2graph.symbol
+
+use symbol2
 
 use seq.arc.symloc
 

@@ -288,7 +288,12 @@ Function initmap5 seq.match5
    , slot.ibcfirstpara2
    , ibcsub.1)
   + CAST(r.2, r.1, ptr.i64, inttoptr))
- , addtemplates([typeint, typeboolean, typebyte]
+ , addtemplate(symbol(internalmod, "clock", typeint)
+  , 1
+  , CALL(r.1, 0, 32768, function.[i64], symboltableentry("clock", function.[i64])))
+ , {addtemplate (symbol (internalmod," spacecount", typeint), 1, LOAD (r.1, symboltableentry (" spacecount
+  ", i64), i64)),}
+ addtemplates([typeint, typeboolean, typebyte]
   , symbol(internalmod, "callidx", seqof.typeT, typeint, typeint)
   , 4
   , GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)

@@ -113,7 +113,9 @@ else
  let element = acc_(len - 5)
  let theacc = acc_(len - 6)
  let theseq = acc_(len - 10)
- if islocal.element ∧ value.element = value.masteridx + 1 ∧ firstvar.loop = value.theacc then
+ let idxNB = symbol(internalmod, "idxNB", paratypes.loop, parameter.first.paratypes.loop)
+ if islocal.element ∧ value.element = value.masteridx + 1 ∧ firstvar.loop = value.theacc
+ ∧ idxNB = acc_(len - 8) then
   let empty = if isrecordconstant.theseq then acc_(len - 23) else acc_(len - 26)
   let isempty = 
    isrecordconstant.empty ∧ isSequence.first.fullconstantcode.empty
@@ -127,7 +129,6 @@ else
     Lit.nopara.last.fullconstantcode.theseq
    else
     Local(firstvar.loop - 1)
-  let a = symbol(internalmod, "idxNB", paratypes.loop, parameter.first.paratypes.loop)
   let shouldbe = 
    [Local(firstvar.loop + 1)
     , seqlen
@@ -141,7 +142,7 @@ else
     , Define.value.masteridx
     , theseq
     , masteridx
-    , a]
+    , idxNB]
    + Define.value.element
    + theacc
    + element

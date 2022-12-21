@@ -1,5 +1,7 @@
 Module symbol2
 
+use bits
+
 use seq.modExports
 
 use mytype
@@ -227,8 +229,6 @@ Export %(modref) seq.word
 Export isThisLibrary(sd:symdef) boolean
 
 Export externalNo(sd:symdef) int
-
-use bits
 
 Export isNOINLINE(sd:symdef) boolean
 

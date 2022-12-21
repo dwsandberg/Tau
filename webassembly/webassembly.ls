@@ -41,11 +41,9 @@ for acc = empty:seq.byte, names = "parts =", f ∈ files do
   ]
 )
 
-use addprofile
-
 use set.symbol
 
-Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean) seq.file
+Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean,profile:boolean) seq.file
 {problem is same symbol is used in different onclicks}
 let LF = [encodeword.[char.10]]
 let includetemplate = false
@@ -53,9 +51,7 @@ let input2 = cat(input, "", exports, Library)
 let info2 = breakparagraph.data.first.input2
 let libname = Library
 let libexports = exports + "SpecialExports" + "SpecialImports"
-let rcinfo = 
- {addprofile. }
- compilerFront:callconfig("wasm"
+let rcinfo = compilerFront:callconfig(if profile then "profile" else "wasm"
   , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")] + input)
 let charseq = seqof.typeref."char standard *"
 for

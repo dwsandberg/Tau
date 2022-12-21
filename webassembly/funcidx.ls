@@ -124,10 +124,10 @@ use otherseq.int
 Function createwasm(imports:seq.seq.byte
  , exports:seq.seq.byte
  , data:seq.int
- , funcrefs:seq.int
  , startidx:int
  , fn:filename
  , info:boolean) seq.file
+let eledata=elementdata
 let tmp1 = sort.encodingdata:wfunc
 let importfuncs = subseq(tmp1, 1, length.imports)
 let funcswithcode = tmp1 << length.imports
@@ -145,7 +145,7 @@ for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode d
   magic + tobyte.1 + vector.types + tobyte.2 + vector.vector.imports + tobyte.3
   + vector.vector.funcs
   + {tables} tobyte.4
-  + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
+  + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.eledata + 2)]
   + {memory} tobyte.5
   + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
   + tobyte.7
@@ -155,22 +155,22 @@ for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode d
   + {elements} tobyte.9
   + vector.vector.[
    [tobyte.0, i32const] + LEBs.2 + END
-   + vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEBu.f /for (frefs)]
+   + vector.for frefs = empty:seq.seq.byte, f ∈ eledata do frefs + LEBu.f /for (frefs)]
  let codevector = vector.code
  let forlater = 
   for txt = "Successful compile /p", p2 ∈ importfuncs do
    txt + %.p2 + "typeidx =" + printtypeidx.typeidx.p2 + "/br"
   /for (txt)
-  + for txt = "", cnt = 2, f ∈ funcrefs do
+  + for txt = "", cnt = 2, f ∈ eledata do
    next(txt + "$(cnt):$(f)", cnt + 1)
-  /for ("tableelements $(txt) /br")
+  /for ("tableelements $(txt)  /p")
   + for txt = ""
    , offset = length.beforecode + length.LEBu.length.codevector + 1
    , p2 ∈ funcswithcode
   do
    next(
     txt + %.tobits.offset + %.sym.p2
-    + "funcidx = $(funcidx.p2) typidx = $(printtypeidx.typeidx.p2) /br"
+    + "funcidx = $(funcidx.p2) typidx = $(printtypeidx.typeidx.p2) /p"
     + %.p2
     + "/p"
     , offset + length.LEBu.length.code.p2 + length.code.p2)
@@ -349,6 +349,9 @@ for acc = empty:seq.int, p ∈ encodingdata:frefindex do acc + toint.p /for (acc
 Export type:frefindex
 
 Function tableindex(sym:symbol) int addorder.frefindex.funcidx.sym + 1
+
+  
+Function funcidx2symbol(idx:int) symbol  sym.decode.to:encoding.efuncidx(idx)
 
 ________________
 

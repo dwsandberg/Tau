@@ -2,9 +2,9 @@ Module taulextable
 
 use standard
 
-use otherseq.seq.word
-
 use otherseq.word
+
+use otherseq.seq.word
 
 use set.word
 

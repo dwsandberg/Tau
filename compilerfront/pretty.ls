@@ -22,8 +22,6 @@ Function pretty(s:seq.word) seq.word pretty(s, false)
 
 Function escapeformat(s:seq.word) seq.word text.pretty2.[breakup("", s, "")]
 
-use format
-
 Function pretty(s:seq.word, headeronly:boolean) seq.word
 if subseq(s, 1, 3) = "Export type:" then
  s
@@ -190,8 +188,7 @@ for first = 0, acc = "", i = 1, e ∈ toseq.a do
  let t1 = if last.t0 ∈ "/br" then t0 >> 1 else t0
  let t2 = removeclose.t1
  if totwidth < maxwidth then
-  {fits on one line}
-  attribute(openlist + t2 + closelist)
+  {fits on one line} attribute(openlist + t2 + closelist)
  else
   {leave first element on current line and place others in a block}
   let firstelement = subseq(t2, 1, first)
@@ -445,7 +442,5 @@ else
  {ruleno}
  assert false report "invalid rule number" + toword.ruleno
  R_1
-
-use otherseq.prettyresult
 
 function %(p:prettyresult) seq.word %.width.p + text.p 

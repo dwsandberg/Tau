@@ -22,8 +22,6 @@ use process.seq.file
 
 use format
 
-use impDependent
-
 use objectio.midpoint
 
 use seq.midpoint
@@ -147,8 +145,7 @@ let entrymod =
   ["Module $(entrypointname)", "use standard", "Function entrypoint (args:UTF8) UTF8 args"]
 let m = starmap.compilerfront2:callconfig("bitcode $(options)", allsrc + entrymod, dependentlibs)
 let m2 = outlib.m
-let dp = if isempty.uses then uses else [last.uses]
-let files = compilerback(m, dependentwords.dp, outname)
+let files = compilerback(m, outname)
 files + file(changeext(outname, "libinfo"), outbytes:midpoint([m2]))
 
 Function makebitcode(input:seq.file, options:seq.word) seq.file

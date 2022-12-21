@@ -24,6 +24,8 @@ use pretty
 
 use reconstructUses
 
+use otherseq.rename
+
 use seq.rename
 
 use standard
@@ -330,8 +332,6 @@ for acc = empty:seq.rename, r ∈ renames do
  else
   acc
 /for (acc)
-
-use otherseq.rename
 
 function totext(result1:midpoint, renames:seq.rename) seq.seq.word
 let src = 

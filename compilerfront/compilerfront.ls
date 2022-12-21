@@ -105,6 +105,14 @@ let lib0 = extractValue(first.allsrc, "Library library")
 assert not.isempty.lib0 report "no library specified"
 let lib = first.lib0
 let exports = extractValue(first.allsrc, "exports")
+let modules = 
+ for txt = empty:set.word, p ∈ allsrc do
+  if length.p > 1 ∧ first.p ∈ "Module module" then txt + p_2 else txt
+ /for (txt)
+assert isempty.toseq(asset.exports \ (modules + merge([lib] + "$EP")))
+report
+ "Export clause of library $(lib) contain unknown module (s)
+  $(toseq(asset.exports \ modules))"
 if option = "library" then
  midpoint(option, prg.libinfo, emptytypedict, empty:seq.modExports, empty:seq.seq.word)
 else

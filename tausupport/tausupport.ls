@@ -250,21 +250,13 @@ Export type:einfo
 
 Export evectorUpdate(b:ptr) ptr
 
-builtin clock2 int
+builtin clock int
 
-Function profileNR(time:int, p:ptr) ptr
+builtin spacecount int
+
+Function profileUpdate(time:int, beforeSpace:int, p:ptr) ptr
 let p1 = set(p, fld:int(p, 0) + 1)
-set(p1, fld:int(p1, 0) + (clock2 - time))
+let p2 = set(p1, fld:int(p1, 0) + (clock - time))
+set(p2, fld:int(p2, 0) + (spacecount - beforeSpace))
 
-Function profileR(time:int, p:ptr) ptr
-let p1 = set(p, fld:int(p, 0) + 1)
-let p2 = set(p1, fld:int(p1, 0) + (clock2 - time))
-let p3 = set(p2, 0)
-set(p3, fld:int(p3, 0) - 1)
-
-/Function PROFILEDATA ptr {OPTION NOINLINE} profileDataGlobal:int
-
-Function profileRstart(p:ptr) int
-let nest = fld:int(p, 0)
-let p1 = set(p, nest + 1)
-if nest = 0 then clock2 else 0 
+Function initProfile ptr toptr.0 

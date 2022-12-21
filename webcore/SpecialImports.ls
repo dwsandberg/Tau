@@ -12,6 +12,8 @@ use webHTTP.seq.word
 
 use JS.HTTPstate.seq.word
 
+Builtin clockReal real
+
 Builtin randomfunc real
 
 Builtin setelementvalue(name:jsbytes, text:jsbytes)real

@@ -70,7 +70,7 @@ h11=$(echo $@ | shasum )
 sharoot=${h11::10}.txt
 
 
-cd ~/work/built/src
+cd ./built/src
 list=$(find  . -type f -print)
 cd ../..
 rm -f $build/$sharoot; touch $build/$sharoot
@@ -89,7 +89,7 @@ if [[   $1 == "-n" ]]; then
 tmpnorun=true
 shift 1
 fi
-cd ~/work
+
 
 checksrc $1
 
@@ -100,6 +100,7 @@ norun=$tmpnorun
 source built/update2.sh
 
 if  [ -z "$norun" ];then
+mv  $build/old$sharoot $build/oldold$sharoot
 mv  $build/$sharoot $build/old$sharoot
 cd $build
 tar -zcf  ~/backup2/$(date +%Y%m%d%H%M).tar.gz --exclude='./built/*' src

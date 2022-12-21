@@ -472,7 +472,10 @@ if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0)
 } }
 
 
-
+    for(  i=0;i<loaded[1];i++){
+     fprintf(stderr,"library %s %lld \n",libnames[i+2],((BT *)((BT *) loaded[i+2])[3])[1]);
+   
+    }
 
  
   
@@ -511,8 +514,6 @@ if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0)
    return a;
  }
  
-BT clock2(processinfo PD)   { return (BT) clock();}
-
 BT currenttime() { 
      BT T1970=210866716800;
      time_t seconds;

@@ -189,7 +189,7 @@ function finaljsHTTP(data,nobits ){
 , sqrt:arg =>    Math.sqrt(arg)  
 , arcsin:arg =>   Math.asin(arg)  
 , arccos:arg =>    Math.acos(arg) 
-, clock:function(){return performance.now()}
+, clockReal:function(){return performance.now()}
 , callprocess:function(wrapper, args){ 
   try { return exports.processbody(wrapper, args); } 
   catch(err){ 
@@ -260,7 +260,7 @@ function finaljsHTTP(data,nobits ){
 
 ,  callevent2:function (id,  event   ){
 let a=document.getElementById(asjsstring(id).trim())
-console.log("SDF"+a);
+console.log("SDF"+a+"EVENT"+asjsstring(event).trim());
  a.dispatchEvent(new Event(asjsstring(event).trim()));
   return(0);
   }

@@ -12,9 +12,9 @@ use process.seq.byte
 
 use seq.seq.byte
 
-use encoding.seq.char
-
 use seq.seq.char
+
+use seq.debuginfo
 
 use bitcast.dummyrec2
 
@@ -30,13 +30,13 @@ use seq.int
 
 use bitcast.seq.int
 
+use otherseq.mytype
+
 use seq.mytype
 
+use otherseq.seq.mytype
+
 use standard
-
-use encoding.symaddresses
-
-use seq.symaddresses
 
 use seq.symbol
 
@@ -48,42 +48,15 @@ use tausupport
 
 Export type:debuginfo
 
-Export profiledata(debuginfo) seq.parc
-
-Export symbolrefdecodeX(debuginfo) seq.symbol
-
 Export words(debuginfo) seq.seq.char
-
-Export type:parc
-
-Export callee(parc) int
-
-Export caller(parc) int
-
-Export clocks(parc) int
-
-Export counts(parc) int
-
-Export space(parc) int
 
 type debuginfo is libname:seq.word
  , words:seq.seq.char
  , entrypointaddress:int
- , symboladdress:seq.int
- , profiledata:seq.parc
- , symbolrefdecodeX:seq.symbol
+ , addressSymbol:seq.addrsym
+ , bytes:seq.byte
 
-type parc is caller:int, callee:int, counts:int, clocks:int, space:int, unused:int
-
-Function =(a:parc, b:parc) boolean callee.a = callee.b ∧ caller.a = caller.b
-
-Builtin loadedLibs seq.debuginfo
-
-Function symboladdress seq.int
-for acc = empty:seq.int, ll ∈ loadedLibs do acc + symboladdress.ll /for (acc)
-
-Function symbolrefdecodeX seq.symbol
-for acc = empty:seq.symbol, ll ∈ loadedLibs do acc + symbolrefdecodeX.ll /for (acc)
+builtin loadedLibs seq.debuginfo
 
 Function dependentwords(dependentlibs:seq.word) seq.seq.char
 for acc = empty:seq.seq.char, ll ∈ loadedLibs do
@@ -114,16 +87,15 @@ else
 _______________
 
 Function callfunc(ctsym:symbol, typedict:typedict, stk:seq.int) seq.int
-let t = funcaddress.ctsym
-if t = 0 then
+let v = lookup(ctsym, deepcopySym.resulttype.ctsym, deepcopySym.seqof.typeword)
+let funcaddress = v_1
+if funcaddress = 0 then
  empty:seq.int
 else
- let adcret = funcaddress.deepcopySym.resulttype.ctsym
- let adc = funcaddress.deepcopySym.seqof.typeword
  let p = 
-  createthread(adcret
-   , adc
-   , {funcaddress} t
+  createthread({address of deepcopy for resulttype of function} v_2
+   , {address of deepcopy for seq.word} v_3
+   , funcaddress
    , c.bitcast:dummyrec2(toptr.packed.stk)
    , buildargcode(ctsym, typedict))
  assert not.aborted.p report message.p
@@ -142,37 +114,30 @@ type dummyrec2 is a:int, b:int, c:dummyparameterrecord
 
 builtin createthread(int, int, int, dummyparameterrecord, int) process.int
 
-function funcaddress(sym:symbol) int
-let b = encodingdata:symaddresses
-let symdefs = 
- tosymdefs.if length.b = 0 then
-  let decode = symbolrefdecodeX
-  for acc = empty:set.symdef, idx = 1, a ∈ symboladdress do
-   next(acc + symdef(decode_idx, empty:seq.symbol, a), idx + 1)
-  /for (decode.encode.symaddresses.acc)
- else
-  b_1
-let c = getSymdef(symdefs, sym)
-if isempty.c then 0 else paragraphno.c_1
-
-type symaddresses is tosymdefs:set.symdef
-
-function =(symaddresses, symaddresses) boolean true
-
-function hash(symaddresses) int 1
-
 type addrsym is addr:int, sym:symbol
 
 function >1(a:addrsym, b:addrsym) ordering addr.a >1 addr.b
 
 builtin callstack(n:int) seq.int
 
+function addrsym seq.addrsym
+for acc = empty:seq.addrsym, ll ∈ loadedLibs do acc + addressSymbol.ll /for (acc)
+
+function %(a:addrsym) seq.word "$(addr.a) $(sym.a)"
+
+Function checkIT(input:seq.file, o:seq.word) seq.file
+{should not need this function}
+[file(o, "Hi")]
+
+function lookup(s1:symbol, s2:symbol, s3:symbol) seq.int
+for a1 = 0, a2 = 0, a3 = 0, a ∈ addrsym do
+ next(if sym.a = s1 then addr.a else a1
+  , if sym.a = s2 then addr.a else a2
+  , if sym.a = s3 then addr.a else a3)
+/for ([a1, a2, a3])
+
 Function stackTraceImp seq.word
-let decode = symbolrefdecodeX
-let t = 
- for t = empty:seq.addrsym, idx = 1, i ∈ symboladdress do
-  next(t + addrsym(i, decode_idx), idx + 1)
- /for (sort.t)
+let t = sort.addrsym
 for txt = "/p", r ∈ callstack.30 << 2 do
  let i = binarysearch(t, addrsym(r, Lit.1))
  txt + %.r + if between(-i - 1, 1, length.t) then %.sym.t_(-i - 1) else "" /if
