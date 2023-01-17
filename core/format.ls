@@ -30,14 +30,14 @@ function escape(w:seq.word) word escape.first.w
 function escape(w:word) word encodeword([char.0] + decodeword.w)
 
 Function HTMLformat(a:seq.word) UTF8
-{OPTION PROFILE}
+{OPTION XPROFILE}
 let LF = {encodeword.[char.10]} ""
 let none = merge."+NONE"
 let nobreak = 5
 let pendingbreak = 4
 let firstdq = 1
 let seconddq = 2
-let escape = 6
+let escape = 6,
 for acc = emptyUTF8
  , state = 0
  , result = empty:seq.word
@@ -104,7 +104,7 @@ do
     , stk
     , this)
  else if last = "<*"_1 then
-  let pb = if state = pendingbreak then result + LF + [escape."<br>", space] else result
+  let pb = if state = pendingbreak then result + LF + [escape."<br>", space] else result,
   if this = "none"_1 then
    next(acc + toUTF8(result, true, false), firstdq, empty:seq.word, push(stk, ""), none)
   else if this = "section"_1 then
@@ -127,7 +127,7 @@ do
     , none)
  else
   next(acc, state, result + last, stk, this)
-/for (acc + toUTF8(if last = none then result else result + [last], true, false))
+/do acc + toUTF8(if last = none then result else result + [last], true, false)
 
 Export escapeformat word
 
@@ -137,7 +137,7 @@ let none = merge."+NONE"
 let firstdq = 1
 let seconddq = 2
 let pendingLine = 3
-let escape = 4
+let escape = 4,
 for acc = emptyUTF8
  , indent = 0
  , state = 0
@@ -191,7 +191,7 @@ do
   next(acc, 0, 0, result + LF + LF, stk, this)
  else
   let result0 = if state = pendingLine then result + LF + constantseq(indent, space) else result
-  let newstate = if state = pendingLine then 0 else state
+  let newstate = if state = pendingLine then 0 else state,
   if last = "<*"_1 then
    if this = "none"_1 then
     next(acc, indent + 1, firstdq, result0, push(stk, this), none)
@@ -203,4 +203,4 @@ do
    next(acc, indent, newstate, result0 + LF, stk, this)
   else
    next(acc, indent, newstate, result0 + last, stk, this)
-/for (acc + toUTF8(if last = none then result else result + last, false, false)) 
+/do acc + toUTF8(if last = none then result else result + last, false, false) 

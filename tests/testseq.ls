@@ -35,7 +35,7 @@ function hash(a:seedtrack) int key.a
 Function getint(size:int) int
 let p = last.encodingdata:seedtrack
 let d = pseudorandom.val.p
-let c = encode.seedtrack(key.p + 1, d)
+let c = encode.seedtrack(key.p + 1, d),
 d mod size
 
 type typerec2 is a:int, b:int
@@ -73,6 +73,7 @@ let all =
  + check:seq.typerec2(16, 8)
  + EOL
  + sparsecheck
+,
 if "FAIL"_1 ∉ all then "PASS testseq" else "FAIL testseq $(all)"
 
 Function sparsecheck seq.word
@@ -81,7 +82,8 @@ let b =
   , @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
  do
   check(acc, @e)
- /for (acc)
+ /do acc
+,
 "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int
@@ -89,12 +91,12 @@ let i = r_1 mod 30 + 1
 let c = replaceS(s, i, r)
 assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, length.s)) report "FAIL1"
 assert subseq(s, i + length.r, length.r) = subseq(c, i + length.r, length.r) report "FAIL2"
-assert subseq(c, i, i + length.r - 1) = r report "FAIL3"
+assert subseq(c, i, i + length.r - 1) = r report "FAIL3",
 c
 
 function random(s:seq.int, i:int, result:seq.seq.int) seq.seq.int
 if i > length.s then
  result
 else
- let len = s_i mod 5 + 2
+ let len = s_i mod 5 + 2,
  random(s, i + len, result + subseq(s, i, i + len - 1)) 

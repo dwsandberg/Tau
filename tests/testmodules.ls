@@ -46,10 +46,11 @@ let y =
   , test20
   , t044
   , "200:1:4:5.4:56 (200, 1, 5.4):" = %(":", postorder.tr1)]
+,
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int) seq.word
-"[$(for acc = "", @e ∈ a do acc + toword.@e + "," /for (acc >> 1))]"
+"[$(for acc = "", @e ∈ a do acc + toword.@e + "," /do acc >> 1)]"
 
 ---
 
@@ -98,28 +99,31 @@ let r =
  print.g + "transversal" + print.sinksfirst.g + "Suc" + print.toseq.successors(g, n2)
  + "sinks"
  + print.sinks(g, asset.[n5])
+,
 r
 = "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8, 2, 1, 3] Suc [4]
  sinks [4, 7, 8]"
 
 function t506 boolean
 let g = newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4)]
-let closure = [arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
+let closure = [arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)],
 closure = toseq.arcs.transitiveClosure.g
 
 function print(g:graph.int) seq.word
-"GRAPH:$(for acc = "", @e ∈ toseq.arcs.g do acc + print.@e /for (acc))"
+"GRAPH:$(for acc = "", @e ∈ toseq.arcs.g do acc + print.@e /do acc)"
 
 function print(a:arc.int) seq.word "(" + toword.tail.a + toword.head.a + ")"
 
 function t508 boolean
 let s = 
  for acc = constantseq(100, 0)
-  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001) do acc + (e mod 100 + 1) /for (acc)
+  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001) do
+   acc + (e mod 100 + 1)
+  /do acc
  do
   replace(acc, i, acc_i + 1)
- /for (acc)
-let totalcounts = for acc = 0, @e ∈ s do acc + @e /for (acc)
+ /do acc
+let totalcounts = for acc = 0, @e ∈ s do acc + @e /do acc,
 length.s = 100 ∧ totalcounts = 100001
 
 _____________
@@ -132,8 +136,8 @@ function t044 boolean
 let s = 
  UTF8.[tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50
  + encodeUTF8.char.336
-let z = myseq.for acc = empty:seq.int, @e ∈ toseqbyte.s do acc + toint.@e /for (acc)
-for acc = "", @e ∈ z do acc + toword.@e /for (acc) = "40 50 335 50 336"
+let z = myseq.for acc = empty:seq.int, @e ∈ toseqbyte.s do acc + toint.@e /do acc,
+for acc = "", @e ∈ z do acc + toword.@e /do acc /for = "40 50 335 50 336"
 ∧ length.toseq.to:myseq.int(z) ≠ 0
 ∧ length.toseq.to:myseq.int([1, 2, 3]) = 0
 
@@ -143,7 +147,7 @@ bits
 
 Function checkbits seq.word
 let min64integer = toint(0x1 << 63)
-let max64integer = toint(bits.-1 >> 1)
+let max64integer = toint(bits.-1 >> 1),
 check(
  [toint.toword.min64integer = min64integer
   , toint.toword.max64integer = max64integer

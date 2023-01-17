@@ -51,7 +51,7 @@ let t8 = if b8 = 0x0 then 0 else 8
 let d8 = if b8 = 0x0 then 0xFF ∧ d16 else b8
 let b4 = d8 >> 4
 let t4 = if b4 = 0x0 then 0 else 4
-let d4 = if b4 = 0x0 then 0xF ∧ d8 else b4
+let d4 = if b4 = 0x0 then 0xF ∧ d8 else b4,
 t32 + t16 + t8 + t4
 + [0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]_(toint.d4 + 1)
 
@@ -73,4 +73,4 @@ for acc = empty:seq.bits, current = bits.0, shift = 0, b ∈ a do
   next(acc + current, bits.toint.b ∧ 0xFF, 8)
  else
   next(acc, current ∨ (bits.toint.b ∧ 0xFF) << shift, shift + 8)
-/for (acc + current) 
+/do acc + current 

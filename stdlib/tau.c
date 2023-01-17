@@ -49,12 +49,13 @@ static int alloccount=0;
 // BT profiledata; 
 // BT profilevector;
 
-BT spacecount=0;
+BT spacecount2=0;
   
+BT spacecount() {return spacecount2;}
 
 BT allocatespace(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
    sp->nextone=sp->nextone+i*8;
-    spacecount+=i;
+    spacecount2+=i;
      if ((sp->nextone)>(sp->lastone) ){int k,x;   BT *b;
         assertexit(i*8<blocksize,"too big an object");
        //  fprintf(stderr,"mem lock\n");
@@ -125,80 +126,6 @@ BT critical(processinfo PD,BT P1, BT P2,processinfo allocatein, BT   (*add2)(pro
 }
 
 // end of encoding support
-
-// start of library support //
-
-BT loaded[20]={0,0};
-char libnames[20][100];
-
-BT empty[2]={0,0};
-
- 
- BT loadedLibs(processinfo PD)  // returns list of loaded libraries
- {return (BT)loaded;}   
-  
-BT * bcwords=empty;
-
-BT * getbcwords() {return bcwords;}
-
-int looklibraryname(char* name) { int i;
-  for(  i=0;i<loaded[1];i++){
-    // fprintf(stderr,"match %d %s %s\n",i,name,libnames[i+2]);
-    if (strcmp(libnames[i+2],name)==0) return i  ;
-    }
-   return -1;}
-
-BT initlib5(char * libname,BT  libdesc,BT initwordsfunc) {
-  //fprintf(stderr,"initlib5 %s %lld \n",libname,loaded[1]); 
-  static BT (* addlibrarywords)(processinfo PD,BT   );
-if ( loaded[1]==0 ){
-  /* only needed when initializing base lib */
-     
-    addlibrarywords  = ( BT (* )(processinfo PD,BT   )) initwordsfunc; 
-addlibrarywords(&sharedspace,libdesc);
-} 
-if (loaded[1] == 1) {
-     BT arg[1]={(BT) empty};
-    int fd;
-  char name[100],*filedata; struct stat sbuf;
-   sprintf(name,"%s/%s.bcword",basedir,libnames[2]);
-       bcwords=empty; BT * data2;
-     if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
-       fprintf(stderr, "failed to load %s \n",name); exit(1);}
-    if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
-     {
-    bcwords=(long long *) filedata; 
-    fprintf(stderr, "loading2 %s %lld   \n ",name,bcwords[1]  );
-     addlibrarywords(&sharedspace,(BT)arg);
-   } else  {fprintf(stderr, "failed to load2 %s \n",name); exit(1);}
-
-}
-
-
-// addlibrarywords(&sharedspace,libdesc);
- 
- 
- // register library 
-     { int i =loaded[1]++;
-    //  char name[100];
-    // struct stat sbuf;
-   // sprintf(name,"%s.dylib",libname);
-   //  stat(name, &sbuf);
-    loaded[i+2]= libdesc; 
-   // ((BT*)loaded[i+2])[3]=0;
-    strcpy(libnames[i+2],libname);
-    }
-
-// fprintf(stderr,"finish initlib5  \n");
-return 0;
-  
-}
-
-
-
-
-// end of library support 
-
 
 void dumpstack()
 {   void* callstack[128];
@@ -286,14 +213,10 @@ return 0;
 
 #include <dlfcn.h>
 
-BT loadlibrary(struct pinfo *PD,char *lib_name_root){
+BT loadlibrary(char *lib_name_root){
    char lib_name[200];
    struct stat sbuf;
    BT liblib;
-    int i = looklibraryname(lib_name_root) ;
-  if (i >= 0)
-   {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
-     return ((BT*)loaded[i+2])[3];}
   //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
    sprintf(lib_name,"%s/%s",basedir,lib_name_root);
  // sprintf(lib_name,"%s.dylib",lib_name_root);
@@ -305,19 +228,12 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
     }  
   stat(lib_name, &sbuf) ;  
    fprintf(stderr,"using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
-  return sbuf.st_mtimespec.tv_sec;
-      
+  return sbuf.st_mtimespec.tv_sec;  
 }
-
-
 
 #else
 
-
-
-
-void init_libs();
-
+ void initializewords(processinfo PD);
 
 #endif
 
@@ -426,15 +342,15 @@ struct einfo einit ={0,0};
 
 struct einfo *staticencodings[2];
 
+BT mainentry(BT,BT);
+
+
+
 int main(int argc, char **argv)    {   int i=0,count; 
 
 strcpy(basedir,argv[0]);
 for(i=strlen(basedir)-1 ;i >=0 ;i--) if (basedir[i]=='/') {basedir[i]=0; break;}
 
-#ifdef LIBRARY 
-     fprintf(stderr,"DYLIB VERSION\n");
-    if (argc==0)  fprintf(stderr,"must have compiled library as first argument"); 
-#endif  
            // initialize main process
     sharedspace.encodings = staticencodings;
     sharedspace.lasteinfo = &einit;
@@ -444,42 +360,21 @@ for(i=strlen(basedir)-1 ;i >=0 ;i--) if (basedir[i]=='/') {basedir[i]=0; break;}
      signal(SIGBUS,fatal_error_signal);
     signal(SIGILL,fatal_error_signal);
  
- #ifdef LIBRARY 
-   int startarg=2;
+#ifdef LIBRARY 
+      int startarg=2;
+     fprintf(stderr,"DYLIB VERSION\n");
+    if (argc==0)  fprintf(stderr,"must have compiled library as first argument"); 
      fprintf(stderr, "Library %s  \n ",argv[1]  );    
      loadlibrary(&sharedspace, argv[1]); 
 #else
   int startarg=1;
-  init_libs();
+ initializewords(&sharedspace) ;
+
+     
 #endif
   
-if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0) 
-{ // example arg format "stdlib makebitcode+$build webassembly.libsrc stdlib.libinfo"
-  int fd;
-  char name[100],tmp[100],*filedata;
-  struct stat sbuf;
-  int t=strlen(argv[3])-strlen("libinfo");
-   strncpy(tmp,argv[3], t);
-   sprintf(name,"%s/%sbcword",argv[1]+12,tmp);
-      bcwords=empty; BT * data2;
-     if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
-       fprintf(stderr, "failed to load  %s \n",name); exit(1);}
-    else   if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
-     {
-    bcwords=(long long *) filedata; 
-    fprintf(stderr, "loading %s %lld  \n ",name,bcwords[1]  );
-
-} }
-
-
-    for(  i=0;i<loaded[1];i++){
-     fprintf(stderr,"library %s %lld \n",libnames[i+2],((BT *)((BT *) loaded[i+2])[3])[1]);
-   
-    }
-
- 
   
-      BT   entrypoint=((BT*)loaded[loaded[1]+1])[2];
+ //     BT   entrypoint=((BT*)loaded[loaded[1]+1])[2];
 
       processinfo PD=&sharedspace;
       int j;  
@@ -487,7 +382,7 @@ if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0)
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
       p->deepcopyseqword = (BT)noop;
-       p->func=entrypoint;
+       p->func=(BT)&mainentry;
    
       char allargs[2000]="";
        for(j=startarg; j < argc; j++) 
@@ -521,7 +416,11 @@ BT currenttime() {
      return T1970+seconds;
 }
 
+BT threadclock() { struct timespec ts;
+if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts) == -1) return -1; 
 
+return ts.tv_sec * 1000000000 + ts.tv_nsec; 
+}
     
 BT randomint (processinfo PD,BT len){
      int randomData = open("/dev/urandom", O_RDONLY);
@@ -532,11 +431,6 @@ BT randomint (processinfo PD,BT len){
      close(randomData);
      return org;
   }
-
-
-
-
-
 
 BT callstack(processinfo PD,BT maxsize){
       BT r = myalloc(PD,maxsize+2);

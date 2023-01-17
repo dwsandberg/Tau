@@ -20,11 +20,11 @@ Export type:symbolconstant
 
 Function seqelements(s:symbol) seq.symbol
 if iswords.s then
- for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /for (acc)
+ for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /do acc
 else
  assert isrecordconstant.s report "constant code error $(s)"
  let code1 = fullconstantcode.s
- assert isSequence.last.code1 report "constant code error 21 $(code1)"
+ assert isSequence.last.code1 report "constant code error 21 $(code1)",
  code1 >> 1
 
 Function fullconstantcode(s:symbol) seq.symbol
@@ -34,10 +34,10 @@ Function Constant2(args:seq.symbol) symbol
 symconst(addorder.symbolconstant.args, hasfref.args)
 
 function hasfref(args:seq.symbol) boolean
-for hasfref = false, sym ∈ args while not.hasfref do hasfref.sym /for (hasfref)
+for hasfref = false, sym ∈ args while not.hasfref do hasfref.sym /do hasfref
 
 Function hash(s:seq.symbol) int
-hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for (acc)
+hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /do acc
 
 type symbolconstant is toseq:seq.symbol
 
@@ -48,7 +48,7 @@ function hash(a:symbolconstant) int hash.toseq.a
 Function constantsymbols set.symdef
 for acc = empty:set.symdef, i = 1, p ∈ encodingdata:symbolconstant do
  next(acc + symdef(symconst(i, hasfref.toseq.p), toseq.p, 0), i + 1)
-/for (acc)
+/do acc
 
 function map(map0:seq.symbol, prg:seq.symdef) seq.symbol
 for map = map0, todo = empty:seq.symdef, sd ∈ prg do
@@ -59,27 +59,28 @@ for map = map0, todo = empty:seq.symdef, sd ∈ prg do
    while ok
    do
     if isrecordconstant.sym then
-     let mapvalue = map_(toint.name.sym)
+     let mapvalue = map_(toint.name.sym),
      next(acc + mapvalue, isrecordconstant.mapvalue)
     else
      next(acc + sym, ok)
-   /for (if ok then replaceS(map, i, [Constant2.acc]) else empty:seq.symbol)
+   /do if ok then replaceS(map, i, [Constant2.acc]) else empty:seq.symbol
+  ,
   if isempty.newmap then next(map, todo + sd) else next(newmap, todo)
  else
   next(map, todo)
-/for (
+/do
  if isempty.todo then
   map
  else
   assert length.todo < length.prg
   report
    "ill formed program
-    $(for txt = "", sd2 ∈ todo do txt + "/p" + %.sym.sd2 + %.code.sd2 /for (txt))"
+    $(for txt = "", sd2 ∈ todo do txt + "/p" + %.sym.sd2 + %.code.sd2 /do txt)"
+  ,
   map(map, todo)
-)
 
 Function renumberconstants(prg:seq.symdef) seq.symdef
-let map = map(sparseseq.Lit.0, prg)
+let map = map(sparseseq.Lit.0, prg),
 for newprg = empty:seq.symdef, sd ∈ prg do
  if isrecordconstant.sym.sd then
   newprg
@@ -90,6 +91,7 @@ for newprg = empty:seq.symdef, sd ∈ prg do
      next(acc + map_(toint.name.sym), true)
     else
      next(acc + sym, changed)
-   /for (if changed then acc else code.sd)
+   /do if changed then acc else code.sd
+  ,
   newprg + symdef4(sym.sd, newcode, paragraphno.sd, getOptionsBits.sd)
-/for (newprg) 
+/do newprg 

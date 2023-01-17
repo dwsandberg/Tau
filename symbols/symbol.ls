@@ -18,8 +18,6 @@ use seq.typedef
 
 use otherseq.word
 
-use set.word
-
 Export >2(symbol, symbol) ordering
 
 Export type:symbol
@@ -115,7 +113,7 @@ type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, fla
 function maplibrary(libname:word, map:seq.word) word
 let match = 1
 let nomatch = 2
-let done = 3
+let done = 3,
 for state = 0, result = libname, x ∈ map
 while state ≠ done
 do
@@ -125,17 +123,17 @@ do
   next(done, x)
  else
   next(if x = libname then match else nomatch, result)
-/for (result)
+/do result
 
 Function changelibrary(s:symbol, map:seq.word) symbol
-let newtypes = for acc = empty:seq.mytype, t ∈ types.s do acc + changelibrary(t, map) /for (acc)
+let newtypes = for acc = empty:seq.mytype, t ∈ types.s do acc + changelibrary(t, map) /do acc,
 symbol(worddata.s
  , moduleref([maplibrary(library.module.s, map), name.module.s], para.module.s)
  , newtypes
  , raw.s
  , flags.s)
 
-Function replacestar(s:symbol, typelib:word, modulelib:word) symbol
+Function replacestar(s:symbol, modulelib:word) symbol
 symbol(worddata.s
  , moduleref([if library.module.s ∈ "*" then modulelib else library.module.s, name.module.s]
   , para.module.s)
@@ -145,7 +143,7 @@ symbol(worddata.s
 
 Function clearrequiresbit(s:symbol) symbol
 {will clear requires bit}
-let flags = flags.s ∧ (bits.-1 ⊻ requiresbit)
+let flags = flags.s ∧ (bits.-1 ⊻ requiresbit),
 if flags = flags.s then s else symbol(worddata.s, module.s, types.s, raw.s, flags)
 
 Function =(a:symbol, b:symbol) boolean
@@ -206,13 +204,16 @@ if with = typeT ∨ isconst.sym then
  sym
 else
  let newtypes = 
-  for newtypes = empty:seq.mytype, t ∈ types.sym do newtypes + replaceT(with, t) /for (newtypes)
+  for newtypes = empty:seq.mytype, t ∈ types.sym do
+   newtypes + replaceT(with, t)
+  /do newtypes
  let newmodule = replaceT(with, module.sym)
  let newhash = 
   if true ∨ not.isunbound.sym ∨ isAbstract.newmodule then
    flags.sym
   else
    (unboundbit ⊻ bits.-1) ∧ flags.sym
+ ,
  symbol(worddata.sym, newmodule, newtypes, raw.sym, newhash)
 
 function symbolZ(module:modref
@@ -222,7 +223,7 @@ function symbolZ(module:modref
  , rt:mytype
  , flags:bits
  , raw:bits) symbol
-let types = namePara + paras + rt
+let types = namePara + paras + rt,
 symbol([name]
  , module
  , types
@@ -230,7 +231,7 @@ symbol([name]
  , if isempty.namePara then simplenamebit ∨ flags else flags)
 
 Function Br2(t:int, f:int) symbol
-let raw = bits.t << 20 ∨ bits.f
+let raw = bits.t << 20 ∨ bits.f,
 symbolZ(moduleref."internallib $br"
  , "BR2"_1
  , [typeref.[toword.toint.raw, "."_1, "internallib"_1]]
@@ -266,17 +267,19 @@ else if isspecial.s ∧ name.module.s ∉ "$record $loopblock" then
  if isdefine.s ∨ isbr.s ∨ isExit.s then
   1
  else
-  assert name.module.s ∈ "$continue $sequence" report "CHeKC $(s)"
+  assert name.module.s ∈ "$continue $sequence" report "CHeKC $(s)",
   toint.name.s
 else
  length.types.s - if issimplename.s then 1 else 2
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype) seq.word
-let fullname = if isempty.nametype then [name] else [name] + ":" + %.first.nametype
+let fullname = if isempty.nametype then [name] else [name] + ":" + %.first.nametype,
 if length.paratypes = 0 then
  fullname
 else
- for acc = fullname + "(", t ∈ paratypes do acc + %.t + "," /for (acc >> 1 + ")")
+ for acc = fullname + "(", t ∈ paratypes do
+  acc + %.t + ","
+ /do acc >> 1 + ")"
 
 Function istype(s:symbol) boolean
 not.issimplename.s ∧ wordname.s = "type"_1 ∧ nopara.s = 1
@@ -514,12 +517,12 @@ symbolZ(moduleref."internallib $define"
 
 Function Fref(s:symbol) symbol
 assert not.isconst.s ∧ first.worddata.s ∉ "FREF" report "FREF problem $(s) $(stacktrace)"
-let z = constbit ∨ frefbit ∨ flags.s
+let z = constbit ∨ frefbit ∨ flags.s,
 symbol(worddata.s, module.s, types.s, raw.s, z)
 
 Function basesym(s:symbol) symbol
 if isFref.s then
- let flags = flags.s ∧ (constbit ∨ frefbit ∨ hasfrefbit ⊻ tobits.-1)
+ let flags = flags.s ∧ (constbit ∨ frefbit ∨ hasfrefbit ⊻ tobits.-1),
  symbol(worddata.s, module.s, types.s, raw.s, flags)
 else
  s
@@ -527,10 +530,6 @@ else
 Function GetSeqLength symbol symbol(internalmod, "getseqlength", typeptr, typeint)
 
 Function GetSeqType symbol symbol(internalmod, "getseqtype", typeptr, typeint)
-
-Function abortsymbol(typ:mytype) symbol
-let a = if isseq.typ then typeptr else typ
-symbol(builtinmod.a, "assert", seqof.typeword, a)
 
 Function nametype(sym:symbol) seq.mytype
 if issimplename.sym then empty:seq.mytype else [first.types.sym]
@@ -573,7 +572,7 @@ Function iscore4(typ:mytype) boolean
 typ = typeint ∨ typ = typereal ∨ typ = typeptr ∨ typ = typeboolean
 
 Function setSym(typ:mytype) symbol
-let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else typ
+let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else typ,
 symbol(if iscore4.fldtype then internalmod else builtinmod.fldtype
  , "set"
  , typeptr
@@ -585,6 +584,7 @@ let kind2 =
  if isseq.fldtype then
   typeptr
  else if isencoding.fldtype ∨ fldtype = typeword then typeint else fldtype
+,
 symbol(builtinmod.kind2, "fld", typeptr, typeint, kind2)
 
 type symdef is sym:symbol, code:seq.symbol, bits:bits
@@ -630,9 +630,9 @@ Function hasState(sd:symdef) boolean (bits.sd ∧ STATE) ≠ 0x0
 
 function A1(opts:seq.word) bits
 for acc = 0x0, w ∈ opts do
- let i = findindex("ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE", w)
+ let i = findindex("ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE", w),
  acc ∨ 0x1 << (47 + i)
-/for (acc)
+/do acc
 
 Function symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:seq.word) symdef
 symdef(sym, code, bits.paragraphno ∨ A1.options)
@@ -649,14 +649,14 @@ do
   next(result + w, acc >> 1)
  else
   next(result, acc >> 1)
-/for (result)
+/do result
 
 Function getOptionsBits(sd:symdef) bits bits.sd
 
 Export code(symdef) seq.symbol
 
 Function getCode(a:set.symdef, sym:symbol) seq.symbol
-let b = getSymdef(a, sym)
+let b = getSymdef(a, sym),
 if isempty.b then empty:seq.symbol else code.b_1
 
 Function symconst(i:int, hasfref:boolean) symbol

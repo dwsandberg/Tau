@@ -30,7 +30,7 @@ for acc = empty:seq.UTF8
  , @e ∈ break(tobyte.toint.char1.",", [tobyte.toint.char1.dq], toseqbyte.a)
 do
  acc + UTF8.@e
-/for (acc)
+/do acc
 
 Function breakparagraph(a:seq.byte) seq.seq.word
 {breaks file into seq of paragraphs}
@@ -41,7 +41,7 @@ function blankline(a:UTF8, i:int) int
 if i > length.a then
  i
 else
- let t = toint.a_i
+ let t = toint.a_i,
  if t = 10 then
   i
  else if t > length.classifychar ∨ t = 0 then
@@ -55,7 +55,7 @@ if i ≥ length.u then
  else
   result
 else if toint.u_i = 10 then
- let j = blankline(u, i + 1)
+ let j = blankline(u, i + 1),
  if j > 0 then
   if i - 1 < last then
    breakparagraph(u, j + 1, j + 1, result)
@@ -77,16 +77,16 @@ Function classifychar seq.word
 Function towords(a:UTF8) seq.word towords.decodeUTF8.a
 
 Function towords(chars:seq.char) seq.word
-let spacechar = char.32
+let spacechar = char.32,
 for acc = "", last = 1, i = 1, ch ∈ chars + spacechar do
  if not.between(toint.ch, 1, length.classifychar) then
   next(acc, last, i + 1)
  else
-  let class = classifychar_(toint.ch)
+  let class = classifychar_(toint.ch),
   if class = "0"_1 then
    next(acc, last, i + 1)
   else
-   let newacc = if last = i then acc else acc + encodeword.subseq(chars, last, i - 1)
+   let newacc = if last = i then acc else acc + encodeword.subseq(chars, last, i - 1),
    if class ∈ "SPACE" then
     next(newacc, i + 1, i + 1)
    else if (ch = char1."." ∨ ch = char1.":") ∧ i + 1 ≤ length.chars
@@ -94,4 +94,4 @@ for acc = "", last = 1, i = 1, ch ∈ chars + spacechar do
     next(newacc + encodeword.[ch, spacechar], i + 1, i + 1)
    else
     next(newacc + class, i + 1, i + 1)
-/for (acc) 
+/do acc 

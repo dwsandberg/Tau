@@ -31,24 +31,24 @@ Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Module,
  /keyword module, /keyword Function, /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
-The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example,/so" a /sw + b" is equivalent to /so" a+b"; but /so" a * b" is not equivalent to /so" a*b". 
+The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example,/ldq a /sp +/sp b" is equivalent to /ldq    a+b"; but /ldq  a * b" is not equivalent to /ldq  a*b". 
   
-  A period followed by a space is treated as a separate word from a period not ollowed by a space. 
+  A period followed by a space is treated as a separate word from a period not followed by a space. 
   This allows a period at the end of a sentence to be distinguished from a period in google.com. 
   
-  The colon is treated the same as a peroid since a space normal follows a colon but not in  3:30PM.
+The colon is treated the same as a period since a space normally follows a colon but not in  3:30PM.
 
-A word sequence literal is double-quoted. For Example: /so" This is a string Literal."  
+A word sequence literal is double-quoted. For Example:  /ldq  This is a string Literal."  
 
 To include a double quote within a string use  a syntactical short  hand.  For example:
-  <* block /so" hello world without quotes; $(dq) hello world $(dq) with quotes"   *> 
-  is the sames as 
+  <* block /ldq  hello world without quotes; $(dq) hello world $(dq) with quotes"   *> 
+  is the same as 
   writing 
-  <* block  /so" hello world without quotes"/sw+ dq /sw+/so"hello world" /sw +dq /ws+/so"  with quotes"   *>
+  <* block  /ldq  hello world without quotes;"/sp+/sp dq /sp+/sp /ldq hello world"  +/sp dq /sp+"/nosp   with quotes"   *>
   Since $(...) can receive any expression we could also write
-  <* block /so"hello world without quotes $(dq./so"hello world") with quotes" *>
-  Since /so"$(" functions as an escape in strings, it can be include within a string
-  as /so" $(/so" $")( " Note that just the /so" $" is escaped as /so" /so $(/so"$(")" will raise an error 
+  <* block "/nosp hello world without quotes $(dq./ldq hello world") with quotes" *>
+  Since /ldq $(" functions as an escape in strings, it can be include within a string
+  as "/nosp  $(/ldq  $")( " Note that just the /dq  $" is escaped as /ldq    $("/nosp $(")" will raise an error 
   because the escape in the inner qoute is not properly formed.
   
 
@@ -61,29 +61,28 @@ For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ⊻ ∈ ∉ ∩ ∪ ar
 <* code /le /ge /ne /and /or /xor /in /nin /cap /cup *> respectively.
 
 Be careful to insert necessary spaces around operators. For example, 
-<* code 8*9 *> is incorrect and should be written as <* code 8 * 9 *>, or <* code (8) /sn *(9) *>.
+<* code 8*9 *> is incorrect and should be written as <* code 8 * 9 *>, or <* code (8)  *(9) *>.
 
 
 
-<* section Coverting words to UTF8 *>
+<* section Converting words to UTF8 *>
 
 A sequence of tau words must be transformed back to UTF8 format to communicate with the outside world. 
  When a file is read the white space is striped out and must be added back in. 
 
 The basic rules  for   adding  spaces is to  add a space 
 after each word except when :
-/br 1. If the word is /so+-_.. :/sw^ then the space before and after the word is suppressed. 
-/br 2. If the word is /sw)]}," then the space before the word is suppressed.
+/br 1. If the word is /sp+-_.. :^/sp then the space before and after the word is suppressed. 
+/br 2. If the word is /sp)]}," then the space before the word is suppressed.
 /br 3. If the word is ([{ then the space after the word is suppressed.
 
-Line breaks are handled by inserting formating words.  The simplest formating rules are
-/sw /br for a line break and /sw /p for a paragraph break. 
+Line breaks are handled by inserting formatting words.  The simplest formatting rules are
+ /br  for a line break and   /p for a paragraph break. 
 
 Since an opening quote mark should be treated differently than a closing quote mark and the ASCII character set
-does not distinguish between opening and closing quote marks additional formating words /sw /sw /sw /sn /sw /sc /sw /so  will space the following word using one of the four cases above.  
-The letter in these commands can be read as
-(w)/sc ord, (s)/sc pace, (n)/sc one, (c)/sc lose bracket or (c)/sc omma, and (o)/sc pen bracket 
-Thus <* none /so" this is a quote " *> with produce:/so" this is a quote "
+does not distinguish between opening and closing quote marks, /ldq is insert a double quote
+Suppressing the space after.  Additional /sp will force a space and /nosp will suppress the
+Space normally added after a word. 
 
 The format words are interpreted differently when producing plain text or HTML.  For example, /keyword /p produces LF LF for plain text and 
 <* LF <p> *>.  Different functions are provide to do this.   When creating files from seq.word  for output, if file extension is html then the output is HTML 
@@ -91,7 +90,7 @@ otherwise plain text.
 
 <* section Expressions *>
 
-Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
+The follow are treated as   infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 /br _^
 /br unary minus
 /br * / mod ∪ ∩ \
@@ -102,12 +101,12 @@ Here is a list of infix binary operators. The operators on the same line are the
 
 Parentheses are used to override the default precedence.  Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.
 
-Procedure calls are of the form <* code /so f1(p1, p2, …, pn)*>. 
-<* code /so f1() *> is illegal and should be written f1. To avoid excessive parentheses in expressions 
-<* code f1(p1) *> is equivalent to <* code  f1.p1 *>. 
-The precedence of/sw. is between the /sw_ and the *.
+Procedure calls are of the form <* code  f1 /nosp(p1, p2, …, pn)*>. 
+<* code   f1 /nosp() *> is illegal and should be written f1. To avoid excessive parentheses in expressions 
+<* code f1 /nosp(p1)*> is equivalent to <* code  f1.p1 /nosp *>. 
+The precedence of /sp. is between the /sp_ and the *.
 
-The operators ≤ ≥ ≠ are abbreviations for   \so not(a > b) , \so not ( a < b ), \so not(a = b) respectively. 
+The operators ≤ ≥ ≠ are abbreviations for   not /nosp(a > b) ,   not /nosp( a < b ),  not /nosp(a = b) respectively. 
 
 
 The compilation unit in tau is  a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word /keyword module.
@@ -115,69 +114,78 @@ The compilation unit in tau is  a library. A library contains modules. A module 
 A paragraph is a sequence of words. Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Library,
  /keyword module, /keyword Function /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
 
+(x)* repeat 0 or more times
+/br (x|y)  select x or y 
+/br A backslash before ( or ) removes the regular expression meaning.
 
+The non-terminals are P TYPE L E B C  representing Paragraphs, types, parameter lists, expressions, blocks, and comments
+
+The right hand side of the grammar rules are described with a regular expressions syntax
+where /br (x)*  means repeat x 0 or more times;
+/br (x | y)  means select x or y. y can be empty;
+/br A backslash before ( or ) removes the regular expression meaning.
+
+
+Reserved words are words included on the right hand side of the grammar rules
+excluding the words: use type Export unbound Function function is number and word.
+
+
+The meaning of /em word is context sensitive.
+/br For the last E rule (string literals)  /em word does not include " or if it is ( preceded by $.
+/br For the C rule, /em word does not include {}.
+/br For rules for P with /keyword Function , /keyword function and /keyword Export, 
+/em word  includes binary operators but not words starting with a digit or are reserved.
+(To allow binary operators to be user defined.)
+/br Other usage  of /em word excludes reserved words, binary operations and words starting with a digit. 
+ 
+The /em number represents a word of all digits or 0x or 0X followed by hexadecimal digits.
 
 The syntax for non-comment paragraphs is 
-<* block <paragraph>→ /keyword Module <word>.T | /keyword Module <word>  | <definition> /br <paragraph>→ /keyword use <type> 
-/br <paragraph>→ /keyword type <word> /keyword is  <name list> 
-/br <paragraph>→ /keyword Export <function> 
-/br <paragraph>→ /keyword unbound <function> 
-/br <paragraph>→ /keyword Function <function> /em E
-/br <paragraph>→ /keyword function <function> /em E
-/br <name list>→ <word>:<type> | <name list>, <word>:<type> 
-/br   <function > → <function name>(<name list>)<type>     
-/br   <function > → <function name> <type>      
-/br <let name>→ <word> /br <parameter name>→ <word> /br <type>→ <word> 
-/br <type>→ <word>.<type> /br <function call>→ <function name> | <function name>(/em EList)
-/br /em E → <function call> |<parameter name> |<let name> 
-/br /em E → /keyword if /em E /keyword then /em E /keyword else /em E 
-/br /em E → /keyword if /em E /keyword then /em E /keyword else /em E /keyword /if
-/br /em E →(/em E )/br /em E → /em E  <binary op> /em E  
-/br /em E → /sw-/em E /br /em E → <word>./em E  
-/br /em E→  /em sequenceConstructor  /br  /em sequenceConstructor → [ /em EList]/br /em EList→ /em E  | /em EList, /em E  
-/br /em forItems →   <word> = /em E , /em forItems | <word> ∈ /em E
-/br /em E →  /keyword  for  /em forItems /keyword do /em E   /keyword /for ( /em E ) 
-/br /em E →  /keyword  for  /em forItems /keyword while /em E /keyword do /em E   /keyword /for ( /em E ) 
-/br /em E → /keyword let <let name> = /em E /em E 
-/br /em E → /keyword assert /em E /keyword report /em E /em E  
-/br /em E → { < words forming a comment with the brackets outside of double quotes balanced  > } /em E  
-/br /em E → process.<function call> | process(<function call>)*>
+<* block /em P→ /keyword Module /em word.T | /keyword Module /em word  
+/br /em P→ /keyword use /em TYPE 
+/br /em P→ /keyword type /em word /keyword is  /em L  /em C  
+/br /em P→  /keyword Export   type:/em TYPE   /em C 
+/br /em P→ ( /keyword Export |   /keyword unbound) /em word(:/em TYPE |) (\(/em L \)|)   /em TYPE    /em C 
+/br /em P→ (/keyword  Function | /keyword function ) /em word(:/em TYPE |)( \(/em L \) |)   /em TYPE  /em B
+/br /em TYPE → /em word (./em word)*
+/br /em L → (/em C /em word:|) /em TYPE ( , (/em C /em word:|) /em TYPE )*
+/br /em E →  /em word (:/em TYPE |) (\(/em E ( , /em E )*\)) 
+/br /em E → /keyword if /em E /keyword then /em B /keyword else /em B ( /keyword /if | )
+/br /em E →\(/em E \)/br /em E → /em E  <binary op> /em E  
+/br /em E → -/em E /br /em E → /em word./em E  
+/br /em E →   /em C /em E
+/br /em E → [ /em E ( , /em E )]
+/br /em E → /keyword  for /em word = /em E, ( /em word = /em E , )* /em word ∈ /em E /keyword do 
+(while /em E |)/keyword do /em B   /keyword /do /em E (/keyword /for |)  
+/br /em E  → number (. number|)
+/br /em E → " (/em word| $\(E\))*"
+/br /em B  →   (/keyword let <let name> = /em E | /keyword assert /em E /keyword report /em B 
+| /em { (/em C | /em word)*  },   )* E
+/br  /em C → ({ (/em C | /em word)*  } |)*
 
-The type of an expression can always be inferred from the sub-expression. For example, 1.0 <* code + 5.0 *> is of type real, <fmt code 1 * 8 *> is of type int, 
+The type of an expression can always be inferred from the sub-expressions. For example, 1.0 <* code + 5.0 *> is of type real, <* code 1 * 8 *> is of type int, 
 and <* code 1.0 = 8.0 *> is of type boolean.
 
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
-A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.
-A let statement DOES NOT define a variable that can change values.
+A /keyword let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows. 
+A /keyword let statement DOES NOT define a variable that can change values.
 
-Occasionally some unexpected syntactical  issues arise.   The   let statement  
- does not have a required seperator between the two expressions.
- The follow function looks good but will cause a syntax error:  
-<* block /keyword function f1 int /br /keyword let x=  56  /br  -4+x *> 
- 
-Written on a single line, the problem becomes clear as there is no second expression: 
-<* block /keyword function f1 int /keyword let x=  56    -4+x *>
-
-The fix is to add parenthesizes 
-
-function f1 int   let x=  56    (-4+x)
 
 <* section Module Standard *>
 
 A module is a collection of functions and types.
 
 The module standard defines often used function and types. A full list of
-functions is  <* none <a href ='../built/stdlibdoc.html#standard'>  here </a>  *>
+functions is  <* none <a href ='./stdlibdoc.html#standard'>  here </a>  *>
 Many of the functions are defined in other modules and only exported from the standard module. A few note worth types and functions are list below.
 
 The types /em int and /em real are implement by the underlying hardware and have the usual operations. 
 
 The type boolean has operators:∧ ∨ /em not /em true and /em false. The second operator of ∧ and ∨ is evaluated if and only if the first operator does not determine the result.
 
-This document itself can be feed directly to a Tau compiler.  Modules like the next with a 
-? as the last character of their name are introduced sole for the purpose of allowing the document to compile. 
+This document itself can be feed directly to a Tau compiler.  Modules  with names ending in a question mark like in the next paragraph  are introduced solely for the purpose of allowing the document to compile. 
 
 Module standard?
 
@@ -185,9 +193,7 @@ The paragraph below makes visible in module standard?  the function and types in
 
 use standard
 
-
-
-For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT are defined. The is a binary operaator >1 in the standard module that could be defined as
+For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT are defined. There is a binary operaator >1 in the standard module that could be defined as
 
 Function >1(a:int,b:int) ordering if a > b then GT else if a=b then EQ else LT
 
@@ -196,7 +202,7 @@ Function >1(a:int,b:int) ordering if a > b then GT else if a=b then EQ else LT
   Function ∧(a:ordering, b:ordering)ordering 
   if a = EQ   then b   else a
 
-By convention function that begin with a %  have a return type of seq.word and supply a humman readable representation.  Think of it as a /em print statement. Two such functions are defined in the standard module:
+By convention function that begin with a %  have a return type of seq.word and supply a human readable representation.   Two such functions are defined in the standard module:
 
 Export %(n:int) seq.word  
 
@@ -242,7 +248,7 @@ Module testseq
 use standard
 
 Function testseq seq.word
-let s1 = "This is a test sequence with 9 words."
+let s1 = "This is a test sequence with 9 words." ,
 if length.s1 = 9 ∧ s1_3 = "a"_1 ∧ subseq(s1, 4, 5) = "test sequence"
 ∧ subseq(s1, 4, 3) = empty:seq.word
 ∧ subseq(s1, 1, 5) + subseq(s1, 6, length.s1) = s1 
@@ -257,11 +263,11 @@ else "FAIL"
 
 An operation can be performed on each element of a sequence.  The following sums a sequence:
 
- function sum(s:seq.int) int  for   accumulator=0 ,e ∈ s    do accumulator+e    /for(accumulator)
+ function sum(s:seq.int) int  for   accumulator=0 ,e ∈ s    do accumulator+e    /do accumulator /for
 
 More than one accumulator is allowed. The following takes the average of the sequence
 
-  function average(s:seq.int) int for   count=0,sum=0, e ∈ s   do next(count+1,sum+e)    /for( sum / count)
+  function average(s:seq.int) int for   count=0,sum=0, e ∈ s   do next(count+1,sum+e)    /do  sum / count /for
 
 For each element of the sequence the  expression after the /keyword do is executed giving new values to the accumulators. 
 
@@ -269,7 +275,7 @@ It is possible to not examine all elements of the sequence.  The following stops
 
  
 function /in(s:seq.int,ele:int) boolean   
-  for found = false, i ∈ s   while not.found   do ele = i  /for(found)
+  for found = false, i ∈ s   while not.found   do ele = i  /do found /for
   
 
 <* section User Types *>
@@ -370,9 +376,9 @@ Module listset.T
  Function +(s:listset.T, ele:T)listset.T if ele ∈ s then s else listset([ ele]+ toseq.s)
 
   Function tolistset(s:seq.T)listset.T {construct a listset from a sequence}
-for acc = empty:listset.T, ele ∈ s do acc + ele /for(acc)
+for acc = empty:listset.T, ele ∈ s do acc + ele /do acc /for
 
-  Function ∪(a:listset.T, b:listset.T)listset.T { This union is constructed so if a element is in both a and b the representation in a is use in the result } for acc = a, ele ∈ toseq.b do acc + ele /for(acc)
+  Function ∪(a:listset.T, b:listset.T)listset.T { This union is constructed so if a element is in both a and b the representation in a is use in the result } for acc = a, ele ∈ toseq.b do acc + ele /do acc /for
 
   Export isempty(seq.T)boolean
 
@@ -391,7 +397,7 @@ use listset.word
 
 Function testlistset seq.word 
 let set1 = tolistset."A A B C A C B"
-let set2 = tolistset."D B E"
+let set2 = tolistset."D B E" ,
 if toseq.set1 = "C B A" ∧ first."C" ∈ set1
  ∧ first."D" ∉ set1
  ∧ toseq(set1 ∪ set2) = "D E C B A"then
@@ -433,13 +439,13 @@ function print(a:listset.myentry)seq.word
  for txt ="", ele ∈ toseq.a do
   txt + "(" + toword.key.ele + "," + data.ele
   + "),"
- /for(txt >> 1)
+ /do txt >> 1 /for
  
 
  
 Function testdict seq.word let dict = tolistset.[ myentry(1,"add"), myentry(2,"sub"), myentry(3,"mult")]
 let dict2 = tolistset.[ myentry(2,"subtract"), myentry(4,"divide")]
-let l1 = lookup(dict, 4)
+let l1 = lookup(dict, 4) ,
 if print.dict = "(3, mult),(2, sub),(1, add)"
  ∧ print.dict2 = "(4, divide),(2, subtract)"
  ∧ isempty.lookup(dict, 4)
@@ -484,7 +490,7 @@ use B
 use standard
 
 Function f1(p1:int)int 
-  let l1 = p1 * TWO 
+  let l1 = p1 * TWO ,
    p1 * l1 - THREE
 
 function THREE int 3
@@ -575,21 +581,21 @@ Function testExampleEncoding seq.word
   let  R="R1 R2 R3 R4 R5 R6 R7 R8 R9 R11 R12 R13"
   let postfix="5   3 4 + *  3 4 + *  6   3 4 + * +  7 +"
   {encode every subexpression of the postfix expression.  If a sub-expression is used
-   more that once it will have the same encoding every time it is used. }
-   { Below a stack is used.  The definition is in core.}
+   more that once it will have the same encoding every time it is used. /br
+     Below a stack is used.  The definition is in core.}
   let encodingofpostfix= for  stk=empty:stack.encoding.myencoding,w /in postfix do 
     if w /in "+*" then  
     push(pop.pop.stk ,encode.myencoding(w, top(stk, 2)))
     else push(stk,encode.myencoding(w,empty:seq.encoding.myencoding))
-    /for(top.stk)
+    /do top.stk /for
   { all the encodings are now in encodingdata:myencoding. It is now easy to print out 
-  instruction that will evaluate common subexpressions only once}
+  instruction that will evaluate common subexpressions only once},
        for acc="" ,idx=1,   e /in encodingdata:myencoding do 
        let newacc=acc+"/br"+R_idx+ "=" +if op.e /in"+,*" then 
-                [R_(valueofencoding.(operands.e)_1) ,op.e ,R_(valueofencoding.(operands.e)_2)]
-      else  [op.e]
+                [R_(valueofencoding.(operands.e)_1) ,op.e        ,R_(valueofencoding.(operands.e)_2)]
+      else  [op.e] ,
       next(newacc,idx+1)
-      /for(acc)
+      /do acc /for
       
 The testexample output is: <* block R1 = 5 
 /br R2 = 3 
@@ -625,7 +631,7 @@ use process.int
 use standard
 
  function myprocess(a:int)int 
-   assert a > 0   report "invalid"
+   assert a > 0   report "invalid" ,
    3^a
 
   function useprocess(i:int)int 
@@ -634,9 +640,9 @@ use standard
   the  psuedo-function   process below and allows a spawned process 
   of type process.in to be created
   from the function   myprocess }
-  let a = process.myprocess.i 
+  let a = process.myprocess.i ,
   if aborted.a 
-    then  assert message.a ="invalid"   report "new message"
+    then  assert message.a ="invalid"   report "new message" ,
    0 
   else result.a
 
@@ -751,7 +757,7 @@ Making the function tail recursive is not the only way to reduce the stack size.
 Perhaps the best way to reverse a sequence is to use
 
   Function reverse5(s:seq.int)seq.int    
-  for acc=empty:seq.int,e ∈ s   do [e]+acc /for(acc)
+  for acc=empty:seq.int,e ∈ s   do [e]+acc /do acc /for
 
 
 In this case the tau compiler will remove  the bounds checking when indexing the sequence.  

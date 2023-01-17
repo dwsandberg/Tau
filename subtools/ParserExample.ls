@@ -34,20 +34,19 @@ for lrpart = push(empty:stack.stkele, stkele(startstate, ATTR.0))
  , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate
 do
- {lexical analysis is done here}
- {Assume the input is only integers}
+ {lexical analysis is done here /br Assume the input is only integers}
  let tokenno = 
   if findindex(tokenlist, this) > length.tokenlist then
    findindex(tokenlist, "I"_1)
   else
    findindex(tokenlist, "#"_1)
- let attribute = ATTR.if this ∈ {end marked} "#" then 0 else toint.this
+ let attribute = ATTR.if this ∈ {end marked} "#" then 0 else toint.this,
  next(step(lrpart, input, attribute, tokenno, idx), idx + 1)
-/for (val.attribute.undertop(lrpart, 1))
+/do val.attribute.undertop(lrpart, 1)
 
 function step(stk:stack.stkele, input:seq.word, attrib:ATTR, tokenno:int, place:int) stack.stkele
 let stateno = stateno.top.stk
-let actioncode = actiontable_(tokenno + length.tokenlist * stateno)
+let actioncode = actiontable_(tokenno + length.tokenlist * stateno),
 if actioncode > 0 then
  if stateno = finalstate then
   stk
@@ -59,7 +58,7 @@ else
  let rulelen = rulelength_ruleno
  let newstk = pop(stk, rulelen)
  let newstateno = actiontable_(leftside_ruleno + length.tokenlist * stateno.top.newstk)
- let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
+ let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen))),
  step(push(newstk, newstkele), input, attrib, tokenno, place)
 
 -----
@@ -76,7 +75,7 @@ else if ruleno = {F I} 3 then
  R_1
 else
  {ruleno}
- assert false report "invalid rule number" + toword.ruleno
+ assert false report "invalid rule number" + toword.ruleno,
  R_1
 
 function rulelength seq.int [2, 2, 1]

@@ -46,23 +46,23 @@ do
    while not.isempty.stk2 ∧ not.isstartorloop.sym.top.stk2
    do
     next(pop.stk2, sons + top.stk2)
-   /for (sons + top.stk2)
+   /do sons + top.stk2
   else
    for stk2 = stk, sons = empty:seq.symloc, count = nopara.sym, k ∈ toseq.stk
    while count > 0
    do
-    let top = top.stk2
+    let top = top.stk2,
     next(pop.stk2, sons + top, if isdefine.sym.top then count else count - 1)
-   /for (sons)
+   /do sons
  let newstk = pop(stk, length.sons)
- let tail = symloc(i, sym)
- next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy) /for (arcs), push(newstk, tail))
-/for (drawgraph.newgraph.acc)
+ let tail = symloc(i, sym),
+ next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy) /do arcs, push(newstk, tail))
+/do drawgraph.newgraph.acc
 
 Function generatenode(a:set.symloc) symloc symloc(cardinality.a, Lit.0)
 
 Function node2text(a:symloc) seq.word
-let sy = sym.a
+let sy = sym.a,
 if isloopblock.sy then
  "Loop:$(firstvar.sy)"
 else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then %.sy else [name.sy]

@@ -120,10 +120,10 @@ function t030 boolean
 function isbyte(i:int) boolean between(i, 0, 255)
 
 function t031 boolean
-false = for acc = true, e ∈ [0 - 1, 256, 255, 0] do acc ∧ isbyte.e /for (acc)
+false = for acc = true, e ∈ [0 - 1, 256, 255, 0] do acc ∧ isbyte.e /do acc
 
 function t032 boolean
-for acc = true, e ∈ [23, 4, 5, 255, 7, 2, 255] do acc ∨ isbyte.e /for (acc)
+for acc = true, e ∈ [23, 4, 5, 255, 7, 2, 255] do acc ∨ isbyte.e /do acc
 
 function t033 boolean 6 = toint.if true then "3"_1 else "5"_1 /if + 3
 
@@ -133,22 +133,22 @@ function print(a:seq.int) seq.word "[$(%(",", a) >> 1)]"
 
 function t035 boolean "[2, 3, 4, 5]" = print.[2, 3, 4, 5]
 
-function t036 boolean 10 = for acc = 0, e ∈ [1, 2, 3, 4] do acc + e /for (acc)
+function t036 boolean 10 = for acc = 0, e ∈ [1, 2, 3, 4] do acc + e /do acc
 
-function t037 boolean 24 = for acc = 1, e ∈ [1, 2, 3, 4] do acc * e /for (acc)
+function t037 boolean 24 = for acc = 1, e ∈ [1, 2, 3, 4] do acc * e /do acc
 
 Function t038 boolean
-[1, 2, 3, 4] = for acc = empty:seq.int, e ∈ [1, 2, 3, 4] do acc + e /for (acc)
+[1, 2, 3, 4] = for acc = empty:seq.int, e ∈ [1, 2, 3, 4] do acc + e /do acc
 
 function t039 boolean
-let a = 6 * 6
+let a = 6 * 6,
 a + a = 72
 
 function t040 boolean "a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, "k"_1)
 
 function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, "k"_1)
 
-function t042 boolean 97 = for acc = 100, e ∈ [1, 2] do acc - e /for (acc)
+function t042 boolean 97 = for acc = 100, e ∈ [1, 2] do acc - e /do acc
 
 function t043 boolean
 "code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A
@@ -156,15 +156,15 @@ function t043 boolean
  V 87 W 88 X 89 Y 90 Z"
 = for acc = "code glyph", e ∈ arithseq(43, 1, 48) do
  acc + [toword.e, encodeword.[char.e]]
-/for (acc)
+/do acc
 
 function t044 boolean "$(dq) ()+,-.:= []^_{}" = standalonechars
 
 function standalonechars seq.word
 for acc = "", e ∈ arithseq(length.classifychar, 1, 1) do
- let class = classifychar_e
+ let class = classifychar_e,
  if class ∈ "0 SPACE" then acc else acc + [class]
-/for (acc)
+/do acc
 
 function t045 boolean
 {testing UNICODE to word conversion and no-break space in integer 8746}
@@ -230,4 +230,5 @@ let list =
   , a.Tpair(3, "three") = 3
   , "this is a test" << 2 = "a test"
   , "this is a test" >> 3 = "this"]
+,
 check(list, "test11") 

@@ -83,27 +83,8 @@ Function knownWfunc(alltypes:typedict) seq.wfunc
   , symbol(internalmod, "processisaborted", typeptr, typeboolean)
   , [i32wrapi64, i32load, tobyte.2] + LEBu.0)
  , wfunc(alltypes
-  , abortsymbol.typeint
+  , symbol(internalmod, "assert", seqof.typeword, typeint)
   , [f64converti64s] + Wcall.abortfunc + drop + const64.0)
- , wfunc(alltypes
-  , abortsymbol.typebyte
-  , [f64converti64s] + Wcall.abortfunc + drop + const64.0)
- , wfunc(alltypes
-  , abortsymbol.typeptr
-  , [f64converti64s] + Wcall.abortfunc + drop + const64.0)
- , wfunc(alltypes
-  , abortsymbol.typeref."packed2 tausupport *"
-  , [f64converti64s] + Wcall.abortfunc + drop + const64.0)
- , wfunc(alltypes
-  , abortsymbol.typeref."packed3 tausupport *"
-  , [f64converti64s] + Wcall.abortfunc + drop + const64.0)
- , wfunc(alltypes
-  , abortsymbol.typeref."packed4 tausupport *"
-  , [f64converti64s] + Wcall.abortfunc + drop + const64.0)
- , wfunc(alltypes
-  , abortsymbol.typeboolean
-  , [f64converti64s] + Wcall.abortfunc + drop + const32.0)
- , wfunc(alltypes, abortsymbol.typereal, [f64converti64s] + Wcall.abortfunc)
  , wfunc(alltypes
   , symbol4(internalmod, "bitcast"_1, seqof.typeint, [typereal], seqof.typeint)
   , [i64reinterpretf64])

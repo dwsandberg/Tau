@@ -104,8 +104,6 @@ Export continue(i:int) symbol {From symbol}
 
 Export Start(mytype) symbol {From symbol}
 
-Export abortsymbol(mytype) symbol {From symbol}
-
 Export builtinmod(mytype) modref {From symbol}
 
 Export deepcopySym(mytype) symbol {From symbol}
@@ -317,6 +315,16 @@ Export type:typeentry {From typedict}
 Export basetype(mytype, typedict) mytype {From typedict}
 
 Export emptytypedict typedict {From typedict}
+
+Export type:addrsym
+
+Export addr(addrsym) int
+
+Export sym(addrsym) symbol
+
+Export addrsym(int, symbol) addrsym
+
+type addrsym is addr:int, sym:symbol
 
 type modExports is modname:modref, exports:seq.symbol, types:seq.seq.mytype
 

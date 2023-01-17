@@ -239,24 +239,26 @@ Function between(i:int, lower:int, upper:int) boolean i ≥ lower ∧ i ≤ uppe
 
 Function ^(i:int, n:int) int
 {* nth power of i}
-for acc = 1, @e ∈ constantseq(n, i) do acc * @e /for (acc)
+for acc = 1, @e ∈ constantseq(n, i) do acc * @e /do acc
 
 _______________
 
 Function hash(a:seq.int) int
-finalmix.for acc = hashstart, @e ∈ a do hash(acc, @e) /for (acc)
+finalmix.for acc = hashstart, @e ∈ a do hash(acc, @e) /do acc
 
 Function hash(a:seq.word) int
-finalmix.for acc = hashstart, @e ∈ a do hash(acc, hash.@e) /for (acc)
+finalmix.for acc = hashstart, @e ∈ a do hash(acc, hash.@e) /do acc
 
 Function pseudorandom(seed:int) int
 let ah = 16807
 let mh = 2147483647
-let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah))
+let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah)),
 if test > 0 then test else test + mh
 
 Function randomseq(seed:int, length:int) seq.int
-for acc = [seed], @e ∈ constantseq(length - 1, 1) do acc + pseudorandom.last.acc /for (acc)
+for acc = [seed], @e ∈ constantseq(length - 1, 1) do
+ acc + pseudorandom.last.acc
+/do acc
 
 Builtin randomint(i:int) seq.int
 
@@ -269,17 +271,18 @@ let nosep = if includeseperator then 0 else 1
 let l = 
  for acc = empty:seq.int, i = 1, e ∈ s do
   next(acc + if e ∈ seperators then [i] else empty:seq.int, i + 1)
- /for (acc)
+ /do acc
+,
 for acc = empty:seq.seq.word, i = 1, ele ∈ l + (length.s + 1) do
  next(acc + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1)
   , i + 1)
-/for (acc)
+/do acc
 
 Function extractValue(s:seq.word, name:seq.word) seq.word
 for value = "", last = "="_1, p ∈ break(s + "? =", "=", false) do
  next(if last ∈ name then value + p >> 1 else value
   , if isempty.p then "="_1 else last.p)
-/for (value)
+/do value
 
 type char is toint:int
 

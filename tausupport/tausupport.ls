@@ -56,6 +56,8 @@ use taublockseq.packed6
 
 use ptr
 
+use bitcast.ptr
+
 use seq.ptr
 
 use bitcast.seq.ptr
@@ -124,18 +126,22 @@ type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
 Builtin getseqlength(ptr) int {OPTION COMPILETIME}
 
-function set(i:ptr, b:real) ptr set(i, representation.b)
+function set2(i:ptr, b:real) ptr set(i, representation.b)
 
-function set(i:ptr, b:packed2) ptr set(set(i, fld1.b), fld2.b)
+function set2(i:ptr, b:int) ptr set(i, b)
 
-function set(i:ptr, b:packed3) ptr set(set(set(i, fld1.b), fld2.b), fld3.b)
+function set2(i:ptr, b:ptr) ptr set(i, b)
 
-function set(i:ptr, b:packed4) ptr set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b)
+function set2(i:ptr, b:packed2) ptr set(set(i, fld1.b), fld2.b)
 
-function set(i:ptr, b:packed5) ptr
+function set2(i:ptr, b:packed3) ptr set(set(set(i, fld1.b), fld2.b), fld3.b)
+
+function set2(i:ptr, b:packed4) ptr set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b)
+
+function set2(i:ptr, b:packed5) ptr
 set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b)
 
-function set(i:ptr, b:packed6) ptr
+function set2(i:ptr, b:packed6) ptr
 set(set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b), fld6.b)
 
 Function blockIt(s:seq.int) seq.int blockit3.s
@@ -170,11 +176,11 @@ Function outofbounds seq.word "out of bounds $(stacktrace)"
 
 function packedbytes(a:seq.byte) seq.byte
 let c = packed([bits.1, bits.length.a] + toseqbits.a)
-assert getseqtype.c = 0 report "to big byte sequence to pack"
+assert getseqtype.c = 0 report "to big byte sequence to pack",
 bitcast:seq.byte(set(set(toptr.c, getseqtype.c), length.c))
 
 Function blockIt(s:seq.byte) seq.byte
-let blksz = 8128 * 8
+let blksz = 8128 * 8,
 if length.s ≤ blksz then
  packedbytes.s
 else
@@ -183,24 +189,25 @@ else
  let discard = 
   for acc = set(set(blkseq, blockseqtype:byte), length.s), @e ∈ arithseq(noblks, blksz, 1) do
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
-  /for (acc)
+  /do acc
+ ,
  bitcast:seq.byte(blkseq)
 
 Function toseqseqbyte(b:seq.bits, bytestowrite:int) seq.seq.byte
 let blksz = 8128
-let noblks = (length.b + blksz - 1) / blksz
+let noblks = (length.b + blksz - 1) / blksz,
 for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0) do
  let new = packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
- let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8))
+ let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8)),
  acc + bitcast:seq.byte(toptr.new)
-/for (acc)
+/do acc
 
 Function toseqseqbyte(s:seq.byte) seq.seq.byte
 let blksz = 8128 * 8
-let noblks = (length.s + blksz - 1) / blksz
+let noblks = (length.s + blksz - 1) / blksz,
 for acc = empty:seq.seq.byte, start ∈ arithseq(noblks, blksz, 1) do
  acc + packedbytes.subseq(s, start, start + blksz - 1)
-/for (acc)
+/do acc
 
 ____________
 
@@ -220,8 +227,27 @@ else if typ ∈ "packed4" then
 else if typ ∈ "packed5" then
  toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
 else
- assert typ ∈ "packed6" report "packing cat not found" + typ
+ assert typ ∈ "packed6" report "packing cat not found" + typ,
  toptr(bitcast:seq.packed6(obj1) + bitcast:seq.packed6(obj2))
+
+Function blocktype(typ:word) int
+if typ ∈ "int" then
+ blockseqtype:int
+else if typ ∈ "real" then
+ blockseqtype:real
+else if typ ∈ "ptr" then
+ blockseqtype:int
+else if typ ∈ "packed2" then
+ blockseqtype:packed2
+else if typ ∈ "packed3" then
+ blockseqtype:packed3
+else if typ ∈ "packed4" then
+ blockseqtype:packed4
+else if typ ∈ "packed5" then
+ blockseqtype:packed5
+else
+ assert typ ∈ "packed6" report "packing not found" + typ,
+ blockseqtype:packed6
 
 Function packobject(typ:word, obj:ptr) ptr
 if typ ∈ "int" then
@@ -239,7 +265,7 @@ else if typ ∈ "packed4" then
 else if typ ∈ "packed5" then
  toptr.blockIt.bitcast:seq.packed5(obj)
 else
- assert typ ∈ "packed6" report "packing not found" + typ
+ assert typ ∈ "packed6" report "packing not found" + typ,
  toptr.blockIt.bitcast:seq.packed6(obj)
 
 Export geteinfo(gl:ptr, name:seq.word) einfo
@@ -254,9 +280,8 @@ builtin clock int
 
 builtin spacecount int
 
-Function profileUpdate(time:int, beforeSpace:int, p:ptr) ptr
+Function profileUpdate(time:int, beforeSpace:int, p:ptr) int
 let p1 = set(p, fld:int(p, 0) + 1)
 let p2 = set(p1, fld:int(p1, 0) + (clock - time))
-set(p2, fld:int(p2, 0) + (spacecount - beforeSpace))
-
-Function initProfile ptr toptr.0 
+let p3 = set(p2, fld:int(p2, 0) + (spacecount - beforeSpace)),
+0 

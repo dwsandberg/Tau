@@ -55,6 +55,4 @@ void assertexit(int b,char *message);
 
 void initprocessinfo(processinfo p,processinfo PD);
 
-BT createthread(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype );
-
 BT processisaborted(processinfo PD,BT pin);

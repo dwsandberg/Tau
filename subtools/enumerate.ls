@@ -13,7 +13,7 @@ use textio
 use sparseseq.word
 
 Function enumerate(input:seq.file, o:seq.word) seq.file
-let message = "The data below this line was auto generated."
+let message = "The data below this line was auto generated.",
 for data = "", auto = "", continue = true, p ∈ breakparagraph.data.first.input
 while continue
 do
@@ -33,14 +33,13 @@ do
    data + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if + "/p"
    , auto
    , true)
-/for (
+/do
  [
   file(filename.o
    , data + "/p" + message
    + "/p_________________________________________"
    + auto >> 1)
   ]
-)
 
 * The /keyword enumeration cmd is used to generate code in a module for enumeration types instead of creating
 the code by hand. If the following in a file named enum.ls it will generate two enumeration types and
@@ -59,7 +58,7 @@ operations on them.
 
 *___________________
 
-* Here is a link to the <* none <a href ="../Tools/install4.html" > Result </a> *>
+* Here is a link to the <* none <a href ="./install4.html" > Result </a> *>
 
 * In the first enumeration type Each word in the data list is given a value starting with 0. The ?
 mark is a place holder for numbers that with not be include in the type.
@@ -80,9 +79,10 @@ let codes =
     next(replaceS(acc, toint.merge("0x" + code) + 1, [w]), 0, code)
    else
     next(acc, 1, w)
-  /for (for txt = "", e ∈ acc do txt + e /for (txt))
+  /do for txt = "", e ∈ acc do txt + e /do txt
  else
   codes0
+,
 if nodefs then
  ""
 else
@@ -98,13 +98,12 @@ else
  else
   next(acc + "/p Function" + codes_i + type + type + "." + toword(i - 1)
    , list + codes_i + ",")
-/for (
+/do
  acc + "/p"
  + pretty("Function $(if isempty.decodename then "decode" else decodename) (code:$(type)) seq.word
-  $(list >> 1)] let i = toint.code if between (i+1, 1,"
+  $(list >> 1)] let i = toint.code do if between (i+1, 1,"
  + toword.length.codes
- + ") then let r = [$(dq.codes)_(i+1)]"
+ + ") then let r = [$(dq.codes)_(i+1)] do"
  + "if r ≠ $(dq."?") then r else $(dq(type + "."))+toword.i else $(dq(type + "."))
   +toword.i")
- + "/p"
-) 
+ + "/p" 

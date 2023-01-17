@@ -4,11 +4,11 @@ use standard
 
 Function randomphrase seq.word
 let a = randomint.1
-let seed = if a_1 < 0 then-a_1 + 1 else a_1
+let seed = if a_1 < 0 then-a_1 + 1 else a_1,
 getphrase.seed
 
 Function getphrase(seed:int) seq.word
-let a = randomseq(seed, 6)
+let a = randomseq(seed, 6),
 "The" + adjectives_(a_1 mod 140 + 1) + nouns_(a_2 mod 140 + 1)
 + verbs_(a_3 mod 140 + 1)
 + "the"

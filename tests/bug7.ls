@@ -21,7 +21,7 @@ Function testbug7 seq.word
 {since encodings have side effects it is not safe to use simple inline expansion of functions since
  the order of evaluation becomes important. Function c32 is the candiate for inline expansion. }
 let discard0 = [i64, i32]
-let z = c32.0
+let z = c32.0,
 if [i64, i32] = [1, 2] ∧ 128 = (newseq8.[1, 128])_2 then
  "PASS bug7"
 else

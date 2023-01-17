@@ -68,16 +68,17 @@ else
  let dd = d.first.grp
  let base = 
   makereal.subseq(dd, length.dd - 3, length.dd) - toreal(length.grp - 1) / 2.0 * inc
+ ,
  for acc = empty:seq.arcpath.T, new = base, q ∈ grp do
   next(acc + arcpath(arc.q, d.q >> 3 + print(3, new), 0), new + inc)
- /for (acc)
+ /do acc
 
 Function drawscript:T seq.word
 "<script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).getBBox () ;
  /br arcs.forEach (function (idval, index) {if (index > 0) {
- /br let element = document.getElementById (idval) ; let d = $(dq."M")+(bb.x+bb.width)+
- $(dq.",")+(bb.y+bb.height)+element.getAttribute ($(dq."d")
- ).substring (5) ; element.setAttribute ($(dq."d"), d) ;}}) ;} </script>
+ /br let element = document.getElementById (idval) ; let d =
+ $(dq."M")+(bb.x+bb.width)+$(dq.",")+(bb.y+bb.height)+element.getAttribute (
+ $(dq."d")).substring (5) ; element.setAttribute ($(dq."d"), d) ;}}) ;} </script>
  /br <style>.arcs {fill:none ; stroke:black ; stroke-width:.07 ;}.nodes {font-size:.03em;
  stroke-width:.1 ;} svg g:hover text {opacity:1;} svg g:hover rect {opacity:1;} </style>
  "
@@ -93,7 +94,7 @@ for arclist = empty:seq.arc.T, a ∈ arcs do
   arclist
  else
   arclist + a
-/for (drawgraph.newgraph.arclist)
+/do drawgraph.newgraph.arclist
 
 Function drawgraph(xxx:graph.T, labels:set.labeledarc.T) seq.word
 let haslabels = not.isempty.labels
@@ -102,14 +103,14 @@ let scaley = 0.4
 let layout = layout(xxx, haslabels)
 let arcpaths0 = 
  for ap = empty:set.arcpath.T, a ∈ paths.layout do
-  let from = if length.a = 2 then x.lookup(nodeinfo.layout, nodeinfo(a_1, 0, 0))_1 else 0
+  let from = if length.a = 2 then x.lookup(nodeinfo.layout, nodeinfo(a_1, 0, 0))_1 else 0,
   for d = "", from0 = 0, from1 = from, p ∈ a << 1 do
-   let xy = lookup(nodeinfo.layout, nodeinfo(p, 0, 0))_1
+   let xy = lookup(nodeinfo.layout, nodeinfo(p, 0, 0))_1,
    next(d + "L" + print(3, toreal.y.xy * scalex) + print(3, toreal.x.xy * scaley)
     , from1
     , x.xy)
-  /for (asset.[arcpath(arc(first.a, last.a), d, from0)] ∪ ap)
- /for (ap)
+  /do asset.[arcpath(arc(first.a, last.a), d, from0)] ∪ ap
+ /do ap
 let arcpaths = 
  if not.haslabels then
   arcpaths0
@@ -119,7 +120,8 @@ let arcpaths =
     next(acc, grp + p)
    else
     next(acc + addgroup.grp, [p])
-  /for (asset(acc + addgroup.grp))
+  /do asset(acc + addgroup.grp)
+,
 for txt = ""
  , i = 1
  , id = requestids(cardinality.nodes.xxx + cardinality.arcs.xxx) + requestids.1
@@ -131,7 +133,7 @@ for txt = ""
 do
  {assumes nodes in g uses same sortorder as nodinfo}
  let nodex = toreal.y.n * scalex
- let nodey = toreal.x.n * scaley
+ let nodey = toreal.x.n * scaley,
  if i ≤ cardinality.nodes.xxx ∧ (nodes.xxx)_i = n.n then
   let succ = toseq.successors(xxx, n.n)
   let hovertext = nodeTitle.n.n
@@ -147,12 +149,13 @@ do
       "L $(print(3, toreal.y.xy * scalex)) $(print(3, toreal.x.xy * scaley))"
      else
       d.paths_1
+    ,
     next(
      arctxt
      + "<path id = $(dq.[toword.j]) class = $(dq."arcs") d = $(dq."M 0 0 $(path)") ></path>"
      + encodeword.[char.10]
      + if haslabels then
-      let lab = lookup(labels, arc(n.n, s, ""))
+      let lab = lookup(labels, arc(n.n, s, "")),
       if isempty.lab then
        ""
       else
@@ -163,14 +166,15 @@ do
      else
       ""
      , j + 1)
-   /for (arctxt)
+   /do arctxt
   let newdraw = 
    if length.succ > 0 then
     for drawtxt = "", k ∈ arithseq(1 + length.succ, 1, id) do
      drawtxt + toword.k + ","
-    /for ("[$(drawtxt >> 1)],")
+    /do "[$(drawtxt >> 1)],"
    else
     ""
+  ,
   next(txt + svg
    , i + 1
    , id + length.succ + 1
@@ -180,13 +184,12 @@ do
    , if isempty.hovertext then hover else hover + hovertext(n.n, nodex, nodey, hovertext))
  else
   next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
-/for (
- let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for (svg2)
+/do
+ let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /do svg2,
  "/br <* none $(drawscript:T) <svg id = $(dq."svg10") dqns = $(dq."http://www.w3.org/2000/svg")
   width = $(dq."100%") viewBox =
   $(dq("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.3)))
   onload = $(dq."[$(draw >> 1)].forEach (shiftstart)") > $(txt + hovertxt)+</svg> *>"
-)
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
 

@@ -38,11 +38,11 @@ Function clength(s:seq.T, i:int) int
 if i > length.s then
  0
 else
- assert s_i > 0 report "invalid"
+ assert s_i > 0 report "invalid",
  if s_i < 128 then
   1 + clength(s, i + 1)
  else
-  assert s_i < 128 + 64 + 32 report "invalid"
+  assert s_i < 128 + 64 + 32 report "invalid",
   1 + clength(s, i + 2)
 
 Function cindex(s:seq.T, i:int, idx:int) T

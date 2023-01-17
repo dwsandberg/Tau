@@ -18,6 +18,7 @@ function libexe {
  if [ -z "$norun" ];then
  echo "building ${allargs#*o=}"
  restargs="${allargs#*\ }"
+ echo "$build/${tauDylib}$1.lib $restargs > /dev/null"
 $build/${tauDylib}$1.lib $restargs > /dev/null
  else
    echo "make built/${allargs#*o=}"
@@ -31,8 +32,9 @@ fi
 
 function linklibrary { 	 
  if [ -z "$norun" ];then
-   if [ -z $tauDylib ];then 
-		echo "void init_$1(); $ccode init_$1();}"> $build/$1.c 
+   if [ -z $tauDylib ];then         
+       echo '#define  BT long long int' > $build/$1.c 
+		echo "BT entrypoint$1(BT,BT); BT mainentry(BT a,BT b){return entrypoint$1(a,b);}" >> $build/$1.c 
 		cmd="clang -lm -pthread stdlib/*.c $build/$1.c $dependlibs $build/$1.bc -o $build/$1.lib  "
 		echo $cmd
 		$cmd
@@ -45,7 +47,6 @@ fi
 }
 
 function startfresh {
-ccode="void init_libs(){"
  dependlibs=
  cp bin/stdlib.bc $build
  linklibrary stdlib

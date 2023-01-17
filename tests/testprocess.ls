@@ -58,14 +58,14 @@ check(
   , print(5, tan(pi / 4.0)) = "1.00000"
   , print(5, arcsin.sin.0.5) = "0.50000"
   , print(5, arccos.cos.0.5) = "0.50000"
-  , print(3, for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e /for (acc)) = "38.000"
+  , print(3, for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e /do acc) = "38.000"
   , "23.45000-18.45000" = print(5, 23.45) + print(5, 5.0 - 23.45)
   ,-2^4 = -16
   , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
   = "1 C addcomma function i int merge s segment seq seq toword toword word"
   , for acc = "", @e ∈ alphasort.["z b", "a b", "a a", "test 23", "test 20"] do
    acc + @e + "/"
-  /for (acc >> 1)
+  /do acc >> 1 /for
   = "a a / a b / test 20 / test 23 / z b"]
  , "real")
 
@@ -97,6 +97,7 @@ let y =
   ∧ c.result.process.testprocess3 = "a test"
   , t513
   , t514]
+,
 check(y, "testprocess")
 
 _________
@@ -108,18 +109,18 @@ function t513 boolean "3 5 7 11 13 17 19 23 29 31 37" = findprimes(3, 40)
 function t514 boolean
 let c = 10000
 let a = process.countprimes(3, c)
-let b = process.countprimes(c + 1, 2 * c)
+let b = process.countprimes(c + 1, 2 * c),
 [1228, 1033] = [result.a, result.b]
 
 function findprimes(start:int, finish:int) seq.word
 for acc = "", @e ∈ arithseq((finish - start + 2) / 2, 2, start) do
  if isprime.@e then acc + toword.@e else acc
-/for (acc)
+/do acc
 
 function countprimes(start:int, finish:int) int
 for acc = 0, @e ∈ arithseq((finish - start + 2) / 2, 2, start) do
  if isprime.@e then acc + 1 else acc
-/for (acc)
+/do acc
 
 function isprime(i:int) boolean
 if i mod 2 = 0 then
@@ -127,8 +128,8 @@ if i mod 2 = 0 then
 else
  let a = i / 2
  {intpart.sqrt.toreal.i}
- let b = (a + i / a) / 2
- for acc = true, f ∈ arithseq(a, 2, 3) while acc ∧ f ≤ b do i mod f ≠ 0 /for (acc)
+ let b = (a + i / a) / 2,
+ for acc = true, f ∈ arithseq(a, 2, 3) while acc ∧ f ≤ b do i mod f ≠ 0 /do acc
 
 _________________
 
@@ -137,25 +138,24 @@ let r =
  sort.for acc = empty:seq.int, i ∈ randomint.samplesize do
   for acc2 = acc, j ∈ arithseq(16, 4, 0) do
    acc2 + (toint(tobits.i >> j ∧ 0xF) + 4 * j)
-  /for (acc2)
- /for (acc)
+  /do acc2
+ /do acc
+,
 for acc = empty:seq.int, last = -1, count = -1, sum = 0, t ∈ r do
  if last ≠ t ∧ count > 0 then
   next(acc + count * 256, t, 1, sum + count)
  else
   next(acc, t, count + 1, sum)
-/for (
- let mean = toreal.sum / 256.0
+/do
+ let mean = toreal.sum / 256.0,
  for sqs = 0.0, x ∈ acc do
-  let cnt = toreal(x / 256)
+  let cnt = toreal(x / 256),
   sqs + (cnt - mean)^2
- /for (
-  let stddev = sqrt(sqs / 256.0)
+ /do
+  let stddev = sqrt(sqs / 256.0),
   if mean / stddev > 5.4 then "PASS" else "FAIL" /if
   + print(3, toreal.samplesize * 16.0 / 256.0)
   + "mean"
   + print(3, mean)
   + "std dev"
-  + print(3, stddev)
- )
-) 
+  + print(3, stddev) 

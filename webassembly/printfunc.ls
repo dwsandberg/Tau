@@ -18,22 +18,21 @@ use stack.word
 
 Function printfunc(f:wfunc) seq.word
 let nocheck = false
-let a = code.f
+let a = code.f,
 if isempty.a then
  %.sym.f + "funcidx = $(funcidx.f) typidx = $(printtypeidx.typeidx.f)"
 else
  let typdesc = printtypeidx.typeidx.f
  let argtypes = subseq(typdesc, 3, length.typdesc - 5)
  let d1 = decodeLEBu(a, 1)
- let d2 = decodeLEBu(a, next.d1)
+ let d2 = decodeLEBu(a, next.d1),
  for text = "", place = next.d2, e ∈ constantseq(value.d2, 1) do
-  let d3 = decodeLEBu(a, place)
+  let d3 = decodeLEBu(a, place),
   next(text + constantseq(value.d3, (%.wtype.a_(next.d3))_1), next.d3 + 1)
- /for (
+ /do
   "($(text))
    /br $(zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), %.sym.f))
    "
- )
 
 Function printcode(a:seq.byte) seq.word zzz(true, "", a, "")
 
@@ -67,7 +66,7 @@ do
      if top.blkstk = "void"_1 then
       stk
      else
-      assert not.isempty.stk ∧ top.stk = top.blkstk report "type problem else $(toseq.stk)+$(top.blkstk)"
+      assert not.isempty.stk ∧ top.stk = top.blkstk report "type problem else $(toseq.stk)+$(top.blkstk)",
       pop.stk
     else if byte ∈ [return, drop] then
      pop.stk
@@ -78,11 +77,11 @@ do
       stk
      else
       assert top.blkstk = "void"_1 ∨ not.isempty.stk ∧ top.stk = top.blkstk
-      report "type problem end $(toseq.stk) /br $(toseq.blkstk) /br $(text)"
+      report "type problem end $(toseq.stk) /br $(toseq.blkstk) /br $(text)",
       stk
     else
      newstack(byte, stk, text)
-   let newblkstk = if byte ∈ [END] then pop.blkstk else blkstk
+   let newblkstk = if byte ∈ [END] then pop.blkstk else blkstk,
    next(text + decodeop.byte
     , byte
     , result
@@ -101,7 +100,7 @@ do
    assert byte
    ∈ [i32const, i64const, localset, localget, localtee
     , call, callindirect, brif, br, tobyte.255]
-   report "OPCODE $(decodeop.byte):$(text + stacktrace)"
+   report "OPCODE $(decodeop.byte):$(text + stacktrace)",
    next(text, byte, 0x0, shift, "startLEBarg", stk, blkstk, lastop)
  else if state = "inf64const" then
   if shift = 7 then
@@ -109,16 +108,16 @@ do
   else
    next(text, op, 0x0, shift + 1, state, stk, blkstk, op)
  else if state = "type" then
-  let newblkstk = push(blkstk, (%.wtype.byte)_1)
+  let newblkstk = push(blkstk, (%.wtype.byte)_1),
   next(text + decodeop.op + %.wtype.byte, op, 0x0, 0, "startop", stk, newblkstk, op)
  else if state = "alignmentbyte" then
   next(text, op, 0x0, 0, "startLEBarg", stk, blkstk, lastop)
  else if state = "zerobyte" then
-  assert byte = tobyte.0 report "expected 0 byte $(stacktrace)"
+  assert byte = tobyte.0 report "expected 0 byte $(stacktrace)",
   next(text, op, 0x0, 0, "startop", stk, blkstk, lastop)
  else
   assert state ∈ ["startLEBarg", "inLEB"] report "state problem $(state)"
-  let c = tobits.byte ∧ 0x7F
+  let c = tobits.byte ∧ 0x7F,
   if c = tobits.byte then
    let arg = 
     if state = "startLEBarg" then
@@ -144,11 +143,11 @@ do
      assert between(arg + 1, 1, length.locals)
      report "??? localset problem /br $(text + decodeop.op)" + toword.arg + xx
      assert top.stk = locals_(arg + 1)
-     report "type problem localset" + toword.arg + "locals" + locals + "/br" + text
+     report "type problem localset" + toword.arg + "locals" + locals + "/br" + text,
      pop.stk
     else if op = call then
      assert top(stk, length.xx - 4) = subseq(xx, 3, length.xx - 2)
-     report "types nomatch call stk:$(top(stk, length.xx - 4)) xx $(xx) /br $(text)"
+     report "types nomatch call stk:$(top(stk, length.xx - 4)) xx $(xx) /br $(text)",
      push(pop(stk, length.xx - 4), last.xx)
     else if op = callindirect then
      assert length.xx > 0 report "call indirect $(printtypeidx.arg)"
@@ -156,18 +155,18 @@ do
      report
       "types nomatch $(decodeop.op + top(stk, length.xx - 3)) //
        $(subseq(xx, 3, length.xx - 2)) i32"
-     assert last.xx ∈ "i32 i64 f64" report "?? callindirect $(xx) $(printtypeidx.arg)"
+     assert last.xx ∈ "i32 i64 f64" report "?? callindirect $(xx) $(printtypeidx.arg)",
      push(pop(stk, length.xx - 3), last.xx)
     else if op ∈ [i32store, i64store, f64store, i64load, i64load8u, i32load, f64load, i32const, i64const] then
      newstack(op, stk, text)
     else if op = localget then
-     assert between(arg + 1, 1, length.locals) report "localget problem"
+     assert between(arg + 1, 1, length.locals) report "localget problem",
      push(stk, locals_(arg + 1))
     else if op = brif then
-     assert top(stk, 1) = "i32" report "XXK" + toword.arg + toseq.stk + "/br" + text
+     assert top(stk, 1) = "i32" report "XXK" + toword.arg + toseq.stk + "/br" + text,
      pop.stk
     else if op = br then
-     let blktype = undertop(blkstk, arg)
+     let blktype = undertop(blkstk, arg),
      if blktype = "void"_1 then
       stk
      else
@@ -176,14 +175,16 @@ do
        "JK" + blktype + top.stk + decodeop.lastop + toword.arg + "/br" + toseq.blkstk
        + "/br"
        + text
+      ,
       pop.stk
     else
      assert op ∈ [localtee] report "OPCODEX $(decodeop.op):$(text) stk $(toseq.stk)"
      assert between(arg + 1, 1, length.locals)
      report "??? localtee problem /br $(text) $(decodeop.op)" + toword.arg + xx
      assert top.stk = locals_(arg + 1)
-     report "type problem localtee" + toword.arg + "locals" + locals + "/br" + text
+     report "type problem localtee" + toword.arg + "locals" + locals + "/br" + text,
      stk
+   ,
    next(text + decodeop.op + toword.arg + xx
     , op
     , 0x0
@@ -195,9 +196,9 @@ do
   else if state = "startLEBarg" then
    next(text, op, c, 7, "inLEB", stk, blkstk, lastop)
   else
-   let newresult = result ∨ c << shift
+   let newresult = result ∨ c << shift,
    next(text, op, newresult, shift + 7, state, stk, blkstk, lastop)
-/for ("P $(text)")
+/do "P $(text)"
 
 function newstack(op:byte, stk:stack.word, text:seq.word) stack.word
 let d = 
@@ -240,8 +241,8 @@ let d =
  else if op = unreachable then
   ["", ""]
  else
-  assert false report "newstack $(decodeop.op)"
+  assert false report "newstack $(decodeop.op)",
   ["", ""]
 assert length.toseq.stk ≥ length.d_1 ∧ top(stk, length.d_1) = d_1
-report "type problem $(decodeop.op) stk: $(toseq.stk) /br $(text)"
+report "type problem $(decodeop.op) stk: $(toseq.stk) /br $(text)",
 if isempty.d_2 then pop(stk, length.d_1) else push(pop(stk, length.d_1), d_2_1) 

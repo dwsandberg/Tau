@@ -52,9 +52,9 @@ Function align64 align align.7
 
 Function decode(code:align) seq.word
 let discard = [unspecified, align8, align16, align32, align64]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 8) then
- let r = ["unspecified ? ? ? align8 align16 align32 align64"_(i + 1)]
+ let r = ["unspecified ? ? ? align8 align16 align32 align64"_(i + 1)],
  if r ≠ "?" then r else "align." + toword.i
 else
  "align." + toword.i
@@ -97,13 +97,14 @@ Function STORE instop instop.44
 
 Function decode(code:instop) seq.word
 let discard = [BLOCK, BINOP, CAST, SELECT, RET, BR, PHI, ALLOCA, LOAD, CMP2, CALL, GEP, STORE]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 45) then
  let r = 
   [
    "? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL
     ? ? ? ? ? ? ? ? GEP STORE"
    _(i + 1)]
+ ,
  if r ≠ "?" then r else "instop." + toword.i
 else
  "instop." + toword.i
@@ -136,11 +137,12 @@ Function FUNCTION typeop typeop.21
 
 Function decode(code:typeop) seq.word
 let discard = [NumEle, TVOID, DOUBLE, OPAQUE, INTEGER, POINTER, ARRAY, FUNCTION]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 22) then
  let r = 
   [
    "? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"_(i + 1)]
+ ,
  if r ≠ "?" then r else "typeop." + toword.i
 else
  "typeop." + toword.i
@@ -173,12 +175,13 @@ Function TYPES blockop blockop.17
 
 Function decode(code:blockop) seq.word
 let discard = [INFOBLOCK, MODULE, PARA, PARAGRP, CONSTANTS, FUNCTIONBLK, VALUESYMTABLE, TYPES]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 18) then
  let r = 
   [
    "INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
    _(i + 1)]
+ ,
  if r ≠ "?" then r else "blockop." + toword.i
 else
  "blockop." + toword.i
@@ -205,9 +208,9 @@ Function FUNCTIONDEC moduleop moduleop.8
 
 Function decode(code:moduleop) seq.word
 let discard = [Version, TRIPLE, LAYOUT, GLOBALVAR, FUNCTIONDEC]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 9) then
- let r = ["? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"_(i + 1)]
+ let r = ["? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"_(i + 1)],
  if r ≠ "?" then r else "moduleop." + toword.i
 else
  "moduleop." + toword.i
@@ -253,13 +256,14 @@ let discard =
  [SETTYPE, CNULL, CUNDEF, CINTEGER, CWIDEINTEGER
   , CFLOAT, CAGGREGATE, CSTRING2, CSTRING0, CBINOP
   , CCAST, CGEP, CDATA]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 23) then
  let r = 
   [
    "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ?
     ? ? ? ? CGEP ? CDATA"
    _(i + 1)]
+ ,
  if r ≠ "?" then r else "constop." + toword.i
 else
  "constop." + toword.i
@@ -303,11 +307,12 @@ let discard =
  [trunc, zext, sext, fptoui, fptosi
   , uitofp, sitofp, fptrunc, fpext, ptrtoint
   , inttoptr, bitcast]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 12) then
  let r = 
   [
    "trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"_(i + 1)]
+ ,
  if r ≠ "?" then r else "castop." + toword.i
 else
  "castop." + toword.i
@@ -350,9 +355,9 @@ Function xor binaryop binaryop.12
 
 Function decode(code:binaryop) seq.word
 let discard = [add, sub, mul, udiv, sdiv, urem, srem, shl, lshr, ashr, and, or, xor]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 13) then
- let r = ["add sub mul udiv sdiv urem srem shl lshr ashr and or xor"_(i + 1)]
+ let r = ["add sub mul udiv sdiv urem srem shl lshr ashr and or xor"_(i + 1)],
  if r ≠ "?" then r else "binaryop." + toword.i
 else
  "binaryop." + toword.i
@@ -401,13 +406,14 @@ Function sle cmp2op cmp2op.41
 
 Function decode(code:cmp2op) seq.word
 let discard = [Feq, Fgt, Fge, Flt, Fle, Fne, eq, ne, ugt, uge, ult, ule, sgt, sge, slt, sle]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 42) then
  let r = 
   [
    "? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt
     sge slt sle"
    _(i + 1)]
+ ,
  if r ≠ "?" then r else "cmp2op." + toword.i
 else
  "cmp2op." + toword.i 

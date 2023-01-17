@@ -8,17 +8,17 @@ use bits
 
 use seq.byte
 
-use callconfig
-
 use compilerfrontT.callconfig
 
 use file
 
 use seq.file
 
+use llvmcode
+
 use standard
 
-use seq.symbol
+use set.symbol
 
 use symbol2
 
@@ -34,26 +34,31 @@ for acc = empty:seq.byte, names = "parts =", f ∈ files do
   next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
  else
   next(acc, names)
-/for (
+/do
  [
   file(filename(Library + ".libsrc")
    , toseqbyte.toUTF8(names + "uses = $(uses) exports = $(exports) Library = $(Library)") + acc)
   ]
-)
 
-use set.symbol
-
-Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean,profile:boolean) seq.file
+Function wasm(input:seq.file
+ , Library:seq.word
+ , exports:seq.word
+ , o:seq.word
+ , info:boolean
+ , profile:boolean) seq.file
 {problem is same symbol is used in different onclicks}
 let LF = [encodeword.[char.10]]
 let includetemplate = false
 let input2 = cat(input, "", exports, Library)
 let info2 = breakparagraph.data.first.input2
 let libname = Library
-let libexports = exports + "SpecialExports" + "SpecialImports"
-let rcinfo = compilerFront:callconfig(if profile then "profile" else "wasm"
+let libexports = 
+ exports + "SpecialExports" + "SpecialImports"
+ + if profile then "webProfileSupport" else ""
+let rcinfo = 
+ compilerFront:callconfig(if profile then "profile" else "wasm"
   , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")] + input)
-let charseq = seqof.typeref."char standard *"
+let charseq = seqof.typeref."char standard *",
 for
  syms2 = [symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint)]
  , imports = empty:seq.symbol
@@ -65,47 +70,42 @@ do
   next(syms2 + exports.m, imports)
  else
   next(syms2, imports)
-/for (
+/do
  {should check for dup names on syms2}
  let scriptstart = 
   for txt = "<script> $(LF)", sym ∈ syms2 do
    let f = 
     for args = "", i ∈ arithseq(nopara.sym, 1, 1) do
      args + "a b c d e f g h i j k l m n o p q r s t u v w x y z"_i + ","
-    /for ([name.sym] + "(" + args >> 1 + ")")
+    /do [name.sym] + "(" + args >> 1 + ")"
+   ,
    {Cannot just call reclaimspace after call to function f because f may be interpreted and return control
     will waiting for a callback. javascript global inprogress counts the number of callbacks we are waiting
     for. if inprogress is zero then it is safe to reclaim space.}
    txt
    + "function $(f) {exports.$(f) ; if (inprogress $(merge."= =") 0) exports.reclaimspace () ;}
     $(LF)"
-  /for (txt)
- {assert false report for acc = empty:seq.symbol, sd /in toseq.prg.rcinfo do acc+sym.sd /for (%n
-  .acc)}
+  /do txt
+ let prg4 = asset.renumberconstants.toseq.prg.rcinfo
+ let initprofile0 = getSymdef(prg4, symbol(moduleref(libname + "initialize"), "initProfile", typeptr))
+ let initprofile = if isempty.initprofile0 then empty:seq.symbol else [sym.initprofile0_1]
  let wasmfiles = 
-  wasmcompile(typedict.rcinfo
-   , asset.renumberconstants.toseq.prg.rcinfo
-   , toseq.asset.syms2
-   , o
-   , imports
-   , info)
+  wasmcompile(typedict.rcinfo, prg4, toseq.asset(syms2 + initprofile), o, imports, info, initprofile)
  let script = 
   {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template.js
    ")+toseqbyte.toUTF8." </script>" else}
   toseqbyte.toUTF8."<script src = $(merge.dq."/webassembly/template.js") > </script>"
+ ,
  for acc = wasmfiles, page ∈ input do
   if ext.fn.page ∉ "html" then
    acc
   else
-   let pagehtml = data.page
+   let pagehtml = data.page,
    acc
    + file(filename."+$(dirpath.fn.first.wasmfiles) $([name.fn.page]).html"
     , pagehtml + script
     + toseqbyte.toUTF8(scriptstart + "$(LF) pageinit ($(merge.dq.libname), $(name.fn.page)) ; </script>"))
- /for (acc)
-)
-
-use otherseq.symbol
+ /do acc
 
 Function doc seq.word
 "Steps to call function f1 as a process.

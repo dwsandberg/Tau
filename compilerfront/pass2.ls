@@ -45,7 +45,7 @@ else
    else
     not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
    , idx + 1)
- /for (isverysimple)
+ /do isverysimple
 
 Function Callself bits bits.1
 
@@ -79,28 +79,29 @@ for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
   let newcode = 
    if isconstorlocal.[acc_(length.acc - 1)] ∧ isconstorlocal.[last.acc] then
     let index = last.acc
-    let theseq = acc_(length.acc - 1)
+    let theseq = acc_(length.acc - 1),
     acc >> 2 + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
    else
     let t = backparse2(acc, length.acc, 2, empty:seq.int)
     let index0 = subseq(acc, t_2, length.acc)
     let theseq0 = subseq(acc, t_1, t_2 - 1)
     let theseq = if isconstorlocal.theseq0 then first.theseq0 else Local(nextvar + 1)
-    let index = if isconstorlocal.index0 then first.index0 else Local(nextvar + 2)
+    let index = if isconstorlocal.index0 then first.index0 else Local(nextvar + 2),
     subseq(acc, 1, t_1 - 1)
     + if isconstorlocal.theseq0 then empty:seq.symbol else theseq0 + Define.value.theseq /if
     + if isconstorlocal.index0 then empty:seq.symbol else index0 + Define.value.index /if
     + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
+  ,
   next(newcode, nextvar + 3, sym)
  else
   next(if name.sym ∈ "checkfornoop" then acc else acc + sym, nextvar, sym)
-/for (acc)
+/do acc
 
 Function forexpisnoop(sym:symbol, acc:seq.symbol) seq.symbol
 let len = length.acc
 assert acc_(len - 1) = continue.2 ∧ nopara.acc_(len - 3) = 2 ∧ len ≥ 24
 report "SDF $(len) $(sym) $(acc)"
-let loop = acc_(len - 21)
+let loop = acc_(len - 21),
 if not(isloopblock.loop ∧ isSequence.acc_(len - 4)) then
  empty:seq.symbol
 else
@@ -113,7 +114,7 @@ else
  let element = acc_(len - 5)
  let theacc = acc_(len - 6)
  let theseq = acc_(len - 10)
- let idxNB = symbol(internalmod, "idxNB", paratypes.loop, parameter.first.paratypes.loop)
+ let idxNB = symbol(internalmod, "idxNB", paratypes.loop, parameter.first.paratypes.loop),
  if islocal.element ∧ value.element = value.masteridx + 1 ∧ firstvar.loop = value.theacc
  ∧ idxNB = acc_(len - 8) then
   let empty = if isrecordconstant.theseq then acc_(len - 23) else acc_(len - 26)
@@ -123,7 +124,6 @@ else
   {assert name.sym /in" tointseq towordseq toalphaseq % function hash breakcommas typerecords constantrecords
    AGGREGATE buildargs alphasort findelement2 profilecall tocharseq inrec asseqseqmytype" report" as"
    +%.sym+%.acc}
-  {assert name.sym ∉" testr" report" kkk"+%.acc}
   let seqlen = 
    if isrecordconstant.theseq then
     Lit.nopara.last.fullconstantcode.theseq
@@ -147,13 +147,13 @@ else
    + theacc
    + element
   assert subseq(acc, len - 20, len - 5) = shouldbe
-  report "$(theseq) shouldbe $(sym) $(acc) /p $(shouldbe)"
+  report "$(theseq) shouldbe $(sym) $(acc) /p $(shouldbe)",
   if isrecordconstant.theseq ∧ isempty then
    subseq(acc, 1, len - 24) + theseq
   else if islocal.theseq ∧ isempty then
    subseq(acc, 1, len - 27) + theseq
   else
-   let theseqtype = first.paratypes.loop
+   let theseqtype = first.paratypes.loop,
    if %.parameter.theseqtype ∈ ["packed2", "ptr"] then
     {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
    else
@@ -173,7 +173,7 @@ let theseqtype = seqof.seqparameter
 let elementtype = 
  if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then seqparameter else typeptr
 let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte
-let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
+let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype),
 [theseq
  , GetSeqType
  , Define.value.seqtype
@@ -184,7 +184,8 @@ let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], eleme
  , Br2(1, 2)]
 + [theseq, masteridx, callidx, Exit]
 + if boundscheck then
- [masteridx
+ [Start.typeint
+  , masteridx
   , Lit.0
   , GtOp
   , Br2(1, 2)
@@ -194,8 +195,12 @@ let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], eleme
   , GtOp
   , Br2(1, 2)
   , outofboundssymbol
-  , abortsymbol.elementtype
-  , Exit]
+  , symbol(internalmod, "assert", seqof.typeword, typeint)
+  , Exit
+  , seqtype
+  , Exit
+  , EndBlock
+  , Define.value.seqtype]
 else
  empty:seq.symbol
 /if
@@ -215,7 +220,7 @@ else
  , EndBlock]
 
 function exitlocations(s:seq.symbol, i:int, result:seq.int) seq.int
-let sym = s_i
+let sym = s_i,
 if isstart.sym then
  [i] + result
 else if isblock.sym then
@@ -224,7 +229,7 @@ else
  exitlocations(s, i - 1, if isExit.sym then [i] + result else result)
 
 function matchblock(s:seq.symbol, i:int, nest:int) int
-let sym = s_i
+let sym = s_i,
 if isblock.sym then
  matchblock(s, i - 1, nest + 1)
 else if isstartorloop.sym then
@@ -248,12 +253,12 @@ Function backparse2(s:seq.symbol, i:int, no:int, result:seq.int) seq.int
 if no = 0 then
  result
 else
- assert i > 0 report "back parse 1a:" + toword.no + %.s + stacktrace
+ assert i > 0 report "back parse 1a:" + toword.no + %.s + stacktrace,
  if isdefine.s_i then
-  let args = backparse2(s, i - 1, 1, empty:seq.int)
+  let args = backparse2(s, i - 1, 1, empty:seq.int),
   backparse2(s, args_1, no, result)
  else if isblock.s_i then
-  let b = matchblock(s, i - 1, 0)
+  let b = matchblock(s, i - 1, 0),
   if b = 1 then [b] + result else backparse2(s, b - 1, no - 1, [b] + result)
  else
   let nopara = nopara.s_i
@@ -265,12 +270,14 @@ else
     assert length.args = nopara
     report
      "back parse 3 $(s_i)" + toword.nopara + "//"
-     + for acc = "", @e ∈ args do acc + toword.@e /for (acc)
+     + for acc = "", @e ∈ args do acc + toword.@e /do acc
+    ,
     args_1
   let b = 
    if first > 1 ∧ isdefine.s_(first - 1) then
-    let c = backparse2(s, first - 2, 1, empty:seq.int)
+    let c = backparse2(s, first - 2, 1, empty:seq.int),
     c_1
    else
     first
+  ,
   backparse2(s, b - 1, no - 1, [b] + result) 

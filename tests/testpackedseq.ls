@@ -16,7 +16,7 @@ Function check:seq.T(size:int, depth:int) seq.word
 let unpack = random:seq.T(depth)
 let pack = packed.unpack
 let typ = getseqtype.pack
-let blksize = 8160 * 8
+let blksize = 8160 * 8,
 if pack ≠ unpack then
  "FAIL seq not equal"
 else if length.pack ≤ blksize ∧ typ = 0 ∧ size = 8 then
@@ -35,7 +35,7 @@ else
  random:seq.T(depth - 1 - getint.2) + random:seq.T(depth - 1 - getint.2)
 
 Function base:seq.T seq.T
-let i = getint.6
+let i = getint.6,
 if i = 0 then
  empty:seq.T
 else if i = 1 then
@@ -50,7 +50,7 @@ else
  constantseq(getint.7, get:T)
 
 function seqkind(a:seq.T) seq.word
-let t = getseqtype.a
+let t = getseqtype.a,
 if t = 0 then
  [toword.length.a]
 else if t = 1 then
@@ -60,9 +60,9 @@ else if t = getseqtype.constantseq(1, get:T) then
 else if ispseq.a then "pseq" else "unknown"
 
 Function seqstruct(a:seq.T) seq.word
-let kind = seqkind.a
+let kind = seqkind.a,
 if kind = "pseq" then
- let p = to:pseq.T(a)
+ let p = to:pseq.T(a),
  "($(seqstruct.a.p) $(seqstruct.b.p))"
 else
  kind 

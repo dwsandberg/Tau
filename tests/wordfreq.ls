@@ -23,7 +23,7 @@ type wordfreq is count:int, w:word
 function >1(a:wordfreq, b:wordfreq) ordering count.a >1 count.b
 
 function count(s:seq.wordfreq, w:word) seq.wordfreq
-let index = addorder.indexedword.w
+let index = addorder.indexedword.w,
 replaceS(s, index, [wordfreq(count.s_index + 1, w)])
 
 function print(p:wordfreq) seq.word
@@ -37,16 +37,16 @@ if count.p < mincount then empty:seq.wordfreq else [p]
 
 function wordfreq(mincount:int, a:seq.seq.word) seq.wordfreq
 for acc = empty:seq.wordfreq
- , @e ∈ sort.for acc = sparseseq.wordfreq(0, "A"_1), @e ∈ a do count(acc, @e) /for (acc)
+ , @e ∈ sort.for acc = sparseseq.wordfreq(0, "A"_1), @e ∈ a do count(acc, @e) /do acc
 do
  acc + removelowcount(mincount, @e)
-/for (acc)
+/do acc
 
 function count(s:seq.wordfreq, w:seq.word) seq.wordfreq
-for acc = s, @e ∈ w do count(acc, @e) /for (acc)
+for acc = s, @e ∈ w do count(acc, @e) /do acc
 
 Function testwordfreq seq.word
-let result = for acc = empty:seq.word, @e ∈ wordfreq(50, testdata) do acc + print.@e /for (acc)
+let result = for acc = empty:seq.word, @e ∈ wordfreq(50, testdata) do acc + print.@e /do acc
 let result1 = 
  "/br the word s occurs 58 times.
   /br the word nextvar occurs 58 times.
@@ -70,6 +70,7 @@ let result1 =
   /br the word) occurs 241 times.
   /br the word.occurs 408 times.
   /br the word, occurs 460 times."
+,
 if subseq(result, 1, 8) = subseq(result1, 1, 8) then "PASS wordfreq" else "<* literal FAIL wordfreq *>"
 
 function testdata seq.seq.word

@@ -52,8 +52,8 @@ Function getattributes(id:seq.word, attributes:seq.word) seq.word
 towords.getattributes2(token.id, jsUTF8.toseqbyte.HTMLformat.attributes)
 
 Function getLines(id:seq.word) seq.seq.word
-let a = toseqbyte.getattributes2(token.id, jsUTF8.toseqbyte.HTMLformat."textContent")
-for acc = empty:seq.seq.word, l ∈ breaklines.a do acc + towords.l /for (acc)
+let a = toseqbyte.getattributes2(token.id, jsUTF8.toseqbyte.HTMLformat."textContent"),
+for acc = empty:seq.seq.word, l ∈ breaklines.a do acc + towords.l /do acc
 
 Function setAttribute(id:seq.word, att:seq.word, value:seq.word) real
 setattribute2(token.id, token.att, jsUTF8.toseqbyte.HTMLformat.value)
@@ -67,13 +67,11 @@ let none = "N"_1
 let xml = 
  for xml = "", hasquote = none, w ∈ xml0 do
   if w ∈ dq then
-   if hasquote = none then
-    next(xml + w + "/nosp", w)
-   else
-    next(xml + w, none)
+   if hasquote = none then next(xml + w + "/nosp", w) else next(xml + w, none)
   else if w = "/br"_1 then
    next(xml + encodeword.[char.10], hasquote)
   else
    next(xml + w, hasquote)
- /for (xml)
+ /do xml
+,
 replacesvg(token.name, jsUTF8.toseqbyte.toUTF8.xml) 

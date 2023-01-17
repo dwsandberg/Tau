@@ -28,7 +28,8 @@ void initprocessinfo(processinfo p,processinfo PD){
 }
 
 
-BT createthread(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
+
+BT createthread(processinfo PD ,BT * args2,BT argtype ){
 BT profileidx=0;
 BT (*finishprof)(BT idx,BT x) =NULL;
   pthread_attr_t 	stackSizeAttribute;
@@ -39,22 +40,18 @@ BT (*finishprof)(BT idx,BT x) =NULL;
   /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
   processinfo p=(processinfo)  allocatespace(PD,(sizeof (struct pinfo)+7)/8);
   initprocessinfo(p,PD);
-  p->deepcopyresult =  deepcopyresult; 
-    p->deepcopyseqword =  deepcopyseqword;
-    p->func= func;
+  p->deepcopyresult =  args2[0]; 
+    p->deepcopyseqword =  args2[1];
+    p->func= args2[2];
     p->argtype=argtype;
-     p->args= args;
+     p->args= args2+3;
 
   p->profileindex = profileidx; 
   p->finishprof=finishprof;
   assertexit(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )threadbody,(void *) p),"ERROR");
   return (BT)p;
-} 
-
-BT createthreadI(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
-return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args+2, argtype);}
-
-
+}   
+ 
 /*
 
 The following code  was used to generate case in the threadbody.

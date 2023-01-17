@@ -2,10 +2,6 @@ Module prettycompilerfront
 
 use UTF8
 
-use callconfig
-
-use compilerfrontT.callconfig
-
 use seq.char
 
 use cleanExports
@@ -55,50 +51,45 @@ if isempty.p then first."?" else if first.p ∈ "/keyword" then p_2 else first.p
 
 function %(r:rename) seq.word %.sym.r + newname.r + %.paraorder.r
 
-Function transform(input:seq.file
+Function transform(m:midpoint
  , o:seq.word
  , target:seq.word
- , modrename:seq.word
+ , modrenames:seq.word
  , parseit:boolean
  , reorguse:boolean
  , html:boolean
  , noindex:boolean
  , cleanexports:boolean
- , moveexports:boolean) seq.file
-let modrenames = modrename
-let m = 
- if parseit ∨ cleanexports ∨ moveexports then
-  compilerFront:callconfig("text", input)
- else
-  empty:midpoint
+ , moveexports:boolean
+ , input:seq.file) seq.file
 let exportinfo = manageExports.m
 let srctext = 
  if parseit then
   for renames = empty:seq.rename, sd ∈ toseq.prg.m do
    if not.isempty.code.sd ∧ subseq(worddata.first.code.sd, 1, 2) = "{rename" then
-    let x = worddata.first.code.sd >> 1 << 2
+    let x = worddata.first.code.sd >> 1 << 2,
     for paraorder = empty:seq.int, error = "", w ∈ x << 1 do
      if w ∈ "(,)" then
       next(paraorder, error)
      else
       assert checkinteger.w ∈ "INTEGER"
       report "format problem with rename for $(%.sym.sd + worddata.first.code.sd)"
-      let no = toint.w
+      let no = toint.w,
       if between(no, 1, nopara.sym.sd) then
        next(paraorder + no, error)
       else
        next(paraorder, "$(w) should be between 1 and $(nopara.sym.sd)")
-    /for (renames + rename(sym.sd, [first.x], paraorder))
+    /do renames + rename(sym.sd, [first.x], paraorder)
    else
     renames
-  /for (totext(m, renames))
+  /do totext(m, renames)
  else
   for acc = empty:seq.seq.word, i ∈ input do
    if ext.fn.i ∈ "libinfo" then acc else acc + breakparagraph.data.i
-  /for (acc)
+  /do acc
 let exported = exportedmodref.m
-let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for (uses)
-let directory = if isempty.target then "tmp" else target
+let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /do uses
+let directory = if isempty.target then "tmp" else target,
 for txt = empty:seq.seq.word
  , modtext = ""
  , uses = empty:seq.seq.word
@@ -108,7 +99,7 @@ do
  if isempty.p then
   next(txt, modtext, uses, pno + 1)
  else
-  let key = key.p
+  let key = key.p,
   if subseq(p, 1, 2) = "Library =" then
    next(txt, modtext, uses, pno + 1)
   else if first.p ∈ "use" then
@@ -139,7 +130,7 @@ do
            , ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)
           do
            uselist + %.ref4
-          /for (uselist)
+          /do uselist
          else
           uses
         let uselist = 
@@ -148,36 +139,39 @@ do
          else
           for uselist = empty:seq.seq.word, u ∈ uselist0 do
            uselist + ([rename(modrenames, u_2)] + u << 2)
-          /for (uselist)
-        for newuses = "", ref ∈ sortuse(uselist, "") do newuses + "/p /keyword use" + ref /for (newuses)
+          /do uselist
+        ,
+        for newuses = "", ref ∈ sortuse(uselist, "") do newuses + "/p /keyword use" + ref /do newuses
       let newexports = if moveexports then newtext(exportinfo, modname) else ""
-      let idx = includecomment.modtext
+      let idx = includecomment.modtext,
       "Module" + rename(modrenames, modname) + subseq(modtext, 3, idx - 1) + newuses
       + newexports
       + modtext << (idx - 1)
+    ,
     next(txt + formatedModuleText, p, empty:seq.seq.word, pno + 1)
   else
    let newmodtext = 
     if key ∈ "Export" then
      if cleanexports ∨ moveexports then
-      let p2 = newtext(exportinfo, pno, modtext_2)
+      let p2 = newtext(exportinfo, pno, modtext_2),
       if isempty.p2 ∨ moveexports then modtext else modtext + "/p" + pretty.p2
      else
       modtext + "/p" + pretty.p
     else
      modtext + "/p" + if html then p else escapeformat.p
+   ,
    next(txt, newmodtext, uses, pno + 1)
-/for (
+/do
  if html then
   for maintxt = "", header = "", M ∈ txt do
    if key.M ∉ "Module module" then
     next(maintxt + M + "/p", header)
    else
     let modname = M_2
-    let indextxt = if noindex then "" else "<* none <hr id = $(merge.dq.[modname]) > *>"
+    let indextxt = if noindex then "" else "<* none <hr id = $(merge.dq.[modname]) > *>",
     next(maintxt + indextxt + "/keyword $(M) /p"
      , header + "<a href = $(merge.dq("#" + modname)) > $(modname) </a>")
-  /for ([file(o, if noindex then maintxt else "<* none $(header)+*> $(maintxt)")])
+  /do [file(o, if noindex then maintxt else "<* none $(header)+*> $(maintxt)")]
  else
   let modtodir = 
    for modtodir = "", lib = first.directory, p1 ∈ if parseit then src.m else srctext do
@@ -189,12 +183,13 @@ do
      next(modtodir, merge(directory + "/" + p1_3))
     else
      next(modtodir, lib)
-   /for (modtodir)
+   /do modtodir
   let para = 
    if reorguse then "reorguse" else "" /if + if parseit then "parseit" else "" /if
    + if cleanexports then "cleanexports" else "" /if
    + if moveexports then "moveexports" else "" /if
-   + for txt2 = "", x ∈ input do txt2 + "/br" + fullname.fn.x /for (txt2)
+   + for txt2 = "", x ∈ input do txt2 + "/br" + fullname.fn.x /do txt2
+  ,
   for files = empty:seq.file, summary = "inputs $(para) /p files created", M ∈ txt do
    if subseq(M, 1, 1) ∉ ["Module", "module"] ∨ char1."$" ∈ decodeword.M_2
    ∨ length.M < 2 then
@@ -202,10 +197,9 @@ do
    else
     let modname = M_2
     let idx = findindex(modtodir, modname)
-    let fn = filename("+" + modtodir_(idx + 1) + modname + ".ls")
+    let fn = filename("+" + modtodir_(idx + 1) + modname + ".ls"),
     next(files + file(fn, M), summary + "/br" + fullname.fn)
-  /for (files + file(o, summary))
-)
+  /do files + file(o, summary)
 
 * The /keyword transform cmd takes a list of input source files. For each module in the input a pretty printed
 file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block transform helloworld/helloworld
@@ -228,59 +222,54 @@ option is useful for examining source code. For example </ block transform htmlc
 flags = html*> If the option" flags = html noindex" is used then no index is included. This final
 form is useful for producing documentation with imbedded Tau code.
 
-Function unusedsymbols(input:seq.file
+Function unusedsymbols(m:midpoint
  , o:seq.word
  , flags:seq.word
- , all:boolean
- , generated:boolean
+ , all0:boolean
+ , generated0:boolean
  , excessExports:boolean) seq.file
-let all0 = all
-let generated0 = generated
-let m = compilerFront:callconfig("text", input)
-let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for (uses)
+let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /do uses
 let templates = 
  for acc = templates.m, sym ∈ toseq.dict do
   if isAbstract.module.sym ∧ isempty.getCode(templates.m, sym) then
    acc + symdef(sym, empty:seq.symbol, 0)
   else
    acc
- /for (acc)
+ /do acc
 let roots = 
  for acc = empty:set.symbol, sd ∈ toseq.prg.m do
   if nopara.sym.sd ≠ 2 then
    acc
   else
-   let a = decodeword.name.sym.sd
+   let a = decodeword.name.sym.sd,
    if subseq(a, length.a - 2, length.a) = decodeword.first."$EP" then
     acc + sym.sd
    else
     acc
- /for (acc)
+ /do acc
 let a2 = closeuse(empty:set.symbol, roots, prg.m, templates, dict)
 let a3 = 
  for acc = empty:set.symbol, prg = empty:seq.symdef, sym ∈ toseq(dict \ a2) do
-  let b = getSymdef(prg.m, sym)
+  let b = getSymdef(prg.m, sym),
   if not.isempty.b ∧ paragraphno.b_1 ≠ 0 ⊻ generated0 then
    next(acc + sym, prg + b_1)
   else
    next(acc, prg)
- /for (
+ /do
   if all0 then
    for arcs = empty:set.arc.symbol, sd ∈ prg do
     for arcs2 = arcs, sy ∈ toseq(asset.code.sd ∩ acc - sym.sd) do
      arcs2 + arc(sym.sd, sy)
-    /for (arcs2)
-   /for (
-    let g = newgraph.toseq.arcs
+    /do arcs2
+   /do
+    let g = newgraph.toseq.arcs,
     acc \ (nodes.g \ asset.sources.g)
-   )
   else
    acc
- )
 let outsyms = 
  if excessExports then
   {symbols exported from a module and only used internally to that module}
-  let exportedSymbols = for acc = empty:seq.symbol, alibmod ∈ libmods.m do acc + exports.alibmod /for (acc)
+  let exportedSymbols = for acc = empty:seq.symbol, alibmod ∈ libmods.m do acc + exports.alibmod /do acc,
   for acc = result2(empty:set.symbol, empty:set.symbol)
    , sd ∈ toseq.prg.m + toseq.templates.m
   do
@@ -289,14 +278,15 @@ let outsyms =
      next(internal0 + sy, external0)
     else
      next(internal0, external0 + sy)
-   /for (result2(internal0, external0))
-  /for (internaluse.acc ∩ asset.exportedSymbols \ externaluse.acc \ a3)
+   /do result2(internal0, external0)
+  /do internaluse.acc ∩ asset.exportedSymbols \ externaluse.acc \ a3
  else
   a3
 let out = 
  for acc = empty:seq.seq.word, sym ∈ toseq.outsyms do
   acc + %.sym
- /for ("Unused symbols for roots $(toseq.roots) /p $(%n.alphasort.acc)")
+ /do "Unused symbols for roots $(toseq.roots) /p $(%n.alphasort.acc)"
+,
 [file(o, out)]
 
 type result2 is internaluse:set.symbol, externaluse:set.symbol
@@ -315,7 +305,7 @@ type rename is sym:symbol, newname:seq.word, paraorder:seq.int
 function =(a:rename, b:rename) boolean sym.a = sym.b
 
 function rename(renames:seq.word, name:word) word
-let i = findindex(renames, name)
+let i = findindex(renames, name),
 if i > length.renames then name else renames_(i + 2)
 
 function getrename(renames:seq.rename, s:symbol) seq.rename
@@ -327,11 +317,13 @@ for acc = empty:seq.rename, r ∈ renames do
  else if not.isAbstract.module.sym.r ∨ name.module.sym.r ≠ name.module.s then
   acc
  else if replaceTsymbol(para.module.s, sym.r) = s then
-  assert true report "M $(s) $(r)"
+  assert true report "M $(s) $(r)",
   acc + r
  else
   acc
-/for (acc)
+/do acc
+
+use process.seq.word
 
 function totext(result1:midpoint, renames:seq.rename) seq.seq.word
 let src = 
@@ -349,10 +341,10 @@ let src =
       "Export $(newname.r) $(p << 2)"
      else
       ""
-    /for (if isempty.found then p else found)
+    /do if isempty.found then p else found
    else
     p
-  /for (acc)
+  /do acc
 let acc4 = 
  for acc4 = src, sd ∈ toseq.prg.result1 do
   if paragraphno.sd = 0 then
@@ -369,15 +361,14 @@ let acc4 =
     if isempty.hasrename then
      fullname.sym.sd + plist2
     else
-     let plist = break(first.",", plist2 << 1)
+     let plist = break(first.",", plist2 << 1),
      for newpara = "", i ∈ paraorder.hasrename_1 do
       newpara + plist_i + ","
-     /for (newname.first.hasrename + if isempty.newpara then "" else "($(newpara >> 1)")
+     /do newname.first.hasrename + if isempty.newpara then "" else "($(newpara >> 1)"
    let c = if isempty.hasrename then code.sd else code.sd << 1
-   let tmp = c
    let newtext = 
     [src2_1] + newheader + %.resulttype.sym.sd
-    + for acc = "", stk = empty:stack.seq.word, last = c_1, sym ∈ tmp << 1 do
+    + for stk = empty:stack.seq.word, last = c_1, sym ∈ c << 1 do
      if sym = NotOp ∧ nopara.last = 2 then
       let paratypes = paratypes.last
       let newname = 
@@ -388,15 +379,18 @@ let acc4 =
        else if name.last = "<"_1 then
         "≥"
        else if name.last = ">"_1 then "≤" else [name.last]
+      ,
       if name.last ≠ newname_1 then
-       next(acc, stk, symbol(internalmod, newname, paratypes_1, paratypes_2, typeboolean))
+       next(stk, symbol(internalmod, newname, paratypes_1, paratypes_2, typeboolean))
       else
-       next(acc, newstk(last, stk, renames), sym)
+       next(newstk(last, stk, renames), sym)
      else
-      next(acc, newstk(last, stk, renames), sym)
-    /for (top.newstk(last, stk, renames))
+      next(newstk(last, stk, renames), sym)
+    /do top.newstk(last, stk, renames)
+   ,
    replace(acc4, paragraphno.sd, pretty.newtext)
- /for (acc4)
+ /do acc4
+,
 for acc = empty:seq.seq.word
  , modtext = empty:seq.seq.word
  , beforeModule = true
@@ -411,8 +405,9 @@ do
    if subseq(p, 1, 1) ∈ ["/keyword", "use", "builtin", "Export"] then
     p
    else if subseq(p, 1, 1) ∈ ["type", "Function", "function"] then pretty.p else p
+  ,
   next(acc, modtext + t, beforeModule)
-/for (acc)
+/do acc
 
 function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename) stack.seq.word
 if isstart.sym ∨ isExit.sym ∨ isbr.sym then
@@ -420,35 +415,38 @@ if isstart.sym ∨ isExit.sym ∨ isbr.sym then
 else if name.module.sym ∈ "$int" then
  push(stk, [name.sym])
 else if name.sym = first."let" ∧ length.toseq.stk ≥ 2 then
- let args = top(stk, 2)
+ let args = top(stk, 2),
  push(pop(stk, 2), args_1 + "(" + args_2 + ")")
 else if isdefine.sym ∧ not.isempty.stk then
  push(pop.stk, "let $([name.sym]) = ($(top.stk))")
 else if iswords.sym then
- let wd = worddata.sym
+ let wd = worddata.sym,
  if first.wd = first.dq then
   push(stk, dq + subseq(wd, 2, length.wd - 1) + dq)
  else
   push(stk, wd)
 else if name.sym ∈ "{" ∧ length.toseq.stk ≥ 2 then
  {comment}
- let args = top(stk, 2)
- push(pop(stk, 2), args_1 + args_2)
+ if nopara.sym = 1 then
+  stk
+ else
+  let args = top(stk, 2),
+  push(pop(stk, 2), args_1 + args_2)
 else if isblock.sym ∧ length.toseq.stk ≥ 3 then
- let args = top(stk, 3)
+ let args = top(stk, 3),
  push(pop(stk, 3), "if $(args_1) then $(args_2) else $(args_3) /if")
 else if name.sym ∈ "assert" then
  stk
 else if name.sym ∈ "makereal" ∧ (top.stk)_2 = "."_1 then
  stk
 else if name.sym = "report"_1 ∧ length.toseq.stk ≥ 3 then
- let args = top(stk, 3)
+ let args = top(stk, 3),
  push(pop(stk, 3), "assert $(args_1) report ($(args_3)) ($(args_2))")
 else if sym
 = symbol(moduleref("* seq", typeword), "+", [seqof.typeword, seqof.typeword], seqof.typeword)
 ∧ last.top.pop.stk ∈ dq
 ∧ top.pop.stk ≠ dq."$" then
- let args = top(stk, 2)
+ let args = top(stk, 2),
  if first.args_2 ∈ dq ∧ args_2 ≠ dq."$" then
   push(pop(stk, 2), args_1 >> 1 + args_2 << 1)
  else
@@ -457,9 +455,10 @@ else if sym
     subseq(args_2, 3, length.args_2 - 1)
    else
     args_2
+  ,
   push(pop(stk, 2), args_1 >> 1 + "$" + "(" + t + ")" + dq)
 else if nopara.sym = 2 ∧ name.sym ∈ binaryops ∧ length.toseq.stk ≥ 2 then
- let args = top(stk, 2)
+ let args = top(stk, 2),
  push(pop(stk, 2), "($(args_1)" + name.sym + args_2 + ")")
 else if nopara.sym = 2 ∧ name.sym ∈ "$" then
  let args = top(stk, 2)
@@ -468,35 +467,42 @@ else if nopara.sym = 2 ∧ name.sym ∈ "$" then
    args_1 >> 1 + args_2 << 1
   else
    args_1 >> 1 + "$" + "(" + args_2 + ")" + dq
+ ,
  push(pop(stk, 2), new)
+else if name.sym ∈ "$assert" then
+ let args = top(stk, 2),
+ push(pop(stk, 2), "assert $(args_1) report $(args_2)")
+else if name.sym ∈ "$letend" then
+ let args = top(stk, nopara.sym),
+ for acc7 = "", s ∈ args >> 1 do
+  acc7 + s
+ /do push(pop(stk, nopara.sym), acc7 + "do" + last.args)
 else if name.sym ∈ "$fortext" then
  let args = top(stk, nopara.sym)
  let whileexp = args_(length.args - 3)
+ let accNames = undertop(stk, 1),
  push(pop(stk, nopara.sym)
-  , for acc6 = "for", i = 1, name ∈ top.stk do
-   next(acc6 + name + if i = length.top.stk then "∈" else "=" /if + args_i + ","
+  , for acc6 = "for", i = 1, name ∈ accNames do
+   next(acc6 + name + if i = length.accNames then "∈" else "=" /if + args_i + ","
     , i + 1)
-  /for (
-   assert true
-   report
-    acc6 + "-1:$(length.args - 1)-2:$(args_(length.args - 2)) while $(whileexp)"
+  /do
    acc6 >> 1 + if whileexp = "true" then "" else "while $(whileexp)" /if
-   + "do $(args_(length.args - 2)) /for ($(args_(length.args - 1)))"
-  ))
+   + "do $(args_(length.args - 2)) /do $(args_(length.args)) /for"
+  )
 else if length.toseq.stk ≥ nopara.sym then
  if isSequence.sym then
   push(pop(stk, nopara.sym), "[$(addcommas.top(stk, nopara.sym))]")
  else
-  let xx = getrename(renames, sym)
+  let xx = getrename(renames, sym),
   if not.isempty.xx then
    push(pop(stk, nopara.sym)
     , if nopara.sym = 0 then
      newname.xx_1
     else
-     let args = top(stk, nopara.sym)
+     let args = top(stk, nopara.sym),
      for acc = newname.xx_1 + "(", i ∈ paraorder.xx_1 do
       acc + args_i + ","
-     /for (acc >> 1 + ")")
+     /do acc >> 1 + ")"
     )
   else
    push(pop(stk, nopara.sym)
@@ -511,14 +517,15 @@ else
 function binaryops seq.word "=+_^∩ ∪ \-* / << >> > < ? >1 >2 ∈ mod ∧ ∨ ⊻ ≠ ∉ ≥ ≤"
 
 function addcommas(s:seq.seq.word) seq.word
-for acc2 = "", t ∈ s do acc2 + t + "," /for (acc2 >> 1)
+for acc2 = "", t ∈ s do acc2 + t + "," /do acc2 >> 1
 
 function closeuse(done:set.symbol
  , toprocess:set.symbol
  , prg:set.symdef
  , templates:set.symdef
  , dict:set.symbol) set.symbol
-let new0 = for acc = empty:seq.symbol, sym ∈ toseq.toprocess do acc + getCode(prg, sym) /for (acc)
+let new0 = 
+ for acc = empty:seq.symbol, sym ∈ toseq.toprocess do acc + getCode(prg, sym) /do acc
 let new1 = 
  for acc = empty:seq.symbol, sym ∈ toseq.asset.new0 do
   if isspecial.sym ∨ iswords.sym ∨ isInternal.sym ∨ islocal.sym
@@ -529,8 +536,8 @@ let new1 =
    acc
   else
    acc + sym
- /for (asset.acc \ done)
-let new2 = requires(new1, templates, dict, true) \ done ∪ new1
+ /do asset.acc \ done
+let new2 = requires(new1, templates, dict, true) \ done ∪ new1,
 if isempty.new2 then done else closeuse(done ∪ toprocess, new2, prg, templates, dict)
 
 function ⊻(a:boolean, b:boolean) boolean if a then not.b else b

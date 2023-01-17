@@ -38,7 +38,7 @@ function dir(fn:filename) word
 if length.dirpath.fn = 1 then
  first.dirpath.fn
 else
- for acc = "", p ∈ dirpath.fn do acc + p + "/" /for (merge(acc >> 1))
+ for acc = "", p ∈ dirpath.fn do acc + p + "/" /do merge(acc >> 1)
 
 function filename(dir:word, name:word, ext:word) filename filename([dir], name, ext)
 
@@ -51,7 +51,7 @@ else
 type file is fn:filename, rawdata:seq.seq.byte, dummy:int
 
 Function data(f:file) seq.byte
-for acc = empty:seq.byte, e ∈ rawdata.f do acc + e /for (acc)
+for acc = empty:seq.byte, e ∈ rawdata.f do acc + e /do acc
 
 function file2(fn:filename, data:seq.seq.byte) file file(fn, data, 0)
 
@@ -73,7 +73,7 @@ Function file(fn:filename, a:seq.seq.byte) file file2(fn, a)
 
 Function filename(s:seq.word) filename
 let t = getfilenames.s
-assert length.t = 1 ∧ ext.first.t ∉ "?" report "illegal file name $(s + stacktrace)"
+assert length.t = 1 ∧ ext.first.t ∉ "?" report "illegal file name $(s + stacktrace)",
 first.t
 
 function =(a:filename, b:filename) boolean
@@ -82,7 +82,7 @@ dirpath.b = dirpath.a ∧ name.a = name.b ∧ ext.a = ext.b
 Function %(a:filename) seq.word dirpath.a + name.a + "." + ext.a
 
 Function getfilenames(s:seq.word) seq.filename
-let nofile = "."_1
+let nofile = "."_1,
 for acc = empty:seq.filename
  , filename = nofile
  , last = "?"_1
@@ -110,16 +110,15 @@ do
   next(acc, w, last, prefix, suffix)
  else
   next(acc + fixfilename(prefix, filename, suffix), w, last, prefix, suffix)
-/for (
+/do
  if filename ≠ nofile ∧ w ∉ "=" then
   acc + fixfilename(prefix, filename, suffix)
  else
   acc
-)
 
 function fixfilename(prefix:seq.word, name:word, suffix:word) filename
 let t = decodeword.name
-let yy = break(char1."/", t)
+let yy = break(char1."/", t),
 if length.yy = 1 then
  filename(prefix, name, suffix)
 else
@@ -130,4 +129,4 @@ else
 Function changeext(f:filename, ext:seq.word) filename filename(dirpath.f, name.f, first.ext)
 
 Function breakparagraph(fileseq:seq.file) seq.seq.word
-for acc = empty:seq.seq.word, f ∈ fileseq do acc + breakparagraph.data.f /for (acc) 
+for acc = empty:seq.seq.word, f ∈ fileseq do acc + breakparagraph.data.f /do acc 

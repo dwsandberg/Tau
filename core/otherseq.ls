@@ -43,7 +43,9 @@ Export subseq(s:seq.T, start:int, finish:int) seq.T {From seq.T}
 Export ∈(a:T, s:seq.T) boolean {From seq.T}
 
 Function reverse(s:seq.T) seq.T
-for acc = empty:seq.T, @e ∈ arithseq(length.s, 0 - 1, length.s) do acc + s_@e /for (acc)
+for acc = empty:seq.T, e ∈ arithseq(length.s, 0 - 1, length.s) do
+ acc + s_e
+/do acc
 
 type cseq is sequence, element:T
 
@@ -59,12 +61,12 @@ Function constantseq(len:int, element:seq.T) seq.T toseq.cseq2(len, length.eleme
 
 Function replace(s:seq.T, index:int, value:T) seq.T
 if not.ispseq.s then
- let b = for acc = empty:seq.T, @e ∈ arithseq(index - 1, 1, 1) do acc + s_@e /for (acc)
+ let b = for acc = empty:seq.T, @e ∈ arithseq(index - 1, 1, 1) do acc + s_@e /do acc
  let initseq = arithseq(length.s - index, 1, index + 1)
- let initacc = b + value
- for oldacc = initacc, e30 ∈ initseq do oldacc + s_e30 /for (oldacc)
+ let initacc = b + value,
+ for oldacc = initacc, e30 ∈ initseq do oldacc + s_e30 /do oldacc
 else
- let p = to:pseq.T(s)
+ let p = to:pseq.T(s),
  if index > length.a.p then
   a.p + replace(b.p, index - length.a.p, value)
  else
@@ -89,28 +91,28 @@ unbound >1(T, T) ordering
 
 Function >1(a:seq.T, b:seq.T) ordering
 let lengtha = length.a
-let lengthb = length.b
+let lengthb = length.b,
 if lengtha > lengthb then GT else if lengtha < lengthb then LT else subcmp(a, b, 1)
 
 function subcmp(a:seq.T, b:seq.T, i:int) ordering
 if i > length.a then
  EQ
 else
- let c = a_i >1 b_i
+ let c = a_i >1 b_i,
  if c = EQ then subcmp(a, b, i + 1) else c
 
 unbound >2(T, T) ordering
 
 Function >2(a:seq.T, b:seq.T) ordering
 let lengtha = length.a
-let lengthb = length.b
+let lengthb = length.b,
 if lengtha > lengthb then GT else if lengtha < lengthb then LT else subcmp2(a, b, 1)
 
 function subcmp2(a:seq.T, b:seq.T, i:int) ordering
 if i > length.a then
  EQ
 else
- let c = a_i >2 b_i
+ let c = a_i >2 b_i,
  if c = EQ then subcmp2(a, b, i + 1) else c
 
 unbound ?alpha(T, T) ordering
@@ -119,9 +121,9 @@ Function ?alpha(a:seq.T, b:seq.T) ordering subcmpalpha(a, b, 1)
 
 function subcmpalpha(a:seq.T, b:seq.T, i:int) ordering
 let lengtha = length.a
-let lengthb = length.b
+let lengthb = length.b,
 if i ≤ lengtha ∧ i ≤ lengthb then
- let c = ?alpha(a_i, b_i)
+ let c = ?alpha(a_i, b_i),
  if c = EQ then subcmpalpha(a, b, i + 1) else c
 else if length.a = length.b then EQ else if length.a > length.b then GT else LT
 
@@ -156,7 +158,7 @@ Function binarysearch(s:seq.T, val:T) int
 binarysearchNB(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T) int
-assert b > 0 ∧ a ≤ length.s report "out of bounds in binary search"
+assert b > 0 ∧ a ≤ length.s report "out of bounds in binary search",
 binarysearchNB(s, b, a, val)
 
 Function binarysearchNB(s:seq.T, b:int, a:int, val:T) int
@@ -164,24 +166,24 @@ if a < b then
  -(a + 1)
 else
  let p = (a + b) / 2
- let c = idxNB(s, p) >1 val
+ let c = idxNB(s, p) >1 val,
  if c = EQ then
   p
  else if c = GT then binarysearchNB(s, b, p - 1, val) else binarysearchNB(s, p + 1, a, val)
 
 Function setinsert(s:seq.T, val:T) seq.T
 {* assumes s is sorted}
-let i = binarysearch(s, val)
+let i = binarysearch(s, val),
 if i > 0 then s else subseq(s, 1,-i - 1) + [val] + subseq(s,-i, length.s)
 
 Function setdelete(s:seq.T, val:T) seq.T
 {* assumes s is sorted}
-let i = binarysearch(s, val)
+let i = binarysearch(s, val),
 if i > 0 then subseq(s, 1, i - 1) + subseq(s, i + 1, length.s) else s
 
 Function setreplaceorinsert(s:seq.T, val:T) seq.T
 {assumes s is sorted}
-let i = binarysearch(s, val)
+let i = binarysearch(s, val),
 if i > 0 then
  subseq(s, 1, i - 1) + [val] + subseq(s, i + 1, length.s)
 else
@@ -196,7 +198,8 @@ let b =
  for acc = empty:seq.int, i = 1, e ∈ a do
   next(acc + if e ∈ ([seperator] + quotes) then [i] else empty:seq.int
    , i + 1)
- /for (acc)
+ /do acc
+,
 if isempty.b then
  [a]
 else
@@ -213,7 +216,7 @@ function break(str:seq.T
 if j > length.b then
  result + (str + subseq(a, start, length.a))
 else
- let i = b_j
+ let i = b_j,
  if currentquote ≠ seperator then
   {in quoted string}
   if a_i = seperator then
@@ -223,7 +226,7 @@ else
   else if a_i = currentquote ∧ a_(i + 1) = currentquote then
    break(subseq(a, start, i), currentquote, seperator, a, b, j + 2, i + 2, result)
   else
-   assert a_i ≠ seperator ∧ a_(i + 1) = seperator report "format problem"
+   assert a_i ≠ seperator ∧ a_(i + 1) = seperator report "format problem",
    break(empty:seq.T
     , seperator
     , seperator
@@ -244,25 +247,25 @@ else
     , i + 1
     , result + (str + subseq(a, start, i - 1)))
   else
-   assert isempty(str + subseq(a, start, i - 1)) report "format problem"
+   assert isempty(str + subseq(a, start, i - 1)) report "format problem",
    break(str, a_i, seperator, a, b, j + 1, i + 1, result)
 
 Function suffix(s:seq.T, len:int) seq.T subseq(s, length.s - len - 1, length.s)
 
 Function findindex(s:seq.T, w:T) int
 {result > length.s when element is not found.Otherwise results is location in sequence}
-for i = 1, e ∈ s while e ≠ w do i + 1 /for (i)
+for i = 1, e ∈ s while e ≠ w do i + 1 /do i
 
 ________________________
 
 unbound %(T) seq.word
 
 Function %(term:seq.word, z:seq.T) seq.word
-for acc = "", i ∈ z do acc + %.i + term /for (acc)
+for acc = "", i ∈ z do acc + %.i + term /do acc
 
-Function %(z:seq.T) seq.word for acc = "", i ∈ z do acc + %.i /for (acc)
+Function %(z:seq.T) seq.word for acc = "", i ∈ z do acc + %.i /do acc
 
 Function %n(z:seq.T) seq.word
 for acc = "", idx = 1, i ∈ z do
  next(acc + "/br" + toword.idx + ":" + %.i, idx + 1)
-/for (acc) 
+/do acc 

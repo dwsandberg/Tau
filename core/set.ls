@@ -21,7 +21,7 @@ type set is toseq:seq.T
 unbound >1(T, T) ordering
 
 Function asset(s:seq.T) set.T
-set.for acc = empty:seq.T, @e ∈ s do setinsert(acc, @e) /for (acc)
+set.for acc = empty:seq.T, @e ∈ s do setinsert(acc, @e) /do acc
 
 Function empty:set.T set.T set.empty:seq.T
 
@@ -34,7 +34,7 @@ Function ∪(val:T, s:set.T) set.T set.setreplaceorinsert(toseq.s, val)
 Function _(s:set.T, i:int) T (toseq.s)_i
 
 Function lookup(s:set.T, val:T) set.T
-let i = binarysearch(toseq.s, val)
+let i = binarysearch(toseq.s, val),
 if i > 0 then set.[(toseq.s)_i] else empty:set.T
 
 Function ∩(a:set.T, b:set.T) set.T set.intersect(toseq.a, toseq.b, 1, 1)
@@ -45,7 +45,7 @@ if i > length.a then
 else if j > length.b then
  empty:seq.T
 else
- let c = a_i >1 b_j
+ let c = a_i >1 b_j,
  if c = EQ then
   [a_i] + intersect(a, b, i + 1, j + 1)
  else if c = GT then intersect(a, b, i, j + 1) else intersect(a, b, i + 1, j)
@@ -70,7 +70,7 @@ else if (a_i >1 b_j) = GT then
 else if (a_i >1 b_j) = EQ then
  union(a, b, i + 1, j + 1, result + a_i)
 else
- let p = binarysearch(a, i + 1, length.a, b_j)
+ let p = binarysearch(a, i + 1, length.a, b_j),
  if p > 0 then
   union(a, b, p + 1, j + 1, result + subseq(a, i, p))
  else
@@ -104,7 +104,7 @@ else if j > length.b then
  result + subseq(a, i, length.a)
 else
  let ai = a_i
- let c = ai >1 b_j
+ let c = ai >1 b_j,
  if c = EQ then
   replace(a, b, i + 1, j + 1, result + [b_j])
  else if c = LT then
@@ -140,7 +140,7 @@ The following must be true (a >2 b) ≠ EQ implies >1 (a, b) = (a >2 b)
 unbound >2(T, T) ordering
 
 Function findelement2(a:set.T, n:T) set.T
-let i = binarysearch2(toseq.a, 1, length.toseq.a, n)
+let i = binarysearch2(toseq.a, 1, length.toseq.a, n),
 if i < 0 then
  asset.empty:seq.T
 else
@@ -148,7 +148,7 @@ else
   , @e ∈ subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i))
  do
   acc + @e
- /for (acc)
+ /do acc
 
 function expandrangedown(a:seq.T, n:T, l:int) int
 if l > 1 then
@@ -167,7 +167,7 @@ if a < b then
  -(a + 1)
 else
  let p = (a + b) / 2
- let c = s_p >2 val
+ let c = s_p >2 val,
  if c = EQ then
   p
  else if c = GT then binarysearch2(s, b, p - 1, val) else binarysearch2(s, p + 1, a, val) 

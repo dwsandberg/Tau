@@ -34,7 +34,7 @@ if for l = empty:seq.int
   48 49 50 51 53 54 6"
 do
  l + hash.decodeword.w
-/for (l)
+/do l /for
 = [1606469939, 3611716215, 3408990482, 2398569529, 1805514831
  , 2794507078, 3153899467, 1592536390, 2267580998, 4148795192
  , 2029448469, 1396446841, 658738060, 3120177018, 3341416014
@@ -62,4 +62,5 @@ let out =
  + testwordfreq
  + testprocess
  + if isempty.input then "no opt test file specified" else testopt.input
+,
 [file(filename.o, out)] 

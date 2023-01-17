@@ -18,16 +18,17 @@ use real
 
 use standard
 
-Function set2zero(p:ptr, size:int)ptr
-{used in wasm2.ls}if size = 0 then p else set2zero(set(p, 0), size - 1)
+Function set2zero(p:ptr, size:int) ptr
+{used in wasm2.ls}
+if size = 0 then p else set2zero(set(p, 0), size - 1)
 
 Function empty:JS.HTTPresult JS.HTTPresult toJS.HTTPresult(empty:seq.byte, empty:seq.byte)
 
 type jsbytes is toreal:real
 
-Export toreal(jsbytes)real
+Export toreal(jsbytes) real
 
-Export jsbytes(real)jsbytes
+Export jsbytes(real) jsbytes
 
 Export type:jsbytes
 
@@ -37,17 +38,19 @@ Export type:jsbytes
 
 type HTTPresult is header:seq.byte, result:seq.byte
 
-Export HTTPresult(header:seq.byte, result:seq.byte)HTTPresult
+Export HTTPresult(header:seq.byte, result:seq.byte) HTTPresult
 
-Export result(HTTPresult)seq.byte
+Export result(HTTPresult) seq.byte
 
-Function aborted(h:HTTPresult)boolean subseq(header.h, 1, 1) ≠ toseqbyte.toUTF8."2"
+Function aborted(h:HTTPresult) boolean subseq(header.h, 1, 1) ≠ toseqbyte.toUTF8."2"
 
-Function token(s:seq.word)jsbytes
-jsUTF8.toseqbyte.for acc = emptyUTF8, w ∈ s do acc + decodeword.w /for(acc)
+Function token(s:seq.word) jsbytes
+jsUTF8.toseqbyte.for acc = emptyUTF8, w ∈ s do acc + decodeword.w /do acc
 
-Function jsUTF8(t:seq.byte)jsbytes{OPTION NOINLINE}jsbytes.toreal.bitcast:int(toptr.packed.t)
+Function jsUTF8(t:seq.byte) jsbytes
+{OPTION NOINLINE}
+jsbytes.toreal.bitcast:int(toptr.packed.t)
 
-Function towords(a:jsbytes)seq.word towords.UTF8.toseqbyte.a
+Function towords(a:jsbytes) seq.word towords.UTF8.toseqbyte.a
 
-Function toseqbyte(a:jsbytes)seq.byte bitcast:seq.byte(toptr.intpart.toreal.a) 
+Function toseqbyte(a:jsbytes) seq.byte bitcast:seq.byte(toptr.intpart.toreal.a) 

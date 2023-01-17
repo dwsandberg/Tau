@@ -6,8 +6,6 @@ use internalbc
 
 use llvm
 
-use seq.llvmtype
-
 use encoding.match5
 
 use seq.match5
@@ -17,6 +15,8 @@ use mytype
 use otherseq.mytype
 
 use persistant
+
+use seq.slot
 
 use standard
 
@@ -33,12 +33,6 @@ use set.symdef
 use seq.typedef
 
 use otherseq.seq.word
-
-Export type:steponeresult
-
-Export defines(steponeresult) seq.symdef
-
-Export entrypoint(steponeresult) slot
 
 Export type:match5 {From codetemplates}
 
@@ -87,15 +81,18 @@ Function conststype llvmtype array(-2, i64)
 
 Function profiletype llvmtype array(-3, i64)
 
-Function stepone(alltypes:typedict, prgX:set.symdef, libname:word, isbase:boolean) steponeresult
-let discard1 = initmap5
+Function stepone(alltypes:typedict
+ , prgX:set.symdef
+ , libname:word
+ , isbase:boolean
+ , initprofile:seq.symbol) seq.symdef
 for used = empty:seq.symbol
  , crecord = empty:seq.symdef
  , indefines = empty:seq.symdef
  , cc ∈ toseq.prgX
 do
  let firstsym = sym.cc
- let code = code.cc
+ let code = code.cc,
  if isrecordconstant.firstsym then
   let lastsym = last.code
   let sd = 
@@ -103,16 +100,17 @@ do
     , if isSequence.lastsym then
      [Lit.0, Lit.nopara.lastsym] + code >> 1
     else
-     assert isRecord.lastsym report "nnn $(code)"
+     assert isRecord.lastsym report "nnn $(code)",
      code >> 1
     , 0)
+  ,
   next(used + toseq.asset.code.sd, crecord + sd, indefines)
  else if isInternal.firstsym then
-  if {firstsym is external call} externalNo.cc = 1 ∧ isThisLibrary.cc then
-   let discard5 = call(alltypes, firstsym, "CALL"_1, name.firstsym)
+  if {firstsym is external call} internalidx.sym.cc = 1 ∧ isThisLibrary.cc then
+   let discard5 = call(alltypes, firstsym, "CALL"_1, name.firstsym),
    next(used, crecord, indefines)
   else if not.isbase then
-   let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname))
+   let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname)),
    next(used, crecord, indefines)
   else
    next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
@@ -121,28 +119,30 @@ do
    addtemplate(firstsym
     , 1
     , GEP(r.1, i64, slot.global([merge("$$" + toword.externalNo.cc)], i64, C64.0)))
+  ,
   next(used, crecord, indefines)
  else if libname = library.module.firstsym ∨ isThisLibrary.cc ∨ externalNo.cc = 0 then
   next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
  else
   {not define in this library}
-  let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname))
+  let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname)),
   next(used, crecord, indefines)
-/for (
- let entrypointsym = 
-  for entrypointsym = Lit.0, sd ∈ indefines do
-   let discard = declare(alltypes, prgX, sym.sd, libname)
-   if name.sym.sd ∈ "entrypoint" then sym.sd else entrypointsym
-  /for (entrypointsym)
- let discard100 = uses(alltypes, asset.used, crecord, prgX, alltypes, libname)
- steponeresult(indefines
-  , symboltableentry([mangledname(prgX, entrypointsym, libname)], function.[ptr.i64, i64, ptr.i64]))
-)
+/do
+ let discard101 = for acc = 0, sd ∈ indefines do declare(alltypes, prgX, sym.sd, libname) /do 0
+ let discard102 = 
+  for acc = empty:seq.slot, sym ∈ initprofile do
+   if name.sym ∉ "profileData" then
+    acc
+   else
+    acc + symboltableentry([mangledname(prgX, sym, libname)], tollvmtype(alltypes, sym))
+  /do profiledatatemplate.acc
+ let discard100 = uses(alltypes, asset.used, crecord, prgX, alltypes, libname),
+ indefines
 
 function declare(alltypes:typedict, prgX:set.symdef, ele2:symbol, libname:word) int
 let name = mangledname(prgX, ele2, libname)
 let discard = funcdec(alltypes, ele2, name)
-let discard5 = call(alltypes, ele2, "CALL"_1, name)
+let discard5 = call(alltypes, ele2, "CALL"_1, name),
 0
 
 Function uses(alltypes:typedict
@@ -155,55 +155,55 @@ for acc = empty:match5, ele ∈ toseq.used1 do
  if isconst.ele then
   if isFref.ele then
    let basesym = basesym.ele
-   let functyp = ptr.tollvmtype(typedict, basesym)
+   let functyp = ptr.tollvmtype(typedict, basesym),
    addtemplate(Fref.basesym
     , 0
     , emptyinternalbc
     , "ACTARG"_1
     , ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym, libname)], functyp)))
-  else if isrecordconstant.ele then acc else buildconst(ele, alltypes)
- else if isspecial.ele then
-  buildspecial(ele, alltypes)
- else if isBuiltin.ele then
-  if wordname.ele = "createthreadY"_1 then
-   let rt = parameter.para.module.ele
-   let l = 
-    for l = empty:seq.llvmtype, e ∈ paratypes.ele << 3 do
-     l + tollvmtype(alltypes, e)
-    /for (l + tollvmtype(alltypes, rt))
-   addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, l)
+  else if iswordseq.ele then
+   addtemplate(ele, 0, emptyinternalbc, "ACTARG"_1, slot.addwordseq.worddata.ele)
+  else if isword.ele then
+   addtemplate(ele, 0, emptyinternalbc, "ACTARG"_1, slot.wordref.wordname.ele)
   else
    acc
+ else if isspecial.ele then
+  buildspecial(ele, alltypes)
  else if isInternal.ele ∧ internalidx.ele = 1 then
   call(alltypes, ele, "CALL"_1, name.ele)
  else
   acc
-/for (processconst(isrecordconstant, alltypes))
-
-type steponeresult is defines:seq.symdef, entrypoint:slot
+/do processconst(isrecordconstant, alltypes)
 
 Function processconst(toprocess:seq.symdef, alltypes:typedict) int
-let initvalue = length.encodingdata:match5
+let initvalue = length.encodingdata:match5,
 for notprocessed = empty:seq.symdef, xx ∈ toprocess do
  for args = empty:seq.int, defined = true, ele ∈ code.xx
  while defined
  do
-  let tp = findtemplate.ele
-  if isempty.tp then next(args, false) else next(args + arg.tp_1, true)
- /for (
+  if isIntLit.ele then
+   next(args + toint.C64.value.ele, true)
+  else if isRealLit.ele then
+   next(args + toint.Creal.value.ele, true)
+  else if ele = Littrue then
+   next(args + toint.C64.1, true)
+  else if ele = Litfalse then
+   next(args + toint.C64.0, true)
+  else
+   let tp = findtemplate.ele,
+   if isempty.tp then next(args, false) else next(args + arg.tp_1, true)
+ /do
   if defined then
-   let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
+   let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args),
    notprocessed
   else
    notprocessed + xx
- )
-/for (
+/do
  if length.encodingdata:match5 = initvalue then
-  assert isempty.notprocessed report "processconst problem"
+  assert isempty.notprocessed report "processconst problem",
   0
  else
   processconst(notprocessed, alltypes)
-)
 
 Function internalidx(s:symbol) int
 {list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2
@@ -246,7 +246,7 @@ let l =
   , "set ptr int"
   , "set ptr real"
   , "set ptr ptr"]
-let idx = findindex(l, [name.s] + %(types.s >> 1))
+let idx = findindex(l, [name.s] + %(types.s >> 1)),
 if idx ≤ length.l then idx + 1 else 1
 
 Function mangledname(extname:set.symdef, s:symbol, library:word) word
@@ -256,8 +256,9 @@ report
  "Mangled Name problem $(s)" + library
  + for txt = "", sd ∈ toseq.extname do
   txt + "/br" + %.sym.sd + library.module.sym.sd
- /for (txt + stacktrace)
-if externalNo.b_1 = 1 ∧ isThisLibrary.b_1 then
+ /do txt + stacktrace
+let extNo = if isInternal.s then internalidx.s else externalNo.b_1,
+if extNo = 1 ∧ isThisLibrary.b_1 then
  name.s
 else
  merge.[
@@ -266,18 +267,18 @@ else
   else if isThisLibrary.b_1 then library else library.module.s
   , "$"_1
   , "$"_1
-  , toword.externalNo.b_1]
+  , toword.extNo]
 
 Function addtype(a:mytype) int
 addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do
  acc + wordref.name.e + wordref.modname.e + wordref.library.e
-/for (acc)
+/do acc
 
 Function addtypeseq(a:seq.mytype) int
-addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtype.@e /for (acc)
+addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtype.@e /do acc
 
 Function addsymbol(a:symbol) seq.int
-let t = privatefields.a
+let t = privatefields.a,
 [addwordseq.worddata.a
  , wordref.library.module.a
  , wordref.name.module.a

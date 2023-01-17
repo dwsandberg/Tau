@@ -2,10 +2,6 @@ Module frontcmd
 
 use baseTypeCheck
 
-use callconfig
-
-use compilerfrontT.callconfig
-
 use file
 
 use graphcode
@@ -22,14 +18,12 @@ use symbol2
 
 use set.symdef
 
-Function front(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
+Function front(cf:midpoint, o:seq.word, pass:seq.word, names:seq.word, ~n:seq.word
  , mods:seq.word, ~mods:seq.word, within:boolean, out:seq.word) seq.file
-let names = n
-let cf = compilerFront:callconfig(if isempty.pass then "pass2" else pass, input)
 let prg = prg.cf
-let ignorenames = isempty.names ∨ out ∈ ["calls", "calledby"]
+let ignorenames = isempty.names ∨ out ∈ ["calls", "calledby"],
 for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
- let ss = sym.sd
+ let ss = sym.sd,
  if isconstantorspecial.ss then
   next(selected, root)
  else if (isempty.mods ∨ name.module.ss ∈ mods) ∧ (ignorenames ∨ name.ss ∈ names)
@@ -38,25 +32,25 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
   next(selected + sd, if name.ss ∈ names then root + ss else root)
  else
   next(selected, root)
-/for (
+/do
  let output = 
   if out = "sym" then
-   for txt = "", i ∈ selected do txt + "/p" + %.sym.i /for (txt)
+   for txt = "", i ∈ selected do txt + "/p" + %.sym.i /do txt
   else if out = "symdef" then
    for txt = "", sd1 ∈ selected do
-    let kk = getOptions.sd1
+    let kk = getOptions.sd1,
     txt + "/p" + %.sym.sd1 + if isempty.kk then "" else "OPTIONS:$(kk)" /if + %.code.sd1
-   /for (txt)
+   /do txt
   else if out = "symdefgraph" then
    for txt = "", sd1 ∈ selected do
     txt + "/p" + %.sym.sd1 + {print} tograph.code.sd1
-   /for (txt)
+   /do txt
   else if out = "baseTypeCheck" then
    baseTypeCheck(toseq.prg, typedict.cf)
   else if out = "resultCheck" then
    checkresults.toseq.prg
   else
-   let syms = for acc = empty:set.symbol, sd5 ∈ selected do acc + sym.sd5 /for (acc)
+   let syms = for acc = empty:set.symbol, sd5 ∈ selected do acc + sym.sd5 /do acc
    let g = 
     for acc = empty:seq.arc.symbol, sd1 ∈ selected do
      for acc2 = acc, h ∈ toseq(asset.code.sd1 ∩ syms) do
@@ -64,20 +58,21 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
        acc2
       else
        acc2 + arc(sym.sd1, h)
-     /for (acc2)
-    /for (newgraph.acc)
+     /do acc2
+    /do newgraph.acc
    let g2 = 
     if out ∈ ["calls", "calledby"] then
-     assert not.isempty(nodes.g ∩ asset.root) report "no intersection between symbols in option n and call graph"
+     assert not.isempty(nodes.g ∩ asset.root) report "no intersection between symbols in option n and call graph",
      subgraph(g, reachable(if out = "calledby" then complement.g else g, root))
     else
      g
+   ,
    if out = "text" then
-    for txt = "txt", a ∈ toseq.arcs.g do txt + "/br" + %.tail.a + %.head.a /for (txt)
+    for txt = "txt", a ∈ toseq.arcs.g do txt + "/br" + %.tail.a + %.head.a /do txt
    else
     drawgraph.newgraph.toseq.arcs.g2
+ ,
  [file(o, output)]
-)
 
 * The /keyword front command is a multiple purpose command. It outputs data from various stages of the compiler
 .

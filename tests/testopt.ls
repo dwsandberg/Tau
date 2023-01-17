@@ -1,10 +1,10 @@
 Module testopt
 
-use callconfig
-
 use compilerfrontT.callconfig
 
 use file
+
+use llvmcode
 
 use standard
 
@@ -45,7 +45,12 @@ let cl =
   , "true boolean"
   , "4"
   , {optest24}
-  "Start (int) /br %1 5 = (int, int) boolean Br2 (1, 2) /br 24 Exit /br 0 Exit /br EndBlock /br"
+  "Start (int)
+   /br %1 5 = (int, int) boolean Br2 (1, 2)
+   /br 24 Exit
+   /br 0 Exit
+   /br EndBlock
+   /br"
   , "25"
   , {optest26}
   "Start (int)
@@ -137,7 +142,7 @@ let cl =
    /br EndBlock
    /br"]
 let r = 
- for acc = "", @e ∈ arithseq(length.cl, 1, 1) do acc + getcode(p2, cl, @e) /for (acc)
+ for acc = "", @e ∈ arithseq(length.cl, 1, 1) do acc + getcode(p2, cl, @e) /do acc /for
  + if [40, 20, 30, 20]
  = [multitarget(4, true, false)
   , multitarget(4, false, false)
@@ -147,15 +152,21 @@ let r =
   ""
  else
   "fail multitarget"
+,
 if isempty.r then "PASS testopt" else "testopt $(r)"
 
 Function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int) seq.word
 let name = merge("optest" + toword.no)
-let code = for acc = "", p ∈ p2 do if name = name.sym.p then %.code.p else acc /for (acc)
+let code = for acc = "", p ∈ p2 do if name = name.sym.p then %.code.p else acc /do acc,
 if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1, "") then
  ""
 else
- "/br <* literal FAILED *> test" + toword.no + "in optest /br" + code + "/p" + codelist_no
+ "/br <* literal FAILED *> test"
+ + toword.no
+ + "in optest /br"
+ + code
+ + "/p"
+ + codelist_no
 
 +" /p diffs:"+sameto (code, codelist_no, 1,"")+" /p"+toseq.asset." a b c d xxx"
 

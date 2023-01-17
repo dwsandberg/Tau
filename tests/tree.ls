@@ -28,7 +28,7 @@ Function _(t:tree.T, i:int) tree.T (sons.t)_i
 Function nosons(t:tree.T) int length.sons.t
 
 Function postorder(a:tree.T) seq.tree.T
-for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e /for (acc) + a
+for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e /do acc /for + a
 
 unbound %(T) seq.word
 
@@ -40,4 +40,4 @@ else
  + if nosons.t = 1 then
   ".$(t_1)"
  else
-  "($(for acc = "", e ∈ sons.t do acc + %.e + "," /for (acc >> 1 + ")"))" 
+  "($(for acc = "", e ∈ sons.t do acc + %.e + "," /do acc >> 1 + ")")" 

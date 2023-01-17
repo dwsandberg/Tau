@@ -16,6 +16,8 @@ use seq.mytype
 
 use persistant
 
+use seq.slot
+
 use standard
 
 use symbol
@@ -51,13 +53,13 @@ Export type:symbol {From symbol}
 Function tollvmtype(alltypes:typedict, s:symbol) llvmtype
 function.tollvmtypelist(alltypes, s)
 
-function tollvmtypelist(alltypes:typedict, s:symbol) seq.llvmtype
+Function tollvmtypelist(alltypes:typedict, s:symbol) seq.llvmtype
 assert resulttype.s ≠ typeT report "TTT $(s)"
-let starttypes = [tollvmtype(alltypes, resulttype.s), i64]
+let starttypes = [tollvmtype(alltypes, resulttype.s), i64],
 for acc = starttypes, @e ∈ paratypes.s do
- assert @e ≠ typeT report "TTTP $(s)"
+ assert @e ≠ typeT report "TTTP $(s)",
  acc + tollvmtype(alltypes, @e)
-/for (acc)
+/do acc
 
 Function tollvmtype(alltypes:typedict, s:mytype) llvmtype
 if isseq.s then
@@ -65,7 +67,7 @@ if isseq.s then
 else if abstracttypename.s = "process"_1 then
  ptr.i64
 else
- let kind = basetype(s, alltypes)
+ let kind = basetype(s, alltypes),
  if kind = typeint ∨ kind = typeboolean then
   i64
  else if kind = typereal then double else ptr.i64
@@ -95,7 +97,7 @@ Function addtemplate(sym:symbol
  , arg:int
  , llvmtypelist:seq.llvmtype) match5
 let m = match5(sym, length, parts, action, arg, llvmtypelist)
-let discard = encode.m
+let discard = encode.m,
 m
 
 Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot) match5
@@ -105,7 +107,9 @@ Function addtemplate(sym:symbol, length:int, b:internalbc) match5
 addtemplate(sym, length, b, "TEMPLATE"_1, slot.nopara.sym)
 
 function addtemplates(t:seq.mytype, sym:symbol, length:int, b:internalbc) match5
-first.for acc = empty:seq.match5, e ∈ t do [addtemplate(replaceTsymbol(e, sym), length, b)] /for (acc)
+first.for acc = empty:seq.match5, e ∈ t do
+ [addtemplate(replaceTsymbol(e, sym), length, b)]
+/do acc
 
 Function findtemplate(d:symbol) seq.match5
 findencode.match5(d, 0, emptyinternalbc, "NOTFOUND"_1, 0, [i64])
@@ -115,13 +119,13 @@ function =(a:match5, b:match5) boolean sym.a = sym.b
 function hash(a:match5) int hash.sym.a
 
 Function templatesyms seq.symbol
-for acc = empty:seq.symbol, m ∈ encodingdata:match5 do acc + sym.m /for (acc)
+for acc = empty:seq.symbol, m ∈ encodingdata:match5 do acc + sym.m /do acc
 
 Function funcdec(alltypes:typedict, i:symbol, symname:word) int
 toint.modulerecord([symname]
  , [toint.FUNCTIONDEC, typ.tollvmtype(alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-Function initmap5 seq.match5
+Function initmap5(liblist:seq.slot) seq.match5
 [addtemplate(Littrue, 0, emptyinternalbc, "ACTARG"_1, C64.1)
  , addtemplate(Litfalse, 0, emptyinternalbc, "ACTARG"_1, C64.0)
  , addtemplate(symbol(internalmod, "packedindex", seqof.typebyte, typeint, typeint)
@@ -237,57 +241,6 @@ Function initmap5 seq.match5
   , 2
   , CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
   + GEP(r.2, i64, ibcsub.1, C64.1))
- , addtemplate(abortsymbol.typeint
-  , 1
-  , CALL(r.1
-   , 0
-   , 32768
-   , function.[i64, i64, ptr.i64]
-   , symboltableentry("assert", function.[i64, i64, ptr.i64])
-   , slot.ibcfirstpara2
-   , ibcsub.1)
-  )
- , addtemplate(abortsymbol.typebyte
-  , 1
-  , CALL(r.1
-   , 0
-   , 32768
-   , function.[i64, i64, ptr.i64]
-   , symboltableentry("assert", function.[i64, i64, ptr.i64])
-   , slot.ibcfirstpara2
-   , ibcsub.1)
-  )
- , addtemplate(abortsymbol.typeboolean
-  , 1
-  , CALL(r.1
-   , 0
-   , 32768
-   , function.[i64, i64, ptr.i64]
-   , symboltableentry("assert", function.[i64, i64, ptr.i64])
-   , slot.ibcfirstpara2
-   , ibcsub.1)
-  )
- , addtemplate(abortsymbol.typereal
-  , 2
-  , CALL(r.1
-   , 0
-   , 32768
-   , function.[i64, i64, ptr.i64]
-   , symboltableentry("assert", function.[i64, i64, ptr.i64])
-   , slot.ibcfirstpara2
-   , ibcsub.1)
-  + CAST(r.2, r.1, double, sitofp))
- , addtemplates(packedtypes + typeptr
-  , abortsymbol.typeT
-  , 2
-  , CALL(r.1
-   , 0
-   , 32768
-   , function.[i64, i64, ptr.i64]
-   , symboltableentry("assert", function.[i64, i64, ptr.i64])
-   , slot.ibcfirstpara2
-   , ibcsub.1)
-  + CAST(r.2, r.1, ptr.i64, inttoptr))
  , addtemplate(symbol(internalmod, "clock", typeint)
   , 1
   , CALL(r.1, 0, 32768, function.[i64], symboltableentry("clock", function.[i64])))
@@ -375,45 +328,76 @@ Function initmap5 seq.match5
  , addtemplate(symbol(builtinmod.typereal, "fld", [typeptr, typeint], typereal)
   , 3
   , GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64) + CAST(r.3, r.2, double, bitcast))
+ , addtemplate(symbol(internalmod, "basewords", typeptr)
+  , 4
+  , CALL(r.1, 0, 32768, function.[ptr.i64], first.liblist) + GEP(r.2, i64, r.1, C64.1)
+  + LOAD(r.3, r.2, i64)
+  + CAST(r.4, r.3, ptr.i64, inttoptr))
+ , addtemplate(symbol(internalmod, "addresssymbols", seqof.typeptr)
+  , 4 + 3 * length.liblist
+  , for
+   acc = CALL(r.1
+    , 0
+    , 32768
+    , function.[ptr.i64, i64, i64]
+    , symboltableentry("allocatespace", function.[ptr.i64, i64, i64])
+    , slot.ibcfirstpara2
+    , C64(length.liblist + 2))
+   + GEP(r.2, i64, r.1, C64.0)
+   + STORE(r.3, r.2, C64.0)
+   + GEP(r.3, i64, r.1, C64.1)
+   + STORE(r.4, r.3, C64.length.liblist)
+   , idx = 1
+   , w ∈ liblist
+  do
+   next(
+    acc + GEP(r(idx + 3), i64, r.1, C64((idx + 5) / 3))
+    + CALL(r(idx + 4), 0, 32768, function.[ptr.i64], w)
+    + LOAD(r(idx + 5), r(idx + 4), i64)
+    + STORE(r(idx + 6), r(idx + 3), r(idx + 5))
+    , idx + 3)
+  /do acc + GEP(r(4 + 3 * length.liblist), i64, r.1, C64.0))
  ]
+
+Function profiledatatemplate(profdata:seq.slot) match5
+let start = 
+ CALL(r.1
+  , 0
+  , 32768
+  , function.[ptr.i64, i64, i64]
+  , symboltableentry("allocatespace", function.[ptr.i64, i64, i64])
+  , slot.ibcfirstpara2
+  , C64(length.profdata + 2))
+ + GEP(r.2, i64, r.1, C64.0)
+ + STORE(r.3, r.2, C64.0)
+ + GEP(r.3, i64, r.1, C64.1)
+ + STORE(r.4, r.3, C64.length.profdata)
+,
+addtemplate(symbol(internalmod, "profiledata", seqof.typeptr)
+ , 4 + 3 * length.profdata
+ , for acc = start, idx = 1, w ∈ profdata do
+  next(
+   acc + GEP(r(idx + 3), i64, r.1, C64((idx + 5) / 3))
+   + CALL(r(idx + 4), 0, 32768, function.[ptr.i64, i64], w, slot.ibcfirstpara2)
+   + CAST(r(idx + 5), r(idx + 4), i64, ptrtoint)
+   + STORE(r(idx + 6), r(idx + 3), r(idx + 5))
+   , idx + 3)
+ /do acc + GEP(r(4 + 3 * length.profdata), i64, r.1, C64.0))
 
 Function symboltableentry(name:seq.word, type:llvmtype) slot
 modulerecord(name, [toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-function =(a:llvmtype, b:llvmtype) boolean typ.a = typ.b
-
-Function buildconst(xx:symbol, alltypes:typedict) match5
-if isIntLit.xx then
- addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.value.xx)
-else if isRealLit.xx then
- addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, Creal.value.xx)
-else if iswordseq.xx then
- addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, slot.addwordseq.worddata.xx)
-else if xx = Littrue then
- addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.1)
-else if xx = Litfalse then
- addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.0)
-else
- assert isword.xx report "not a constant $(xx)"
- addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, slot.wordref.wordname.xx)
+Function =(a:llvmtype, b:llvmtype) boolean typ.a = typ.b
 
 Function buildspecial(xx:symbol, alltypes:typedict) match5
-if islocal.xx then
- addtemplate(xx, 0, emptyinternalbc, "LOCAL"_1, slot.value.xx)
-else if isdefine.xx then
- addtemplate(xx, 0, emptyinternalbc, "DEFINE"_1, slot.value.xx)
-else if isblock.xx then
- addtemplate(xx, 0, emptyinternalbc, wordname.xx, 0, [i64])
-else if isstart.xx then
- let typ = tollvmtype(alltypes, resulttype.xx)
- addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, [typ])
-else if isRecord.xx then
+if isRecord.xx then
  if nopara.xx < 10 then
   let fldbc = 
    recordcode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1)
     , tollvmtypelist(alltypes, xx) << 2
     , 0
     , true)
+  ,
   addtemplate(xx, regno.fldbc, bc.fldbc)
  else
   addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, tollvmtypelist(alltypes, xx) << 2)
@@ -424,6 +408,7 @@ else if isSequence.xx then
     , tollvmtype(alltypes, para.module.xx)
     , 0
     , true)
+  ,
   addtemplate(xx, regno.fldbc, bc.fldbc)
  else
   addtemplate(xx
@@ -432,8 +417,6 @@ else if isSequence.xx then
    , "SEQUENCE"_1
    , nopara.xx
    , [tollvmtype(alltypes, para.module.xx)])
-else if isbr.xx then
- addtemplate(xx, brt.xx, emptyinternalbc, wordname.xx, brf.xx, [i64])
 else if isloopblock.xx then
  addtemplate(xx
   , firstvar.xx
@@ -442,11 +425,9 @@ else if isloopblock.xx then
   , nopara.xx
   , for oldacc = [tollvmtype(alltypes, resulttype.xx)], e20 ∈ paratypes.xx do
    oldacc + tollvmtype(alltypes, e20)
-  /for (oldacc))
-else if iscontinue.xx then
- addtemplate(xx, 0, emptyinternalbc, "CONTINUE"_1, nopara.xx, [i64])
+  /do oldacc)
 else
- addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, [i64])
+ empty:match5
 
 Function call(alltypes:typedict, xx:symbol, type:word, symname:word) match5
 let list = tollvmtypelist(alltypes, xx)
@@ -458,6 +439,7 @@ let newcode =
   , typ.functype
   , toint.symboltableentry([symname], functype)
   , if type = "CALL"_1 then nopara.xx + 1 else nopara.xx)
+,
 addtemplate(xx, 1, newcode, type, nopara.xx, list)
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
@@ -466,57 +448,10 @@ let args =
   empty:seq.int
  else
   subseq(argstack, length.argstack - arg.t + 1, length.argstack)
+,
 processtemplate(parts.t, deltaoffset, args)
 
 type recordcoderesult is regno:int, bc:internalbc
-
-function setnextfld(bc:internalbc
- , args:seq.int
- , i:int
- , types:seq.llvmtype
- , regno:int
- , pint:int
- , preal:int
- , pptr:int) recordcoderesult
-if i > length.args then
- recordcoderesult(regno, bc)
-else
- let typ = types_i
- if typ = double then
-  if preal = 0 then
-   setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast)
-    , args
-    , i
-    , types
-    , regno + 1
-    , pint
-    , regno + 1
-    , pptr)
-  else
-   let newbc = 
-    GEP(r(regno + 1), double, r.preal, C64(i - 1))
-    + STORE(r(regno + 2), r(regno + 1), slot.args_i)
-   setnextfld(bc + newbc, args, i + 1, types, regno + 1, pint, preal, pptr)
- else if typ = ptr.i64 then
-  if pptr = 0 then
-   setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.ptr.i64, bitcast)
-    , args
-    , i
-    , types
-    , regno + 1
-    , pint
-    , preal
-    , regno + 1)
-  else
-   let newbc = 
-    GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1))
-    + STORE(r(regno + 2), r(regno + 1), slot.args_i)
-   setnextfld(bc + newbc, args, i + 1, types, regno + 1, pint, preal, pptr)
- else
-  let newbc = 
-   GEP(r(regno + 1), i64, r.pint, C64(i - 1))
-   + STORE(r(regno + 2), r(regno + 1), slot.args_i)
-  setnextfld(bc + newbc, args, i + 1, types, regno + 1, pint, preal, pptr)
 
 Function sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean) recordcoderesult
 recordcode([toint.C64.0, toint.C64.length.args] + args
@@ -534,8 +469,35 @@ let newcode =
   , symboltableentry("allocatespace", function.[ptr.i64, i64, i64])
   , firstpara
   , C64.length.args)
-let c = setnextfld(newcode, args, 1, types, lastreg + 1, lastreg + 1, 0, 0)
-if template then
- recordcoderesult(regno.c + 1, bc.c + GEP(r(regno.c + 1), i64, r(lastreg + 1), C64.0))
-else
- c 
+let pint = lastreg + 1,
+for bc = newcode, i = 1, regno = pint, preal = 0, pptr = 0, arg ∈ args do
+ let typ = types_i,
+ if typ = double then
+  let offset = if preal = 0 then 1 else 0
+  let newpreal = if preal = 0 then regno + 1 else preal
+  let newbc0 = if preal = 0 then bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast) else bc
+  let newbc = 
+   GEP(r(regno + offset + 1), double, r.newpreal, C64(i - 1))
+   + STORE(r(regno + offset + 2), r(regno + offset + 1), slot.args_i)
+  ,
+  next(newbc0 + newbc, i + 1, regno + offset + 1, newpreal, pptr)
+ else if typ = ptr.i64 then
+  let offset = if pptr = 0 then 1 else 0
+  let newpptr = if pptr = 0 then regno + 1 else pptr
+  let newbc0 = if pptr = 0 then bc + CAST(r(regno + 1), r.pint, ptr.ptr.i64, bitcast) else bc
+  let newbc = 
+   GEP(r(regno + offset + 1), ptr.i64, r.newpptr, C64(i - 1))
+   + STORE(r(regno + offset + 2), r(regno + offset + 1), slot.args_i)
+  ,
+  next(newbc0 + newbc, i + 1, regno + offset + 1, preal, newpptr)
+ else
+  let newbc = 
+   GEP(r(regno + 1), i64, r.pint, C64(i - 1))
+   + STORE(r(regno + 2), r(regno + 1), slot.args_i)
+  ,
+  next(bc + newbc, i + 1, regno + 1, preal, pptr)
+/do
+ if template then
+  recordcoderesult(regno + 1, bc + GEP(r(regno + 1), i64, r(lastreg + 1), C64.0))
+ else
+  recordcoderesult(regno, bc) 

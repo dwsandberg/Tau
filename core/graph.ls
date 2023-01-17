@@ -29,7 +29,7 @@ type graph is arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 Function newgraph(a:seq.arc.T) graph.T
 for acc = graph(empty:set.arc.T, empty:set.arc.T, empty:set.T), @e ∈ a do
  acc + @e
-/for (acc)
+/do acc
 
 Function =(c:arc.T, d:arc.T) boolean tail.c = tail.d ∧ head.c = head.d
 
@@ -44,10 +44,12 @@ unbound >1(T, T) ordering
 Function subgraph(g:graph.T, nodes:set.T) graph.T
 for acc = graph(empty:set.arc.T, empty:set.arc.T, nodes), @e ∈ toseq.arcs.g do
  if head.@e ∉ nodes then acc else if tail.@e ∉ nodes then acc else acc + @e
-/for (acc)
+/do acc
 
 Function successors(g:graph.T, n:T) set.T
-for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do acc + head.@e /for (acc)
+for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do
+ acc + head.@e
+/do acc
 
 Function arcstosuccessors(g:graph.T, n:T) set.arc.T findelement2(arcs.g, arc(n, n))
 
@@ -57,23 +59,23 @@ asset.toarcs(toseq.predecessors(g, n), n)
 Function predecessors(g:graph.T, n:T) set.T
 for acc = empty:set.T, @e ∈ toseq.findelement2(backarcs.g, arc(n, n)) do
  acc + head.@e
-/for (acc)
+/do acc
 
 Function deletearc(g:graph.T, a:arc.T) graph.T
 graph(arcs.g - a, backarcs.g - arc(head.a, tail.a), nodes.g)
 
 Function deletearcs(g:graph.T, a:set.arc.T) graph.T
-for acc = g, @e ∈ toseq.a do deletearc(acc, @e) /for (acc)
+for acc = g, @e ∈ toseq.a do deletearc(acc, @e) /do acc
 
 Function deletenode(g:graph.T, n:T) graph.T
 deletearcs(graph(arcs.g, backarcs.g, nodes.g - n)
  , arcstosuccessors(g, n) ∪ arcstopredecessors(g, n))
 
 Function toarcs(n:T, s:seq.T) seq.arc.T
-for acc = empty:seq.arc.T, @e ∈ s do acc + arc(n, @e) /for (acc)
+for acc = empty:seq.arc.T, @e ∈ s do acc + arc(n, @e) /do acc
 
 Function toarcs(s:seq.T, n:T) seq.arc.T
-for acc = empty:seq.arc.T, @e ∈ s do acc + arc(@e, n) /for (acc)
+for acc = empty:seq.arc.T, @e ∈ s do acc + arc(@e, n) /do acc
 
 Function backarc(a:arc.T) arc.T arc(head.a, tail.a)
 
@@ -84,21 +86,21 @@ Function +(g:graph.T, a:arc.T) graph.T
 graph(arcs.g + a, backarcs.g + arc(head.a, tail.a), nodes.g + tail.a + head.a)
 
 Function +(g:graph.T, a:seq.arc.T) graph.T
-for acc = g, @e ∈ a do acc + @e /for (acc)
+for acc = g, @e ∈ a do acc + @e /do acc
 
 Function +(g:graph.T, node:T) graph.T graph(arcs.g, backarcs.g, nodes.g + node)
 
 Function reachable(g:graph.T, a:seq.T) set.T
-let d = asset.a
+let d = asset.a,
 reachable(g, d, d, 1)
 
 function reachable(g:graph.T, old:set.T, new:set.T, count:int) set.T
-assert count < 1000 report "fal" + toword.cardinality.old + toword.cardinality.new
+assert count < 1000 report "fal" + toword.cardinality.old + toword.cardinality.new,
 if isempty.new then
  old
 else
- let a = for acc = empty:set.T, @e ∈ toseq.new do acc ∪ successors(g, @e) /for (acc)
- let b = old ∪ new
+ let a = for acc = empty:set.T, @e ∈ toseq.new do acc ∪ successors(g, @e) /do acc
+ let b = old ∪ new,
  reachable(g, b, a \ b, count + 1)
 
 Function complement(g:graph.T) graph.T graph(backarcs.g, arcs.g, nodes.g)
@@ -111,13 +113,13 @@ Function sinks(g:graph.T, b:set.T) seq.T
 {returns list of sinks in graph with arcs to nodes in set b removed}
 for acc = empty:seq.T, n ∈ toseq(nodes.g \ b) do
  if cardinality(successors(g, n) \ b) = 0 then acc + n else acc
-/for (acc)
+/do acc
 
 Function sources(g:graph.T, b:set.T) seq.T
 {returns list of sources in graph with arcs to nodes in set b removed}
 for acc = empty:seq.T, n ∈ toseq(nodes.g \ b) do
  if cardinality(predecessors(g, n) \ b) = 0 then acc + n else acc
-/for (acc)
+/do acc
 
 Function sources(g:graph.T) seq.T sources(g, empty:set.T)
 
@@ -128,11 +130,11 @@ Function sinksfirst(g:graph.T) seq.T
 sinksfirst(g, empty:set.T, empty:seq.T)
 
 function sinksfirst(g:graph.T, b:set.T, result:seq.T) seq.T
-let new = sinks(g, b)
+let new = sinks(g, b),
 if isempty.new then result else sinksfirst(g, b ∪ asset.new, result + new)
 
 function breathfirst(g:graph.T, b:set.T, result:seq.T) seq.T
-let new = sources(g, b)
+let new = sources(g, b),
 if isempty.new then result else breathfirst(g, b ∪ asset.new, result + new)
 
 Function breathfirst(g:graph.T) seq.T
@@ -155,6 +157,6 @@ for g = gin, n ∈ toseq.nodes.gin do
  for arcs = empty:seq.arc.T, p ∈ toseq.predecessors(g, n) do
   for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n) do
    acc2 + arc(p, s)
-  /for (arcs + acc2)
- /for (g + arcs)
-/for (g) 
+  /do arcs + acc2
+ /do g + arcs
+/do g 

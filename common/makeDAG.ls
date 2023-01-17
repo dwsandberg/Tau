@@ -20,13 +20,13 @@ make(g
 
 function make(g:graph.T, reversed:seq.arc.T, l:seq.T, nodes:set.T, i:int) graph.T
 if i > length.l then
- let r = for acc = asset.empty:seq.arc.T, @e ∈ reversed do acc + backarc.@e /for (acc)
+ let r = for acc = asset.empty:seq.arc.T, @e ∈ reversed do acc + backarc.@e /do acc,
  replacearcs(g, asset.reversed, r)
 else
  let n = l_i
- let succs = successors(g, n)
+ let succs = successors(g, n),
  make(g
-  , for acc = reversed, @e ∈ toseq.arcstosuccessors(g, n) do acc + filter(nodes, @e) /for (acc)
+  , for acc = reversed, @e ∈ toseq.arcstosuccessors(g, n) do acc + filter(nodes, @e) /do acc
   , l
   , nodes + n
   , i + 1)
@@ -42,10 +42,12 @@ if cardinality(predecessors(g, n) \ b) = 0 then asset.[n] else empty:set.T
 
 function ordernodes(g:graph.T, b:set.T, first:seq.T, last:seq.T) seq.T
 let a = 
- for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sources2(g, b, @e) /for (acc)
-let d = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sinks2(g, b, @e) /for (acc)
+ for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sources2(g, b, @e) /do acc
+let d = 
+ for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sinks2(g, b, @e) /do acc
+,
 if cardinality.a + cardinality.d = 0 then
- let u = nodes.g \ b
+ let u = nodes.g \ b,
  if isempty.u then first + last else ordernodes(g, b + u_1, first + u_1, last)
 else
  ordernodes(g, b ∪ a ∪ d, first + toseq.a, toseq.d + last) 

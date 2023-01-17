@@ -46,6 +46,6 @@ for acc = empty:seq.int, e ∈ constantseq(i, 0) do
  + toint(tobits.representation.randomfunc << 16
  ⊻ (tobits.representation.randomfunc
  ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)))
-/for (acc)
+/do acc
 
 Function blockseqtype real {used by template.js} toreal.blockseqtype:byte 

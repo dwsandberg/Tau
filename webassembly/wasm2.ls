@@ -10,24 +10,26 @@ use seq.mytype
 
 use standard
 
+use seq.symbol
+
 use symbol2
 
 use wasm
 
-Function %(a:seq.byte) seq.word for acc = "bytes:", @e ∈ a do acc + %.@e /for (acc)
+Function %(a:seq.byte) seq.word for acc = "bytes:", @e ∈ a do acc + %.@e /do acc
 
 Function allocatesym symbol symbol(moduleref."? core32", "allocate", typeint, typeptr)
 
 Function recordsym(alltypes:typedict, sym:symbol) symbol
 for acc = empty:seq.mytype, typ ∈ paratypes.sym do
- let kind = basetype(typ, alltypes)
+ let kind = basetype(typ, alltypes),
  acc + if kind = typeboolean ∨ kind = typereal then kind else typeint
-/for (symbol(moduleref."* $$record", "$$record", acc, typeint))
+/do symbol(moduleref."* $$record", "$$record", acc, typeint)
 
-Function initwordsbody(initprofile:set.symbol) seq.byte
+Function initwordsbody(initprofile:seq.symbol) seq.byte
 let empty = const32.getoffset.Constant2.[Lit.0, Lit.0, Record.[typeint, typeint]]
 let charseq = seqof.typeref."char standard *"
-let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint)
+let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint),
 funcbody([i32, i64]
  , store(const32.0, empty, encodings) + store(const32.0, empty, thisencoding)
  + switchcontext.newcontext2.0
@@ -36,8 +38,6 @@ funcbody([i32, i64]
  + Wcall.symboladdwords
  + Wdefine.1
  + switchcontext.newcontext2.0)
-
-use set.symbol
 
 Function reclaimspacefunc(alltypes:typedict) int
 addf(alltypes
@@ -59,6 +59,7 @@ let funccall =
  Wlocal.0 + i64truncf64s + Wlocal.1 + i32truncf64s
  + Wcallindirect.typeindex([i64], i64)
  + Wdefine.4
+,
 addf(alltypes
  , symbol(internalmod, "processbody", typereal, typereal, typereal)
  , funcbody([i32, i32, i64, i32]
@@ -135,7 +136,7 @@ let p2 = 1
 let runin = 2
 let addfunc = 3
 let callingprocess = 4
-let owningprocess = 5
+let owningprocess = 5,
 addf(alltypes
  , symbol(internalmod, "critical", [typeint, typeint, typeptr, typeint], typeptr)
  , funcbody([i32, i32]
@@ -160,6 +161,7 @@ let callingprocess = 4
 let calladd2 = 
  Wlocal.einfo + load64(Wlocal.data, 0) + Wlocal.addfunc + i32wrapi64
  + Wcallindirect.typeindex([i64, i64], i64)
+,
 addf(alltypes
  , symbol(internalmod, "addencoding5", [typeptr, typeptr, typeint], typeptr)
  , {parameters einfo, data, add2}

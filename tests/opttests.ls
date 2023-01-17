@@ -56,7 +56,7 @@ Function optest7 seq.word"A" + "B"
 Function optest8 int [ 1, 2, 3 + 4]_3
 
 Function optest9 int let a = 5
-let c = 6
+let c = 6 ,
  a + c
 
 Function optest10 int 12 / 5
@@ -88,7 +88,7 @@ Function optest22 boolean"A"_1 = encodeword.[ char.65]
 Function optest23 int optest23a(6, 3)
 
 function parabits(nopara:int)int
-let b = nopara
+let b = nopara ,
  toint(bits.if b > 6 then 0 else b + 1 /if << 5)
 
 Function optest23a(a:int, b:int)int(a + a) / b
@@ -137,9 +137,9 @@ Function optest37(s:seq.word, i:int)int
 
 Function optest38(a:int, b:int, c:int, d:int)ordering optest38a(a >1 b, c >1 d)
 
-Function optest38a(a:ordering, b:ordering)ordering let x = a
+Function optest38a(a:ordering, b:ordering)ordering let x = a ,
  if x = EQ then b else x
 
 Function optest16a(a:seq.char)seq.int
  { This is just a type change and the compiler recognizes this and does not generate code }
- for acc = empty:seq.int, @e /in a do acc + toint.@e /for(acc)
+ for acc = empty:seq.int, @e /in a do acc + toint.@e /do acc  /for

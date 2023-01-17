@@ -15,5 +15,5 @@ function hash(a:idrange) int next.a
 Function requestids(no:int) int
 let d = encodingdata:idrange
 let firstno = if isempty.d then 1 else next.last.d
-let discard = encode.idrange(firstno + no)
+let discard = encode.idrange(firstno + no),
 firstno 

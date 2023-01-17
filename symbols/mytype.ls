@@ -51,16 +51,16 @@ type modref is library:word, name:word, para:mytype
 type typedef is name:word, modname:word, library:word
 
 Function %(s:mytype) seq.word
-for acc = "", t ∈ typerep.s do acc + "." + name.t /for (acc << 1)
+for acc = "", t ∈ typerep.s do acc + "." + name.t /do acc << 1
 
 Function fullprint(s:mytype) seq.word
-for acc = "", t ∈ typerep.s do acc + name.t + modname.t + library.t /for (acc)
+for acc = "", t ∈ typerep.s do acc + name.t + modname.t + library.t /do acc
 
 Function changelibrary(s:mytype, map:seq.word) mytype
 for acc = empty:seq.typedef, t ∈ typerep.s do
  let match = 1
  let nomatch = 2
- let done = 3
+ let done = 3,
  acc
  + for state = 0, result = t, x ∈ map
  while state ≠ done
@@ -71,8 +71,8 @@ for acc = empty:seq.typedef, t ∈ typerep.s do
    next(done, typedef(name.t, modname.t, x))
   else
    next(if x = library.t then match else nomatch, result)
- /for (result)
-/for (mytype.acc)
+ /do result
+/do mytype.acc
 
 Function =(a:mytype, b:mytype) boolean typerep.a = typerep.b
 
@@ -82,11 +82,11 @@ Function abstracttype(t:mytype) mytype
 if length.typerep.t = 1 then t else mytype.[first.typerep.t, first.typerep.typeT]
 
 Function abstractModref(typ:mytype) modref
-let t = first.typerep.typ
+let t = first.typerep.typ,
 modref(library.t, modname.t, if length.typerep.typ > 1 then typeT else noparameter)
 
 Function tomodref(m:mytype) modref
-let t = first.typerep.m
+let t = first.typerep.m,
 modref(library.t, modname.t, parameter.m)
 
 Function abstractmod(m:modref) modref
@@ -106,10 +106,10 @@ if isAbstract.m then mytype(typerep.m >> 1 + typerep.with) else m
 Function replaceT(m:modref, t:mytype) modref modref(library.m, name.m, replaceT(para.m, t))
 
 Function =(a:typedef, b:typedef) boolean
-name.a = name.b ∧ modname.a = modname.b ∧ library.a = library.b
+name.a = name.b ∧ modname.a = modname.b ∧ wild(library.a, library.b) = EQ
 
 Function >1(a:typedef, b:typedef) ordering
-name.a >1 name.b ∧ modname.a >1 modname.b ∧ library.a >1 library.b
+name.a >1 name.b ∧ modname.a >1 modname.b ∧ wild(library.a, library.b)
 
 Function >2(a:typedef, b:typedef) ordering name.a >1 name.b
 
@@ -142,22 +142,22 @@ Function typeT mytype typeref."T internal internallib"
 Function typeseqdec mytype typeref."sequence internal internallib"
 
 Function typeref(s:seq.word) mytype
-assert length.s = 3 report "typereferror $(s)"
+assert length.s = 3 report "typereferror $(s)",
 mytype.[typedef(first.s, s_2, s_3)]
 
 Function internalmod modref moduleref."internallib internal"
 
 Function hash(b:seq.mytype, other:seq.word) int
 for acc = hashstart, a ∈ b >> 1 do
- for acc2 = acc, e ∈ typerep.a do hash2(hash2(acc, name.e), modname.e) /for (acc2)
-/for (for acc3 = acc, w ∈ other do hash2(acc3, w) /for (finalmix.acc3))
+ for acc2 = acc, e ∈ typerep.a do hash2(hash2(acc, name.e), modname.e) /do acc2
+/do for acc3 = acc, w ∈ other do hash2(acc3, w) /do finalmix.acc3
 
 function hash2(b:bits, w:word) bits hash(b, hash.w)
 
 Function addabstract(a:mytype, t:mytype) mytype mytype([first.typerep.a] + typerep.t)
 
 Function moduleref(modname:seq.word, para:mytype) modref
-assert length.modname = 2 report "modname must be of length 2 $(modname + stacktrace)"
+assert length.modname = 2 report "modname must be of length 2 $(modname + stacktrace)",
 modref(modname_1, modname_2, para)
 
 Function moduleref(modname:seq.word) modref moduleref(modname, noparameter)
@@ -194,7 +194,7 @@ Function passtypes(modname:modref, defines:set.mytype, exports:set.mytype) passt
 passtypes(modname, defines, empty:seq.seq.word, empty:seq.seq.word, exports, empty:set.modref)
 
 Function resolvetypes(librarytypes:set.passtypes, t:seq.seq.word, lib:word) set.passtypes
-let librarymods = for acc = empty:set.modref, p ∈ toseq.librarytypes do acc + modname.p /for (acc)
+let librarymods = for acc = empty:set.modref, p ∈ toseq.librarytypes do acc + modname.p /do acc,
 for knownmods = librarymods
  , s = librarytypes
  , defines = empty:set.mytype
@@ -208,7 +208,7 @@ do
  else if first.m ∈ "Module module" then
   let newmod = modref(lib, m_2, if length.m > 2 then typeT else noparameter)
   assert cardinality(knownmods + newmod) = cardinality.knownmods + 1
-  report "Duplicate module name:$(m)"
+  report "Duplicate module name:$(m)",
   if mref = internalmod then
    next(knownmods + newmod
     , s
@@ -221,6 +221,7 @@ do
     resolve(s
      , knownmods
      , passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref))
+   ,
    next(knownmods + newmod
     , s + p2
     , empty:set.mytype
@@ -230,8 +231,8 @@ do
  else if first.m ∈ "use" then
   assert for state = 0, w ∈ m << 1 do
    if state < 2 then 2 else if state = 2 ∧ w ∈ "." then 1 else 3
-  /for (state = 2)
-  report "incorrect format in module:$(mref) /br $(m)"
+  /do state = 2 /for
+  report "incorrect format in module:$(mref) /br $(m)",
   next(knownmods, s, defines, unresolveduses + m << 1, unresolvedexports, mref)
  else if first.m ∈ "type" then
   let newdefines = 
@@ -245,7 +246,7 @@ do
      mref
     , m_2)
   assert cardinality.newdefines = cardinality.defines + 1
-  report "Duplicate type definition in Module:$(m)"
+  report "Duplicate type definition in Module:$(m)",
   next(knownmods, s, newdefines, unresolveduses, unresolvedexports, mref)
  else if subseq(m, 1, 3) = "Export type:" then
   next(knownmods
@@ -256,13 +257,13 @@ do
    , mref)
  else
   next(knownmods, s, defines, unresolveduses, unresolvedexports, mref)
-/for (
+/do
  let p2 = 
   resolve(s
    , knownmods
    , passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref))
+ ,
  R(s + p2, knownmods, 100000)
-)
 
 function newtype(mref:modref, name:word) mytype
 mytype([typedef(name, name.mref, library.mref)] + typerep.para.mref)
@@ -274,15 +275,15 @@ else
  for cnt = 0, acc = empty:set.passtypes, p ∈ toseq.s1 do
   next(cnt + length.unresolvedexports.p + length.unresolveduses.p
    , acc + resolve(s1, knownmods, p))
- /for (
-  assert countin ≠ cnt report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for (acc2)
+ /do
+  assert countin ≠ cnt report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /do acc2,
   R(acc, knownmods, cnt)
- )
 
 function printunresolved(p:passtypes) seq.word
 let txt = 
- for acc = "", t ∈ unresolveduses.p do acc + "use $(t) /br" /for (acc)
- + for acc = "", t ∈ unresolvedexports.p do acc + "Export type:$(t)+/br" /for (acc)
+ for acc = "", t ∈ unresolveduses.p do acc + "use $(t) /br" /do acc /for
+ + for acc = "", t ∈ unresolvedexports.p do acc + "Export type:$(t)+/br" /do acc
+,
 if isempty.txt then
  ""
 else
@@ -292,19 +293,20 @@ function resolve(all:set.passtypes, knownmods:set.modref, p:passtypes) passtypes
 let dict = formtypedict(all, p)
 let p1 = 
  for exports = exports.p, x = empty:seq.seq.word, t2 ∈ unresolvedexports.p do
-  let b = resolvetype(dict, t2)
+  let b = resolvetype(dict, t2),
   if isempty.b then next(exports, x + t2) else next(exports + b_1, x)
- /for (passtypes(modname.p, defines.p, unresolveduses.p, x, exports, uses.p))
+ /do passtypes(modname.p, defines.p, unresolveduses.p, x, exports, uses.p)
+,
 for uses = uses.p, x = empty:seq.seq.word, t2 ∈ unresolveduses.p do
- let b = resolveuse(dict, knownmods, t2)
+ let b = resolveuse(dict, knownmods, t2),
  if isempty.b then next(uses, x + t2) else next(uses + b_1, x)
-/for (passtypes(modname.p, defines.p, x, unresolvedexports.p1, exports.p1, uses))
+/do passtypes(modname.p, defines.p, x, unresolvedexports.p1, exports.p1, uses)
 
 Function >1(a:passtypes, b:passtypes) ordering name.modname.a >1 name.modname.b
 
 Function resolvetype(knowntypes:set.mytype, ref:seq.word) seq.mytype
 if subseq(ref, 1, 2) = "seq." then
- let t = resolvetype(knowntypes, ref << 2)
+ let t = resolvetype(knowntypes, ref << 2),
  if length.t ≠ 1 then t else [seqof.first.t]
 else if ref = "int" then
  [typeint]
@@ -318,8 +320,8 @@ else
  let x = 
   for acc = empty:seq.typedef, w ∈ ref do
    if w = "."_1 then acc else acc + typedef(w, "internal"_1, "."_1)
-  /for (mytype.acc)
- let a1 = findelement2(knowntypes, x)
+  /do mytype.acc
+ let a1 = findelement2(knowntypes, x),
  if cardinality.a1 = 1 then
   toseq.a1
  else if length.ref = 1 then
@@ -327,26 +329,27 @@ else
  else
   let a = 
    findelement2(knowntypes, mytype([typedef(ref_1, "internal"_1, "."_1)] + typerep.typeT))
+  ,
   if cardinality.a ≠ 1 then
    empty:seq.mytype
   else if ref_2 = "."_1 then
-   let b = resolvetype(knowntypes, ref << 2)
+   let b = resolvetype(knowntypes, ref << 2),
    if isempty.b then b else [mytype([(typerep.(toseq.a)_1)_1] + typerep.b_1)]
   else
    empty:seq.mytype
 
 function resolveuse(knowntypes:set.mytype, knownmodules:set.modref, ref:seq.word) seq.modref
-let a = findelement2(knownmodules, modref("?"_1, ref_1, noparameter))
+let a = findelement2(knownmodules, modref("?"_1, ref_1, noparameter)),
 if cardinality.a ≠ 1 then
  empty:seq.modref
 else if length.ref = 1 then
  toseq.a
 else
- let b = resolvetype(knowntypes, ref << 2)
+ let b = resolvetype(knowntypes, ref << 2),
  if isempty.b then empty:seq.modref else [modref(library.a_1, name.a_1, b_1)]
 
 Function findpasstypes(all:set.passtypes, lib:word, m:seq.word) set.passtypes
-let newmod = modref(lib, m_2, if length.m > 2 then typeT else noparameter)
+let newmod = modref(lib, m_2, if length.m > 2 then typeT else noparameter),
 lookup(all
  , passtypes(newmod
   , empty:set.mytype
@@ -367,5 +370,6 @@ for r = exports.this, u ∈ toseq.uses.this do
     , empty:set.mytype
     , empty:set.modref)
    )
+ ,
  if isempty.a then r else r ∪ exports.a_1
-/for (r ∪ defines.this) 
+/do r ∪ defines.this 

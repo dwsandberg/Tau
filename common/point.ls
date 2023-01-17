@@ -54,5 +54,5 @@ Function print(p:point) seq.word
 Function length(a:point) real sqrt((z.a)^2 + (x.a)^2 + (y.a)^2)
 
 Function unit(a:point) point
-let l = length.a
+let l = length.a,
 point(x.a / l, y.a / l, z.a / l) 

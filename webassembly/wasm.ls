@@ -41,12 +41,12 @@ vector.toseqbyte(emptyUTF8 + decodeword.modname)
 + LEBu.idx
 
 Function vector(a:seq.byte) seq.byte
-assert length.a < 2^32 report "vector problem $(stacktrace)"
+assert length.a < 2^32 report "vector problem $(stacktrace)",
 LEBu.length.a + a
 
 Function vector(a:seq.seq.byte) seq.byte
-assert length.a < 2^32 report "vector problem"
-for acc = LEBu.length.a, @e ∈ a do acc + @e /for (acc)
+assert length.a < 2^32 report "vector problem",
+for acc = LEBu.length.a, @e ∈ a do acc + @e /do acc
 
 Export tobyte(b:bits) byte
 
@@ -461,7 +461,7 @@ let discard =
   , f64converti32u, f64converti64s, f64converti64u, f64promotef32, i32reinterpretf32
   , i64reinterpretf64, f32reinterpreti32, f64reinterpreti64, i32extend8s, i32extend16s
   , i64extend8s, i64extend16s, i64extend32s]
-let i = toint.code
+let i = toint.code,
 if between(i + 1, 1, 197) then
  let r = 
   [
@@ -482,6 +482,7 @@ if between(i + 1, 1, 197) then
     i32reinterpretf32 i64reinterpretf64 f32reinterpreti32 f64reinterpreti64 i32extend8s i32extend16s i64extend8s
     i64extend16s i64extend32s"
    _(i + 1)]
+ ,
  if r ≠ "?" then r else "byte." + toword.i
 else
  "byte." + toword.i 

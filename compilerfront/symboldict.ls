@@ -57,11 +57,11 @@ Function common(d:symboldict) commoninfo first.commonX.d
 
 Function requires(d:symboldict, sym:symbol) seq.symbol
 if hasrequires.sym then
- let t = getSymdef(requires.d, sym)
+ let t = getSymdef(requires.d, sym),
  if isempty.t then
   empty:seq.symbol
  else
-  assert not.isempty.t report "requires $(sym)"
+  assert not.isempty.t report "requires $(sym)",
   code.t_1
 else
  empty:seq.symbol

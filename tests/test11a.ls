@@ -1,7 +1,5 @@
 Module test11a
 
-use callconfig
-
 use compilerfrontT.callconfig
 
 use checking
@@ -9,6 +7,8 @@ use checking
 use file
 
 use seq.file
+
+use llvmcode
 
 use process.midpoint
 
@@ -40,10 +40,12 @@ let z =
    , "<* literal then and else types are different *>"
    , "function f1 (a:int) int if true then true else 0")
   , testerror(in, "<* literal cond of if must be boolean but is int *>", "function f1 (a:int) int if 1 then 2 else 3")
-  , testerror(in, "<* literal condition in assert must be boolean", "function f1 (a:int) int assert 1 report 2 3")
+  , testerror(in
+   , "<* literal condition in assert must be boolean"
+   , "function f1 (a:int) int assert 1 report 2 do 3")
   , testerror(in
    , "<* literal report in assert must be seq of word in:"
-   , "function f1 (a:int) int assert true report 2 3")
+   , "function f1 (a:int) int assert true report 2 do 3")
   , testerror(in, "<* literal cannot resolve type hhh", "function f1 (z:hhh) int 3")
   , testerror(in, "<* literal cannot resolve type xxx", "function f1 (z:int) xxx 3")
   , testerror(in, "recursive type problem:", "type testtype is fld1:testtype")
@@ -59,17 +61,18 @@ let z =
    , "use notdefined")
   , testerror(in, "Duplicate type definition", "type t1 is a:int /p type t1 is b:int")
   , testerror(in, "Duplicate module name", "Module testit")]
+,
 check(z, "test11a") + checkprec
 
 function testcomp2(in:seq.file, s:seq.word) seq.word
 let txt = "Library = testcomp uses = stdlib exports = testit /p module testit /p use standard /p $(s)"
-let p = process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in << 1)
+let p = process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in << 1),
 if aborted.p then
  message.p
 else
  for acc = "", sd ∈ toseq.prg.result.p do
   acc + "/br /br" + %.sym.sd + %.code.sd
- /for (acc)
+ /do acc
 
 function compare(in:seq.file, exp1:seq.word, exp2:seq.word) boolean
 testcomp2(in, "Function f1 (a:int, b:int, c:int) int $(exp1)")
@@ -80,7 +83,7 @@ function isprefix(p:seq.word, s:seq.word) boolean subseq(s, 1, length.p) = p
 function testerror(in:seq.file, m:seq.word, code:seq.word) boolean
 let r = testcomp2(in, code)
 let a = isprefix(m, r)
-assert isprefix(m, r) report "Fail test11a expected:$(m) /br got:$(subseq(r, 1, length.m))"
+assert isprefix(m, r) report "Fail test11a expected:$(m) /br got:$(subseq(r, 1, length.m))",
 a
 
 type checkprec is toseq:seq.word
@@ -127,7 +130,8 @@ let b =
   , "((1 ∧ 2) ∨ 3)"
   , "(1 ∨ (2 ∧ 3))"
   , "((uni 1)+2)"]
-check(for acc = empty:seq.seq.word, @e ∈ a do acc + toseq.@e /for (acc)
+,
+check(for acc = empty:seq.seq.word, @e ∈ a do acc + toseq.@e /do acc
  , b
  , "precedence test")
 
@@ -135,7 +139,8 @@ function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word) seq.word
 let x = 
  for acc = "", i ∈ arithseq(length.y, 1, 1) do
   if y_i = b_i then acc else acc + toword.i
- /for (acc)
+ /do acc
+,
 if x = "" then "PASS $(testname)" else "<* literal FAILED *> test $(x) in $(testname)"
 
 function x(a:int) checkprec checkprec.[toword.a]

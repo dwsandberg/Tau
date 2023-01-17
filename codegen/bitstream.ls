@@ -37,8 +37,8 @@ else
  let j = i / 16
  let start = %.endpart.x << (3 - j)
  let k = i mod 16 + 1
- let part = if k = 16 then start else [toword.k] + "bits of" + start
- part + for acc = "", @e ∈ reverse.fullwords.x do acc + %.@e /for (acc)
+ let part = if k = 16 then start else [toword.k] + "bits of" + start,
+ part + for acc = "", @e ∈ reverse.fullwords.x do acc + %.@e /do acc
 
 function firstword(x:bitstream) bits
 if isempty.fullwords.x then endpart.x else first.fullwords.x
@@ -62,17 +62,17 @@ let finishword = toint(bits(finish - 1) >> 6) + 1
 let startshift = toint(bits(start - 1) ∧ bits.63)
 let finishshift = toint(bits(finish - 1) ∧ bits.63)
 let startpart = ithword(s, startword) >> startshift
-let finishpartmask = bits.-1 >> (63 - partbits)
+let finishpartmask = bits.-1 >> (63 - partbits),
 if len ≤ 64 then
  if len ≤ 0 then
   empty:bitstream
  else if startword = finishword then
   bitstream(len, startpart ∧ finishpartmask, empty:seq.bits)
  else
-  let endpart = ithword(s, finishword) << (64 - startshift) ∧ finishpartmask
+  let endpart = ithword(s, finishword) << (64 - startshift) ∧ finishpartmask,
   bitstream(len, startpart ∨ endpart, empty:seq.bits)
 else if startshift = 0 then
- let endpart = ithword(s, finishword) ∧ finishpartmask
+ let endpart = ithword(s, finishword) ∧ finishpartmask,
  bitstream(len, endpart, subseq(fullwords.s, startword, finishword - 1))
 else
  let endpart = 
@@ -86,11 +86,12 @@ else
   subseq(fullwords.s + endpart.s
    , startword
    , if finishshift = 63 then finishword else finishword - 1)
+ ,
  bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
 Function +(a:bitstream, b:bitstream) bitstream
 {steal bits from b to make full words in a}
-let partbitsa = toint(bits.length.a ∧ bits(64 - 1))
+let partbitsa = toint(bits.length.a ∧ bits(64 - 1)),
 if partbitsa = 0 ∧ length.a > 0 then
  {no need to steal bits}
  bitstream(length.a + length.b, endpart.b, fullwords.a + endpart.a + fullwords.b)
@@ -100,14 +101,14 @@ else
  let partbitsb = toint(bits.length.b ∧ bits(64 - 1))
  let steal = 64 - partbitsa
  let overlap = firstword.b << partbitsa ∨ endpart.a
- let firstpart = fullwords.a + overlap
+ let firstpart = fullwords.a + overlap,
  if length.fullwords.b = 0 then
   if partbitsb + partbitsa > 64 then
    bitstream(length.a + length.b, firstword.b >> steal, firstpart)
   else
    bitstream(length.a + length.b, overlap, fullwords.a)
  else
-  let allwords = shiftleft(2, firstword.b >> steal, fullwords.b + endpart.b, partbitsa, firstpart)
+  let allwords = shiftleft(2, firstword.b >> steal, fullwords.b + endpart.b, partbitsa, firstpart),
   if partbitsb > steal ∨ partbitsb = 0 then
    bitstream(length.a + length.b, endpart.b >> steal, allwords)
   else
@@ -115,14 +116,14 @@ else
 
 Function add(a:bitstream, b:bits, nobits:int) bitstream
 let partbitsa = toint(bits.length.a ∧ bits(64 - 1))
-let firstwordb = b ∧ bits.-1 >> (64 - nobits)
+let firstwordb = b ∧ bits.-1 >> (64 - nobits),
 if partbitsa = 0 ∧ length.a > 1 then
  bitstream(length.a + nobits, firstwordb, fullwords.a + endpart.a)
 else
  let overlap = firstwordb << partbitsa ∨ endpart.a
- let steal = 64 - partbitsa
+ let steal = 64 - partbitsa,
  if partbitsa + nobits > 64 then
-  let firstpart = fullwords.a + overlap
+  let firstpart = fullwords.a + overlap,
   bitstream(length.a + nobits, firstwordb >> steal, firstpart)
  else
   bitstream(length.a + nobits, overlap, fullwords.a)
@@ -130,13 +131,13 @@ else
 Function +(a:bitstream, b:byte) bitstream add(a, tobits.b, 8)
 
 Function +(a:bitstream, b:seq.byte) bitstream
-for acc = a, @e ∈ b do acc + @e /for (acc)
+for acc = a, @e ∈ b do acc + @e /do acc
 
 function shiftleft(i:int, leftover:bits, allwords:seq.bits, shiftleft:int, result:seq.bits) seq.bits
 if i > length.allwords then
  result
 else
- let next = allwords_i
+ let next = allwords_i,
  shiftleft(i + 1
   , next >> (64 - shiftleft)
   , allwords

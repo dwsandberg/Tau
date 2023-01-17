@@ -109,7 +109,7 @@ let d =
 let p1 = cross(point(6.0, 7.0, 8.0), point(1.0, 0.0, 0.0) + point(0.0, 0.0, 0.0))
 assert a ∧ b ∧ c ∧ d ∧ print(3, length.unit.-(p1 - 3.0 * p1 + p1)) = "1.000"
 ∧ (p1 >1 p1) = EQ
-report "problem with matrix"
+report "problem with matrix",
 "test matrix ok"
 
 Function identity matrix

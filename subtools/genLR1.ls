@@ -66,7 +66,7 @@ type action2 is toaction:action
 
 function >1(a1:action2, b1:action2) ordering
 let a = toaction.a1
-let b = toaction.b1
+let b = toaction.b1,
 stateno.a >1 stateno.b ∧ codedaction.a >1 codedaction.b ∧ lookahead.a >1 lookahead.b
 
 function recovery(alphabet:seq.word, grammar:seq.seq.word) seq.word
@@ -86,20 +86,19 @@ for txt = "", s ∈ encodingdata:state do
    next(acc, hasreduce)
   else
    next(acc + (rule.p)_(place.p), hasreduce)
- /for (
+ /do
   let tmp = 
    if hasreduce > 0 ∨ isempty.acc then
     "}-$(hasreduce)"
    else
     [first.acc] + "}" + %.findindex(alphabet, first.acc)
-  let stateno = valueofencoding.encode.s
+  let stateno = valueofencoding.encode.s,
   txt + ", {$(stateno) $(tmp)"
- )
-/for ("[$(txt << 1)]")
+/do "[$(txt << 1)]"
 
 function print(grammar:seq.seq.word, actions:seq.action) seq.word
-let d = sort.for b = empty:seq.action2, a ∈ actions do b + action2.a /for (b)
-let c = for b = empty:seq.action, a ∈ d do b + toaction.a /for (b)
+let d = sort.for b = empty:seq.action2, a ∈ actions do b + action2.a /do b
+let c = for b = empty:seq.action, a ∈ d do b + toaction.a /do b,
 for result = "", laststate = 1, lastaction = -1, this ∈ c do
  let p1 = 
   if laststate ≠ stateno.this then
@@ -115,8 +114,9 @@ for result = "", laststate = 1, lastaction = -1, this ∈ c do
     "shift" + toword.codedaction.this
   else
    ""
+ ,
  next(result + p1 + p2 + lookahead.this, stateno.this, codedaction.this)
-/for (result)
+/do result
 
 function hash(s:state) int hash.(toseq.toset.s)_1
 
@@ -126,8 +126,9 @@ let allarcs =
   acc
   + for arcs = empty:seq.arc.word, i = 1, e ∈ rule do
    next(if i > 2 then arcs + arc(rule_(i - 1), rule_i) else arcs, i + 1)
-  /for (arcs)
- /for (acc)
+  /do arcs
+ /do acc
+,
 follow(newgraph.allarcs, grammar)
 
 function follow(g:graph.word, grammar:seq.seq.word) graph.word
@@ -136,15 +137,17 @@ let g2 =
   let a = 
    for acc = empty:seq.arc.word, succ ∈ toseq.successors(g, rule_1) do
     acc + arc(last.rule, succ)
-   /for (acc)
+   /do acc
+  ,
   newgraph
-  + for acc = a, pred ∈ toseq.predecessors(g, rule_1) do acc + arc(pred, rule_2) /for (acc)
- /for (newgraph)
+  + for acc = a, pred ∈ toseq.predecessors(g, rule_1) do acc + arc(pred, rule_2) /do acc
+ /do newgraph
+,
 if g = g2 then g else follow(g2, grammar)
 
 function ruleno(grammar:seq.seq.word, rule:seq.word) int
 let ruleno = if rule = "" then 0 else findindex(grammar, rule)
-assert ruleno ≤ length.grammar report "rule not found $(rule)"
+assert ruleno ≤ length.grammar report "rule not found $(rule)",
 ruleno
 
 function shift(stateno:int, lookahead:word, newstateno:int) action
@@ -159,13 +162,13 @@ subseq(rule.p, 1, place.p - 1) + "'" + subseq(rule.p, place.p, length.rule.p)
 function print(s:state) seq.word
 for acc = "/br", dotrule ∈ toseq.toset.s do
  acc + print.dotrule + "/br |"
-/for (acc >> 2)
+/do acc >> 2
 
 function initialstate(grammar:seq.seq.word) set.dottedrule
 close2(grammar, asset.[dottedrule(2, "G F #")])
 
 function close2(g:seq.seq.word, s:set.dottedrule) set.dottedrule
-let newset = for acc = s, dotrule ∈ toseq.s do acc ∪ close(g, dotrule) /for (acc)
+let newset = for acc = s, dotrule ∈ toseq.s do acc ∪ close(g, dotrule) /do acc,
 if s = newset then s else close2(g, newset)
 
 function close(grammar:seq.seq.word, p:dottedrule) set.dottedrule
@@ -174,7 +177,7 @@ if place.p > length.rule.p then
 else
  asset.for acc = empty:seq.dottedrule, rule ∈ grammar do
   if rule_1 = (rule.p)_(place.p) then acc + dottedrule(2, rule) else acc
- /for (acc)
+ /do acc
 
 function advance(g:seq.seq.word, state:set.dottedrule, next:word) set.dottedrule
 close2(g
@@ -183,17 +186,17 @@ close2(g
    acc + dottedrule(place.p + 1, rule.p)
   else
    acc
- /for (acc))
+ /do acc)
 
 function finished(s:state) seq.seq.word
 for acc = empty:seq.seq.word, p ∈ toseq.toset.s do
  acc + if place.p = length.rule.p + 1 then [rule.p] else empty:seq.seq.word
-/for (acc)
+/do acc
 
 function shifts(s:state) seq.word
 toseq.asset.for acc = empty:seq.word, p ∈ toseq.toset.s do
  acc + if place.p = length.rule.p + 1 then empty:seq.word else [(rule.p)_(place.p)]
-/for (acc)
+/do acc
 
 function resolveamb(ruleprec:seq.seq.word, grammar:seq.seq.word, dup:seq.action) seq.action
 if length.dup = 1 then
@@ -207,13 +210,14 @@ else if length.dup ≥ 2 ∧ codedaction.dup_1 < 0 ∧ codedaction.dup_2 < 0 the
   while r = 0
   do
    next(if length.p > 1 ∧ p = rule1 then i else 0, i + 1)
-  /for (r)
+  /do r
  let reducepos2 = 
   for r = 0, i = 1, p ∈ ruleprec
   while r = 0
   do
    next(if length.p > 1 ∧ p = rule2 then i else 0, i + 1)
-  /for (r)
+  /do r
+ ,
  if reducepos1 = 0 ∧ reducepos2 = 0 then
   dup
  else
@@ -227,13 +231,14 @@ else if length.dup = 2 ∧ codedaction.dup_1 < 0 ∧ codedaction.dup_2 > 0 then
   while r = 0
   do
    next(if length.p = 1 ∧ p_1 = lookahead.dup_2 then i else 0, i + 1)
-  /for (r)
+  /do r
  let reducepos = 
   for r = 0, i = 1, p ∈ ruleprec
   while r = 0
   do
    next(if length.p > 1 ∧ p = rule1 then i else 0, i + 1)
-  /for (r)
+  /do r
+ ,
  if between(reducepos, 1, shiftpos) then
   {choose reduce} [dup_1]
  else if between(shiftpos, 1, reducepos) then {choose shift} [dup_2] else dup
@@ -241,7 +246,7 @@ else
  dup
 
 function printRulePrecedence(ruleprec:seq.seq.word) seq.word
-for acc = "{RulePrecedence", @e ∈ ruleprec do acc + "|" + @e /for (acc + "|}")
+for acc = "{RulePrecedence", @e ∈ ruleprec do acc + "|" + @e /do acc + "|}"
 
 function lr1parser(grammarandact:seq.seq.seq.word
  , ruleprec:seq.seq.word
@@ -252,12 +257,12 @@ function lr1parser(grammarandact:seq.seq.seq.word
 {ruleprec is a list of rules and lookaheads. The position of the lookahead is noted. Rule reductions
  after position are discarded and rule the first rule listed before the position is used to reduce. 
  }
-let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first.@e /for (acc)
-let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /for (acc)
+let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first.@e /do acc
+let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /do acc
 assert isempty(asset.terminals ∩ nontermials) report "terminals and nontermials sets must be distinct"
 let alphabet = terminals + toseq.nontermials
 let initialstateno = addorder.state.initialstate.grammar2
-let symbolsused = for acc = empty:set.word, rule ∈ grammar2 do acc ∪ asset.rule /for (acc)
+let symbolsused = for acc = empty:set.word, rule ∈ grammar2 do acc ∪ asset.rule /do acc
 let missingsymbols = symbolsused \ asset.alphabet
 assert isempty(symbolsused \ asset.alphabet)
 report "Symbols not included in alphabet $(toseq(symbolsused \ asset.alphabet))"
@@ -269,7 +274,7 @@ let k =
   + if length.item = 1 ∧ item_1 ∉ alphabet then
    "lookahead $(item) is not in alphabet"
   else if length.item > 1 ∧ item ∉ grammar2 then "rule is not in grammar:$(item)" else ""
- /for (problems)
+ /do problems
 assert isempty.k report "ruleprec problem $(k)"
 let graminfo = grammarinfo(grammar2, follow.grammar2)
 let actions = closestate(graminfo, 1, empty:seq.action, asset.terminals)
@@ -278,19 +283,20 @@ let dups = dups.actions
 let actions2 = 
  for acc = empty:seq.seq.action, @e ∈ dups.actions do
   acc + resolveamb(ruleprec, grammar2, @e)
- /for (acc)
-let actions3 = for acc = empty:seq.action, @e ∈ actions2 do acc + @e /for (acc)
+ /do acc
+let actions3 = for acc = empty:seq.action, @e ∈ actions2 do acc + @e /do acc
 let amb = 
  for acc = "", @e ∈ actions2 do
-  acc + if length.@e > 1 then "/br >>>> $(print(grammar2, @e))" else empty:seq.word
- /for (acc)
+  acc
+  + if length.@e > 1 then "/br >>>> $(print(grammar2, @e))" else empty:seq.word
+ /do acc
 let finalstatebody = 
  for txt = "", a ∈ actions3 do
   if lookahead.a = first."#" ∧ codedaction.a > 0 then
    txt + toword.codedaction.a
   else
    txt
- /for (txt)
+ /do txt
 let para = if parameterized then ":T" else ""
 let result = 
  [generatereduce(grammarandact, alphabet, attributename, ruleprec)] + lextable.terminals
@@ -298,12 +304,12 @@ let result =
   "function rulelength $(para) seq.int
    $(for acc = "[", @e ∈ grammarandact do
    acc + toword(length.@e_1 - 1) + ","
-  /for (acc >> 1 + "]"))
+  /do acc >> 1 + "]")
    "
   , "function leftside $(para) seq.int
    $(for acc = "[", @e ∈ grammarandact do
    acc + toword.findindex(alphabet, @e_1_1) + ","
-  /for (acc >> 1 + "]"))
+  /do acc >> 1 + "]")
    "
   , "function tokenlist $(para) seq.word $(dq.alphabet)"
   , "function startstate $(para) int $(initialstateno)"
@@ -316,8 +322,9 @@ let result =
      replaceS(table
       , findindex(alphabet, lookahead.@e) + length.alphabet * stateno.@e
       , [codedaction.@e])
-    /for (table)
-   for acc = "[", @e ∈ x do acc + toword.@e + "," /for (acc >> 1 + "]")
+    /do table
+   ,
+   for acc = "[", @e ∈ x do acc + toword.@e + "," /do acc >> 1 + "]"
   else
    "{action table omitted} [0]"
   )
@@ -332,12 +339,13 @@ let header =
  + printRulePrecedence.ruleprec
  + if length.amb > 0 then "ambiguous actions:$(amb)" else "" /if
  + if codeonly then "" else print(grammar2, actions3) + print.follow.graminfo
+,
 [header] + result
 
 function print(a:graph.word) seq.word
 for acc = "nodes", node ∈ toseq.nodes.a do
  acc + "/br" + node + "followed by:" + toseq.successors(a, node)
-/for (acc)
+/do acc
 
 function dups(s:seq.action) seq.seq.action
 if isempty.s then empty:seq.seq.action else dups(1, sort.s, 1, empty:seq.seq.action)
@@ -351,7 +359,7 @@ else
  dups(i, s, i + 1, result + subseq(s, startofrun, i - 1))
 
 function closestate(graminfo:grammarinfo, stateno:int, result:seq.action, alphabet:set.word) seq.action
-let m = encodingdata:state
+let m = encodingdata:state,
 if stateno > length.m then
  result
 else
@@ -364,14 +372,15 @@ else
     , lookahead ∈ toseq(successors(follow.graminfo, first.rule) ∩ alphabet)
    do
     acc2 + reduce(stateno, lookahead, ruleno(grammar.graminfo, rule))
-   /for (acc2)
-  /for (acc)
+   /do acc2
+  /do acc
  let newresult = 
   for acc = result + reduceActions, lookahead ∈ toseq.asset.shifts.state do
    let newstate = advance(grammar.graminfo, toset.state, lookahead)
-   let newstateno = if isempty.newstate then 0 else addorder.state.newstate
+   let newstateno = if isempty.newstate then 0 else addorder.state.newstate,
    acc + shift(stateno, lookahead, newstateno)
-  /for (acc)
+  /do acc
+ ,
  closestate(graminfo, stateno + 1, newresult, alphabet)
 
 function generatereduce(grammarandact:seq.seq.seq.word
@@ -382,12 +391,12 @@ function generatereduce(grammarandact:seq.seq.seq.word
  $(attributename)) $(attributename) {Alphabet $(alphabet)}
  $(if isempty.ruleprec then "" else printRulePrecedence.ruleprec)
  $(for acc = "", i = 1, e ∈ grammarandact do
- let reduceline = "else if ruleno = {$(e_1)}" + toword.i + "then" + e_2
+ let reduceline = "else if ruleno = {$(e_1)}" + toword.i + "then" + e_2,
  next(acc + reduceline, i + 1)
-/for (
+/do
  acc << 1 + "else {ruleno} assert false report" + dq."invalid rule number"
- + "+toword.ruleno R_1"
-))
+ + "+toword.ruleno do R_1"
+)
  "
 
 Function LR1(input:seq.file, o:seq.word, codeonly:boolean, parameterized:boolean) seq.file
@@ -405,7 +414,7 @@ let funcidx =
    -funcidx
   else
    funcidx + 1
- /for (-funcidx)
+ /do-funcidx
 let p = location_funcidx
 let x = findindex(p, "Alphabet"_1)
 let terminals = subseq(p, x + 1, x + findindex(p << x, "}"_1) - 1)
@@ -415,22 +424,22 @@ let ruleprec = c >> 1
 let rules = 
  for acc = empty:seq.seq.seq.word, b ∈ break(p, "ruleno", false) do
   if subseq(b, 1, 2) = "= {" then
-   let k = findindex(b, first."}")
+   let k = findindex(b, first."}"),
    acc + [subseq(b, 3, k - 1), subseq(b, k + 3, length.b - 2)]
   else
    acc
- /for (acc)
+ /do acc
 let attribute = p_(findindex(p, first.")") + 1)
-let nonTerminals = for acc = empty:set.word, r ∈ rules do acc + first.first.r /for (acc)
-let terminals2 = for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for (acc)
-let result = lr1parser(rules, ruleprec, terminals2, [attribute], codeonly, parameterized)
+let nonTerminals = for acc = empty:set.word, r ∈ rules do acc + first.first.r /do acc
+let terminals2 = for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /do acc
+let result = lr1parser(rules, ruleprec, terminals2, [attribute], codeonly, parameterized),
 for txt = first.result, action = "", otherfuncs = "", p2 ∈ result << 1 do
  let pretty = pretty.p2
- let isaction = subseq(p2, 1, 2) ∈ ["Function action", "function action"]
+ let isaction = subseq(p2, 1, 2) ∈ ["Function action", "function action"],
  next(txt + "/p" + pretty
   , if isaction then pretty else action
   , if isempty.action ∨ isaction then otherfuncs else otherfuncs + "/p" + pretty)
-/for (
+/do
  let file2 = 
   if length.input < 2 ∨ isempty.otherfuncs then
    empty:seq.file
@@ -444,13 +453,13 @@ for txt = first.result, action = "", otherfuncs = "", p2 ∈ result << 1 do
      next(done, newfile + "/p" + pretty.p3)
     else
      next(done, newfile + "/p" + p3)
-   /for ([file(filename."+tmp tables.ls", newfile << 1 + otherfuncs)])
+   /do [file(filename."+tmp tables.ls", newfile << 1 + otherfuncs)]
+ ,
  for newfile = "", p3 ∈ location do
   newfile + "/p"
   + if subseq(p3, 1, 2) ∈ ["Function action", "function action"] then
    {use old function header}
-   let j = findindex(p, ")"_1)
+   let j = findindex(p, ")"_1),
    subseq(p, 1, j) + action << findindex(action, ")"_1)
   else if not.isempty.p3 ∧ first.p3 ∈ "Function function Export type" then pretty.p3 else p3
- /for ([file(o, txt), file(filename."+tmp action.ls", newfile << 1)] + file2)
-) 
+ /do [file(o, txt), file(filename."+tmp action.ls", newfile << 1)] + file2 
