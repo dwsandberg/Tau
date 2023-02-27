@@ -71,7 +71,10 @@ Function optest14 bits bits.11 << 2
 
 Function optest15 bits bits.11 >> 2
 
-Function optest16 int(optest16a.[ char.45, char.46])_2
+Function optest16(a:seq.char)seq.int
+ { This is just a type change and the compiler recognizes this and does not generate code }
+ for acc = empty:seq.int, @e /in a do acc + toint.@e /do acc  /for
+
 
 Function optest17 char(decodeword."HJK"_1)_1
 
@@ -140,6 +143,4 @@ Function optest38(a:int, b:int, c:int, d:int)ordering optest38a(a >1 b, c >1 d)
 Function optest38a(a:ordering, b:ordering)ordering let x = a ,
  if x = EQ then b else x
 
-Function optest16a(a:seq.char)seq.int
- { This is just a type change and the compiler recognizes this and does not generate code }
- for acc = empty:seq.int, @e /in a do acc + toint.@e /do acc  /for
+Function optest39 int(optest16.[ char.45, char.46])_2

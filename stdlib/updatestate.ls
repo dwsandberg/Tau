@@ -41,7 +41,7 @@ function >1(a:UTF8, b:UTF8) ordering toseqbyte.a >1 toseqbyte.b
 function >1(a:byte, b:byte) ordering toint.a >1 toint.b
 
 Function prettystate(input:seq.file, o:seq.word) seq.file
-for acc = "", a ∈ breakparagraph.data.first.input do
+{ }for acc = "", a ∈ breakparagraph.data.first.input do
  if subseq(a, 1, 1) ∈ ["-", "comment"] then
   acc + "/p comment" + a << 1
  else if subseq(a, 1, 1) ∈ [":", "define"] then
@@ -206,16 +206,17 @@ if lib.cmd ∈ "shell" then
 else if cmds.cmd = "makelib" then
  for depends = "", libinfo = "", u ∈ reverse.extractValue(data.cmdpara, "uses") do
   next(depends + fullname.filename."+$build $(u).$libtype"
-   , if isempty.libinfo then "$(u).libinfo" else libinfo + u)
+   ,  libinfo+"$(u).libinfo" )
  /do
   let opts = extractValue(data.cmdpara, "options")
   let options = if isempty.opts then opts else "options = $(opts)"
   let out = changeext(fn, "libsrc"),
-  "/p #makelibrary $(name.fn)
+  {"/p #makelibrary $(name.fn)
    /br libexe $(lib.cmd) libsrc $(parts << 1) $(data.cmdpara) o =
-   $("+$(dirpath.out)" + name.out + ".libsrc")
-   /br libexe $(lib.cmd) makebitcode+$build $([name.out] + "." + ext.out + libinfo)
-   $(options)
+   $("+$(dirpath.out)" + name.out + ".libsrc")}
+    "/p #makelibrary $(name.fn)
+   /br libexe $(lib.cmd) makebitcode+$build $( libinfo)+.ls $(parts << 1)
+   $(options) libname = $(name.fn) $(data.cmdpara) o = $(first.parts)
    /br dependlibs $(eq + dq.depends)
    /br linklibrary $(name.fn)"
 else

@@ -158,7 +158,8 @@ let names =
  for acc = sparseseq."undefinedname"_1, @e ∈ symbols do processsymentry(acc, @e) /do acc
 let slots2 = slotorder2(z, 4, empty:seq.slotdesc)
 let checkslots = number.check(slots2, q1)
-assert "ERROR"_1 ∉ checkslots report number.q1 + checkslots
+assert "ERROR"_1 ∉ checkslots
+report "check slot error (search for ERROR) /br" + number.q1 + checkslots
 let constanddefs = descslot(check, objects, slots2, names, q1)
 let ttt = for acc = "", e ∈ arithseq(length.q1, 1, 0) do acc + toword.e /do acc
 let labels = for acc = empty:seq.seq.word, e ∈ ttt do acc + ("" + e) /do acc
@@ -189,7 +190,7 @@ let str1 =
    acc + printrecord(TYPES, @e) + ","
   /do acc >> 1)
    ]+subseq (typerecords, 3, length.typerecords), a)
-   /br , [file (filename (o), bc)]
+   /br, [file (filename (o), bc)]
    /p Function inittypes seq.llvmtype
    /br [$(number.q1)]
    /p Function initslots seq.slot

@@ -59,7 +59,6 @@ Function file(name:seq.word, out:seq.word) file file(filename.name, out)
 
 Function file(fn:filename, {C} out:seq.word) file
 {OPTION NOINLINE}
-{BXXX}
 file(fn
  , if ext.fn ∈ "html" then
   toseqbyte(htmlheader + HTMLformat.out)

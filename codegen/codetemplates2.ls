@@ -48,7 +48,7 @@ Export firstvar(a:match5) int
 
 Export functype(m:match5) llvmtype {From codetemplates}
 
-Export length(match5) int {no of instruction that return results} {From codetemplates}
+Export length(match5) int {no of instruction that return results From codetemplates}
 
 Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
 
@@ -62,18 +62,15 @@ Export regno(recordcoderesult) int {From codetemplates}
 
 Export findtemplate(d:symbol) seq.match5 {From codetemplates}
 
-Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean) recordcoderesult
-{From codetemplates}
+Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean) recordcoderesult {From codetemplates}
 
-Export sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean) recordcoderesult
-{From codetemplates}
+Export sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean) recordcoderesult {From codetemplates}
 
 Export symboltableentry(name:seq.word, type:llvmtype) slot {From codetemplates}
 
 Export tollvmtype(typedict, symbol) llvmtype {From codetemplates}
 
-Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
-{From codetemplates}
+Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc {From codetemplates}
 
 Export constdata seq.slot {From persistant}
 
@@ -91,42 +88,45 @@ for used = empty:seq.symbol
  , indefines = empty:seq.symdef
  , cc ∈ toseq.prgX
 do
- let firstsym = sym.cc
- let code = code.cc,
- if isrecordconstant.firstsym then
-  let lastsym = last.code
-  let sd = 
-   symdef(firstsym
-    , if isSequence.lastsym then
-     [Lit.0, Lit.nopara.lastsym] + code >> 1
-    else
-     assert isRecord.lastsym report "nnn $(code)",
-     code >> 1
-    , 0)
-  ,
-  next(used + toseq.asset.code.sd, crecord + sd, indefines)
- else if isInternal.firstsym then
-  if {firstsym is external call} internalidx.sym.cc = 1 ∧ isThisLibrary.cc then
-   let discard5 = call(alltypes, firstsym, "CALL"_1, name.firstsym),
+ let firstsym = sym.cc,
+ if isAbstract.module.firstsym then
+  next(used, crecord, indefines)
+ else
+  let code = code.cc,
+  if isrecordconstant.firstsym then
+   let lastsym = last.code
+   let sd = 
+    symdef(firstsym
+     , if isSequence.lastsym then
+      [Lit.0, Lit.nopara.lastsym] + code >> 1
+     else
+      assert isRecord.lastsym report "codegen nnn $(sym.cc) $(code.cc)",
+      code >> 1
+     , 0)
+   ,
+   next(used + toseq.asset.code.sd, crecord + sd, indefines)
+  else if isInternal.firstsym then
+   if {firstsym is external call} internalidx.sym.cc = 1 ∧ isThisLibrary.cc then
+    let discard5 = call(alltypes, firstsym, "CALL"_1, name.firstsym),
+    next(used, crecord, indefines)
+   else if not.isbase then
+    let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname)),
+    next(used, crecord, indefines)
+   else
+    next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
+  else if isGlobal.firstsym then
+   let discard5 = 
+    addtemplate(firstsym
+     , 1
+     , GEP(r.1, i64, slot.global([merge("$$" + toword.externalNo.cc)], i64, C64.0)))
+   ,
    next(used, crecord, indefines)
-  else if not.isbase then
+  else if libname = library.module.firstsym ∨ isThisLibrary.cc ∨ externalNo.cc = 0 then
+   next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
+  else
+   {not define in this library}
    let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname)),
    next(used, crecord, indefines)
-  else
-   next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
- else if isGlobal.firstsym then
-  let discard5 = 
-   addtemplate(firstsym
-    , 1
-    , GEP(r.1, i64, slot.global([merge("$$" + toword.externalNo.cc)], i64, C64.0)))
-  ,
-  next(used, crecord, indefines)
- else if libname = library.module.firstsym ∨ isThisLibrary.cc ∨ externalNo.cc = 0 then
-  next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
- else
-  {not define in this library}
-  let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname)),
-  next(used, crecord, indefines)
 /do
  let discard101 = for acc = 0, sd ∈ indefines do declare(alltypes, prgX, sym.sd, libname) /do 0
  let discard102 = 

@@ -22,7 +22,7 @@ void initprocessinfo(processinfo p,processinfo PD){
     p->space.lastone =0;
     p->space.blocklist = 0;
     p->error =0;
-    p->profileindex = 0;
+    p->profileaddr = 0;
     p->freespace=1;
     p->lasteinfo=PD->lasteinfo;
 }
@@ -31,7 +31,9 @@ void initprocessinfo(processinfo p,processinfo PD){
 
 BT createthread(processinfo PD ,BT * args2,BT argtype ){
 BT profileidx=0;
-BT (*finishprof)(BT idx,BT x) =NULL;
+BT nopara=  (argtype < 4 )?0: (argtype < 8 )?1: (argtype < 16 )?2: (argtype < 32 )?3: 
+            (argtype < 64 )?4:   (argtype < 128 )?5:6;
+//  if (args2[3+nopara]!=0 )fprintf(stderr,"*******nopara %lld %lld\n", nopara,args2[3+nopara]);
   pthread_attr_t 	stackSizeAttribute;
   size_t			stackSize = 0;
   pthread_attr_init (&stackSizeAttribute);
@@ -45,9 +47,7 @@ BT (*finishprof)(BT idx,BT x) =NULL;
     p->func= args2[2];
     p->argtype=argtype;
      p->args= args2+3;
-
-  p->profileindex = profileidx; 
-  p->finishprof=finishprof;
+     p->profileaddr=args2[3+nopara];
   assertexit(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )threadbody,(void *) p),"ERROR");
   return (BT)p;
 }   
@@ -76,11 +76,12 @@ function thecase(i:int) seq.word
   
 
 void threadbody(struct pinfo *q){
+      BT startclock=threadclock();
 if (setjmp(q->env)!=0) {
        q->message= ((BT *(*) (processinfo,BT))(q->deepcopyseqword) ) (q->spawningprocess,q->error);
         q->aborted = 1;}
     else {BT result;
-     // fprintf(stderr,"start threadbody\n");
+    //  fprintf(stderr,"start threadbody %lld\n",threadclock());
     
        //  fprintf(stderr,"case %lld \n",q->argtype);
       switch( q->argtype  ){
@@ -220,7 +221,12 @@ case 129:result = asint(((double(*)(processinfo, BT, BT, BT, BT, BT, BT))(q->fun
       q->aborted = 0; // must be done after seqelement is set 
     }
       if (q->freespace )  myfree(&q->space); 
-   // if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
+       BT endclock=threadclock();
+ //           fprintf(stderr,"end threadbody %lld %lld \n",startclock,endclock);
+     if (q->profileaddr > 0 ) {
+    ((BT *) q->profileaddr) [0] +=1;
+      ((BT *) q->profileaddr) [1] +=endclock;
+     }
 }
 
 BT processisaborted(processinfo PD,BT pin){

@@ -36,9 +36,13 @@ Function hyphenchar char char.45
 
 Function periodchar char char.46
 
-Function nbspchar char {no break space character} char.160
+Function nbspchar char
+{no break space character}
+char.160
 
-Function char1(s:seq.word) char {* First character of first word of s} first.decodeword.s_1
+Function char1(s:seq.word) char
+{* First character of first word of s}
+first.decodeword.s_1
 
 Function toUTF8(n:int) UTF8
 UTF8.if n < 0 then [tobyte.toint.hyphenchar] + toUTF8(n, 10) else toUTF8(-n, 10)
@@ -86,8 +90,8 @@ for state = 0, val = 0, result = empty:seq.int, x0 ∈ toseqbyte.b do
 /do tocharseq.result
 
 Function toword(n:int) word
-{OPTION NOINLINE COMPILETIME}
-{Covert integer to sequence of characters represented as a single word. }
+{OPTION NOINLINE COMPILETIME
+ /br Covert integer to sequence of characters represented as a single word. }
 encodeword.decodeUTF8.toUTF8.n
 
 Function toint(w:word) int
@@ -132,14 +136,16 @@ Function tocharseq(a:seq.int) seq.char
 {This is just a type change and the compiler recognizes this and does not generate code}
 for acc = empty:seq.char, @e ∈ a do acc + char.@e /do acc
 
-Function toUTF8(s:seq.word) UTF8 {OPTION INLINE} toUTF8(s, false, false)
+Function toUTF8(s:seq.word) UTF8
+{OPTION INLINE}
+toUTF8(s, false, false)
 
 Function escapeformat word merge."/ escapeformat"
 
 Function toUTF8(s:seq.word, escapehtml:boolean, spaceonly:boolean) UTF8
-{OPTION INLINE}
-{nospace means add no space before word}
-{if the first character of a multi-character word is char.0 then the character is discarded. This
+{OPTION INLINE
+ /br nospace means add no space before word
+ /br if the first character of a multi-character word is char.0 then the character is discarded. This
  is to allow format with format meaning to be escaped.}
 for cmd = true ∧ not.spaceonly, result = emptyUTF8, nospace = true, this ∈ s do
  let chars = decodeword.this,

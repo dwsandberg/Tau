@@ -30,9 +30,9 @@ else
  removeclose.text.t
 
 function errormessage(message:seq.word, input:seq.word, place:int, parsestk:stack.stkele.attribute2) seq.word
-%.place + message
+%.place + message + "/br" + subseq(input, 1, place)
 
-Function breakup(pre:seq.word, in:seq.word, post:seq.word) attribute2
+function breakup(pre:seq.word, in:seq.word, post:seq.word) attribute2
 if isempty.in then
  attribute2.[prettyresult(0, 0, pre + post)]
 else
@@ -82,11 +82,6 @@ for a = empty:seq.prettyresult, totalwidth = 0, acc = "", p ∈ b do
 function isblock(b:seq.word) boolean subseq(b, 1, 2) = "<* block"
 
 function removeclose(a:seq.word) seq.word
-let b = removeclose2.a,
-b
-
-function removeclose2(a:seq.word) seq.word
-{???? mergeing with removeclose causes error!}
 for acc = "", end = "", i = length.a, w ∈ reverse.a
 while isempty.acc
 do
@@ -253,126 +248,133 @@ list("/keyword $(text.a) $(tmp555) /nosp (", paraList, ") $(text.returnType)")
 
 Below is generated from parser generator.
 
+function add4(a:seq.word, b:seq.word) seq.word
+if blockIsLast.a then
+ if first.b ∈ "/br" then a + b << 1 else a + b
+else if first.b ∈ "/br" then a + b else a + "/br" + b
+
 function action(ruleno:int
  , input:seq.word
  , place:int
  , R:reduction.attribute2
  , stk:stack.stkele.attribute2) attribute2
 {Alphabet.= ():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while
- /for W do wl wlend /do T X F2 A E FP NM L D F F1 G HH F3 E2 EI}
-{RulePrecedence | HH HH comment | comment | let | assert | if | for | W | wl | I | [| $wordlist | (
- | E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E = E |
+ /for W do wl wlend /do T X F2 A E FP NM L D F F1 G HH F3 E2 EI
+ /br RulePrecedence | HH D0 comment | comment | let | assert | if | for | W | wl | I | [| $wordlist |
+ (| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E = E |
  = | > | E E ∧ E | ∧ | E E ∨ E | ∨ | E EI else E2 /if | /if | E EI else E2 | E for F3 /do E2 /for | /for
  | E for F3 /do E2 | D comment | E2 A do E | E2 E |}
-if ruleno = {F HH E2} 1 then
- if width.R_1 + width.R_2 < maxwidth then
+if ruleno = {F D1 E2} 1 then
+ assert length.toseq.R_1 ∈ [1, 2] report %.length.toseq.R_1 + input
+ let comment = 
+  if length.toseq.R_1 = 1 then "" else text.pretty2.[breakup("<* comment", text.last.toseq.R_1, "*>")]
+ ,
+ if width.R_1 + width.R_2 < maxwidth ∧ isempty.comment then
   pretty.[R_1, R_2]
+ else if isempty.comment then
+  attribute.add4(text.R_1, text.R_2)
  else
-  for acc = "", p ∈ toseq.R_1 do
-   acc + text.p
-   + if isempty.acc ∧ last.text.p ∈ "*>" then "" else "/br"
-  /do
-   attribute(acc
-   + if first.text.R_2 ∈ "/br" ∧ (last.acc ∈ "/br" ∨ blockIsLast.acc) then
-    text.R_2 << 1
-   else
-    text.R_2
-   /if)
-else if ruleno = {F HH} 2 then
- if width.R_1 < maxwidth then
-  pretty.[R_1]
+  attribute.add4(add4(text.first.toseq.R_1, comment), text.R_2)
+else if ruleno = {F D1} 2 then
+ assert length.toseq.R_1 ∈ [1, 2] report %.length.toseq.R_1 + input,
+ if length.toseq.R_1 = 1 then
+  R_1
  else
-  for acc = "", p ∈ toseq.R_1 do
-   acc + text.p
-   + if isempty.acc ∧ last.text.p ∈ "*>" then "" else "/br"
-  /do attribute(acc >> 1)
-else if ruleno = {HH HH comment} 3 then
- R_1 + breakup("<* comment", text.R_2, "*>")
-else if ruleno = {HH W NM (FP) T} 4 then
+  let comment = text.pretty2.[breakup("<* comment", text.last.toseq.R_1, "*>")],
+  if width.comment < maxwidth ∧ "/br"_1 ∉ comment then
+   R_1
+  else
+   attribute.add4(text.first.toseq.R_1, comment)
+else if ruleno = {D0 W NM (FP) T} 3 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W_(FP) T} 5 then
+else if ruleno = {D0 W_(FP) T} 4 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W-(FP) T} 6 then
+else if ruleno = {D0 W-(FP) T} 5 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W = (FP) T} 7 then
+else if ruleno = {D0 W = (FP) T} 6 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W > (FP) T} 8 then
+else if ruleno = {D0 W > (FP) T} 7 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W * (FP) T} 9 then
+else if ruleno = {D0 W * (FP) T} 8 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W ∧ (FP) T} 10 then
+else if ruleno = {D0 W ∧ (FP) T} 9 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W ∨ (FP) T} 11 then
+else if ruleno = {D0 W ∨ (FP) T} 10 then
  prettyfunc(R_1, R_2, R_4, R_6)
-else if ruleno = {HH W NM T} 12 then
+else if ruleno = {D0 W NM T} 11 then
  pretty.[attribute."/keyword", R_1, R_2, R_3]
-else if ruleno = {HH W NM is FP} 13 then
+else if ruleno = {D0 W NM is FP} 12 then
  list("/keyword type $(text.R_2) is", R_4, "")
-else if ruleno = {FP T} 14 then
+else if ruleno = {D1 D0} 13 then
  R_1
-else if ruleno = {FP FP, T} 15 then
+else if ruleno = {D1 D0 comment} 14 then
+ R_1 + R_2
+else if ruleno = {FP T} 15 then
+ R_1
+else if ruleno = {FP FP, T} 16 then
  R_1 + R_3
-else if ruleno = {FP W:T} 16 then
+else if ruleno = {FP W:T} 17 then
  pretty.[R_1, R_2, R_3]
-else if ruleno = {FP FP, W:T} 17 then
+else if ruleno = {FP FP, W:T} 18 then
  R_1 + pretty.[R_3, R_4, R_5]
-else if ruleno = {FP comment W:T} 18 then
+else if ruleno = {FP comment W:T} 19 then
  pretty.[R_1, R_2, R_3, R_4]
-else if ruleno = {FP FP, comment W:T} 19 then
+else if ruleno = {FP FP, comment W:T} 20 then
  R_1 + pretty.[R_3, R_4, R_5, R_6]
-else if ruleno = {NM W} 20 then
+else if ruleno = {NM W} 21 then
  R_1
-else if ruleno = {NM W:T} 21 then
+else if ruleno = {NM W:T} 22 then
  pretty.[R_1, R_2, R_3]
-else if ruleno = {T W} 22 then
+else if ruleno = {T W} 23 then
  R_1
-else if ruleno = {T W.T} 23 then
+else if ruleno = {T W.T} 24 then
  pretty.[R_1, R_2, R_3]
-else if ruleno = {E NM} 24 then
+else if ruleno = {E NM} 25 then
  R_1
-else if ruleno = {E NM (L)} 25 then
+else if ruleno = {E NM (L)} 26 then
  if length.R_3 = 1 ∧ length.text.R_1 = 1 then
   wrap(3, R_1, ".", R_3)
  else
   list(text.R_1 + "/nosp (", R_3, ")")
-else if ruleno = {E (E)} 26 then
+else if ruleno = {E (E)} 27 then
  R_2
-else if ruleno = {E EI else E2} 27 then
+else if ruleno = {E EI else E2} 28 then
  ifthenelse(toseq.R_1 + toseq.R_3)
-else if ruleno = {E EI else E2 /if} 28 then
+else if ruleno = {E EI else E2 /if} 29 then
  ifthenelse(toseq.R_1 + toseq.R_3)
-else if ruleno = {E E_E} 29 then
+else if ruleno = {E E_E} 30 then
  wrap(1, R_1, text.R_2, R_3)
-else if ruleno = {E-E} 30 then
+else if ruleno = {E-E} 31 then
  unaryminus.R_2
-else if ruleno = {E W.E} 31 then
+else if ruleno = {E W.E} 32 then
  wrap(3, R_1, text.R_2, R_3)
-else if ruleno = {E E * E} 32 then
+else if ruleno = {E E * E} 33 then
  wrap(4, R_1, text.R_2, R_3)
-else if ruleno = {E E-E} 33 then
+else if ruleno = {E E-E} 34 then
  wrap(5, R_1, text.R_2, R_3)
-else if ruleno = {E E = E} 34 then
+else if ruleno = {E E = E} 35 then
  wrap(6, R_1, text.R_2, R_3)
-else if ruleno = {E E > E} 35 then
+else if ruleno = {E E > E} 36 then
  wrap(7, R_1, text.R_2, R_3)
-else if ruleno = {E E ∧ E} 36 then
+else if ruleno = {E E ∧ E} 37 then
  wrap(8, R_1, text.R_2, R_3)
-else if ruleno = {E E ∨ E} 37 then
+else if ruleno = {E E ∨ E} 38 then
  wrap(9, R_1, text.R_2, R_3)
-else if ruleno = {L E} 38 then
+else if ruleno = {L E} 39 then
  R_1
-else if ruleno = {L L, E} 39 then
+else if ruleno = {L L, E} 40 then
  R_1 + R_3
-else if ruleno = {E [L]} 40 then
+else if ruleno = {E [L]} 41 then
  list("[", R_2, "]")
-else if ruleno = {D let W = E} 41 then
+else if ruleno = {E3 let W = E} 42 then
  attribute(0
   , 10000
   , "/br /keyword let $(text.R_2) $([space, "="_1, space])
    $(if {width.R_2+} width.R_4 > maxwidth then "<* block $(text.R_4) *>" else text.R_4)")
-else if ruleno = {A D} 42 then
- R_1
-else if ruleno = {D assert E report E2} 43 then
+else if ruleno = {E3 comment} 43 then
+ attribute.text.pretty2.[
+  breakup("/br <* comment", text.R_1, "*>")]
+else if ruleno = {E3 assert E report E2} 44 then
  attribute(0
   , 10000
   , "/br /keyword assert $(text.R_2)
@@ -382,13 +384,13 @@ else if ruleno = {D assert E report E2} 43 then
    ""
   )
    /keyword report $(if width.R_4 > maxwidth then addblock.text.R_4 else text.R_4)")
-else if ruleno = {E I} 44 then
+else if ruleno = {E I} 45 then
  R_1
-else if ruleno = {E I.I} 45 then
+else if ruleno = {E I.I} 46 then
  pretty.[R_1, R_2, R_3]
-else if ruleno = {E $wordlist} 46 then
+else if ruleno = {E $wordlist} 47 then
  pretty2.[breakup("<* literal /ldq", text.R_1 << 1, "*>")]
-else if ruleno = {E comment E} 47 then
+else if ruleno = {E comment E} 48 then
  let text = 
   text.pretty2.[breakup("<* comment", text.R_1, "*>")]
   + if width.R_1 + width.R_2 > maxwidth then
@@ -397,33 +399,31 @@ else if ruleno = {E comment E} 47 then
    text.R_2
  ,
  attribute(prec.(toseq.R_2)_1, width.text, text)
-else if ruleno = {F1 W = E} 48 then
+else if ruleno = {F1 W = E} 49 then
  pretty.[R_1, attribute.[space, "="_1, space], R_3]
-else if ruleno = {F1 F1, W = E} 49 then
+else if ruleno = {F1 F1, W = E} 50 then
  R_1 + pretty.[R_3, attribute.[space, "="_1, space], R_5]
-else if ruleno = {F2 F1, W-E} 50 then
+else if ruleno = {F0 F1, W-E} 51 then
  R_1 + pretty.[R_3, attribute."∈", R_5]
-else if ruleno = {F3 F2 do E2} 51 then
- list("/keyword for", R_1, "/keyword") + R_3
-else if ruleno = {F3 F2 while E do E2} 52 then
- list("/keyword for", R_1, "/keyword") + R_5 + R_3
-else if ruleno = {E for F3 /do E2 /for} 53 then
+else if ruleno = {F3 F0 do E2} 52 then
+ list("/keyword for", R_1, "") + R_3
+else if ruleno = {F3 F0 while E do E2} 53 then
+ list("/keyword for", R_1, "") + R_5 + R_3
+else if ruleno = {E for F3 /do E2 /for} 54 then
  prettyfor(R_2, R_4)
-else if ruleno = {X wl E} 54 then
- breakup("<* literal /ldq", subseq(text.R_1, 2, length.text.R_1 - 1), "")
- + attribute("$" + "(*> $(removeclose.text.R_2) <* literal)")
-else if ruleno = {X X wl E} 55 then
- R_1 + breakup("", subseq(text.R_2, 2, length.text.R_2 - 1), "")
- + attribute("$" + "(*> $(removeclose.text.R_3) <* literal)")
+else if ruleno = {E for F3 /do E2} 55 then
+ prettyfor(R_2, R_4)
 else if ruleno = {E X wlend} 56 then
  pretty2.[R_1, breakup("", subseq(text.R_2, 2, length.text.R_2 - 1) + dq, "*>")]
 else if ruleno = {G F #} 57 then
  R_1
-else if ruleno = {E2 A do E} 58 then
+else if ruleno = {E2 E3 E} 58 then
+ pretty.[attribute(removeclose.text.R_1 + ", /br"), R_2]
+else if ruleno = {E2 E3, E} 59 then
  pretty.[attribute(removeclose.text.R_1 + ", /br"), R_3]
-else if ruleno = {E2 E} 59 then
+else if ruleno = {E2 E} 60 then
  R_1
-else if ruleno = {A A D} 60 then
+else if ruleno = {E3 E3 E3} 61 then
  let R2 = 
   if blockIsLast.text.R_1 ∧ first.text.R_2 ∈ "/br" then
    attribute(text.R_2 << 1)
@@ -431,15 +431,22 @@ else if ruleno = {A A D} 60 then
    R_2
  ,
  pretty.[attribute.removeclose.text.R_1, R2]
-else if ruleno = {EI if E then E2} 61 then
+else if ruleno = {E3 E3, E3} 62 then
+ let R2 = 
+  if blockIsLast.text.R_1 ∧ first.text.R_3 ∈ "/br" then
+   attribute(text.R_3 << 1)
+  else
+   R_3
+ ,
+ pretty.[attribute.removeclose.text.R_1, R2]
+else if ruleno = {EI if E then E2} 63 then
  R_2 + R_4
-else if ruleno = {D comment} 62 then
- pretty2.[
-  breakup("/br <* comment", text.R_1, "*>")]
-else if ruleno = {E for F3 /for E2} 63 then
- prettyfor(R_2, R_4)
-else if ruleno = {E2 A, E2} 64 then
- pretty.[attribute(removeclose.text.R_1 + ", /br"), R_3]
+else if ruleno = {X wlstart E} 64 then
+ breakup("<* literal /ldq", subseq(text.R_1, 2, length.text.R_1 - 1), "")
+ + attribute("$" + "(*> $(removeclose.text.R_2) <* literal)")
+else if ruleno = {X X wl E} 65 then
+ R_1 + breakup("", subseq(text.R_2, 2, length.text.R_2 - 1), "")
+ + attribute("$" + "(*> $(removeclose.text.R_3) <* literal)")
 else
  {ruleno}
  assert false report "invalid rule number" + toword.ruleno,
@@ -452,11 +459,11 @@ let total = width.R1 + width.finalexp
 let body = removeclose.if total + 8 > maxwidth then addblock.text.bod else text.bod
 let accexp = attribute2.[first.toseq.R1],
 if length.toseq.R1 = 2 then
- pretty.[accexp, attribute."do $(body) /keyword /do $(finalexp) /for"]
+ pretty.[accexp, attribute."/keyword do $(body) /keyword /do $(finalexp) /for"]
 else
  let text = 
   if total + 11 < maxwidth then
-   "while $(text.last.toseq.R1) /keyword do $(body)"
+   "/keyword while $(text.last.toseq.R1) /keyword do $(body)"
   else
    "
     $(if width.accexp < maxwidth then "/br" else "")

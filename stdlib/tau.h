@@ -28,8 +28,8 @@ struct pinfo { BT aborted; //  if aborted then 1 else if success then 0
     jmp_buf env;
     BT error;
     pthread_t pid;
-    BT profileindex;
-    BT (*finishprof)(BT idx,BT x);
+    BT profileaddr;
+    BT unused;
     BT freespace;
      // info needed to create thread
     BT  deepcopyresult;
@@ -56,3 +56,5 @@ void assertexit(int b,char *message);
 void initprocessinfo(processinfo p,processinfo PD);
 
 BT processisaborted(processinfo PD,BT pin);
+
+BT threadclock();

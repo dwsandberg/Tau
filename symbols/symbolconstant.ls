@@ -28,70 +28,57 @@ else
  code1 >> 1
 
 Function fullconstantcode(s:symbol) seq.symbol
-toseq.decode.to:encoding.symbolconstant(toint.name.s)
+let t = findencode.symdef(s, empty:seq.symbol, 0)
+assert not.isempty.t
+report
+ "unregister symbolconstant $(s)
+  $(for txt = "", sd ∈ toseq.constantsymbols.first."X" do
+  txt + "/p" + %.sym.sd + %.code.sd
+ /do txt)
+  "
+,
+code.t_1
 
-Function Constant2(args:seq.symbol) symbol
-symconst(addorder.symbolconstant.args, hasfref.args)
+use encoding.symdef
 
-function hasfref(args:seq.symbol) boolean
-for hasfref = false, sym ∈ args while not.hasfref do hasfref.sym /do hasfref
+Function Constant2(libname:word, args:seq.symbol) symbol
+for hasfref = false, sym ∈ args
+while not.hasfref
+do
+ hasfref.sym
+/do
+ let flags = if hasfref then constbit ∨ hasfrefbit else constbit
+ let i = addorder.symbolconstant(args, flags)
+ let sym2 = 
+  symbol(moduleref."internallib $constant"
+   , [merge.[libname, "."_1, toword.i]]
+   , empty:seq.mytype
+   , typeptr
+   , flags)
+ let discard = encode.symdef(sym2, args, 0),
+ sym2
+
+Function registerConstant(sd:symdef) symdef
+let discard = encode.sd,
+sd
+
+use set.symbol
+
+function =(a:symdef, b:symdef) boolean sym.a = sym.b
+
+function hash(a:symdef) int hash.sym.a
 
 Function hash(s:seq.symbol) int
 hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /do acc
 
-type symbolconstant is toseq:seq.symbol
+type symbolconstant is toseq:seq.symbol, flags:bits
 
 function =(a:symbolconstant, b:symbolconstant) boolean toseq.a = toseq.b
 
 function hash(a:symbolconstant) int hash.toseq.a
 
-Function constantsymbols set.symdef
-for acc = empty:set.symdef, i = 1, p ∈ encodingdata:symbolconstant do
- next(acc + symdef(symconst(i, hasfref.toseq.p), toseq.p, 0), i + 1)
-/do acc
+use seq.mytype
 
-function map(map0:seq.symbol, prg:seq.symdef) seq.symbol
-for map = map0, todo = empty:seq.symdef, sd ∈ prg do
- if isrecordconstant.sym.sd then
-  let i = toint.name.sym.sd
-  let newmap = 
-   for acc = empty:seq.symbol, ok = true, sym ∈ code.sd
-   while ok
-   do
-    if isrecordconstant.sym then
-     let mapvalue = map_(toint.name.sym),
-     next(acc + mapvalue, isrecordconstant.mapvalue)
-    else
-     next(acc + sym, ok)
-   /do if ok then replaceS(map, i, [Constant2.acc]) else empty:seq.symbol
-  ,
-  if isempty.newmap then next(map, todo + sd) else next(newmap, todo)
- else
-  next(map, todo)
-/do
- if isempty.todo then
-  map
- else
-  assert length.todo < length.prg
-  report
-   "ill formed program
-    $(for txt = "", sd2 ∈ todo do txt + "/p" + %.sym.sd2 + %.code.sd2 /do txt)"
-  ,
-  map(map, todo)
+use bits
 
-Function renumberconstants(prg:seq.symdef) seq.symdef
-let map = map(sparseseq.Lit.0, prg),
-for newprg = empty:seq.symdef, sd ∈ prg do
- if isrecordconstant.sym.sd then
-  newprg
- else
-  let newcode = 
-   for acc = empty:seq.symbol, changed = false, sym ∈ code.sd do
-    if isrecordconstant.sym then
-     next(acc + map_(toint.name.sym), true)
-    else
-     next(acc + sym, changed)
-   /do if changed then acc else code.sd
-  ,
-  newprg + symdef4(sym.sd, newcode, paragraphno.sd, getOptionsBits.sd)
-/do newprg 
+Function constantsymbols(libname:word) set.symdef asset.encodingdata:symdef 

@@ -45,7 +45,9 @@ function t007 boolean [2, 3] = [2] + [3]
 function ff(seed:int, x:int) int
 if x = 1 then pseudorandom.seed else ff(pseudorandom.seed, x - 1)
 
-function t008 boolean {testing random number generator} 1043618065 = ff(1, 10000)
+function t008 boolean
+{testing random number generator}
+1043618065 = ff(1, 10000)
 
 function gen(n:int) seq.int
 if n = 1 then [n] else gen(n - 1) + [n * n]

@@ -54,13 +54,15 @@ else
  "Fail hash"
 
 Function testall(input:seq.file, o:seq.word, noseq:boolean) seq.file
-let out = 
+{ }let out = 
  test11 + checkhash + testencoding + testmodules + testbug7 + randomtest.500
  + testreal
  + if noseq then "" else testseq /if
  + test11a.input
  + testwordfreq
  + testprocess
- + if isempty.input then "no opt test file specified" else testopt.input
+ + if isempty.input then
+  "no opt test file specified"
+ else if ext.fn.first.input ∈ "ls" then testopt.input else ""
 ,
 [file(filename.o, out)] 

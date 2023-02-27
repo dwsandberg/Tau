@@ -18,7 +18,11 @@ use symbol2
 
 use set.symdef
 
-Function test11a(in:seq.file) seq.word
+Function test11a(inp:seq.file) seq.word
+let in = 
+ for acc = empty:seq.file, f ∈ inp do
+  if ext.fn.f ∈ "libinfo" then acc + f else acc
+ /do acc
 let z = 
  [compare(in, "a+b+c", "(a+b)+c")
   , compare(in, "a * b * c", "(a * b) * c")
@@ -40,12 +44,10 @@ let z =
    , "<* literal then and else types are different *>"
    , "function f1 (a:int) int if true then true else 0")
   , testerror(in, "<* literal cond of if must be boolean but is int *>", "function f1 (a:int) int if 1 then 2 else 3")
-  , testerror(in
-   , "<* literal condition in assert must be boolean"
-   , "function f1 (a:int) int assert 1 report 2 do 3")
+  , testerror(in, "<* literal condition in assert must be boolean", "function f1 (a:int) int assert 1 report 2, 3")
   , testerror(in
    , "<* literal report in assert must be seq of word in:"
-   , "function f1 (a:int) int assert true report 2 do 3")
+   , "function f1 (a:int) int assert true report 2, 3")
   , testerror(in, "<* literal cannot resolve type hhh", "function f1 (z:hhh) int 3")
   , testerror(in, "<* literal cannot resolve type xxx", "function f1 (z:int) xxx 3")
   , testerror(in, "recursive type problem:", "type testtype is fld1:testtype")
@@ -66,7 +68,7 @@ check(z, "test11a") + checkprec
 
 function testcomp2(in:seq.file, s:seq.word) seq.word
 let txt = "Library = testcomp uses = stdlib exports = testit /p module testit /p use standard /p $(s)"
-let p = process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in << 1),
+let p = process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in),
 if aborted.p then
  message.p
 else
@@ -83,7 +85,8 @@ function isprefix(p:seq.word, s:seq.word) boolean subseq(s, 1, length.p) = p
 function testerror(in:seq.file, m:seq.word, code:seq.word) boolean
 let r = testcomp2(in, code)
 let a = isprefix(m, r)
-assert isprefix(m, r) report "Fail test11a expected:$(m) /br got:$(subseq(r, 1, length.m))",
+assert isprefix(m, r)
+report "Fail test11a expected:$(m) /br got:$(subseq(r, 1, length.m))" + "/p" + code,
 a
 
 type checkprec is toseq:seq.word

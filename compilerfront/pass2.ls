@@ -69,7 +69,7 @@ type expandresult is nextvar:int, code:seq.symbol, flags:bits
 function isconstorlocal(p:seq.symbol) boolean
 length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
-Function expandIndex(code:seq.symbol, nextvarin:int) seq.symbol
+Function expandIndex(code:seq.symbol, nextvarin:int) expandresult
 for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
  if not.isInternal.sym then
   next(acc + sym, nextvar, sym)
@@ -95,7 +95,7 @@ for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
   next(newcode, nextvar + 3, sym)
  else
   next(if name.sym ∈ "checkfornoop" then acc else acc + sym, nextvar, sym)
-/do acc
+/do expandresult(nextvar, acc, 0x0)
 
 Function forexpisnoop(sym:symbol, acc:seq.symbol) seq.symbol
 let len = length.acc

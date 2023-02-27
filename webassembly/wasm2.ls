@@ -26,15 +26,15 @@ for acc = empty:seq.mytype, typ ∈ paratypes.sym do
  acc + if kind = typeboolean ∨ kind = typereal then kind else typeint
 /do symbol(moduleref."* $$record", "$$record", acc, typeint)
 
-Function initwordsbody(initprofile:seq.symbol) seq.byte
-let empty = const32.getoffset.Constant2.[Lit.0, Lit.0, Record.[typeint, typeint]]
+Function initwordsbody(initprofile:seq.symbol, libname:word) seq.byte
+let empty = const32.getoffset("", libname)
 let charseq = seqof.typeref."char standard *"
 let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint),
 funcbody([i32, i64]
  , store(const32.0, empty, encodings) + store(const32.0, empty, thisencoding)
  + switchcontext.newcontext2.0
  + if isempty.initprofile then empty:seq.byte else Wcall.initprofile_1 + drop /if
- + const64.getoffset.initialwordconst
+ + const64.getoffset(initialwordconst.libname, libname)
  + Wcall.symboladdwords
  + Wdefine.1
  + switchcontext.newcontext2.0)
@@ -85,12 +85,12 @@ addf(alltypes
   + f64converti64s)
  )
 
-Function handleerrorfunc(alltypes:typedict) int
+Function handleerrorfunc(alltypes:typedict, libname:word) int
 addf(alltypes
  , symbol(internalmod, "handleerror", typereal, typereal)
  , funcbody([i32, i64]
   , Wlocal.0 + i64truncf64s + Wdefine.2 + Wlocal.2 + const64.0 + i64les
-  + Wif(void, const64.getoffset.wordsconst."other error" + Wdefine.2)
+  + Wif(void, const64.getoffset("other error", libname) + Wdefine.2)
   + switchcontext.load(Gcurrentprocess, parentprocess)
   + Wlocal.2
   + Wcall.symbol4(moduleref("* seq", typeword)

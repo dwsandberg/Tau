@@ -77,7 +77,8 @@ Function wasmcompile(alltypes:typedict
  , o:seq.word
  , imports:seq.symbol
  , info:boolean
- , initprofile:seq.symbol) seq.file
+ , initprofile:seq.symbol
+ , libname:word) seq.file
 let discard68 = encode.coverage."???"
 let discard67 = startencodings
 let imp = 
@@ -85,7 +86,7 @@ let imp =
   let discard = addf(alltypes, @e, empty:seq.byte),
   acc + importfunc(typeidx64(alltypes, @e), first."imports", wordname.@e)
  /do acc
-let knownfuncs = knownWfunc.alltypes
+let knownfuncs = knownWfunc(alltypes, libname)
 {create functions that will be exported}
 let exp = 
  for acc = empty:seq.seq.byte, @e ∈ roots do
@@ -94,7 +95,7 @@ let exp =
 {define functions with hand coded webassembly definitions}
 let discard100 = 
  [processbodyfunc.alltypes
-  , handleerrorfunc.alltypes
+  , handleerrorfunc(alltypes, libname)
   , reclaimspacefunc.alltypes
   , allocatefunc.alltypes
   , addencodingfunc.alltypes
@@ -102,7 +103,7 @@ let discard100 =
    , symbol(internalmod, "profiledata", typeptr)
    , funcbody([i32]
     , if isempty.initprofile then
-     const64.getoffset.wordsconst."" + return
+     const64.getoffset("", libname) + return
     else
      const64.3 + Wcall.allocatesym + localtee + LEBu.0 + const64.0 + Wstore(typeint, 0)
      + Wlocal.0
@@ -120,7 +121,7 @@ let discard100 =
    , symbol(internalmod, "addresssymbols", typeptr)
    , funcbody([i64]
     , if isempty.initprofile then
-     const64.getoffset.wordsconst."" + return
+     const64.getoffset("", libname) + return
     else
      Wcall.symbol(internalmod, "vector2", seqof.typebyte)
      + Wcall.symbol(moduleref."* webProfileSupport", "decodeaddrsym", seqof.typebyte, typeptr)
@@ -129,7 +130,7 @@ let discard100 =
    )
   ]
 {define depended functions}
-let discardt = dependentfunc(alltypes, knownfuncs, prg4, length.imports + 1)
+let discardt = dependentfunc(alltypes, knownfuncs, prg4, length.imports + 1, libname)
 let elements = 
  for acc = empty:seq.addrsym, p ∈ elementdata do
   acc + addrsym(length.acc + 2, funcidx2symbol(p + 1))
@@ -140,7 +141,10 @@ let discardff =
   , funcbody([i64], const64.allocateconstspace("."_1, elements) + return))
 {define function to initialize words}
 let startfuncidx = funcidx.symbol(moduleref."* core", "initwords3", typeint)
-let mustbedonelast = addf(alltypes, symbol(moduleref."* core", "initwords3", typeint), initwordsbody.initprofile)
+let mustbedonelast = 
+ addf(alltypes
+  , symbol(moduleref."* core", "initwords3", typeint)
+  , initwordsbody(initprofile, libname))
 {create the wasm file}
 assert startfuncidx < length.encodingdata:wfunc
 report "internal error:startfuncidx exceeds number of functions",
@@ -155,9 +159,9 @@ for acc = [1, length.x], acc2 = 0x0, shift = 0, b ∈ x do
   next(acc, newacc2, shift + 8)
 /do if shift > 0 then acc + toint.acc2 else acc
 
-function dependentfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, idx:int) int
-{Do not consider function indices less that idx}
-{get the symbols of functions that has been referenced but do not have a definition}
+function dependentfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, idx:int, libname:word) int
+{Do not consider function indices less that idx
+ /br get the symbols of functions that has been referenced but do not have a definition}
 let k = nobodies.idx,
 if isempty.k then
  {no functions that do not have definitions} 0
@@ -193,7 +197,7 @@ else
      ,
      encode.wfunc(alltypes, sym, funcbody(empty:seq.wtype, bodycode + return), funcidx.sym)
    else
-    let p1 = process.generatefuncbody(alltypes, knownfuncs, code, sym)
+    let p1 = process.generatefuncbody(alltypes, knownfuncs, code, sym, libname)
     assert not.aborted.p1
     report
      "generatefuncbody error for:$(library.module.sym):$(sym)
@@ -201,7 +205,7 @@ else
       /br $(message.p1) $(stacktrace)"
     ,
     encode.wfunc(alltypes, sym, result.p1, funcidx.sym)
- /do dependentfunc(alltypes, knownfuncs, prg, idx + length.k)
+ /do dependentfunc(alltypes, knownfuncs, prg, idx + length.k, libname)
 
 type localinfo is type:wtype, leb:seq.byte, no:int
 
@@ -230,7 +234,11 @@ function Wtee(l:localinfo) seq.byte [localtee] + leb.l
 
 type blkele is code:seq.byte, sym:symbol
 
-function generatefuncbody(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, forsym:symbol) seq.byte
+function generatefuncbody(alltypes:typedict
+ , knownfuncs:seq.wfunc
+ , code:seq.symbol
+ , forsym:symbol
+ , libname:word) seq.byte
 let localmap = 
  for acc = empty:set.localmap, @e ∈ paratypes.forsym do
   addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))
@@ -262,7 +270,7 @@ do
   ,
   next(last, sym, pop(typestk, 1), blkstk, curblk + cc, l2)
  else if isrecordconstant.sym then
-  let this = const64.getoffset.sym,
+  let this = const64.getoffset(sym, libname),
   next(last, sym, push(typestk, i64), blkstk, curblk + this, localtypes)
  else if isconst.sym then
   if inmodule(sym, "$real") then
@@ -292,7 +300,7 @@ do
     , sym
     , push(typestk, i64)
     , blkstk
-    , curblk + const64.getoffset.wordsconst.worddata.sym
+    , curblk + const64.getoffset(worddata.sym, libname)
     , localtypes)
   else
    assert inmodule(sym, "$int") report "NOt HANDLE $(sym)"

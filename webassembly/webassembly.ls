@@ -1,7 +1,5 @@
 Module webassembly
 
-* usegraph exclude standard seq set otherseq bits encoding UTF8 stack
-
 use UTF8
 
 use bits
@@ -86,11 +84,18 @@ do
    + "function $(f) {exports.$(f) ; if (inprogress $(merge."= =") 0) exports.reclaimspace () ;}
     $(LF)"
   /do txt
- let prg4 = asset.renumberconstants.toseq.prg.rcinfo
+ let prg4 = asset.toseq.prg.rcinfo
  let initprofile0 = getSymdef(prg4, symbol(moduleref(libname + "initialize"), "initProfile", typeptr))
  let initprofile = if isempty.initprofile0 then empty:seq.symbol else [sym.initprofile0_1]
  let wasmfiles = 
-  wasmcompile(typedict.rcinfo, prg4, toseq.asset(syms2 + initprofile), o, imports, info, initprofile)
+  wasmcompile(typedict.rcinfo
+   , prg4
+   , toseq.asset(syms2 + initprofile)
+   , o
+   , imports
+   , info
+   , initprofile
+   , first.libname)
  let script = 
   {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template.js
    ")+toseqbyte.toUTF8." </script>" else}

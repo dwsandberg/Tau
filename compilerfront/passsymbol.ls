@@ -269,7 +269,7 @@ else
   , idx = 1
   , knownsize = if isseq then 1 else 0
   , unknownsize = empty:seq.symbol
-  , constructflds = if isseq then [PreFref, indexfunc, Local.1] else empty:seq.symbol
+  , constructflds = if isseq then [Fref.indexfunc, Local.1] else empty:seq.symbol
   , fldtype ∈ if isseq then [typeint] + typs << 2 else typs << 1
  do
   let size = knownsize.fldtype
@@ -307,7 +307,7 @@ else
    let seqtype = seqof.para.modname,
    [symdef(symbol(modname, "toseq", recordtype, seqtype), [Local.1], 0)
     , symdef(symbol4(modname, "to"_1, recordtype, [seqtype], recordtype)
-     , ifthenelse([Local.1, GetSeqType, PreFref, indexfunc, EqOp]
+     , ifthenelse([Local.1, GetSeqType, Fref.indexfunc, EqOp]
       , [Local.1]
       , [Sequence(typeint, 0)]
       , typeptr)
@@ -396,8 +396,8 @@ function printunresolved(p:passsymbols) seq.word
 let txt = for acc = "", t ∈ toseq.unresolvedexports.p do acc + %.t /do acc,
 if isempty.txt then "" else "module $(modname.p) contains unresolved exports:$(txt) /br"
 
-Function parse(input:seq.word, p:partdict, c:commoninfo) bindinfo
-parse(symboldict(syms.p, req.p, [commoninfo(input, modname.c, lib.c, types.c, mode.c)]), false)
+Function parse(input0:seq.word, p:partdict, c:commoninfo) bindinfo
+parse(symboldict(syms.p, req.p, [commoninfo(input0, modname.c, lib.c, types.c, mode.c)]), false)
 
 Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef, mode:word) partdict
 {bug here should not need i = 0 in forloop}

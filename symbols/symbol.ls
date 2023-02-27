@@ -163,7 +163,7 @@ Function privatefields(s:symbol) seq.int [toint.raw.s, toint.flags.s]
 Function Words(s:seq.word) symbol
 symbol(s, moduleref."internallib $words", [typeptr], 0x0, constbit)
 
-function constbit bits bits.1
+Function constbit bits bits.1
 
 function simplenamebit bits bits.2
 
@@ -171,7 +171,7 @@ function specialbit bits bits.4
 
 function frefbit bits bits.8
 
-function hasfrefbit bits bits.16
+Function hasfrefbit bits bits.16
 
 function unboundbit bits 0x20
 
@@ -327,7 +327,7 @@ else if iswords.s then
 else if isword.s then
  "WORD" + wordname.s
 else if isrecordconstant.s then
- "const" + name.s
+ [name.s]
 else if isFref.s then
  "FREF $(basesym.s)"
 else if isloopblock.s then
@@ -516,7 +516,8 @@ symbolZ(moduleref."internallib $define"
  , tobits.i)
 
 Function Fref(s:symbol) symbol
-assert not.isconst.s ∧ first.worddata.s ∉ "FREF" report "FREF problem $(s) $(stacktrace)"
+assert not.isconst.s ∧ first.worddata.s ∉ "FREF" ∧ not.isGlobal.s
+report "FREF problem $(s) $(stacktrace)"
 let z = constbit ∨ frefbit ∨ flags.s,
 symbol(worddata.s, module.s, types.s, raw.s, z)
 
@@ -657,11 +658,4 @@ Export code(symdef) seq.symbol
 
 Function getCode(a:set.symdef, sym:symbol) seq.symbol
 let b = getSymdef(a, sym),
-if isempty.b then empty:seq.symbol else code.b_1
-
-Function symconst(i:int, hasfref:boolean) symbol
-symbol(moduleref."internallib $constant"
- , [toword.i]
- , empty:seq.mytype
- , typeptr
- , if hasfref then constbit ∨ hasfrefbit else constbit) 
+if isempty.b then empty:seq.symbol else code.b_1 

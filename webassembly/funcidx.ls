@@ -325,17 +325,12 @@ Function hash(a:word5) int hash.chars.a
 
 Function wordconst(w:word) symbol Lit.valueofencoding.encode.word5.decodeword.w
 
-Function wordsconst(s:seq.word) symbol
-for acc = empty:seq.symbol, w ∈ s do
- acc + wordconst.w
-/do Constant2(acc + Sequence(seqof.typeint, length.acc))
-
-Function initialwordconst symbol
+Function initialwordconst(libname:word) symbol
 for acc2 = empty:seq.symbol, p ∈ encodingdata:word5 do
  for acc = empty:seq.symbol, c ∈ chars.p do
   acc + Lit.toint.c
- /do acc2 + Constant2(acc + Sequence(seqof.typeint, length.acc))
-/do Constant2(acc2 + Sequence(seqof.seqof.typeint, length.acc2))
+ /do acc2 + Constant2(libname, acc + Sequence(seqof.typeint, length.acc))
+/do Constant2(libname, acc2 + Sequence(seqof.seqof.typeint, length.acc2))
 
 ________________
 
@@ -385,34 +380,29 @@ for offset = globalspace, p ∈ subseq(encodingdata:datax, 1, k - 1) do
  offset + 8 * length.elements.p
 /do offset
 
-/Function constintseq (elements:seq.int) int allocateconstspace ("."_1, [0, length.elements]+
+Function getoffset(s:seq.word, libname:word) int
+for acc = empty:seq.symbol, w ∈ s do
+ acc + wordconst.w
+/do getoffset(Constant2(libname, acc + Sequence(seqof.typeint, length.acc)), libname)
 
-function constantcode(s:symbol) seq.symbol
-let code1 = fullconstantcode.s,
-if isSequence.last.code1 then
- [Lit.0, Lit.nopara.last.code1] + code1 >> 1
-else
- code1 >> 1
-
-Function getoffset(const:symbol) int
-let elements = 
- for elements = empty:seq.int, sym ∈ constantcode.const do
-  elements
-  + if inmodule(sym, "$real") ∨ inmodule(sym, "$int") ∨ inmodule(sym, "$boolean") then
-   value.sym
-  else if sym = Littrue then
-   1
-  else if sym = Litfalse then
-   0
-  else if isFref.sym then
-   tableindex.basesym.sym
-  else if iswordseq.sym then
-   getoffset.wordsconst.worddata.sym
-  else if isword.sym then
-   value.wordconst.wordname.sym
-  else
-   assert isrecordconstant.sym report "problem getoffset $(sym)",
-   getoffset.sym
- /do elements
-,
-allocateconstspace("."_1, elements) 
+Function getoffset(const:symbol, libname:word) int
+let code1 = fullconstantcode.const
+let start = if isSequence.last.code1 then [0, nopara.last.code1] else empty:seq.int,
+for elements = start, sym ∈ code1 >> 1 do
+ elements
+ + if inmodule(sym, "$real") ∨ inmodule(sym, "$int") ∨ inmodule(sym, "$boolean") then
+  value.sym
+ else if sym = Littrue then
+  1
+ else if sym = Litfalse then
+  0
+ else if isFref.sym then
+  tableindex.basesym.sym
+ else if iswordseq.sym then
+  getoffset(worddata.sym, libname)
+ else if isword.sym then
+  value.wordconst.wordname.sym
+ else
+  assert isrecordconstant.sym report "problem getoffset $(sym)",
+  getoffset(sym, libname)
+/do allocateconstspace("."_1, elements) 

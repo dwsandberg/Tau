@@ -2,6 +2,8 @@ Module testopt
 
 use compilerfrontT.callconfig
 
+use compileTimeT.callconfig
+
 use file
 
 use llvmcode
@@ -36,7 +38,7 @@ let cl =
   , "4607182418800017408"
   , "44"
   , "2"
-  , "46"
+  , "%1"
   , "72"
   , "27"
   , "2"
@@ -140,7 +142,9 @@ let cl =
    /br 4 Exit
    /br 5 Exit
    /br EndBlock
-   /br"]
+   /br"
+  , ""
+  , ""]
 let r = 
  for acc = "", @e ∈ arithseq(length.cl, 1, 1) do acc + getcode(p2, cl, @e) /do acc /for
  + if [40, 20, 30, 20]

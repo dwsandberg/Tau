@@ -28,9 +28,11 @@ Export type:ordering
 
 Export type:UTF8 {From UTF8}
 
-Export toword(n:int) word {Covert integer to a single word. } {From UTF8}
+Export toword(n:int) word
+{Covert integer to a single word. /br From UTF8}
 
-Export toint(w:word) int {Convert an integer represented as a word to an int} {From UTF8}
+Export toint(w:word) int
+{Convert an integer represented as a word to an int /br From UTF8}
 
 Export length(seq.char) int
 
@@ -114,17 +116,18 @@ Export isempty(seq.word) boolean {From seq.word}
 
 Export last(s:seq.word) word {From seq.word}
 
-Export +(a:seq.word, b:seq.word) seq.word {OPTION COMPILETIME} {From seq.word}
+Export +(a:seq.word, b:seq.word) seq.word
+{OPTION COMPILETIME /br From seq.word}
 
 Export +(seq.word, word) seq.word {From seq.word}
 
 Export <<(s:seq.word, i:int) seq.word
-{* removes i words from beginning of s}
-{From seq.word}
+{* removes i words from beginning of s /br From seq.word}
 
 Export =(seq.word, seq.word) boolean {From seq.word}
 
-Export >>(s:seq.word, i:int) seq.word {* removes i words from end of s} {From seq.word}
+Export >>(s:seq.word, i:int) seq.word
+{* removes i words from end of s /br From seq.word}
 
 Export _(seq.word, int) word {From seq.word}
 
@@ -142,14 +145,15 @@ Export alphasort(a:seq.seq.word) seq.seq.word {From words}
 
 Export alphasort(a:seq.word) seq.word {From words}
 
-Export merge(a:seq.word) word {make multiple words into a single word. } {From words}
+Export merge(a:seq.word) word
+{make multiple words into a single word. /br From words}
 
 Export type:word {From words}
 
 Export checkinteger(w:word) word
 {* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out like an integer
- but has illegal characters in it. otherwise returns WORD. }
-{From words}
+ but has illegal characters in it. otherwise returns WORD. 
+ /br From words}
 
 Export decodeword(w:word) seq.char {From words}
 
@@ -161,7 +165,9 @@ Export >1(a:word, b:word) ordering {From words}
 
 Builtin stacktrace seq.word
 
-Function dq seq.word {doublequote} [encodeword.[char.34]]
+Function dq seq.word
+{doublequote}
+[encodeword.[char.34]]
 
 Function dq(s:seq.word) seq.word dq + s + dq
 
@@ -169,15 +175,15 @@ type ordering is toint:int
 
 Function space word encodeword.[char.32]
 
-* EQ GT and LT are the possible results of >1 operator
-
 Function EQ ordering ordering.1
 
 Function GT ordering ordering.2
 
 Function LT ordering ordering.0
 
-Function >1(a:ordering, b:ordering) ordering toint.a >1 toint.b
+Function >1(a:ordering, b:ordering) ordering 
+{ possible results are:  EQ GT LT }
+toint.a >1 toint.b
 
 Function =(a:ordering, b:ordering) boolean toint.a = toint.b
 
@@ -204,7 +210,9 @@ Function ∨(a:boolean, b:boolean) boolean if a then true else b
 
 ______________
 
-Function -(i:int) int {OPTION COMPILETIME} 0 - i
+Function -(i:int) int
+{OPTION COMPILETIME}
+0 - i
 
 Builtin >1(a:int, b:int) ordering
 

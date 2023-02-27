@@ -32,10 +32,6 @@ use set.symdef
 
 use typedict
 
-Export prg(postbindresult) set.symdef
-
-Export typedict(postbindresult) typedict
-
 function verysimpleinline(sym1:symbol, code:seq.symbol) boolean
 if isempty.code ∨ length.code > 10 then
  false
@@ -61,18 +57,30 @@ else
 
 type postbindresult is typedict:typedict, prg:set.symdef, inline:set.symdef
 
-Function postbind(roots:seq.symbol, theprg:set.symdef, templates:set.symdef, typedict1:typedict) postbindresult
-let discard = for acc = symbolref.Lit.0, r ∈ roots do symbolref.r /do 0,
-for allsyms = empty:set.symbol, sd ∈ toseq.theprg do
- allsyms + sym.sd
+Function postbind(exports:seq.word, mods:set.passsymbols, theprg:set.symdef, typedict1:typedict) midpoint
+let discard = roots(exports, mods, theprg),
+for allsyms = empty:set.symbol
+ , prg1 = empty:set.symdef
+ , templates = empty:set.symdef
+ , sd ∈ toseq.theprg
+do
+ if isAbstract.module.sym.sd then
+  next(allsyms, prg1, templates + sd)
+ else
+  next(allsyms + sym.sd, prg1 + sd, templates)
 /do
- usedsyms(symboldict(allsyms, empty:seq.commoninfo)
-  , theprg
-  , 0
-  , empty:set.symdef
-  , templates
-  , typedict1
-  , empty:set.symdef)
+ let r = 
+  usedsyms(symboldict(allsyms, empty:seq.commoninfo)
+   , prg1
+   , 0
+   , empty:set.symdef
+   , templates
+   , typedict1
+   , empty:set.symdef)
+ ,
+ midpoint5("", prg.r, templates, typedict1, empty:seq.modExports, empty:seq.seq.word)
+
+use seq.modExports
 
 function %(t:localmap2) seq.word "key: $(key.t) $(value.t)"
 
@@ -100,7 +108,17 @@ else
  for accZ = postbindresult(typedict1, result, inline)
   , symz ∈ subseq(aa, last + 1, length.aa)
  do
-  if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then
+  if isrecordconstant.symz then
+   let b = getSymdef(source, symz)
+   assert not.isempty.b report "FAIL F",
+   for acc = 0, sy ∈ code.b_1 do
+    if isrecordconstant.sy then
+     let discard = symbolref.sy,
+     0
+    else
+     0
+   /do postbindresult(typedict.accZ, prg.accZ ∪ b, inline.accZ)
+  else if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then
    accZ
   else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
@@ -147,13 +165,16 @@ else
    for newdict4 = newdict2
     , cache = empty:set.symdef
     , nextvar = {will be calculated if needed} 0
-    , result2 = empty:seq.symbol
-    , symx ∈ code.sd
+    , result1 = empty:seq.symbol
+    , sym3 ∈ code.sd
    do
-    let sym = replaceTsymbol(modpara, symx),
-    if isconst.sym then
-     next(newdict4, cache, nextvar, result2 + sym)
-    else if isspecial.sym then
+    if isrecordconstant.sym3 then
+     let discard = symbolref.sym3,
+     next(newdict4, cache, nextvar, result1 + sym3)
+    else if isconst.sym3 ∧ not.isFref.sym3 then
+     next(newdict4, cache, nextvar, result1 + sym3)
+    else if isspecial.sym3 then
+     let sym = replaceTsymbol(modpara, sym3)
      let newsym = 
       if isloopblock.sym then
        for acc = empty:seq.mytype, p ∈ paratypes.sym do
@@ -163,61 +184,62 @@ else
        Sequence(parameter.basetype(resulttype.sym, newdict4), nopara.sym)
       else if isstart.sym then Start.basetype(resulttype.sym, newdict4) else sym
      ,
-     next(newdict4, cache, nextvar, result2 + newsym)
+     next(newdict4, cache, nextvar, result1 + newsym)
     else
-     {???? does caching realy help on these symbols if isInternal.sym then let discard = symbolref.sym next
-      (newdict4, cache, nextvar, result2+sym) else}
-     let newdict3 = if isSimple.module.symx then newdict4 else addtype(newdict4, para.module.symx),
-     if name.sym ∈ "pushflds" ∧ isBuiltin.sym then
-      let typ = para.module.sym,
+     let sym4 = basesym.sym3
+     let sym5 = replaceTsymbol(modpara, sym4)
+     let newdict3 = if isSimple.module.sym4 then newdict4 else addtype(newdict4, para.module.sym4),
+     if name.sym5 ∈ "pushflds" ∧ isBuiltin.sym5 then
+      let typ = para.module.sym5,
       next(newdict3
        , cache
        , nextvar
        , if iscore4.typ ∨ isseq.typ ∨ isencoding.typ then
-        result2
+        result1
        else
         let t = flatflds(newdict3, typ),
         if isempty.t ∨ typeT ∈ t then
-         result2 + sym
+         result1 + sym5
         else if length.t = 1 then
-         result2
+         result1
         else
-         for newresult = result2 >> 1, idx = 0, x ∈ t do
-          next(newresult + [last.result2, Lit.idx, Getfld.x], idx + 1)
+         for newresult = result1 >> 1, idx = 0, x ∈ t do
+          next(newresult + [last.result1, Lit.idx, Getfld.x], idx + 1)
          /do newresult
        )
      else
-      let cacheValue = getSymdef(cache, symx)
+      let result2 = if isFref.sym3 then result1 + PreFref else result1
+      let cacheValue = getSymdef(cache, sym4)
       let newValue = 
        if not.isempty.cacheValue then
         code.cacheValue_1
-       else if isInternal.sym then
-        let discard = symbolref.sym,
-        [sym]
-       else if isBuiltin.sym then
-        handleBuiltin(sym, newdict3)
+       else if isInternal.sym5 then
+        let discard = symbolref.sym5,
+        [sym5]
+       else if isBuiltin.sym5 then
+        handleBuiltin(sym5, newdict3)
        else
-        let xx = getCode(inline, sym),
+        let xx = getCode(inline, sym5),
         if isempty.xx then
-         let discard = symbolref.sym,
-         [sym]
+         let discard = symbolref.sym5,
+         [sym5]
         else
-         xx << nopara.sym
+         xx << nopara.sym5
       let newValue2 = 
        if not.isempty.result2 ∧ last.result2 = PreFref ∧ length.newValue ≠ 1 then
-        {cannot inline Fref} [sym]
+        {cannot inline Fref} [sym5]
        else
         newValue
       ,
       next(newdict3
-       , if isempty.cache then cache + symdef(symx, newValue, 0) else cache
+       , if isempty.cache then cache + symdef(sym4, newValue, 0) else cache
        , nextvar
        , result2 + newValue2)
    /do
     postbindresult(newdict4
-     , symdef4(symz, result2, 0, getOptionsBits.sd) ∪ prg.accZ
-     , if verysimpleinline(symz, result2) ∧ not.isNOINLINE.sd then
-      inline.accZ + symdef(symz, result2, 0)
+     , symdef4(symz, result1, 0, getOptionsBits.sd) ∪ prg.accZ
+     , if verysimpleinline(symz, result1) ∧ not.isNOINLINE.sd then
+      inline.accZ + symdef(symz, result1, 0)
      else
       inline.accZ
      )
@@ -475,4 +497,26 @@ for acc = empty:seq.symdef, p ∈ s do
      sym
     , newdict)
  /do acc + symdef4(sym.p, result, 0, getOptionsBits.p)
+/do acc
+
+use set.passsymbols
+
+function roots(exports:seq.word, mods:set.passsymbols, prg10:set.symdef) symbolref
+for acc = symbolref.outofboundssymbol, f ∈ toseq.mods do
+ if name.module.f ∉ exports then
+  acc
+ else if isSimple.module.f then
+  for acc2 = acc, sym ∈ toseq.exports.f do symbolref.sym /do acc2
+ else
+  for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f do
+   acc2 + getCode(prg10, sym)
+  /do
+   for acc3 = acc, sym2 ∈ toseq.asset.acc2 do
+    if isrecordconstant.sym2 then
+     symbolref.sym2
+    else if isAbstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2 ∨ inModFor.sym2 then
+     acc3
+    else
+     symbolref.sym2
+   /do acc3
 /do acc 

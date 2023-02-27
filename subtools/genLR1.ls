@@ -51,8 +51,10 @@ function =(a:state, b:state) boolean toset.a = toset.b
 function =(a:dottedrule, b:dottedrule) boolean
 rule.a = rule.b ∧ place.a = place.b
 
+use words
+
 function >1(a:dottedrule, b:dottedrule) ordering
-rule.a >1 rule.b ∧ place.a >1 place.b
+toalphaseq.rule.a >1 toalphaseq.rule.b ∧ place.a >1 place.b
 
 function hash(p:dottedrule) int hash.rule.p + place.p
 
@@ -395,14 +397,14 @@ function generatereduce(grammarandact:seq.seq.seq.word
  next(acc + reduceline, i + 1)
 /do
  acc << 1 + "else {ruleno} assert false report" + dq."invalid rule number"
- + "+toword.ruleno do R_1"
+ + "+toword.ruleno, R_1"
 )
  "
 
 Function LR1(input:seq.file, o:seq.word, codeonly:boolean, parameterized:boolean) seq.file
 {* A parser generator for a subset of LR1 grammars. 
- /br Codeonly:Only produces generated code
- /br Parameterized:adds T to function name to allowing them to be put into a parameterized module
+ /br /strong codeonly:Only produces generated code
+ /br /strong parameterized:adds T to function name to allowing them to be put into a parameterized module
  /br Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines
  the precedence}
 let location = breakparagraph.data.first.input
@@ -417,7 +419,12 @@ let funcidx =
  /do-funcidx
 let p = location_funcidx
 let x = findindex(p, "Alphabet"_1)
-let terminals = subseq(p, x + 1, x + findindex(p << x, "}"_1) - 1)
+let terminals = 
+ subseq(p
+  , x + 1
+  , x
+  + findindex(p << x, "/br"_1)
+  - 1)
 let a = findindex(p, "RulePrecedence"_1)
 let c = break(subseq(p, a, a + findindex(p << a, "}"_1)), "|", false) << 1
 let ruleprec = c >> 1

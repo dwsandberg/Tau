@@ -342,7 +342,7 @@ use exampleEncoding
 use  geotest
 
 Function testdoc(input:seq.file,o:seq.word) seq.file
-[file(o,"testseq $(testseq) point2d $(testpoint) testlistset $(testlistset) testdict $(testdict) exampleEncoding $(testExampleEncoding) /p geotest  $(geotest)")]
+{ }[file(o,"testseq $(testseq) point2d $(testpoint) testlistset $(testlistset) testdict $(testdict) exampleEncoding $(testExampleEncoding) /p geotest  $(geotest)")]
 
 
 

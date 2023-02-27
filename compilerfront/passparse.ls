@@ -39,10 +39,10 @@ for outer = empty:seq.arc.symbol, p ∈ s do
 /do outer
 
 function removesinks(sinkstokeep:set.symbol, g:graph.symbol, toprocess:seq.symbol) seq.arc.symbol
-{removes sinks that are not unbound and parameter of module is typeT}
-{do a transitiveClosure and only keep arcs whose head is a sink}
-{looking for relation of function to the unbound functions it can call.This are not quite yet that relation
- . }
+{removes sinks that are not unbound and parameter of module is typeT
+ /br do a transitiveClosure and only keep arcs whose head is a sink
+ /br looking for relation of function to the unbound functions it can call.This are not quite yet that
+ relation. }
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess do
  if isunbound.n ∨ para.module.n ≠ typeT then
   next(keep + n, pred, g2)
@@ -106,14 +106,13 @@ for prg = prgin, m ∈ toseq.modlist do
   if first.symsrc ∈ "Export" then
    let sd = getSymdef(acc, sym.p),
    if isempty.sd then
-    symdef4(sym.p, empty:seq.symbol, 0, commentoptions(symsrc, nopara.sym.p))
+    acc
    else
     symdef4(sym.p
      , code.sd_1
      , paragraphno.sd_1
      , commentoptions(symsrc, nopara.sym.p) + getOptions.sd_1)
-   /if
-   ∪ acc
+    ∪ acc
   else
    acc
  /do acc
@@ -126,7 +125,7 @@ if isempty.s1 ∨ first.s1 ∉ "OPTION" then
  ""
 else
  for acc = "", w ∈ s1
- while w ∉ "{}"
+ while w ∉ "{} /br"
  do
   if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE" then acc + w else acc
  /do acc

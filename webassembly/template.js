@@ -191,10 +191,11 @@ function finaljsHTTP(data,nobits ){
 , arccos:arg =>    Math.acos(arg) 
 , clockReal:function(){return performance.now()}
 , callprocess:function(wrapper, args){ 
+ console.log("callprocess 1");
   try { return exports.processbody(wrapper, args); } 
   catch(err){ 
     var b; 
-// console.log("catch err"+ err.message +"err"+"name:"+(err.name)); 
+  console.log("catch err"+ err.message +"err"+"name:"+(err.name)); 
     if(err.message ===undefined){ b = err; } 
     else if(err.message.startsWith("Division")){ b = 0; } 
     else { b = 0; } 

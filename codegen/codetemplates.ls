@@ -243,7 +243,7 @@ Function initmap5(liblist:seq.slot) seq.match5
   + GEP(r.2, i64, ibcsub.1, C64.1))
  , addtemplate(symbol(internalmod, "clock", typeint)
   , 1
-  , CALL(r.1, 0, 32768, function.[i64], symboltableentry("clock", function.[i64])))
+  , CALL(r.1, 0, 32768, function.[i64], symboltableentry("threadclock", function.[i64])))
  , {addtemplate (symbol (internalmod," spacecount", typeint), 1, LOAD (r.1, symboltableentry (" spacecount
   ", i64), i64)),}
  addtemplates([typeint, typeboolean, typebyte]

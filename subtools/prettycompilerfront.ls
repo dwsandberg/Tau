@@ -51,7 +51,7 @@ if isempty.p then first."?" else if first.p ∈ "/keyword" then p_2 else first.p
 
 function %(r:rename) seq.word %.sym.r + newname.r + %.paraorder.r
 
-Function transform(m:midpoint
+Function transform(input:midpoint
  , o:seq.word
  , target:seq.word
  , modrenames:seq.word
@@ -61,7 +61,26 @@ Function transform(m:midpoint
  , noindex:boolean
  , cleanexports:boolean
  , moveexports:boolean
- , input:seq.file) seq.file
+ , input2:seq.file) seq.file
+{The /keyword transform cmd takes a list of input source files. 
+For each module in the input a pretty printed
+file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block transform helloworld/helloworld
+.ls
+/br transform helloworld/helloworld.ls flags = reorguse
+/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit
+/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse *>
+/p  This first variant does not require the source to be sematicaly correct but the syntax must be correct
+. It does not change the order of the paragraphs. 
+/p  The second is like the first except that it moves the use paragraphs to the beginning of the module
+, removes duplicates, and sorts them.
+/p  The third is like the first but requires correct semantics. This allows some additional transformations
+such as" not (a = b)" to become" a /ne b"
+/p  If the parameter" flags = html" is used, an html file is produced with an index of modules. This
+option is useful for examining source code. For example </ block transform htmlcode+built core.libsrc
+flags = html*> If the option" flags = html noindex" is used then no index is included. This final
+form is useful for producing documentation with imbedded Tau code.
+}
+ let m=input
 let exportinfo = manageExports.m
 let srctext = 
  if parseit then
@@ -84,7 +103,7 @@ let srctext =
     renames
   /do totext(m, renames)
  else
-  for acc = empty:seq.seq.word, i ∈ input do
+  for acc = empty:seq.seq.word, i ∈ input2 do
    if ext.fn.i ∈ "libinfo" then acc else acc + breakparagraph.data.i
   /do acc
 let exported = exportedmodref.m
@@ -188,7 +207,7 @@ do
    if reorguse then "reorguse" else "" /if + if parseit then "parseit" else "" /if
    + if cleanexports then "cleanexports" else "" /if
    + if moveexports then "moveexports" else "" /if
-   + for txt2 = "", x ∈ input do txt2 + "/br" + fullname.fn.x /do txt2
+   + for txt2 = "", x ∈ input2 do txt2 + "/br" + fullname.fn.x /do txt2
   ,
   for files = empty:seq.file, summary = "inputs $(para) /p files created", M ∈ txt do
    if subseq(M, 1, 1) ∉ ["Module", "module"] ∨ char1."$" ∈ decodeword.M_2
@@ -200,27 +219,6 @@ do
     let fn = filename("+" + modtodir_(idx + 1) + modname + ".ls"),
     next(files + file(fn, M), summary + "/br" + fullname.fn)
   /do files + file(o, summary)
-
-* The /keyword transform cmd takes a list of input source files. For each module in the input a pretty printed
-file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block transform helloworld/helloworld
-.ls
-/br transform helloworld/helloworld.ls flags = reorguse
-/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit
-/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse *>
-
-* This first variant does not require the source to be sematicaly correct but the syntax must be correct
-. It does not change the order of the paragraphs. 
-
-* The second is like the first except that it moves the use paragraphs to the beginning of the module
-, removes duplicates, and sorts them.
-
-* The third is like the first but requires correct semantics. This allows some additional transformations
-such as" not (a = b)" to become" a /ne b"
-
-* If the parameter" flags = html" is used, an html file is produced with an index of modules. This
-option is useful for examining source code. For example </ block transform htmlcode+built core.libsrc
-flags = html*> If the option" flags = html noindex" is used then no index is included. This final
-form is useful for producing documentation with imbedded Tau code.
 
 Function unusedsymbols(m:midpoint
  , o:seq.word
@@ -476,7 +474,7 @@ else if name.sym ∈ "$letend" then
  let args = top(stk, nopara.sym),
  for acc7 = "", s ∈ args >> 1 do
   acc7 + s
- /do push(pop(stk, nopara.sym), acc7 + "do" + last.args)
+ /do push(pop(stk, nopara.sym), acc7 + "," + last.args)
 else if name.sym ∈ "$fortext" then
  let args = top(stk, nopara.sym)
  let whileexp = args_(length.args - 3)

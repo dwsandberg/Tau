@@ -55,81 +55,97 @@ use seq.seq.word
 use set.word
 
 Function compilerFront:T(option:seq.word, input:seq.file) midpoint
-{OPTION XPROFILE}
-for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
+{OPTION PROFILE}
+for libinfo = empty:midpoint, data = empty:seq.byte, i ∈ input do
  if ext.fn.i ∈ "libinfo" then
   let new = first.inbytes:midpoint(data.i),
   next(
-   midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
+   midpoint(""
+    , prg.libinfo ∪ prg.new
+    , emptytypedict
+    , libmods.libinfo + libmods.new
+    , empty:seq.seq.word)
    , data)
  else
-  next(mp, data + [tobyte.10, tobyte.10] + data.i)
-/do compilerfront2:T(option, breakparagraph.data, mp)
-
-Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint) midpoint
-{OPTION PROFILE}
-let m = compilerfront3(option, allsrc, libinfo),
-if first.option.m ∈ "library text pass1 pass1a prebind" then
- m
-else
+  next(libinfo, data + [tobyte.10, tobyte.10] + data.i)
+/do
+ let allsrc = breakparagraph.data
  let libname = extractValue(first.allsrc, "Library")_1
- let librarymap = [libname, first."*"]
- let prg = {if" xxx"_1 ∈ option then GG.hasstate.prg.m else} prg.m
- let prg5 = pass2:T(librarymap, prg, typedict.m, option) ∪ templates.m
- let m2 = 
-  if "profile"_1 ∈ option then
-   let profinit = symbol(moduleref.[libname, "initialize"_1], "initProfile", typeptr)
-   let profdata = symbol(moduleref.[libname, "initialize"_1], "profileData", typeptr)
-   let prg6 = addprofile(prg5, libname),
-   if isempty.prg6 then
-    m
-   else
-    midpoint(option
-     , prg6 ∪ prg5
-     , typedict.m
-     , libmods.m + modExports(module.profinit, [profinit, profdata], empty:seq.seq.mytype)
-     , [first.src.m + "initialize"] + src.m << 1)
+ let EPname = merge.[libname, "$EP"_1]
+ let allsrc1 = 
+  if length.first.allsrc < 8 ∨ first.first.allsrc ∉ "Library" then
+   allsrc
   else
-   midpoint(option, prg5, typedict.m, libmods.m, src.m)
- ,
- if "bitcode"_1 ∈ option then starmap.prepareback(m2, libinfo) else m2
+   [first.allsrc + EPname] + allsrc << 1
+   + breakparagraph.data.file("??.ls", "Module $(EPname) $(modEntry.allsrc << 2)")
+ let m = compilerfront3(option, allsrc1, libinfo),
+ if first.option.m ∈ "library text pass1 pass1a prebind" then
+  m
+ else
+  let librarymap = [libname, first."*"]
+  let prg = {if" xxx"_1 ∈ option then GG.hasstate.prg.m else} prg.m
+  let prg5 = pass2:T(librarymap, prg, typedict.m, option, libname)
+  let m2 = 
+   if "profile"_1 ∈ option then
+    let profinit = symbol(moduleref.[libname, "initialize"_1], "initProfile", typeptr)
+    let profdata = symbol(moduleref.[libname, "initialize"_1], "profileData", typeptr)
+    let prg6 = addprofile(prg5, libname),
+    if isempty.prg6 then
+     m
+    else
+     midpoint5(option
+      , prg6 ∪ prg5
+      , templates.m
+      , typedict.m
+      , libmods.m + modExports(module.profinit, [profinit, profdata], empty:seq.seq.mytype)
+      , [first.src.m + "initialize"] + src.m << 1)
+   else
+    midpoint5(option, prg5, templates.m, typedict.m, libmods.m, src.m)
+  ,
+  if "bitcode"_1 ∈ option then
+   let m3 = prepareback(m2, libinfo),
+   midpoint5(option.m3, prg.m3, templates.m3, typedict.m3, libmods.m3, src.m3 + allsrc)
+  else
+   m2
+
+use makeentry
 
 unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict) seq.symbol
 
-Function pass2:T(librarymap:seq.word, knownsymbols0:set.symdef, t:typedict, option:seq.word) set.symdef
-{OPTION XPROFILE}
-let knownsymbols = 
- for acc2 = empty:set.symdef, pele0 ∈ toseq.knownsymbols0 do
+Function pass2:T(librarymap:seq.word
+ , knownsymbols0:set.symdef
+ , t:typedict
+ , option:seq.word
+ , libname:word) set.symdef
+{OPTION PROFILE}
+for knownsymbols = empty:set.symdef, pele0 ∈ toseq.knownsymbols0 do
+ if isempty.code.pele0 then
+  knownsymbols + pele0
+ else
   let code = code.pele0,
-  acc2
-  + if isempty.code then
-   pele0
-  else
-   for acc = [first.code], last = first.code, c ∈ code << 1 do
-    next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
-   /do symdef4(sym.pele0, acc, paragraphno.pele0, getOptions.pele0)
- /do acc2
-,
-if "addpass"_1 ∈ option then
- additionalpass:T(librarymap, toseq.knownsymbols, knownsymbols, t)
-else
- let k = 
-  subpass2:T(librarymap
-   , empty:seq.symdef
-   , empty:set.symdef
-   , asset.renumberconstants.toseq.knownsymbols
-   , 0
-   , t)
-  ∪ constantsymbols
- ,
- k
+  for acc = [first.code], last = first.code, c ∈ code << 1 do
+   next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
+  /do
+   let sd = symdef4(sym.pele0, acc, paragraphno.pele0, getOptions.pele0),
+   if isrecordconstant.sym.sd then
+    let discard = registerConstant.sd,
+    knownsymbols
+   else
+    knownsymbols + sd
+/do
+ if "addpass"_1 ∈ option then
+  additionalpass:T(librarymap, toseq.knownsymbols, knownsymbols, t, libname)
+ else
+  subpass2:T(librarymap, empty:seq.symdef, empty:set.symdef, knownsymbols, 0, t, libname)
+  ∪ constantsymbols.libname
 
 function subpass2:T(librarymap:seq.word
  , bigin:seq.symdef
  , corein:set.symdef
  , toprocess:set.symdef
  , count:int
- , typedict:typedict) set.symdef
+ , typedict:typedict
+ , libname:word) set.symdef
 {OPTION XPROFILE}
 for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
@@ -137,41 +153,50 @@ for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toproce
  if isempty.code ∨ isVERYSIMPLE.pele ∨ isINLINE.pele then
   next(big, small, pele ∪ core)
  else if isCOMPILETIME.pele then
-  next(big, small, firstopt:T(librarymap, core, pele, true, typedict) ∪ core)
+  next(big, small, firstopt:T(librarymap, core, pele, true, typedict, libname) ∪ core)
  else if length.code < 30 then
-  let t = firstopt:T(librarymap, core, pele, true, typedict),
+  let t = firstopt:T(librarymap, core, pele, true, typedict, libname),
   if isINLINE.t then next(big, small, t ∪ core) else next(big, t ∪ small, core)
  else
   next(big + pele, small, core)
 /do
  if length.toseq.corein = length.toseq.core then
-  additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict)
+  additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict, libname)
  else
-  subpass2:T(librarymap, big, core, small, count + 1, typedict)
+  subpass2:T(librarymap, big, core, small, count + 1, typedict, libname)
 
-Function additionalpass:T(librarymap:seq.word, p:seq.symdef, start:set.symdef, typedict:typedict) set.symdef
+Function additionalpass:T(librarymap:seq.word
+ , p:seq.symdef
+ , start:set.symdef
+ , typedict:typedict
+ , libname:word) set.symdef
 {OPTION XPROFILE}
 for acc = start, prgele ∈ p do
  if isempty.code.prgele then
   prgele ∪ acc
  else
-  firstopt:T(librarymap, acc, prgele, false, typedict) ∪ acc
+  firstopt:T(librarymap, acc, prgele, false, typedict, libname) ∪ acc
 /do acc
 
-function firstopt:T(librarymap:seq.word, p:set.symdef, sd:symdef, first:boolean, typedict:typedict) symdef
+function firstopt:T(librarymap:seq.word
+ , p:set.symdef
+ , sd:symdef
+ , first:boolean
+ , typedict:typedict
+ , libname:word) symdef
 let s = sym.sd
 let pdict = 
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1) do
   pmap + localmap2(parano, [Local.parano])
  /do pmap
-let a = xxx:T(librarymap, p, code.sd, s, pdict, typedict)
+let a = xxx:T(librarymap, p, code.sd, s, pdict, typedict, libname)
 let t = 
  if first then
   a
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
-  let ty = if Hasfor ∈ flags.a then expandIndex(code.a, nextvar.a) else code.a
-  let t2 = if Callself ∈ flags.a then mergeblocks(ty, s) else ty,
-  expandresult(nextvar.a, t2, flags.a)
+  let ty = if Hasfor ∈ flags.a then expandIndex(code.a, nextvar.a) else a
+  let t2 = if Callself ∈ flags.a then mergeblocks(code.ty, s) else code.ty,
+  expandresult(nextvar.ty, t2, flags.a)
  else
   a
 let options = getOptions.sd
@@ -196,21 +221,23 @@ function xxx:T(librarymap:seq.word
  , code:seq.symbol
  , s:symbol
  , pdict:set.localmap2
- , typedict:typedict) expandresult
-let a = scancode:T(librarymap, p, code, nopara.s + 1, pdict, s, typedict)
+ , typedict:typedict
+ , libname:word) expandresult
+let a = scancode:T(librarymap, p, code, nopara.s + 1, pdict, s, typedict, libname)
 let new = if Hasmerge ∈ flags.a then mergeblocks(code.a, Lit.1) else code.a,
 if length.code = length.new ∧ length.code > 20 ∨ new = code then
  expandresult(nextvar.a, new, flags.a)
 else
- xxx:T(librarymap, p, new, s, pdict, typedict)
+ xxx:T(librarymap, p, new, s, pdict, typedict, libname)
 
-Function scancode:T(librarymap:seq.word
+function scancode:T(librarymap:seq.word
  , p:set.symdef
  , org:seq.symbol
  , nextvarX:int
  , mapX:set.localmap2
  , self:symbol
- , typedict:typedict) expandresult
+ , typedict:typedict
+ , libname:word) expandresult
 for flags = bits.0
  , result = empty:seq.symbol
  , nextvar = nextvarX
@@ -257,7 +284,10 @@ do
     let args = subseq(result, len + 1 - nopara, len)
     let constargs = for acc = true, @e ∈ args while acc do isconst.@e /do acc,
     if constargs then
-     next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
+     next(flags
+      , subseq(result, 1, len - nopara) + Constant2(libname, args + sym)
+      , nextvar
+      , map)
     else
      next(flags, result + sym, nextvar, map)
    else if islocal.sym then
@@ -318,7 +348,7 @@ do
     interpretCompileTime:T(librarymap, subseq(result, len - nopara + 1, len), sym, typedict)
   ,
   if not.isempty.compiletime then
-   let newconst = if length.compiletime > 1 then Constant2.compiletime else first.compiletime,
+   let newconst = if length.compiletime > 1 then Constant2(libname, compiletime) else first.compiletime,
    next(flags, result >> nopara + newconst, nextvar, map)
   else
    let newresult = checkemptycat:T(sym, result),
@@ -337,7 +367,7 @@ do
      {function just returns result} next(flags, result, nextvar, map)
     else
      let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
-     let new = expandinline:T(librarymap, result, t, nextvar, code, p, self, typedict),
+     let new = expandinline:T(librarymap, result, t, nextvar, code, p, self, typedict, libname),
      next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /do expandresult(nextvar, result, flags)
 
@@ -361,7 +391,8 @@ function expandinline:T(librarymap:seq.word
  , code:seq.symbol
  , p:set.symdef
  , self:symbol
- , typedict:typedict) expandresult
+ , typedict:typedict
+ , libname:word) expandresult
 for pmap = empty:set.localmap2
  , paracode = empty:seq.symbol
  , nextvar = nextvarin
@@ -375,5 +406,5 @@ do
   , parano + 1
   , idx)
 /do
- let r = scancode:T(librarymap, p, code, nextvar, pmap, self, typedict),
+ let r = scancode:T(librarymap, p, code, nextvar, pmap, self, typedict, libname),
  expandresult(nextvar.r, paracode + code.r, flags.r) 

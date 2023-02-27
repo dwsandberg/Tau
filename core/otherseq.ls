@@ -24,11 +24,13 @@ Export +(a:seq.T, b:seq.T) seq.T {From seq.T}
 
 Export +(l:seq.T, a:T) seq.T {From seq.T}
 
-Export <<(s:seq.T, i:int) seq.T {* removes i elements from beginning of s} {From seq.T}
+Export <<(s:seq.T, i:int) seq.T
+{* removes i elements from beginning of s /br From seq.T}
 
 Export =(a:seq.T, b:seq.T) boolean {From seq.T}
 
-Export >>(s:seq.T, i:int) seq.T {* removes i elements from end of s} {From seq.T}
+Export >>(s:seq.T, i:int) seq.T
+{* removes i elements from end of s /br From seq.T}
 
 Export _(a:seq.T, c:int) T {From seq.T}
 

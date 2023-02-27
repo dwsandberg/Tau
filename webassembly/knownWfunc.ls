@@ -18,7 +18,7 @@ Function abortfunc symbol symbol(internalmod, "abortfunc", typereal, typereal)
 
 Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
-Function knownWfunc(alltypes:typedict) seq.wfunc
+Function knownWfunc(alltypes:typedict, libname:word) seq.wfunc
 [wfunc(alltypes, symbol(internalmod, "spacecount", typeint), const64.0)
  , wfunc(alltypes
   , symbol(internalmod, "clock", typeint)
@@ -145,7 +145,7 @@ Function knownWfunc(alltypes:typedict) seq.wfunc
  , wfunc(alltypes
   , symbol(internalmod, "idxseq", seqof.typereal, typeint, typereal)
   , const64.8 + [i64mul, i64add, i32wrapi64, f64load, tobyte.3] + LEBu.8)
- , wfunc(alltypes, symbol(internalmod, "stacktrace", seqof.typeword), const64.getoffset.wordsconst."")
+ , wfunc(alltypes, symbol(internalmod, "stacktrace", seqof.typeword), const64.getoffset("", libname))
  , wfunc(alltypes
   , symbol(internalmod, "randomint", typeint, seqof.typeint)
   , Wcall.symbol(moduleref."* SpecialExports", "randomintimp", typeint, seqof.typeint))

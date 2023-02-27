@@ -106,14 +106,22 @@ let bcwords = if isempty.uses then empty:seq.char else getbcwords.bcwordFilename
 let typedict = typedict.m
 let isbase = isempty.uses
 let prgX = prg.m
-let t5 = 
+let t5a=getSymdef(prgX
+  , symbol(moduleref.[libname, "entrypoint"_1]
+   , "entrypoint"
+   , typeref."UTF8 UTF8 *"
+   , typeref."UTF8 UTF8 *")
+  )
+let t5 = if not.isempty.t5a then t5a else 
  getSymdef(prgX
   , symbol(moduleref.[libname, merge.[libname, "$EP"_1]]
    , "entrypoint"
    , typeref."UTF8 UTF8 *"
    , typeref."UTF8 UTF8 *")
   )
-assert not.isempty.t5 report "cannot find entrypoint"
+assert not.isempty.t5 report "CodeGen:cannot find entrypoint"
++for  txt="", p /in toseq.prgX do if name.sym.p /in "entrypoint" then 
+ txt+%.sym.p else txt /do txt
 let entrypointsym = sym.t5_1
 let tobepatched = typ.conststype + toint.symboltableentry("list", conststype)
 let discard0 = initwordref(baselibwords, bcwords)
@@ -136,7 +144,7 @@ let stacktracesymbol = symbol(moduleref(stacktraceinfo >> 1), stacktraceinfo << 
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do
   acc
-  + addfuncdef(typedict
+  + addfuncdef(m
    , if isInternal.sym.@e then
     let internalbody = 
      for acc2 = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.@e, 1, 1) do
@@ -326,7 +334,8 @@ for addrsym = empty:seq.int, sd ∈ {toseq.prg} defines do
   addrsym + addobject([toint.frefslot] + addsymbol.f1)
 /do [addobject([toint.C64.0, toint.C64.length.addrsym] + addrsym)]
 
-function addfuncdef(typedict:typedict, sd:symdef) internalbc
+function addfuncdef(m2:midpoint, sd:symdef) internalbc
+let typedict = typedict.m2
 assert not.isempty.code.sd report "codegen with no definition $(sym.sd) in" + library.module.sym.sd
 let nopara = nopara.sym.sd
 let paramap = 
@@ -438,7 +447,7 @@ do
     , basesym.if isFref.lastfref then
      lastfref
     else
-     let tmp = fullconstantcode.last,
+     let tmp = getCode(prg.m2, last),
      tmp_(length.tmp - 1)
     )
   let typelist = types2 << 2 + first.types2

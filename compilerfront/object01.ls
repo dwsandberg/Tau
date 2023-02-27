@@ -77,17 +77,29 @@ function word0 int 3
 
 function real0 int 4
 
-function buildword int {1 <chars of word>} 1
+function buildword int
+{1 <chars of word>}
+1
 
-function buildrecord int {2 rectyp <elements of record>} 2
+function buildrecord int
+{2 rectyp <elements of record>}
+2
 
-function buildseq int {3 elementtyp <length of seq> <elements of seq>} 3
+function buildseq int
+{3 elementtyp <length of seq> <elements of seq>}
+3
 
-function buildtblrecord int {4 rectyp elements of record} 4
+function buildtblrecord int
+{4 rectyp elements of record}
+4
 
-function buildtblseq int {5 rectyp <length of seq> elements of seq} 5
+function buildtblseq int
+{5 rectyp <length of seq> elements of seq}
+5
 
-function buildblock int {6 elementyp <no of blocks> <length of seq> <elements of block seq>} 6
+function buildblock int
+{6 elementyp <no of blocks> <length of seq> <elements of block seq>}
+6
 
 {The format is a group of records that descibe types followed by [-1] followed by build records.
 
@@ -235,7 +247,7 @@ for txt = "/br tableentry", r ∈ encodingdata:tableentry do
  txt + %.r
 /do txt
 
-function dump(finished:seq.seq.int) seq.word
+Function dump(finished:seq.seq.int) seq.word
 for txt = "/br finished", r ∈ finished do
  txt + "/br" + %.r
 /do txt

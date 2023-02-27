@@ -34,56 +34,68 @@ define makelib2 stdlib2 makelib
 define makelib0 orgstdlib makelib
 define prettybuild stdlib prettystate
 define start shell  startfresh 
+define noop shell #
 
 start start.ls
 +bin taubuild.sh stdlib.bc putfile.c
 + stdlib tau.c tauthreads.c tau.h
 
-libsrc0 core.libsrc start.ls
-+core bits.ls encoding format graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq textio file ptr indirect
 
-libsrc0 symbols.libsrc start.ls
-+symbols symbol2.ls typedict mytype symbolconstant symbol
-
-libsrc0 compilerfront.libsrc start.ls
-+compilerfront pretty.ls parse parsersupport 
-+compilerfront compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2 passparse passsymbol postbind symboldict compileTimeT object01 objectio LEBencoding addprofile
  
-libsrc0 codegen.libsrc start.ls
-+codegen persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants llvmcode
+noop compilerfront.libsrc stdlib1.lib
 
-libsrc0 tausupport.libsrc start.ls
-+tausupport   taublockseq bitcast tausupport encodingsupport
+noop core.libsrc stdlib1.lib
 
-makelib0 stdlib1.lib core.libsrc symbols compilerfront codegen tausupport
-+stdlib updatestate.ls main2   
+noop symbols.libsrc stdlib1.lib
+
+noop tausupport.libsrc stdlib1.lib
+
+noop codegen.libsrc  stdlib1.lib
+
+makelib0 stdlib1.lib 
++stdlib updatestate.ls main2 
++core lib.ls bits.ls encoding format graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq textio file ptr indirect
++symbols lib.ls symbol2.ls typedict mytype symbolconstant symbol
++compilerfront lib.ls  pretty.ls parse parsersupport 
++compilerfront compilerfrontT.ls compilerfront mergeblocks pass2 
+hashset localmap2 passparse passsymbol postbind symboldict 
+compileTimeT object01 objectio LEBencoding addprofile 
+ makeentry PEGnew.ls PEGrules
++codegen lib.ls persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants llvmcode
++tausupport lib.ls   taublockseq bitcast tausupport encodingsupport
++built    start.ls
 exports= llvmcode mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport   textio  words xxhash compilerfront bitcast objectio object01 LEBencoding
 
-makelib1 stdlib2.lib core.libsrc symbols compilerfront codegen tausupport
+comment +simple makeentry3 PEGnew.ls PEGrules
+
+makelib1 stdlib2.lib 
 +stdlib updatestate.ls main2  
++built core.libsrc symbols compilerfront codegen tausupport
 exports=   llvmcode mytype UTF8  bits  ptr encoding file format graph hashset 
 internalbc  llvm llvmconstants main2    otherseq pretty process real seq set 
 sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport   
 textio   words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib2 stdlib.lib 
-core.libsrc symbols compilerfront codegen tausupport
-+stdlib updatestate.ls main2   
-exports=updatestate llvmcode compilerfrontT    mytype UTF8  bits   
- encoding file format graph hashset internalbc  llvm llvmconstants main2  otherseq pretty
-  process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport
-   encodingsupport  textio words xxhash compilerfront bitcast 
-   objectio object01 LEBencoding indirect ptr
-options=info
++stdlib updatestate.ls main2  
++built core.libsrc symbols compilerfront codegen tausupport
+exports=updatestate llvmcode compilerfront compilerfrontT   compileTimeT  mytype UTF8  
+ bitcast  bits   
+ encoding encodingsupport  file format graph hashset internalbc  llvm llvmconstants main2  otherseq pretty
+  objectio  process real seq set sparseseq stack standard symbol symbol2  tausupport
+    textio words xxhash  
+    LEBencoding indirect ptr 
+options=info profile 
 
-libsrc subtools.libsrc
-+subtools baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses taulextable frontcmd wordgraph enumerate
-+subtools graphcode ParserExample cleanExports
-exports = X
+noop subtools.libsrc  tools.lib
 
-makelib tools.lib common.lib subtools.libsrc
+
+makelib tools.lib 
 +tools  profileexample.ls tools
 +symbols profile
++subtools lib.ls baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses taulextable frontcmd wordgraph enumerate
++subtools graphcode ParserExample cleanExports
++built common.lib 
 uses=common stdlib
 exports=baseTypeCheck doc genLR1 taulextable wordgraph
 options=profile
@@ -162,11 +174,10 @@ testall testall.html
 +tests opttests.ls
 +$build stdlib.libinfo
 
-  front baseTypeCheck.html stdlib.libsrc
+ front baseTypeCheck.html stdlib.libsrc
 out=baseTypeCheck
 
-front callgraphwithin.html tools.libsrc stdlib.libinfo common.
- libinfo
+ front callgraphwithin.html tools.libsrc stdlib.libinfo common.libinfo
 mods=taulextable
 flags=within
 
@@ -176,14 +187,32 @@ wasm wbeizer.wasm webcore.libsrc symbols.libsrc
    +compilerfront object01.ls objectio LEBencoding
    +subtools graphcode 
    +common svg2graph uniqueids 
-+wbeizer Bcubic.html Bquadratic wbeizer.ls
++webapps Bcubic.html Bquadratic wbeizer.ls
 exports=wbeizer 
 Library=wbeizer
 flags=info  profile
 
-comment wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
-+webtools webtools.ls  webtools.html
+
+define cmd2html cmd2html
+
+comment makelib cmd2html.lib stdlib.libinfo +webassembly cmd2html.ls 
+uses= stdlib
+exports=cmd2html
+
+comment cmd2html  link.txt +built  subtools.libsrc 
+  moduleRename=frontcmd : webtools2  prettycompilerfront: webtools2
+    libname=webtools
+
+comment noop webtools.html link.txt
+
+comment  noop webtools.ls link.txt
+
+comment webtools is missing tests 
+
+comment wasm webtools.wasm webcore.libsrc symbols compilerfront  subtools
++built webtools.html webtools.ls
 +common svg2graph.ls uniqueids
++simple webtools2
 exports=webtools
 Library=webtools
 flags=info
@@ -191,15 +220,14 @@ flags=info
 prettybuild newrelease.bld
 +.bld release.bld
 
-comment transform  pretty.html +built  stdlib.libsrc  common  tools   webassembly tests printbitcodes
 
 makelib testprofile.lib common.lib 
- +HelloWorld testprofile.ls 
+ +tests testprofile.ls 
  +symbols profile
  +subtools graphcode
 uses=common stdlib
 exports=testprofile
-options=profile
+options=profile info
 
 makelib printbitcodes.lib  stdlib.lib 
 +printbitcodes printbitcodes.ls bitcodesupport.ls slotdesc llvm2
@@ -207,7 +235,6 @@ uses=stdlib
 exports=printbitcodes
 
 define printbitcodes printbitcodes printbitcodes
-define noop shell #
 define regen ppp test2
 define testprofile testprofile testprofile
 
@@ -227,5 +254,7 @@ options = bitcode
 
  testprofile testprofile.html 
  
- transform hhh.html core.libsrc 
+transform hhh.html core.libsrc 
  flags=parseit
+ 
+transform  pretty.html +built  stdlib.libsrc  common  tools   webassembly tests printbitcodes

@@ -11,8 +11,8 @@ use set.word
 type lexaction1 is w:word, tokenno:int, label:word
 
 function tolexaction(next:word, terminals:seq.word) lexaction1
-{user supplied procedure to convert a word into a lex action}
-{assumes W for word; I for Integer}
+{user supplied procedure to convert a word into a lex action
+ /br assumes W for word; I for Integer}
 if next ∈ dq then
  lexaction1(next, findindex(terminals, "$wordlist"_1), next)
 else if next = merge."/ le" then
@@ -35,6 +35,10 @@ else if next = merge."/ in" then
  lexaction1(next, findindex(terminals, "-"_1), "∈"_1)
 else if next = merge."/ xor" then
  lexaction1(next, findindex(terminals, "-"_1), "⊻"_1)
+else if next ∈ ". " then
+ lexaction1(next, findindex(terminals, "."_1), "."_1)
+else if next ∈ ": " then
+ lexaction1(next, findindex(terminals, ":"_1), ":"_1)
 else
  let token = 
   if next ∈ "< > >1 >2 ≤ ≠ ≥" then
@@ -58,7 +62,8 @@ Function lextable(terminals:seq.word) seq.seq.word
 {* generate the lextable for the Tau compiler. }
 let mostfrequentwords = 
  dq
- + "\, ().:+_seq = a int if-then else Function let word 0 i T] [2 use function mytype empty inst"
+ + "\, (). .: :+_seq = a int if-then else Function let word 0 i T] [2 use function mytype empty inst
+  "
 let wordstoinclude = 
  mostfrequentwords + terminals
  + "= < > >2 >1 >> << in+-* / mod \_^/in ∈ /ne ≠ /or ∨ /nin ∉ /cup ∪ /and ∧ /cap ∩ /ge ≥ /le ≤ /xor

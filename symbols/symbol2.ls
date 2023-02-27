@@ -34,7 +34,13 @@ Export templates(midpoint) set.symdef
 
 Export typedict(midpoint) typedict
 
-Export midpoint(seq.word, set.symdef, set.symdef, typedict, seq.modExports, seq.seq.word) midpoint
+Function midpoint5(a:seq.word
+ , b:set.symdef
+ , c:set.symdef
+ , d:typedict
+ , e:seq.modExports
+ , f:seq.seq.word) midpoint
+midpoint(a, b, c, d, e, f)
 
 Export type:modExports
 
@@ -290,8 +296,6 @@ Export getSymdef(set.symdef, symbol) set.symdef {From symbol}
 
 Export symbol4(modref, word, mytype, seq.mytype, mytype) symbol {From symbol}
 
-Export symconst(i:int, hashfref:boolean) symbol {From symbol}
-
 Export type? mytype {From symbol}
 
 Export typebits mytype {From symbol}
@@ -300,9 +304,7 @@ Export typebyte mytype {From symbol}
 
 Export typeword mytype {From symbol}
 
-Export Constant2(args:seq.symbol) symbol {From symbolconstant}
-
-Export renumberconstants(prg:seq.symdef) seq.symdef {From symbolconstant}
+Export Constant2(libname:word, args:seq.symbol) symbol {From symbolconstant}
 
 Export fullconstantcode(s:symbol) seq.symbol {From symbolconstant}
 

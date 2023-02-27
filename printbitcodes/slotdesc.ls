@@ -79,7 +79,8 @@ for result = empty:seq.seq.word, k ∈ slots do
     + "$(z) ERROR: $(findtype(slots, rec_6)) = $(rec_5) $(findtype(slots, rec_8)) =
      $(rec_7)"
   else if rec_1 = toint.CCAST then
-   if rec_2 = 9 ∧ typ.k = 0 ∧ findtype(slots, rec_4) ∈ [rec_3,-1] then
+   if (rec_2 = 9 ∧ typ.k = 0 ∨ rec_2 = 11 ∧ types_(typ.k + 1) = "double")
+   ∧ findtype(slots, rec_4) ∈ [rec_3,-1] then
     result + z
    else
     result + "$(z) ERROR $(types_(typ.k + 1) + %.findtype(slots, rec_4) + %.rec_3)"
@@ -154,12 +155,8 @@ for result = empty:seq.seq.word, sd ∈ s do
       "ptrtoint ($(lookupconst(result, a_4)), $(types_(a_3 + 1))
        $(if check then ", $(printrecord(CONSTANTS, a)))" else ")")"
     else if a_1 = toint.CGEP ∧ length.a = 8 ∧ check then
-     "CGEP (
-      $(if a_2 = 1 then "conststype" else types_(a_3 + 1) /if + ","
-     + lookupconst(result, a_4)
-     + ","
-     + lookupconst(result, a_6)
-     + ","
+     "CGEP ($(if a_2 = 1 then "conststype" else types_(a_3 + 1)),
+      $(lookupconst(result, a_4) + "," + lookupconst(result, a_6) + ","
      + lookupconst(result, a_8)
      + ","
      + printrecord(CONSTANTS, a)

@@ -176,10 +176,10 @@ if op_1 = "process"_1 ∧ length.types.exp = 1 then
  let processtype = processof.rt
  let dcws = deepcopyseqword
  let newcode = 
-  [PreFref, deepcopySym.rt, PreFref, dcws, PreFref, last.code.exp]
+  [Fref.deepcopySym.rt, Fref.dcws, Fref.last.code.exp]
   + subseq(code.exp, 1, length.code.exp - 1)
-  + [PreFref, last.code.exp]
-  + Record([typeint, typeint, typeint] + paratypes.last.code.exp + typeint)
+  + [Lit.0, Fref.last.code.exp]
+  + Record([typeint, typeint, typeint] + paratypes.last.code.exp + typeint + typeint)
   + symbol(builtinmod.rt, "createthreadZ", typeptr, processtype)
  ,
  bindinfo(dict.R
@@ -375,13 +375,14 @@ function action(ruleno:int
  , R:reduction.bindinfo
  , parsestk:stack.stkele.bindinfo) bindinfo
 {Alphabet.= ():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while
- /for W do wl wlend /do T X F2 A E FP NM L D F F1 G HH F3 E2 EI}
-{RulePrecedence | HH HH comment | comment | let | assert | if | for | W | wl | I | [| $wordlist | (
- | E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E = E |
- = | > | E E ∧ E | ∧ | E E ∨ E | ∨ | E EI else E2 /if | /if | E EI else E2 | E for F3 /do E2 /for | /for
- | E for F3 /do E2 | D comment | E2 A do E | E2 A, E | E2 E |}
+ /for W do wlstart wl wlend /do D0 D1 E E2 E3 EI F F0 F1 F3 FP G L NM T X
+ /br RulePrecedence | D1 D0 comment | comment | D1 D0 | wlstart | E3 E3 E3 | E3 E3, E3 | let | assert
+ | if | for | W | wl | I | [| $wordlist | (| E NM | E comment E | E E_E |_| E W.E | E E * E | E-
+ E | * | E E-E |-| E E > E | E E = E | = | > | E E ∧ E | ∧ | E E ∨ E | ∨ | E EI else E2 /if | /if
+ | E EI else E2 | E for F3 /do E2 /for | /for | E for F3 /do E2 | E3 comment | E2 E3, E | E2 E |, | E3
+ let W = E | E2 E3 E |}
 let common = common.dict.R,
-if ruleno = {F HH E2} 1 then
+if ruleno = {F D1 E2} 1 then
  let returntype = last.types.R_1
  assert mode.common ∈ "symbol" ∨ returntype = first.types.R_2
  report
@@ -389,37 +390,29 @@ if ruleno = {F HH E2} 1 then
    , common
    , place
    , parsestk)
- let codewithcomments = 
-  code.R_1 + code.R_2
-  + constantseq(length.code.R_1, symbol(internalmod, "{", seqof.typeword, returntype, returntype))
  ,
- bindinfo(dict.R_2, codewithcomments, types.R_2, "")
-else if ruleno = {F HH} 2 then
+ bindinfo(dict.R_2, code.R_2, types.R_1, "")
+else if ruleno = {F D1} 2 then
  R_1
-else if ruleno = {HH HH comment} 3 then
- if mode.common ∈ "text" then
-  bindinfo(dict.R, code.R_1 + Words.tokentext.R_2, types.R_1, "")
- else
-  R_1
-else if ruleno = {HH W NM (FP) T} 4 then
+else if ruleno = {D0 W NM (FP) T} 3 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W_(FP) T} 5 then
+else if ruleno = {D0 W_(FP) T} 4 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W-(FP) T} 6 then
+else if ruleno = {D0 W-(FP) T} 5 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W = (FP) T} 7 then
+else if ruleno = {D0 W = (FP) T} 6 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W > (FP) T} 8 then
+else if ruleno = {D0 W > (FP) T} 7 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W * (FP) T} 9 then
+else if ruleno = {D0 W * (FP) T} 8 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W ∧ (FP) T} 10 then
+else if ruleno = {D0 W ∧ (FP) T} 9 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W ∨ (FP) T} 11 then
+else if ruleno = {D0 W ∨ (FP) T} 10 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_4, R_6)
-else if ruleno = {HH W NM T} 12 then
+else if ruleno = {D0 W NM T} 11 then
  createfunc(R, common, place, parsestk, tokentext.R_2, R_2, R_3)
-else if ruleno = {HH W NM is FP} 13 then
+else if ruleno = {D0 W NM is FP} 12 then
  let tp = 
   resolvetype(if isAbstract.modname.common then tokentext.R_2 + ".T" else tokentext.R_2
    , common
@@ -427,83 +420,94 @@ else if ruleno = {HH W NM is FP} 13 then
    , parsestk)
  ,
  bindinfo(dict.R, empty:seq.symbol, [tp] + types.R_4, text.R_4)
-else if ruleno = {FP T} 14 then
+else if ruleno = {D1 D0} 13 then
+ R_1
+else if ruleno = {D1 D0 comment} 14 then
+ R_1
+else if ruleno = {FP T} 15 then
  addpara(dict.R, ":", R_1, place, parsestk)
-else if ruleno = {FP FP, T} 15 then
+else if ruleno = {FP FP, T} 16 then
  addpara(dict.R, ":", R_3, place, parsestk, R_1)
-else if ruleno = {FP W:T} 16 then
+else if ruleno = {FP W:T} 17 then
  addpara(dict.R, tokentext.R_1, R_3, place, parsestk)
-else if ruleno = {FP FP, W:T} 17 then
+else if ruleno = {FP FP, W:T} 18 then
  addpara(dict.R, tokentext.R_3, R_5, place, parsestk, R_1)
-else if ruleno = {FP comment W:T} 18 then
+else if ruleno = {FP comment W:T} 19 then
  addpara(dict.R, tokentext.R_2, R_4, place, parsestk)
-else if ruleno = {FP FP, comment W:T} 19 then
+else if ruleno = {FP FP, comment W:T} 20 then
  addpara(dict.R, tokentext.R_4, R_6, place, parsestk, R_1)
-else if ruleno = {NM W} 20 then
+else if ruleno = {NM W} 21 then
  R_1
-else if ruleno = {NM W:T} 21 then
+else if ruleno = {NM W:T} 22 then
  bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 + tokentext.R_3)
-else if ruleno = {T W} 22 then
+else if ruleno = {T W} 23 then
  R_1
-else if ruleno = {T W.T} 23 then
+else if ruleno = {T W.T} 24 then
  bindinfo(dict.R
   , empty:seq.symbol
   , empty:seq.mytype
   , tokentext.R_1 + "." + tokentext.R_3)
-else if ruleno = {E NM} 24 then
+else if ruleno = {E NM} 25 then
+ {54}
  if mode.common ∈ "body text" then
   let f = lookupbysig(dict.R, text.R_1, empty:seq.mytype, common, place, parsestk),
   bindinfo(dict.R, [f], [resulttype.f], "")
  else
   R_1
-else if ruleno = {E NM (L)} 25 then
- unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
-else if ruleno = {E (E)} 26 then
+else if ruleno = {E NM (L)} 26 then
+ {55} unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
+else if ruleno = {E (E)} 27 then
  R_2
-else if ruleno = {E EI else E2} 27 then
+else if ruleno = {E EI else E2} 28 then
  assert types.R_1 = types.R_3
  report errormessage("then and else types are different", common, place, parsestk),
  bindinfo(dict.R_1, code.R_1 + code.R_3 + Exit + EndBlock, types.R_3, "")
-else if ruleno = {E EI else E2 /if} 28 then
+else if ruleno = {E EI else E2 /if} 29 then
  assert types.R_1 = types.R_3
  report errormessage("then and else types are different", common, place, parsestk),
  bindinfo(dict.R_1, code.R_1 + code.R_3 + Exit + EndBlock, types.R_3, "")
-else if ruleno = {E E_E} 29 then
+else if ruleno = {E E_E} 30 then
  opaction(R, common, place, parsestk)
-else if ruleno = {E-E} 30 then
+else if ruleno = {E-E} 31 then
  unaryop(R, common, place, parsestk, tokentext.R_1, R_2)
-else if ruleno = {E W.E} 31 then
+else if ruleno = {E W.E} 32 then
  unaryop(R, common, place, parsestk, tokentext.R_1, R_3)
-else if ruleno = {E E * E} 32 then
+else if ruleno = {E E * E} 33 then
  opaction(R, common, place, parsestk)
-else if ruleno = {E E-E} 33 then
+else if ruleno = {E E-E} 34 then
  opaction(R, common, place, parsestk)
-else if ruleno = {E E = E} 34 then
+else if ruleno = {E E = E} 35 then
  opaction(R, common, place, parsestk)
-else if ruleno = {E E > E} 35 then
+else if ruleno = {E E > E} 36 then
  opaction(R, common, place, parsestk)
-else if ruleno = {E E ∧ E} 36 then
+else if ruleno = {E E ∧ E} 37 then
  opaction(R, common, place, parsestk)
-else if ruleno = {E E ∨ E} 37 then
+else if ruleno = {E E ∨ E} 38 then
  opaction(R, common, place, parsestk)
-else if ruleno = {L E} 38 then
+else if ruleno = {L E} 39 then
  R_1
-else if ruleno = {L L, E} 39 then
+else if ruleno = {L L, E} 40 then
  bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3, "")
-else if ruleno = {E [L]} 40 then
+else if ruleno = {E [L]} 41 then
  let types = types.R_2
  assert for acc = true, @e ∈ types do acc ∧ types_1 = @e /do acc /for
  report errormessage("types do not match in build", common, place, parsestk),
  bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [seqof.types_1], "")
-else if ruleno = {D let W = E} 41 then
+else if ruleno = {E3 let W = E} 42 then
  let name = tokentext.R_2
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:$(name)", common, place, parsestk)
  let newdict = dict.R + Local(name_1, (types.R_4)_1, cardinality.dict.R),
  bindinfo(newdict, code.R_4 + Define(name_1, cardinality.dict.R), types.R_4, name)
-else if ruleno = {A D} 42 then
- R_1
-else if ruleno = {D assert E report E2} 43 then
+else if ruleno = {E3 comment} 43 then
+ if mode.common ∈ "text" then
+  bindinfo(dict.R
+   , [Words.tokentext.R_1] + symbol(internalmod, "{", seqof.typeword, typeint)
+   , [typeint]
+   , "")
+ else
+  R_1
+else if ruleno = {E3 assert E report E2} 44 then
  assert (types.R_2)_1 = typeboolean
  report errormessage("condition in assert must be boolean in:", common, place, parsestk)
  assert (types.R_4)_1 = seqof.typeword
@@ -523,20 +527,21 @@ else if ruleno = {D assert E report E2} 43 then
    + Define("assert"_1, cardinality.dict.R)
    , empty:seq.mytype
    , "")
-else if ruleno = {E I} 44 then
- bindlit.R
-else if ruleno = {E I.I} 45 then
+else if ruleno = {E I} 45 then
+ {46} bindlit.R
+else if ruleno = {E I.I} 46 then
+ {45}
  bindinfo(dict.R
   , [Words(tokentext.R_1 + "." + tokentext.R_3), makerealSymbol]
   , [typereal]
   , "")
-else if ruleno = {E $wordlist} 46 then
+else if ruleno = {E $wordlist} 47 then
  let s = tokentext.R_1,
  bindinfo(dict.R
   , [Words.if mode.common ∈ "text" then s else subseq(s, 2, length.s - 1)]
   , [seqof.typeword]
   , "")
-else if ruleno = {E comment E} 47 then
+else if ruleno = {E comment E} 48 then
  if mode.common ∈ "text" then
   bindinfo(dict.R
    , [Words.tokentext.R_1] + code.R_2
@@ -545,12 +550,12 @@ else if ruleno = {E comment E} 47 then
    , "")
  else
   R_2
-else if ruleno = {F1 W = E} 48 then
+else if ruleno = {F1 W = E} 49 then
  let name = tokentext.R_1
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:$(name)", common, place, parsestk),
  bindinfo(dict.R_1, code.R_3, types.R_3, name)
-else if ruleno = {F1 F1, W = E} 49 then
+else if ruleno = {F1 F1, W = E} 50 then
  let name = tokentext.R_3
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:$(name)", common, place, parsestk),
@@ -558,7 +563,7 @@ else if ruleno = {F1 F1, W = E} 49 then
   , code.R_1 + code.R_5
   , types.R_1 + types.R_5
   , tokentext.R_1 + tokentext.R_3)
-else if ruleno = {F2 F1, W-E} 50 then
+else if ruleno = {F0 F1, W-E} 51 then
  let name = tokentext.R_3
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:$(name)", common, place, parsestk),
@@ -571,15 +576,54 @@ else if ruleno = {F2 F1, W-E} 50 then
   , common
   , place
   , parsestk)
-else if ruleno = {F3 F2 do E2} 51 then
+else if ruleno = {F3 F0 do E2} 52 then
  forbody(R_1, R_2, R_3, common, place, parsestk)
-else if ruleno = {F3 F2 while E do E2} 52 then
+else if ruleno = {F3 F0 while E do E2} 53 then
  forbody(R_1, R_3, R_5, common, place, parsestk)
-else if ruleno = {E for F3 /do E2 /for} 53 then
- {*} forexit(dict.R_1, R_2, R_4)
-else if ruleno = {X wl E} 54 then
- binary2(R, common, place, parsestk, R_1, R_2, false)
-else if ruleno = {X X wl E} 55 then
+else if ruleno = {E for F3 /do E2 /for} 54 then
+ forexit(dict.R_1, R_2, R_4)
+else if ruleno = {E for F3 /do E2} 55 then
+ {63} forexit(dict.R_1, R_2, R_4)
+else if ruleno = {E X wlend} 56 then
+ {55} binary2(R, common, place, parsestk, R_1, R_2, true)
+else if ruleno = {G F #} 57 then
+ {56} R_1
+else if ruleno = {E2 E3 E} 58 then
+ {}
+ let newcode = 
+  if mode.common ∈ "text" then
+   code.R_1 + code.R_2
+   + symbol(internalmod, "$letend", types.R_1 + types.R_2, typeint)
+  else
+   code.R_1 + code.R_2
+ ,
+ bindinfo(dict.R, newcode, types.R_2, "")
+else if ruleno = {E2 E3, E} 59 then
+ let newcode = 
+  if mode.common ∈ "text" then
+   code.R_1 + code.R_3
+   + symbol(internalmod, "$letend", types.R_1 + types.R_3, typeint)
+  else
+   code.R_1 + code.R_3
+ ,
+ bindinfo(dict.R, newcode, types.R_3, "")
+else if ruleno = {E2 E} 60 then
+ R_1
+else if ruleno = {E3 E3 E3} 61 then
+ bindinfo(dict.R, code.R_1 + code.R_2, types.R_1 + types.R_2, "")
+else if ruleno = {E3 E3, E3} 62 then
+ bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3, "")
+else if ruleno = {EI if E then E2} 63 then
+ assert first.types.R_2 = typeboolean
+ report errormessage("cond of if must be boolean but is $(first.types.R_2)", common, place, parsestk),
+ bindinfo(dict.R_1
+  , [Start.first.types.R_4] + code.R_2 + Br2(1, 2) + code.R_4 + Exit
+  , types.R_4
+  , "")
+else if ruleno = {X wlstart E} 64 then
+ {64} binary2(R, common, place, parsestk, R_1, R_2, false)
+else if ruleno = {X X wl E} 65 then
+ {65}
  let B = binary2(R, common, place, parsestk, R_1, R_2, true),
  unaryop(R
   , common
@@ -587,50 +631,6 @@ else if ruleno = {X X wl E} 55 then
   , parsestk
   , "$"
   , bindinfo(dict.R, code.B + code.R_3, types.B + types.R_3, ""))
-else if ruleno = {E X wlend} 56 then
- binary2(R, common, place, parsestk, R_1, R_2, true)
-else if ruleno = {G F #} 57 then
- R_1
-else if ruleno = {E2 A do E} 58 then
- assert false report "not here $(input.common)"
- let newcode = 
-  if mode.common ∈ "text" then
-   code.R_1 + code.R_3
-   + symbol(internalmod, "$letend", types.R_1 + types.R_3, typeint)
-  else
-   code.R_1 + code.R_3
- ,
- bindinfo(dict.R, newcode, types.R_3, "")
-else if ruleno = {E2 E} 59 then
- R_1
-else if ruleno = {A A D} 60 then
- bindinfo(dict.R, code.R_1 + code.R_2, types.R_1 + types.R_2, "")
-else if ruleno = {EI if E then E2} 61 then
- assert first.types.R_2 = typeboolean
- report errormessage("cond of if must be boolean but is $(first.types.R_2)", common, place, parsestk),
- bindinfo(dict.R_1
-  , [Start.first.types.R_4] + code.R_2 + Br2(1, 2) + code.R_4 + Exit
-  , types.R_4
-  , "")
-else if ruleno = {D comment} 62 then
- if mode.common ∈ "text" then
-  bindinfo(dict.R
-   , [Words.tokentext.R_1] + symbol(internalmod, "{", seqof.typeword, typeint)
-   , [typeint]
-   , "")
- else
-  R_1
-else if ruleno = {E for F3 /do E2} 63 then
- forexit(dict.R_1, R_2, R_4)
-else if ruleno = {E2 A, E} 64 then
- let newcode = 
-  if mode.common ∈ "text" then
-   code.R_1 + code.R_3
-   + symbol(internalmod, "$letend", types.R_1 + types.R_3, typeint)
-  else
-   code.R_1 + code.R_3
- ,
- bindinfo(dict.R, newcode, types.R_3, "")
 else
  {ruleno}
  assert false report "invalid rule number" + toword.ruleno,

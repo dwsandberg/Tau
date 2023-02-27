@@ -22,26 +22,35 @@ use symbol2
 
 use set.symdef
 
-function %(sd:symdef) seq.word %.sym.sd + %.code.sd
+/function % (sd:symdef) seq.word %.sym.sd+%.code.sd
 
 function %(a:arc.symbol) seq.word %.tail.a + %.head.a
 
 function subaddprofile(sd:symdef, recursive:set.symbol) seq.symbol
+{assert name.sym.sd /nin" testprofile" report" KL"+%.sym.sd+%.code.sd,}
 for acc2 = empty:seq.symbol, sym ∈ code.sd do
- if isconstantorspecial.sym ∨ isInternal.sym ∨ isBuiltin.sym ∨ isFref.sym then
+ if isconstantorspecial.sym ∨ isInternal.sym ∨ isFref.sym ∨ isGlobal.sym
+ ∨ isBuiltin.sym
+ ∧ (name.sym ∉ "createthreadZ" ∨ length.acc2 ≤ 1 ∨ not.isFref.acc2_(length.acc2 - 1)) then
   acc2 + sym
+ else if isBuiltin.sym then
+  let functocall = acc2_(length.acc2 - 1)
+  let offset = valueofencoding.encode.parc2(sym.sd, basesym.functocall) * 6 + (2 - 6)
+  {7777 assert not (name.sym /in" createthreadZ" /and length.acc2 > 1 /and isFref.acc2_(length.acc2
+   -1)) report" X"+%.sym+%.acc2,},
+  acc2 >> 3
+  + [profiledata
+   , Lit.0
+   , Getfld.seqof.typeptr
+   , Lit(offset + 2)
+   , symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
+   , symbol(internalmod, "bitcast", typeptr, typeint)
+   , acc2_(length.acc2 - 1)
+   , last.acc2
+   , sym]
  else
-  let t = encodingdata:parc2
-  {assert length.acc2 /le 34 report" H"+name.module.sym assert length.t < 2 /or length.acc2 = 34 report
-   " X"+%n.t+%.sym+%.length.acc2}
-  let modname = name.module.sym,
-  if {name.sym /in" entrypointmodule compilerback outlib compilerfront2 extractValue+" /or name.sym /in
-   "_" /and resulttype.sym = seqof.typebyte}
-  true then
-   let offset = valueofencoding.encode.parc2(sym.sd, sym) * 6 + (2 - 6),
-   acc2 + profileCallNR(offset, sym, length.acc2 + 1, sym ∈ recursive)
-  else
-   acc2 + sym
+  let offset = valueofencoding.encode.parc2(sym.sd, sym) * 6 + (2 - 6),
+  acc2 + profileCallNR(offset, sym, length.code.sd + length.acc2, sym ∈ recursive)
 /do acc2
 
 Function addprofile(prg:set.symdef, libname:word) set.symdef
