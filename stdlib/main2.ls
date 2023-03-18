@@ -43,7 +43,7 @@ Function libname(info:midpoint) word extractValue(first.src.info, "Library")_1
 
 
 Function libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word) seq.file
-{ } let outname = filename.o
+{ENTRYPOINT } let outname = filename.o
 let Library = [name.outname],
 for acc1 = empty:seq.byte, acc2 = empty:seq.byte, f ∈ input do
  if ext.fn.f ∈ "ls" then
@@ -84,7 +84,7 @@ let m2 = outlib.m
 
 Function makebitcode(input:seq.file, options:seq.word, libname:seq.word
 ,exports:seq.word,uses:seq.word,o:seq.word) seq.file
-{OPTION PROFILE} 
+{OPTION PROFILE ENTRYPOINT} 
  let fn=filename.o
 let outname = filename."+$(dirpath.fn + libname).bc"
 let tmp =" Library=$(libname) uses=$(uses) exports=$(exports )"

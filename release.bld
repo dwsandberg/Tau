@@ -60,13 +60,11 @@ makelib0 stdlib1.lib
 +compilerfront compilerfrontT.ls compilerfront mergeblocks pass2 
 hashset localmap2 passparse passsymbol postbind symboldict 
 compileTimeT object01 objectio LEBencoding addprofile 
- makeentry PEGnew.ls PEGrules
+ makeentry PEG.ls PEGrules PEGmachine
 +codegen lib.ls persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants llvmcode
 +tausupport lib.ls   taublockseq bitcast tausupport encodingsupport
 +built    start.ls
 exports= llvmcode mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport encodingsupport   textio  words xxhash compilerfront bitcast objectio object01 LEBencoding
-
-comment +simple makeentry3 PEGnew.ls PEGrules
 
 makelib1 stdlib2.lib 
 +stdlib updatestate.ls main2  
@@ -195,7 +193,8 @@ flags=info  profile
 
 define cmd2html cmd2html
 
-comment makelib cmd2html.lib stdlib.libinfo +webassembly cmd2html.ls 
+ makelib cmd2html.lib stdlib.libinfo +webassembly cmd2html.ls 
+ +compilerfront PEG PEGrules PEGmachine makeentry
 uses= stdlib
 exports=cmd2html
 

@@ -21,7 +21,7 @@ function forward(stk:ATTR, token:ATTR) ATTR token
 function _(r:reduction, n:int) ATTR attribute.(toseq.r)_n
 
 Function sampleparser(input:seq.file, data:seq.word, o:seq.word) seq.file
-{The /keyword sampleparser command is a very simple example of a parser generated using the /keyword genLR1 parser. 
+{ENTRYPOINT The /keyword sampleparser command is a very simple example of a parser generated using the /keyword genLR1 parser. 
 It will add up a sequence of integers. For exmple" sampleparser data = 3 4 5" will give the result
 of" Value of the sum of 3 4 5 is 12".The grammar was produced with" LR1+tools ParserExample.ls flags
 = codeonly"

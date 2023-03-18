@@ -41,7 +41,7 @@ function >1(a:UTF8, b:UTF8) ordering toseqbyte.a >1 toseqbyte.b
 function >1(a:byte, b:byte) ordering toint.a >1 toint.b
 
 Function prettystate(input:seq.file, o:seq.word) seq.file
-{ }for acc = "", a ∈ breakparagraph.data.first.input do
+{ENTRYPOINT }for acc = "", a ∈ breakparagraph.data.first.input do
  if subseq(a, 1, 1) ∈ ["-", "comment"] then
   acc + "/p comment" + a << 1
  else if subseq(a, 1, 1) ∈ [":", "define"] then
@@ -91,7 +91,7 @@ else
  subseq(s, 1, i) + substitute(s << i, b, replacement)
 
 Function updatestate2(input:seq.file, o:seq.word, builddir:seq.word, debug:boolean) seq.file
-{???? different case in directory names causes confusion.}
+{ENTRYPOINT ???? different case in directory names causes confusion.}
 let lines = toseq(asset.breaklines.data.first.input ∩ asset.breaklines.data.input_2)
 let unchanged = 
  if isempty.lines then

@@ -1,4 +1,4 @@
-Module frontcmd
+Module frontcmd.T
 
 use baseTypeCheck
 
@@ -18,9 +18,11 @@ use symbol2
 
 use set.symdef
 
-Function front(input:midpoint, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
+unbound compilerFront:T(seq.word, seq.file) midpoint
+
+Function front:T(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
  , mods:seq.word, ~mods:seq.word, within:boolean, out:seq.word) seq.file
-{ The /keyword front command is a multiple purpose command. It outputs data from various stages of the compiler
+{ENTRYPOINT The /keyword front command is a multiple purpose command. It outputs data from various stages of the compiler
 . 
 /p  One use is to figure out what functions are used between modules. The usegraph of the core functions
 indicates there are dependences between the modules texio, file and bits.To see the dependences use <* block front
@@ -61,9 +63,9 @@ symbols in n directly or indirectly are included in the graph
 /br • txt Instead of producing a SVG graph print the args of the graph.
 /br • baseTypeCheck
 /br • resultCheck *> }
+let cf= compilerFront:T(if isempty.pass then "pass2" else pass, input),
  let names=n
- let cf=input
- let prg = prg.cf
+  let prg = prg.cf
 let ignorenames = isempty.names ∨ out ∈ ["calls", "calledby"],
 for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
  let ss = sym.sd,
@@ -116,4 +118,69 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
     drawgraph.newgraph.toseq.arcs.g2
  ,
  [file(o, output)]
+ 
+ use prettycompilerfront
+ 
+ let m = 
+ if parseit ∨ cleanexports ∨ moveexports then
+  compilerFront:callconfig("text", input)
+ else
+  empty:midpoint
+,
+transform(m, o, target, modrename, parseit
+ , reorguse, html, noindex, cleanexports, moveexports
+ , input) 
+ 
+Function transform:T(input:seq.file
+ , o:seq.word
+ , target:seq.word
+ , modrename:seq.word
+ , parseit:boolean
+ , reorguse:boolean
+ , html:boolean
+ , noindex:boolean
+ , cleanexports:boolean
+ , moveexports:boolean) seq.file
+{ENTRYPOINT The /strong transform cmd takes a list of input source files. 
+For each module in the input a pretty printed
+file is in the directory <Tau>/tmp Addition parameters allows for different variants. <* block transform helloworld/helloworld
+.ls
+/br transform helloworld/helloworld.ls flags = reorguse
+/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit
+/br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags = parseit reorguse *>
+/p  This first variant does not require the source to be sematicaly correct but the syntax must be correct
+. It does not change the order of the paragraphs. 
+/p  The second is like the first except that it moves the use paragraphs to the beginning of the module
+, removes duplicates, and sorts them.
+/p  The third is like the first but requires correct semantics. This allows some additional transformations
+such as" not (a = b)" to become" a /ne b"
+/p  If the parameter" flags = html" is used, an html file is produced with an index of modules. This
+option is useful for examining source code. For example </ block transform htmlcode+built core.libsrc
+flags = html*> If the option" flags = html noindex" is used then no index is included. This final
+form is useful for producing documentation with imbedded Tau code.
+} let m = 
+ if parseit ∨ cleanexports ∨ moveexports then
+  compilerFront:T("text", input)
+ else
+  empty:midpoint
+ , transform2(m, o, target, modrename, parseit
+ , reorguse, html, noindex, cleanexports, moveexports
+ , input)
+ 
+Function unusedsymbols:T(input:seq.file
+ , o:seq.word
+ , flags:seq.word
+ , all0:boolean
+ , generated0:boolean
+ , excessExports:boolean) seq.file {ENTRYPOINT The /strong unusedsymbols cmd analyzes code for unused functions. It forms the function call graph for the
+program. It then looks for any any sources in the call graph that are not the entry point of the program
+and lists them. Any functions that are generated from type definitions are also removed. 
+/p The behavior can be modified with flags. If the flag /keyword all is included the all unused functions are
+listed and not just the roots. If the flag /keyword generated is included only the symbols generated from type
+definitions are included. If the flag /keyword excessExports is included symbols exported from a module but
+only used internally to that module are listed.
+/p Here is an example <* block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common *>
+}
+unusedsymbols2(compilerFront:T("text", input),o,flags,all0,generated0,excessExports) 
+
 

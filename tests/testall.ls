@@ -54,7 +54,7 @@ else
  "Fail hash"
 
 Function testall(input:seq.file, o:seq.word, noseq:boolean) seq.file
-{ }let out = 
+{ ENTRYPOINT}let out = 
  test11 + checkhash + testencoding + testmodules + testbug7 + randomtest.500
  + testreal
  + if noseq then "" else testseq /if

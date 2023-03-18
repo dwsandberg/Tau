@@ -402,7 +402,7 @@ function generatereduce(grammarandact:seq.seq.seq.word
  "
 
 Function LR1(input:seq.file, o:seq.word, codeonly:boolean, parameterized:boolean) seq.file
-{* A parser generator for a subset of LR1 grammars. 
+{ ENTRYPOINT * A parser generator for a subset of LR1 grammars. 
  /br /strong codeonly:Only produces generated code
  /br /strong parameterized:adds T to function name to allowing them to be put into a parameterized module
  /br Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines

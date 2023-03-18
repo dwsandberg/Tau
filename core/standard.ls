@@ -171,7 +171,7 @@ Function dq seq.word
 
 Function dq(s:seq.word) seq.word dq + s + dq
 
-type ordering is toint:int
+type ordering is toint:int 
 
 Function space word encodeword.[char.32]
 

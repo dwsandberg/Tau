@@ -50,7 +50,7 @@ for acc = empty:seq.tblEle, e ∈ a do
 /do acc
 
 
-Function initailizeAttribute seq.word ""
+Function initializeAttribute seq.word ""
 
 Function addany(result:seq.seq.word, w:word) seq.seq.word result + [w]
 
@@ -58,14 +58,14 @@ Function tomatch(e:word) word e
 
 Function run2(tab:PEGtable, input:seq.word) seq.word
 let r = parse(input ,replacements.tab,toother.entries.tab
-,initailizeAttribute)
+,initializeAttribute)
 ,
 if  success.r  then 
  %.result.r else "Fail"
 
 Function run(tab:PEGtable, input:seq.word) seq.word
 let r = parse(input ,replacements.tab,toother.entries.tab
-,initailizeAttribute)
+,initializeAttribute)
 ,
 assert success.r report "fail"  
  %.result.r
@@ -166,7 +166,7 @@ if state = Fail then
  let top = top.stk
  let newstk = pop.stk,
  if isempty.newstk then
-  runresult(i, false, initailizeAttribute)
+  runresult(i, false, initializeAttribute)
  else
   next(input, table, newstk, Fstate.top, faili.top, result.top, faili.top, failresult.top)
 else if state = Success* then
@@ -241,6 +241,6 @@ else
  else
   {match non Terminal}
   let newstk = push(stk, frame(Sstate.te, Fstate.te, i, result, faili, failresult)),
-  next(input, table, newstk, action.te, i, [initailizeAttribute], i, [initailizeAttribute])
+  next(input, table, newstk, action.te, i, [initializeAttribute], i, [initializeAttribute])
 
  

@@ -23,14 +23,14 @@ use set.word
 use wordgraph
 
 Function usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word) seq.file
-{The /keyword usegraph cmd creates a graph with each node being a module and the arcs being to other module referenced
- by the module in the /keyword use clauses. 
- /br options:/strong exclude lists the modules to ignore in the use clauses. 
- /br /strong include restricts the modules considered to those listed.
- /p Examples:<* block
+{ENTRYPOINT   /strong usegraph  creates a graph with each node being a module and the arcs being to other module referenced
+by the module in the /keyword use clauses. 
+/br options:/strong exclude lists the modules to ignore in the use clauses. 
+/br /strong include restricts the modules considered to those listed.
+/p Examples:<* block
  /br > usegraph /so+built core.libsrc <* none <a href ="./install1.html" > Result </a> *>
- /br > usegraph /so+built core.libsrc exclude = seq standard <* none <a href ="./install2.html" > Result </a>
- *>}
+/br > usegraph /so+built core.libsrc exclude = seq standard <* none <a href ="./install2.html" > Result </a>
+*>}
 let xx = 0
 {
  /br > usegraph /so+built core.libsrc include = UTF8 words standard textio exclude = seq standard <* none <a
@@ -42,8 +42,9 @@ let out = drawgraph(usegraph(breakparagraph.input, "mod"_1), asset.include, asse
 [file(filename.o, out)]
 
 Function doclibrary(input:seq.file, o:seq.word, mods:seq.word) seq.file
-{OPTION PROFILE
- /br create summary documentation for library source code.The option /strong mods list the modules to
+{OPTION PROFILE ENTRYPOINT
+ /strong doclibrary create summary documentation for library source code. 
+ /br The option /strong mods list the modules to
  be document if the option is not empty. }
 let libsrc = 
  for acc = empty:seq.byte, f ∈ input do

@@ -13,7 +13,7 @@ use textio
 use sparseseq.word
 
 Function enumerate(input:seq.file, o:seq.word) seq.file
-{* The /keyword enumeration cmd is used to generate code in a module for enumeration types instead of creating
+{ENTRYPOINT The /keyword enumeration cmd is used to generate code in a module for enumeration types instead of creating
 the code by hand. If the following in a file named enum.ls it will generate two enumeration types and
 operations on them.
 /p ____________________

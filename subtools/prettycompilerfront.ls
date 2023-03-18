@@ -51,7 +51,7 @@ if isempty.p then first."?" else if first.p ∈ "/keyword" then p_2 else first.p
 
 function %(r:rename) seq.word %.sym.r + newname.r + %.paraorder.r
 
-Function transform(input:midpoint
+Function transform2(m:midpoint
  , o:seq.word
  , target:seq.word
  , modrenames:seq.word
@@ -80,7 +80,6 @@ option is useful for examining source code. For example </ block transform htmlc
 flags = html*> If the option" flags = html noindex" is used then no index is included. This final
 form is useful for producing documentation with imbedded Tau code.
 }
- let m=input
 let exportinfo = manageExports.m
 let srctext = 
  if parseit then
@@ -220,7 +219,7 @@ do
     next(files + file(fn, M), summary + "/br" + fullname.fn)
   /do files + file(o, summary)
 
-Function unusedsymbols(m:midpoint
+Function unusedsymbols2(m:midpoint
  , o:seq.word
  , flags:seq.word
  , all0:boolean

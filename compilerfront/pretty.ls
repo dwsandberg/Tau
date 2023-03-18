@@ -42,7 +42,7 @@ else
   , last = space
   , w ∈ in << 1
  do
-  if linelength > maxwidth ∨ w ∈ "/br /p" then
+  if linelength > maxwidth ∨ w ∈ "/br /p /row" then
    next(result + prettyresult(0, width.acc, acc + escapeformat)
     , [escapeformat] + w
     , wordwidth(last, w)

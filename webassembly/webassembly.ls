@@ -27,7 +27,7 @@ use textio
 use wasmcompile
 
 Function cat(files:seq.file, uses:seq.word, exports:seq.word, Library:seq.word) seq.file
-for acc = empty:seq.byte, names = "parts =", f ∈ files do
+{ENTRYPOINT}for acc = empty:seq.byte, names = "parts =", f ∈ files do
  if ext.fn.f ∈ "ls libsrc" then
   next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
  else
@@ -44,7 +44,7 @@ Function wasm(input:seq.file
  , o:seq.word
  , info:boolean
  , profile:boolean) seq.file
-{problem is same symbol is used in different onclicks}
+{ENTRYPOINT problem is same symbol is used in different onclicks}
 let LF = [encodeword.[char.10]]
 let includetemplate = false
 let input2 = cat(input, "", exports, Library)
