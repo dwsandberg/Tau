@@ -37,7 +37,7 @@ BT nopara=  (argtype < 4 )?0: (argtype < 8 )?1: (argtype < 16 )?2: (argtype < 32
   pthread_attr_t 	stackSizeAttribute;
   size_t			stackSize = 0;
   pthread_attr_init (&stackSizeAttribute);
-  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 12 *8 );
+  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 12 *8 *2 );
   pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
   /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
   processinfo p=(processinfo)  allocatespace(PD,(sizeof (struct pinfo)+7)/8);

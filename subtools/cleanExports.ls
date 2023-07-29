@@ -1,6 +1,6 @@
 Module cleanExports
 
-use otherseq.myExport
+/use otherseq.myExport
 
 use set.myExport
 
@@ -16,125 +16,128 @@ use set.symdef
 
 use otherseq.word
 
+Export type:myExport
+
 type myExport is modname:word, sym:symbol, key:seq.word, org:seq.word, paragraphno:int
 
 function %(e:myExport) seq.word
-[modname.e] + key.e + keyx.sym.e
-+ if name.module.sym.e ≠ modname.e ∧ first.%.module.sym.e ∉ "builtin internal" then
- let b = "{From $(module.sym.e)}",
- if subseq(org.e, length.org.e - length.b + 1, length.org.e) = b then
-  org.e
- else
-  org.e + b
-else
- org.e
+[modname.e]
+ + key.e
+ + keyx.sym.e
+ + 
+ if name.module.sym.e ≠ modname.e ∧ 1_%.module.sym.e ∉ "builtin internal" then
+  let b = "{From^(module.sym.e)}",
+  if subseq(org.e, n.org.e - n.b + 1, n.org.e) = b then org.e else org.e + b
+ else org.e
 
 function getExportName(s:seq.word) seq.word
-if s_3 ∉ ":" then
- [s_2]
+if 3_s ∉ ":" then
+[2_s]
 else
- for name = [s_2, s_3, s_4], last = s_4, w ∈ s << 4
+ for name = [2_s, 3_s, 4_s], last = 4_s, w ∈ s << 4
  while last ∉ "("
- do
-  if w ∈ "." ∨ last ∈ "." then next(name + w, w) else next(name, "("_1)
- /do name
+ do if w ∈ "." ∨ last ∈ "." then next(name + w, w) else next(name, 1_"("),
+ name
 
 function >2(a:myExport, b:myExport) ordering modname.a >1 modname.b
 
 function >1(a:myExport, b:myExport) ordering
-modname.a >1 modname.b ∧ key.a >1 key.b ∧ keyx.sym.a >1 keyx.sym.a
-∧ %.sym.a >1 %.sym.b
+modname.a >1 modname.b
+ ∧ key.a >1 key.b
+ ∧ keyx.sym.a >1 keyx.sym.a
+ ∧ %.sym.a >1 %.sym.b
 
 function keyx(s:symbol) seq.word
 if nopara.s = 1 then
- [merge.%.first.paratypes.s] + if name.s ∈ "type" then "a" else "b"
-else if name.s = first.%.resulttype.s then [merge.%.resulttype.s] + "c" else "zzzz d"
-
-Function fix(m:midpoint) seq.word %n.toseq.manageExports.m
+[merge.%.1_paratypes.s] + if name.s ∈ "type" then "a" else "b"
+else if name.s = 1_%.resulttype.s then
+[merge.%.resulttype.s] + "c"
+else "zzzz d"
 
 Function newtext(a:set.myExport, pno:int, modname:word) seq.word
-let t = findelement2(a, myExport(modname, Lit.0, "", "", 0)),
-for acc = "", e ∈ toseq.t do
+let t = findelement2(a, myExport(modname, Lit.0, "", "", 0))
+for acc = "", e ∈ toseq.t
+do
  if paragraphno.e = pno then
-  if name.module.sym.e ≠ modname.e ∧ first.%.module.sym.e ∉ "builtin internal" then
-   let b = "{From $(module.sym.e)}",
-   if subseq(org.e, length.org.e - length.b + 1, length.org.e) = b then
+  if name.module.sym.e ≠ modname.e ∧ 1_%.module.sym.e ∉ "builtin internal" then
+   let b = "{From^(module.sym.e)}",
+    if subseq(org.e, n.org.e - n.b + 1, n.org.e) = b then
     acc + org.e
-   else
-    acc + org.e + b
-  else
-   acc + org.e
- else
-  acc
-/do acc
+    else acc + org.e + b
+  else acc + org.e
+ else acc
+,
+acc
 
 Function newtext(a:set.myExport, modname:word) seq.word
-let t = findelement2(a, myExport(modname, Lit.0, "", "", 0)),
-for tt = empty:seq.seq.word, ex ∈ toseq.t do
- tt + %.ex
-/do
- for tt2 = "", l ∈ alphasort.tt do
-  tt2 + "/p" + l << (findindex(l, "Export"_1) - 1)
- /do tt2
+let t = findelement2(a, myExport(modname, Lit.0, "", "", 0))
+for tt = empty:seq.seq.word, ex ∈ toseq.t do tt + %.ex
+for tt2 = "", l ∈ alphasort.tt do tt2 + "/p" + l << (findindex(l, 1_"Export") - 1),
+tt2
 
 Function manageExports(m:midpoint) set.myExport
-for exportinfo = empty:seq.myExport
- , modname = "?"_1
+for
+ exportinfo = empty:seq.myExport
+ , modname = 1_"?"
  , exports = empty:seq.symbol
  , pno = 0
  , p ∈ src.m
 do
- if length.p < 2 then
-  next(exportinfo, modname, exports, pno + 1)
- else if first.p ∈ "Module module" then
-  let newname = p_2
-  let newexports = 
-   for acc = empty:seq.symbol, m1 ∈ libmods.m do
+ if n.p < 2 then
+ next(exportinfo, modname, exports, pno + 1)
+ else if 1_p ∈ "Module module" then
+  let newname = 2_p
+  let newexports =
+   for acc = empty:seq.symbol, m1 ∈ libmods.m
+   do
     if name.modname.m1 ≠ newname then
-     acc
+    acc
     else
-     for acc2 = acc, sym ∈ exports.m1 do
+     for acc2 = acc, sym ∈ exports.m1
+     do
       let t = getSymdef(prg.m, sym),
-      if isempty.t ∨ paragraphno.t_1 = 0 ∨ name.module.sym ≠ newname then
+       if isempty.t ∨ paragraphno.1_t = 0 ∨ name.module.sym ≠ newname then
        acc2 + sym
-      else
-       acc2
-     /do acc2
-   /do acc
+       else acc2
+     ,
+     acc2
+   ,
+   acc
   ,
   next(exportinfo, newname, newexports, pno + 1)
- else if first.p ∈ "Export" then
+ else if 1_p ∈ "Export" then
   let clean = cleanexportpara.p
-  let kkkl = 
-   for acc5 = empty:seq.myExport, sym ∈ exports do
+  let kkkl =
+   for acc5 = empty:seq.myExport, sym ∈ exports
+   do
     if getExportName.p = fullname.sym then
      if clean = %(",", paratypes.sym) >> 1 then
       let md = %.module.sym,
-      acc5 + myExport(modname, sym, if first.md = modname then "0" else md, p, pno + 1)
-     else
-      acc5
-    else
-     acc5
-   /do acc5
+      acc5 + myExport(modname, sym, if 1_md = modname then "0" else md, p, pno + 1)
+     else acc5
+    else acc5
+   ,
+   acc5
   ,
   next(exportinfo + kkkl, modname, exports, pno + 1)
- else
-  next(exportinfo, modname, exports, pno + 1)
-/do asset.exportinfo
+ else next(exportinfo, modname, exports, pno + 1)
+,
+asset.exportinfo
 
 function cleanexportpara(s:seq.word) seq.word
-for acc = "", last = first.s, w ∈ s << 1
-while isempty.acc ∨ last.acc ∉ ")"
+for acc = "", last = 1_s, w ∈ s << 1
+while isempty.acc ∨ 1^acc ∉ ")"
 do
  if w ∈ "(" then
-  next(acc + w, w)
+ next(acc + w, w)
  else if w ∈ ":" then
-  next(acc >> 1, w)
+ next(acc >> 1, w)
  else if w ∈ "{" then
-  next(acc + ")", w)
- else if isempty.acc then next(acc, w) else next(acc + w, w)
-/do
- if isempty.acc ∨ first.acc ∉ "(" then
-  if subseq(s, 2, 3) = "type:" then getExportName.s << 2 else ""
- else
-  acc << 1 >> 1 
+ next(acc + ")", w)
+ else if isempty.acc then
+ next(acc, w)
+ else next(acc + w, w)
+,
+if isempty.acc ∨ 1_acc ∉ "(" then
+if subseq(s, 2, 3) = "type:" then getExportName.s << 2 else ""
+else acc << 1 >> 1 

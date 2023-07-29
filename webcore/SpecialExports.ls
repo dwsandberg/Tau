@@ -41,11 +41,17 @@ Function allocatespace3(i:real) real
 toreal.bitcast:int(allocatespace.intpart.i)
 
 Function randomintimp(i:int) seq.int
-for acc = empty:seq.int, e ∈ constantseq(i, 0) do
+for acc = empty:seq.int, e ∈ constantseq(i, 0)
+do
  acc
- + toint(tobits.representation.randomfunc << 16
- ⊻ (tobits.representation.randomfunc
- ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)))
-/do acc
+ + toint(
+  tobits.representation.randomfunc << 16
+  ⊻ (
+   tobits.representation.randomfunc
+   ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)
+  )
+ )
+,
+acc
 
 Function blockseqtype real {used by template.js} toreal.blockseqtype:byte 

@@ -1,4 +1,4 @@
-Module webProfileSupport 
+Module webProfileSupport
 
 use profile
 
@@ -16,6 +16,6 @@ use object01
 
 use bitcast.seq.addrsym
 
-Function decodeaddrsym(b:seq.byte) seq.seq.addrsym 
-{ ???? should work but doesn't:[inbytes:addrsym(b)]}
-[bitcast:seq.addrsym(inrec.b)]
+Function decodeaddrsym(b:seq.byte) seq.seq.addrsym
+{???? should work but doesn't:[inbytes:addrsym (b)]}
+[bitcast:seq.addrsym(inrec.b)] 

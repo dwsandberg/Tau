@@ -23,21 +23,22 @@ Export sons(t:tree.T) seq.tree.T
 
 Export tree(l:T, s:seq.tree.T) tree.T
 
-Function _(t:tree.T, i:int) tree.T (sons.t)_i
+Function _(t:tree.T, i:int) tree.T i_sons.t
 
-Function nosons(t:tree.T) int length.sons.t
+Function nosons(t:tree.T) int n.sons.t
 
 Function postorder(a:tree.T) seq.tree.T
-for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e /do acc /for + a
+for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e,
+acc + a
 
 unbound %(T) seq.word
 
 Function %(t:tree.T) seq.word
 if nosons.t = 0 then
- %.label.t
+%.label.t
 else
  %.label.t
- + if nosons.t = 1 then
-  ".$(t_1)"
- else
-  "($(for acc = "", e ∈ sons.t do acc + %.e + "," /do acc >> 1 + ")")" 
+ + 
+  if nosons.t = 1 then
+  ".^(t_1)"
+  else "(^(for acc = "", e ∈ sons.t do acc + %.e + ",", acc >> 1 + ")")" 

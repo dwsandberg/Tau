@@ -15,7 +15,8 @@ type timestamp is toint:int
 function subseq(a:UTF8, i:int, j:int) UTF8 UTF8.subseq(toseqbyte.a, i, j)
 
 Function testjulian boolean
-[tojulian(2000, 1, 1)
+[
+ tojulian(2000, 1, 1)
  , tojulian(1999, 1, 1)
  , tojulian(1987, 1, 27)
  , tojulian(1987, 6, 19)
@@ -23,20 +24,25 @@ Function testjulian boolean
  , tojulian(1988, 6, 19)
  , tojulian(1900, 1, 1)
  , tojulian(1600, 1, 1)
- , tojulian(1600, 12, 31)]
-= [2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
+ , tojulian(1600, 12, 31)
+]
+ = [2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
 
 Function tojulian(year:int, month:int, day:int) int
 let ayear = if month > 2 then year else year - 1
 let amonth = if month > 2 then month else month + 12,
-(amonth + 1) * 306001 / 10000 + day + 1720994 + 2 - ayear / 100
-+ ayear / 100 / 4
-+ 1461 * ayear / 4
+(amonth + 1) * 306001 / 10000
+ + day
+ + 1720994
+ + 2
+ - ayear / 100
+ + ayear / 100 / 4
+ + 1461 * ayear / 4
 
 Function dayofyear(t:timestamp) int
 toint.t / (24 * 60 * 60)
-- tojulian((fromJuliantointseq(toint.t / (24 * 60 * 60)))_1, 1, 1)
-+ 1
+ - tojulian(1_fromJuliantointseq(toint.t / (24 * 60 * 60)), 1, 1)
+ + 1
 
 Function fromJuliantointseq(dt:int) seq.int
 let a = ((dt + 1) * 4 - 7468865) / 146097
@@ -58,7 +64,14 @@ let second = intlit.subseq(t, 18, 19)
 let date = tojulian(year, month, day),
 timestamp(((date * 24 + hour) * 60 + minutes) * 60 + second)
 
-Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int) timestamp
+Function totimestamp(
+ year:int
+ , month:int
+ , day:int
+ , hour:int
+ , minute:int
+ , second:int
+) timestamp
 timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
 
 Function decompose(ts:timestamp) seq.int
@@ -72,11 +85,19 @@ fromJuliantointseq(t / (24 * 60 * 60)) + [hours, minutes, seconds]
 
 Function print(ts:timestamp) seq.word
 let d = decompose.ts,
-[
- merge.[toword.d_1, "-"_1, toword.d_2, "-"_1, toword.d_3
-  , "."_1, toword.d_4, ":"_1, toword.d_5, ":"_1
-  , toword.d_6]
- ]
+[merge.[
+ toword.1_d
+ , 1_"-"
+ , toword.2_d
+ , 1_"-"
+ , toword.3_d
+ , 1_"."
+ , toword.4_d
+ , 1_":"
+ , toword.5_d
+ , 1_":"
+ , toword.6_d
+]]
 
 Builtin currenttime timestamp {OPTION STATE}
 

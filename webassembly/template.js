@@ -220,9 +220,20 @@ function finaljsHTTP(data,nobits ){
   console.log("GETELEMENT"+asjsstring( id));   
   let  z = document.getElementById(asjsstring( id).trim()); 
   let  kind=z.tagName ;
-  let  r=(kind=="TEXTAREA"  )? z.value:
-         (kind=="INPUT")?   ( ( z.type=="checkbox")?   z.checked :  z.value):
+  let r=""
+  if (kind=="INPUT" & z.type=="radio")  
+   { var ele = document.getElementsByName(z.name);
+    for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked) r=ele[i].value;
+        }
+   }
+  r=(kind=="TEXTAREA"  )? z.value:
+         (kind=="INPUT")?   ( 
+           ( z.type=="checkbox")?   z.checked :
+           ( z.type=="radio")?   r :
+             z.value):
          (kind=="SELECT")? z.value:   z.innerHTML ; 
+   console.log("GETELEMENT"+asjsstring( id)+"="+r);   
   return jsstring2UTF8bytes(r); 
 }
 

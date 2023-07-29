@@ -5,9 +5,9 @@ Make sure clang is installed.   For Mac OS Clang is available if the command lin
 
 Down load zip file from GitHub  (Repository is dwsandberg/Tau
 
-Unzip to directory a which we will call <Tau>.  This directory will become the working directory for tau.    You are free to choose another name.  
+Unzip to a directory   which we will call <Tau>.  This directory will become the working directory for tau.    You are free to choose another name.  
 
-Modify < PA<TH > environment variable to include absolute path to <Tau>/bin. 
+Modify < PATH > environment variable to include absolute path to <Tau>/bin. 
 
 Open terminal and change direcotry to <Tau>.
 
@@ -16,41 +16,37 @@ Run "bash bin/buildtau.sh release.bld".  This is likely to generate a warning me
 
 <* section HelloWorld *>
 
-1. Create a new directory <Tau>/HelloWorld
-
-2. Create a file txt file <Tau>/HelloWorld/HelloWorld.ls that contains:
+A HelloWorld example is inculded in <Tau>/tests.  The code itself is in 
+ The text file <Tau>/tau/HelloWorld.ls that contains:
 
 Module HelloWorld
 
-use file
-
-use seq.file
-
 use standard
 
-Function hello(input:seq.file, o:seq.word)seq.file
-  [file(filename.o,"hello there!")] 
+Function hello  seq.word
+{ENTRYPOINT} "Hello World!"
 
-3.  Create a file txt file <Tau>/helloworld.bld that contains:
+The build file is in the text file  <Tau>/HelloWorld/helloworld.bld that contains 
+<* block
 
 define hello HelloWorld
-define makelib stdlib makelib
-define open shell open -b
+/br define makelib stdlib makelib
+/br define open shell open  
 
 makelib HelloWorld.lib +HelloWorld HelloWorld.ls 
-uses=stdlib
-exports=HelloWorld
+/br uses=stdlib
+/br exports=HelloWorld
 
 hello hello.html
 
-open xx.txt hello.html 
+open xx.txt hello.html *>
 
-4. From terminal run: <* block  bash bin/taubuild.bld  *> 
+To create the program,  from terminal run: <* block  bash bin/taubuild.sh helloworld/helloworld.bld  *> 
 
-This will create a program with the name of <Tau>/built/HelloWorld.lib from the source code in
-directory <tau>/HelloWorld.  Then the program is executed and the output is placed in 
+This will create a program with the name of <Tau>/built/HelloWorld.lib from the source code.
+ Then the program is executed and the output is placed in 
 <Tau>/built/hello.html.
-Finally a web browser with the file <Tau>/built/hello.html.
+Finally a web browser  is opened on  the file <Tau>/built/hello.html.
 
 
 HelloWorld.lib can also be run from the prompt: <* block tau HelloWord hello  *> This will display "Hello World!" in the web browser. 
@@ -74,10 +70,10 @@ Function fact2(a:int,result:int) int
  else if a=0 then result else  fact2(a-1,result * a)
 
 
-The intermediate code is represented by symbols.  The text representation is missing some information
-that is contained in a symbol. The function fact2 is represented by the
-text  "helloworld:test2(int,int)int".  The module of the symbol is represented but not the library. 
-Each type also has module and library but only the name of the type is given. 
+The intermediate code is represented by a sequence of symbols. The text representation of a symbol does not contain all the information
+in a symbol. The function fact2 is represented by the text. " helloworld:test2 (int, int) int"
+The module of the symbol is represented but not the library. Each type also has module and library
+but only the name of the type is given. 
 
   The local variables are represented by % followed by a number, for example   %2.  Local variables  also have name associated with 
   them that is not in the text representation. 
@@ -94,11 +90,11 @@ The body of fact2 can be rewritten as a sequence of statments using explicit got
 /strong Exit means skip executing all the follow statements in the block. 
 
 
-A further rewrite  gets closer to the  intermediate code.  The rewrite start the  block with /strong
-Start(<type of value returned by block>). Each statement is expressed in postfix notation. 
-The "if <exp> then goto(a) else goto(b)"
-becomes  "<postfix exp> Br2(a,b)".  The end of the block is indicated by /strong EndBlock
-The parameter names become %1 and %2 <* block
+A further rewrite gets closer to the intermediate code. The rewrite starts the block with Start (<type
+of value returned by block>). Each statement is expressed in postfix notation. The /ldq if <exp> then
+goto (a) else goto (b)" becomes /ldq <postfix exp> Br2 (a, b)". The end of the block is indicated by
+EndBlock The parameter names become %1 and %2
+ <* block
  /br   Start(int) 
  /br   %1 1 =  Br2(1,2) 
  /br   %2 Exit 
@@ -112,11 +108,10 @@ The parameter names become %1 and %2 <* block
   capture in loop variables. The loop will use two additon symbols called Loop and Continue. 
   
 
- The first step   in calling a function is to assign its arguments to parameters. 
-  If one considers the symbol "loop:3(int,int)int" to be a function declaration
-   "loop(%3:int,%4:int)", the first step is  same as calling a function. Also the "Continue 2"  can be consider
-   a function call to "loop(a-1,result * a)" which transfers control to the beginning of the loop.
-  
+The first step in calling a function is to assign its arguments to new locals. If one considers the
+symbol <* block loop:3 (int, int) int*> to be a function declaration <* block function loop (%3:int, %4:int)*>, then the first
+step is same as the first step in calling a function. Also the /strong Continue /strong 2 can be consider a function call 
+
     
    The Start(int) is replaced with   /strong Loop   and the  "fact2 Exit" is replaced with a /strong CONTINE 2 to get 
    <* block 
@@ -215,7 +210,7 @@ wtau     wtests wtests  *>
 This should open a web browser  with page with a button. 
 Push the button to run the test.  All the test should pass.
 
-<* none <hr> *>
+  /< hr>  
 <* section Documentation below is not complete. *>
 
 section vhost

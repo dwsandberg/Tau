@@ -32,17 +32,14 @@ Export type:processflds
 
 Function geteinfo(gl:ptr, name:seq.word) einfo
 let no = fld:int(gl, 0)
-let encodingno = 
+let encodingno =
  if no > 0 then
-  no
+ no
  else if subseq(name, 1, 2) = "char standard" then
-  1
+ 1
  else if subseq(name, 1, 2) = "typename encodingsupport" then
-  2
- else
-  let newno = addorder.typename.name + 2
-  let discard = set(gl, newno),
-  newno
+ 2
+ else let newno = addorder.typename.name + 2 let discard = set(gl, newno), newno
 ,
 geteinfo2(encodingno, 0)
 
@@ -50,13 +47,12 @@ Function geteinfo2(encodingno:int, dummy:int) einfo
 let cp = currentprocess
 let a = evector.cp,
 if encodingno = encodingno.thisone.a then
- thisone.a
-else if encodingno ≤ length.vector.a ∧ encodingno.(vector.a)_encodingno > 0 then
- let this = (vector.a)_encodingno
+thisone.a
+else if encodingno ≤ n.vector.a ∧ encodingno.encodingno_vector.a > 0 then
+ let this = encodingno_vector.a
  let discard = set(set(toptr.a, toptr.vector.a), toptr.this),
  this
-else
- evectorUpdate.einfo(empty:encodingstate.typename, encodingno, cp)
+else evectorUpdate.einfo(empty:encodingstate.typename, encodingno, cp)
 
 Function evectorUpdate(b:ptr) ptr toptr.evectorUpdate.bitcast:einfo(b)
 
@@ -65,16 +61,16 @@ let cp = currentprocess
 let a = evector.cp
 let encodingno = encodingno.b
 let vin = vector.a
-let newlen = max(encodingno, length.vin)
+let newlen = max(encodingno, n.vin)
 let t = allocatespace(newlen + 2)
 let newvector = bitcast:seq.einfo(t)
-let discard = 
- for acc = set(set(t, 0), newlen)
+let discard =
+ for
+  acc = set(set(t, 0), newlen)
   , cnt = 1
-  , e ∈ vin + constantseq(encodingno - length.vin, einfo(empty:encodingstate.typename, 0, cp))
- do
-  next(set(acc, toptr.if cnt = encodingno then b else e), cnt + 1)
- /do 0
+  , e ∈ vin + constantseq(encodingno - n.vin, einfo(empty:encodingstate.typename, 0, cp))
+ do next(set(acc, toptr.if cnt = encodingno then b else e), cnt + 1),
+ 0
 let discard2 = set(set(toptr.a, toptr.newvector), toptr.b),
 b
 
@@ -82,13 +78,14 @@ function =(a:typename, b:typename) boolean name.a = name.b
 
 function hash(a:typename) int hash.name.a
 
-type processflds is aborted:boolean
- , message:int
- , messageUTF8:int
- , body:int
- , body2:int
- , evector:evector
- , parentprocess:ptr
+type processflds is
+aborted:boolean
+, message:int
+, messageUTF8:int
+, body:int
+, body2:int
+, evector:evector
+, parentprocess:ptr
 
 builtin currentprocess processflds
 
@@ -96,5 +93,9 @@ type einfo is state45:ptr, encodingno:int, allocatein:indirect.processflds
 
 type evector is vector:seq.einfo, thisone:einfo
 
-function einfo(state45:encodingstate.typename, encodingno:int, allocatein:processflds) einfo
+function einfo(
+ state45:encodingstate.typename
+ , encodingno:int
+ , allocatein:processflds
+) einfo
 einfo(toptr.state45, encodingno, indirect.allocatein) 

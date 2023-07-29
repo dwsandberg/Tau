@@ -7,14 +7,15 @@ use standard
 Function rotateleft(x:bits, n:int) bits x << n ∨ x >> (64 - n)
 
 Function hash(acc:bits, x:int) bits
-{after xxhash
- /br example use to hash x and y finalmix (hash (hash (hashstart (seed), x), y))}
+{after xxhash /br example use to hash x and y finalmix (hash (hash (hashstart (seed), x), y))}
 let PRIME1 = 11400714785074694791
 let PRIME2 = 14029467366897019727
 let PRIME4 = 9650029242287828579,
-bits(toint.rotateleft(acc ⊻ bits(toint.rotateleft(bits(toint.acc + x * PRIME2), 31) * PRIME1), 27)
-* PRIME1
-+ PRIME4)
+bits(
+ toint.rotateleft(acc ⊻ bits(toint.rotateleft(bits(toint.acc + x * PRIME2), 31) * PRIME1), 27)
+ * PRIME1
+ + PRIME4
+)
 
 Function hashstart(seed:int) bits
 let PRIME5 = 2870177450012600261,
@@ -45,6 +46,4 @@ let h32c = (hash ⊻ hash >> 15) * 668265263
 let h32d = (h32c ⊻ h32c >> 13) * 374761393,
 abs.toint((h32d ⊻ h32d >> 16) ∧ 0xFFFF FFFF)
 
-Function hashstart32(seed:int) bits
-let PRIME5 = 374761393,
-bits(seed + PRIME5) 
+Function hashstart32(seed:int) bits let PRIME5 = 374761393, bits(seed + PRIME5) 

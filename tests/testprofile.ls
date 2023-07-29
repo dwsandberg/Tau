@@ -10,28 +10,27 @@ use profile
 
 use process.seq.word
 
-Function testprofile(input:seq.file, o:seq.word) seq.file
-{OPTION PROFILE NOINLINE ENTRYPOINT}
- let p = process.processtest(2^2+3)    
- let p2=subtest(2^2+3)  , 
-[file(o, "test" + {subtest.4 +} result.p + profileresults."time")]
+To add profiling to the functions in this Module the follow steps were taken:
+/br 1. To the function to be profiled add {OPTION PROFILE} NOINLINE was also include for these small
+function since if a procedure is expaned inline, no profile results will be shown for that procedure
+.
+/br 2. Add a use clause" use profile"
+/br 3. Add profileresults." time" to make the profile results visible
+/br 4. In the.bld file add to the makelib command the option profile =
+/br 5. In the sources for the makelib command also+tests profile+subtools graphcode
+/br 6. Make sure the uses option of the makelib command include commmon.
 
-function subtest(i:int) seq.word {OPTION PROFILE NOINLINE} 
-%(i^10 + tr.i)
+Function testprofile(input:seq.file, o:seq.word) seq.word
+{OPTION PROFILE NOINLINE ENTRYPOINT /strong test profile}
+let p = process.processtest(2^2 + 3)
+let p2 = subtest(2^2 + 3),
+"test^({subtest.4+} result.p)^(profileresults."time")"
+
+function subtest(i:int) seq.word {OPTION PROFILE NOINLINE} %(i^10 + tr.i)
 
 function tr(n:int) int
 {OPTION PROFILE NOINLINE}
 let a = %.n,
 if n < 3 then n else tr(n - 1) + tr(n - 2)
 
-function processtest(i:int) seq.word {OPTION  PROFILE NOINLINE} subtest.i 
-
-Function subcompilelib2(allsrc:seq.seq.word, dependentlibs:seq.int,  options:seq.word) int
-{OPTION PROFILE }
-let libname = %.2^2
- let z=  xxxx(options, allsrc , dependentlibs),
- 2^4
- 
- function xxxx(options:seq.word,allsrc:seq.seq.word,dependentlibs:seq.int) seq.int
-{OPTION NOINLINE}
- empty:seq.int
+function processtest(i:int) seq.word {OPTION PROFILE NOINLINE} subtest.i 

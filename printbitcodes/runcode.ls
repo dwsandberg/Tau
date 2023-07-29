@@ -4,8 +4,6 @@ use bitcodesupport
 
 use llvm
 
-use llvmconstants
-
 use standard
 
 use seq.instop
@@ -30,34 +28,36 @@ Export type:track
 
 function print(types:seq.seq.int, a:slotrecord) seq.word
 if typ.a ≥ 0 then
- printtype([[0]] + types, typ.a, false) + printrecord(CONSTANTS, record.a)
-else
- [encodeword.symtablename.a] + printrecord(MODULE, record.a)
+printtype([[0]] + types, typ.a, false) + printrecord(CONSTANTS, record.a)
+else [encodeword.symtablename.a] + printrecord(MODULE, record.a)
 
 Function conststype llvmtype array(-2, i64)
 
 Function CGEP(typ:llvmtype, p:slot, a:slot, b:slot, org:seq.int) slot
 {need to figure out types}
 let t1 = consttype.p
-let new = 
- [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.consttype.a
-  , toint.a, typ.consttype.b, toint.b]
-assert new = org report "DIFF $(printrecord(CONSTANTS, org)) /br new $(printrecord(CONSTANTS, new))"
-let typa = 
+let new = [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.consttype.a, toint.a, typ.consttype.b, toint.b]
+assert new = org
+report "DIFF^(printrecord(CONSTANTS, org))
+ /br new^(printrecord(CONSTANTS, new))"
+let typa =
  if typ.t1 ∈ [1, 2] then
-  i64
- else
-  llvmtype.typerecords_(last.typerecords_(typ.t1 + 1) + 1)
+ i64
+ else llvmtype.(1^(typ.t1 + 1)_typerecords + 1)_typerecords
 ,
 C(ptr.typa, new)
 
 Function modulerecord(name:seq.word, rec:seq.int, org:seq.int) slot
-assert rec = org report "DIFF $(printrecord(MODULE, org)) /br new $(printrecord(MODULE, rec))",
+assert rec = org
+report "DIFF^(printrecord(MODULE, org))
+ /br new^(printrecord(MODULE, rec))",
 modulerecord(name, rec)
 
 Function ptrtoint(i:slot, typ:llvmtype, org:seq.int) slot
 let new = [toint.CCAST, 9, typ.typ, toint.i]
-assert new = org report "DIFF $(printrecord(CONSTANTS, org)) /br new $(printrecord(CONSTANTS, new))",
+assert new = org
+report "DIFF^(printrecord(CONSTANTS, org))
+ /br new^(printrecord(CONSTANTS, new))",
 C(i64, new)
 
 Function ptrtoint(i:slot, typ:llvmtype) slot
@@ -84,11 +84,8 @@ Function call(reg:slot, typ:llvmtype, callee:slot) instruction
 instruction([toint.CALL, 0, 32768, typ.typ, toint.callee], "L L T A", reg)
 
 Function call(reg:slot, typ:llvmtype, callee:slot, args:seq.slot) instruction
-instruction(
- [toint.CALL, 0, 32768, typ.typ, toint.callee]
- + for acc = empty:seq.int, @e ∈ args do acc + toint.@e /do acc
- , "L L T A $(constantseq(length.args, "A"_1))"
- , reg)
+for acc = [toint.CALL, 0, 32768, typ.typ, toint.callee], @e ∈ args do acc + toint.@e,
+instruction(acc, "L L T A^(constantseq(n.args, 1_"A"))", reg)
 
 Function binaryop(reg:slot, op:binaryop, a:slot, b:slot) instruction
 instruction([toint.BINOP, toint.a, toint.b, toint.op], "A A L", reg)
@@ -114,7 +111,7 @@ Function br(a:int) instruction instruction([toint.BR, a], "L", slot.0)
 Function /(a:slot, b:int) seq.int [toint.a, b]
 
 Function phi(reg:slot, typ:llvmtype, a:seq.int) instruction
-instruction([toint.PHI, typ.typ] + a, repeat(length.a / 2, "T"), reg)
+instruction([toint.PHI, typ.typ] + a, repeat(n.a / 2, "T"), reg)
 
 function repeat(i:int, result:seq.word) seq.word
 if i = 0 then result else repeat(i - 1, result + "P L")
@@ -128,70 +125,76 @@ Function finish(t:track) seq.seq.int
 let offset = offset.t
 let labels = labels.t
 {fill in block numbers}
-let new = 
- for new = empty:seq.seq.int, rec ∈ recs.t do
-  let inst = instop.rec_1,
-  new
-  + if inst = BR then
-   if length.rec = 2 then
-    [rec_1, getblock(labels, rec_2)]
-   else
-    [rec_1, getblock(labels, rec_2), getblock(labels, rec_3), 1]
-  else if inst = PHI then
-   for acc = subseq(rec, 1, 2), isblock = false, e ∈ subseq(rec, 3, length.rec - 1) do
-    let this = 
-     if isblock then
-      getblock(labels, e)
-     else
-      let slot = last.rec
-      let t2 = 
-       if e > 0 then
-        slot - e - 1 + 1
+let new =
+ for new = empty:seq.seq.int, rec ∈ recs.t
+ do
+  let inst = instop.1_rec,
+   new
+   + 
+    if inst = BR then
+     if n.rec = 2 then
+     [1_rec, getblock(labels, 2_rec)]
+     else [1_rec, getblock(labels, 2_rec), getblock(labels, 3_rec), 1]
+    else if inst = PHI then
+     for acc = subseq(rec, 1, 2), isblock = false, e ∈ subseq(rec, 3, n.rec - 1)
+     do
+      let this =
+       if isblock then
+       getblock(labels, e)
        else
-        slot - (offset + labels_(-e + 1)) - 1
+        let slot = 1^rec
+        let t2 = if e > 0 then slot - e - 1 + 1 else slot - (offset + (-e + 1)_labels) - 1,
+        if t2 ≥ 0 then t2 * 2 else -t2 * 2 + 1
       ,
-      if t2 ≥ 0 then t2 * 2 else-t2 * 2 + 1
-    ,
-    next(acc + this, not.isblock)
-   /do acc
-  else
-   rec
- /do new
+      next(acc + this, not.isblock)
+     ,
+     acc
+    else rec
+ ,
+ new
 let chk = check(orgrecs.t, new, 1, "")
-assert chk = "" report "ERROR $(chk) labels:$(%n.labels.t)",
+assert chk = "" report "ERROR^(chk) labels:^(%n.labels.t)",
 [[1, blockno.t - 1]] + new
 
 Function check(old:seq.seq.int, new:seq.seq.int, i:int, result:seq.word) seq.word
-if i > length.old then
- result
-else if old_i = new_i then
- check(old, new, i + 1, result)
-else
- check(old
-  , new
-  , i + 1
-  , result + "/br old" + printrecord(FUNCTIONBLK, old_i) + "/br new"
-  + printrecord(FUNCTIONBLK, new_i))
+if i > n.old then
+result
+else if i_old = i_new then
+check(old, new, i + 1, result)
+else check(
+ old
+ , new
+ , i + 1
+ ,
+  result
+  + "/br old"
+  + printrecord(FUNCTIONBLK, i_old)
+  + "/br new"
+  + printrecord(FUNCTIONBLK, i_new)
+)
 
-function getblock(labels:seq.int, i:int) int labels_(i + 1)
+function getblock(labels:seq.int, i:int) int (i + 1)_labels
 
 Function functionbody(s:slot, i:int, nopara:int) track
-track(i
+track(
+ i
  , i + nopara
  , empty:seq.seq.int
  , empty:seq.seq.int
  , replaceS(addpara(nopara, sparseseq.-10000), nopara + 1, [0])
- , 1)
+ , 1
+)
 
 function addpara(i:int, result:seq.int) seq.int
 if i = 0 then result else addpara(i - 1, replaceS(result, i, [i - 1]))
 
-type track is offset:int
- , slot:int
- , recs:seq.seq.int
- , orgrecs:seq.seq.int
- , labels:seq.int
- , blockno:int
+type track is
+offset:int
+, slot:int
+, recs:seq.seq.int
+, orgrecs:seq.seq.int
+, labels:seq.int
+, blockno:int
 
 type instruction is data:seq.int, argtypes:seq.word, label:slot
 
@@ -200,44 +203,47 @@ if argtypes.next = "label" then
  let newlabels = replaceS(labels.t, toint.label.next + 1, [blockno.t - 1]),
  track(offset.t, slot.t, recs.t, orgrecs.t, newlabels, blockno.t)
 else
- let tp = instop.(data.next)_1
+ let tp = instop.1_data.next
  let slotinc = if tp ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
  let blockinc = if tp ∈ [BR, RET] then 1 else 0
- let newlabels = 
+ let newlabels =
   if slotinc = 1 ∧ toint.label.next ≠ 0 then
    {assert false report" add"+toword.label.next+toword.(slot.t-offset.t)}
    replaceS(labels.t,-toint.label.next + 1, [slot.t - offset.t])
   else if blockinc = 1 ∧ toint.label.next ≠ 0 then
-   replaceS(labels.t,-toint.label.next + 1, [blockno.t + 1])
-  else if blockinc = 1 then replaceS(labels.t, length.labels.t + 1, [blockno.t]) else labels.t
- let newrec = 
+  replaceS(labels.t,-toint.label.next + 1, [blockno.t + 1])
+  else if blockinc = 1 then
+  replaceS(labels.t, n.labels.t + 1, [blockno.t])
+  else labels.t
+ let newrec =
   if tp = PHI then
-   data.next + (slot.t + 1)
-  else
-   doargs(labels.t, offset.t, slot.t + 1, data.next, argtypes.next)
+  data.next + (slot.t + 1)
+  else doargs(labels.t, offset.t, slot.t + 1, data.next, argtypes.next)
  ,
- track(offset.t
-  , slot.t + slotinc
-  , recs.t + newrec
-  , orgrecs.t
-  , newlabels
-  , blockinc + blockno.t)
+ track(offset.t, slot.t + slotinc, recs.t + newrec, orgrecs.t, newlabels, blockinc + blockno.t)
 
 Function +(t:track, s:seq.int) track
 track(offset.t, slot.t, recs.t, orgrecs.t + s, labels.t, blockno.t)
 
-function doargs(labels:seq.int, offset:int, slot:int, data:seq.int, argtypes:seq.word) seq.int
-for i = 2, result = [first.data], arg ∈ argtypes
-while i ≤ length.data
+function doargs(
+ labels:seq.int
+ , offset:int
+ , slot:int
+ , data:seq.int
+ , argtypes:seq.word
+) seq.int
+for i = 2, result = [1_data], arg ∈ argtypes
+while i ≤ n.data
 do
- let val = 
+ let val =
   if arg ∈ "L T" then
-   data_i
-  else if data_i > 0 then
-   slot - data_i - 1 + 1
+  i_data
+  else if i_data > 0 then
+  slot - i_data - 1 + 1
   else
-   assert true report "P" + toword.labels_(-data_i + 1) + toword.slot + toword.offset,
-   slot - (offset + labels_(-data_i + 1)) - 1
+   assert true report "P" + toword.(-i_data + 1)_labels + toword.slot + toword.offset,
+   slot - (offset + (-i_data + 1)_labels) - 1
  ,
  next(i + 1, result + val)
-/do result 
+,
+result 

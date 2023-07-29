@@ -18,7 +18,7 @@ use set.symdef
 
 use typedict
 
-Export replaceTsymbol(mytype, symbol) symbol
+Export replaceTsymbol(mytype, symbol) symbol {From symbol}
 
 Export type:midpoint
 
@@ -34,12 +34,14 @@ Export templates(midpoint) set.symdef
 
 Export typedict(midpoint) typedict
 
-Function midpoint5(a:seq.word
+Function midpoint5(
+ a:seq.word
  , b:set.symdef
  , c:set.symdef
  , d:typedict
  , e:seq.modExports
- , f:seq.seq.word) midpoint
+ , f:seq.seq.word
+) midpoint
 midpoint(a, b, c, d, e, f)
 
 Export type:modExports
@@ -228,7 +230,7 @@ Export symbol(modref, seq.word, seq.mytype, mytype) symbol {From symbol}
 
 Export type:symdef {From symbol}
 
-Export %(modref) seq.word
+Export %(modref) seq.word {From mytype}
 
 Export isThisLibrary(sd:symdef) boolean
 
@@ -246,7 +248,7 @@ Export getOptions(symdef) seq.word
 
 Export symdef4(symbol, seq.symbol, int, seq.word) symdef
 
-Export code(symdef) seq.symbol
+Export code(symdef) seq.symbol {From symbol}
 
 Export paragraphno(symdef) int {From symbol}
 
@@ -331,23 +333,53 @@ type addrsym is addr:int, sym:symbol
 type modExports is modname:modref, exports:seq.symbol, types:seq.seq.mytype
 
 Function empty:midpoint midpoint
-midpoint(""
+midpoint(
+ ""
  , empty:set.symdef
  , empty:set.symdef
  , emptytypedict
  , empty:seq.modExports
- , empty:seq.seq.word)
+ , empty:seq.seq.word
+)
 
-Function midpoint(option:seq.word
+Function midpoint(
+ option:seq.word
  , prg:set.symdef
  , typedict:typedict
  , libmods:seq.modExports
- , src:seq.seq.word) midpoint
+ , src:seq.seq.word
+) midpoint
 midpoint(option, prg, empty:set.symdef, typedict, libmods, src)
 
-type midpoint is option:seq.word
- , prg:set.symdef
- , templates:set.symdef
- , typedict:typedict
- , libmods:seq.modExports
- , src:seq.seq.word 
+type midpoint is
+option:seq.word
+, prg:set.symdef
+, templates:set.symdef
+, typedict:typedict
+, libmods:seq.modExports
+, src:seq.seq.word
+
+Function libname(info:midpoint) word 1_extractValue(1_src.info, "Library")
+
+Function removeJump(prg:set.symdef) set.symdef
+for acc = empty:set.symdef, sd ∈ toseq.prg
+do
+ let new = removeJump.code.sd,
+  if n.new = n.code.sd then
+  acc + sd
+  else acc + symdef4(sym.sd, new, paragraphno.sd, getOptionsBits.sd)
+,
+acc
+
+Function removeJump(a:seq.symbol) seq.symbol
+for acc = empty:seq.symbol, modify = false, local = Lit.0, last = Lit.0, sym ∈ a
+do
+ if isbr.sym then
+  if last = JumpOp then
+  next(acc >> 1 + EqOp + sym, true, (n.acc - 2)_acc, sym)
+  else if modify ∧ isIntLit.last then
+  next(acc >> 1 + local + last + EqOp + sym, true, local, sym)
+  else next(acc + sym, false, local, sym)
+ else next(acc + sym, modify, local, sym)
+,
+acc 

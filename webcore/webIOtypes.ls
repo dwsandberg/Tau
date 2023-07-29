@@ -45,7 +45,7 @@ Export result(HTTPresult) seq.byte
 Function aborted(h:HTTPresult) boolean subseq(header.h, 1, 1) ≠ toseqbyte.toUTF8."2"
 
 Function token(s:seq.word) jsbytes
-jsUTF8.toseqbyte.for acc = emptyUTF8, w ∈ s do acc + decodeword.w /do acc
+jsUTF8.toseqbyte(for acc = emptyUTF8, w ∈ s do acc + decodeword.w, acc)
 
 Function jsUTF8(t:seq.byte) jsbytes
 {OPTION NOINLINE}

@@ -9,6 +9,6 @@ use standard
 
 type seq8 is sequence, flda:seq.T, fldb:int
 
-function _(a:seq8.T, i:int) T (flda.a)_i
+function _(a:seq8.T, i:int) T i_flda.a
 
-Function newseq8(a:seq.T) seq.T toseq.seq8(length.a, a, 15) 
+Function newseq8(a:seq.T) seq.T toseq.seq8(n.a, a, 15) 

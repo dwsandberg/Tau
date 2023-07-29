@@ -90,7 +90,7 @@ Export decode(encoding.seq.char) seq.char {From encoding.seq.char}
 
 Export encode(seq.char) encoding.seq.char {From encoding.seq.char}
 
-Export addencodings(seq.seq.char) int
+Export addencodings(seq.seq.char) int {From encoding.seq.char}
 
 Export type:ptr {From ptr}
 
@@ -125,6 +125,8 @@ type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
 type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
 Builtin getseqlength(ptr) int {OPTION COMPILETIME}
+
+Builtin getseqtype(ptr) int {OPTION COMPILETIME}
 
 function set2(i:ptr, b:real) ptr set(i, representation.b)
 
@@ -172,109 +174,109 @@ Builtin abort:real(seq.word) real
 
 Builtin abort:boolean(seq.word) boolean
 
-Function outofbounds seq.word "out of bounds $(stacktrace)"
+Function outofbounds seq.word "out of bounds^(stacktrace)"
 
 function packedbytes(a:seq.byte) seq.byte
-let c = packed([bits.1, bits.length.a] + toseqbits.a)
+let c = packed([bits.1, bits.n.a] + toseqbits.a)
 assert getseqtype.c = 0 report "to big byte sequence to pack",
-bitcast:seq.byte(set(set(toptr.c, getseqtype.c), length.c))
+bitcast:seq.byte(set(set(toptr.c, getseqtype.c), n.c))
 
 Function blockIt(s:seq.byte) seq.byte
 let blksz = 8128 * 8,
-if length.s ≤ blksz then
- packedbytes.s
+if n.s ≤ blksz then
+packedbytes.s
 else
- let noblks = (length.s + blksz - 1) / blksz
+ let noblks = (n.s + blksz - 1) / blksz
  let blkseq = allocatespace(noblks + 2)
- let discard = 
-  for acc = set(set(blkseq, blockseqtype:byte), length.s), @e ∈ arithseq(noblks, blksz, 1) do
-   set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
-  /do acc
+ let discard =
+  for acc = set(set(blkseq, blockseqtype:byte), n.s), @e ∈ arithseq(noblks, blksz, 1)
+  do set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1))),
+  acc
  ,
  bitcast:seq.byte(blkseq)
 
 Function toseqseqbyte(b:seq.bits, bytestowrite:int) seq.seq.byte
 let blksz = 8128
-let noblks = (length.b + blksz - 1) / blksz,
-for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0) do
+let noblks = (n.b + blksz - 1) / blksz
+for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0)
+do
  let new = packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
  let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8)),
  acc + bitcast:seq.byte(toptr.new)
-/do acc
+,
+acc
 
 Function toseqseqbyte(s:seq.byte) seq.seq.byte
 let blksz = 8128 * 8
-let noblks = (length.s + blksz - 1) / blksz,
-for acc = empty:seq.seq.byte, start ∈ arithseq(noblks, blksz, 1) do
- acc + packedbytes.subseq(s, start, start + blksz - 1)
-/do acc
+let noblks = (n.s + blksz - 1) / blksz
+for acc = empty:seq.seq.byte, start ∈ arithseq(noblks, blksz, 1)
+do acc + packedbytes.subseq(s, start, start + blksz - 1),
+acc
 
 ____________
 
 Function cat(obj1:ptr, obj2:ptr, typ:word) ptr
 if typ ∈ "int" then
- toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
+toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
 else if typ ∈ "real" then
- toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
+toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
 else if typ ∈ "ptr" then
- toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
+toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
 else if typ ∈ "packed2" then
- toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
+toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
 else if typ ∈ "packed3" then
- toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
+toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
 else if typ ∈ "packed4" then
- toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
+toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
 else if typ ∈ "packed5" then
- toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
+toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
 else
  assert typ ∈ "packed6" report "packing cat not found" + typ,
  toptr(bitcast:seq.packed6(obj1) + bitcast:seq.packed6(obj2))
 
 Function blocktype(typ:word) int
 if typ ∈ "int" then
- blockseqtype:int
+blockseqtype:int
 else if typ ∈ "real" then
- blockseqtype:real
+blockseqtype:real
 else if typ ∈ "ptr" then
- blockseqtype:int
+blockseqtype:int
 else if typ ∈ "packed2" then
- blockseqtype:packed2
+blockseqtype:packed2
 else if typ ∈ "packed3" then
- blockseqtype:packed3
+blockseqtype:packed3
 else if typ ∈ "packed4" then
- blockseqtype:packed4
+blockseqtype:packed4
 else if typ ∈ "packed5" then
- blockseqtype:packed5
-else
- assert typ ∈ "packed6" report "packing not found" + typ,
- blockseqtype:packed6
+blockseqtype:packed5
+else assert typ ∈ "packed6" report "packing not found" + typ, blockseqtype:packed6
 
 Function packobject(typ:word, obj:ptr) ptr
 if typ ∈ "int" then
- toptr.blockIt.bitcast:seq.int(obj)
+toptr.blockIt.bitcast:seq.int(obj)
 else if typ ∈ "real" then
- toptr.blockIt.bitcast:seq.real(obj)
+toptr.blockIt.bitcast:seq.real(obj)
 else if typ ∈ "ptr" then
- toptr.blockIt.bitcast:seq.ptr(obj)
+toptr.blockIt.bitcast:seq.ptr(obj)
 else if typ ∈ "packed2" then
- toptr.blockIt.bitcast:seq.packed2(obj)
+toptr.blockIt.bitcast:seq.packed2(obj)
 else if typ ∈ "packed3" then
- toptr.blockIt.bitcast:seq.packed3(obj)
+toptr.blockIt.bitcast:seq.packed3(obj)
 else if typ ∈ "packed4" then
- toptr.blockIt.bitcast:seq.packed4(obj)
+toptr.blockIt.bitcast:seq.packed4(obj)
 else if typ ∈ "packed5" then
- toptr.blockIt.bitcast:seq.packed5(obj)
+toptr.blockIt.bitcast:seq.packed5(obj)
 else
  assert typ ∈ "packed6" report "packing not found" + typ,
  toptr.blockIt.bitcast:seq.packed6(obj)
 
-Export geteinfo(gl:ptr, name:seq.word) einfo
+Export geteinfo(gl:ptr, name:seq.word) einfo {From encodingsupport}
 
-Export geteinfo2(int, int) einfo
+Export geteinfo2(int, int) einfo {From encodingsupport}
 
-Export type:einfo
+Export type:einfo {From encodingsupport}
 
-Export evectorUpdate(b:ptr) ptr
+Export evectorUpdate(b:ptr) ptr {From encodingsupport}
 
 builtin clock int
 

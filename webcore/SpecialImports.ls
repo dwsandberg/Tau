@@ -28,11 +28,13 @@ Builtin callevent2(name:jsbytes, text:jsbytes) real
 
 Builtin replacesvg(id:jsbytes, xml:jsbytes) real
 
-Builtin jsHTTP(url:jsbytes
+Builtin jsHTTP(
+ url:jsbytes
  , method:jsbytes
  , bodydata:jsbytes
  , followfunc:jsbytes
- , state:JS.HTTPstate.seq.word) real
+ , state:JS.HTTPstate.seq.word
+) real
 
 Builtin arcsin(real) real
 

@@ -1,83 +1,82 @@
 Module symboldict
 
-use seq.commoninfo
+use otherseq.mytype
 
-use set.mytype
+use seq.mytype
 
 use standard
 
 use symbol
 
+use otherseq.symbol
+
 use set.symbol
 
 use set.symdef
-
-Export type:bindinfo
-
-Export code(bindinfo) seq.symbol
-
-Export dict(bindinfo) symboldict
-
-Export tokentext(bindinfo) seq.word
-
-Export types(bindinfo) seq.mytype
-
-Export bindinfo(dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word) bindinfo
-
-Export type:commoninfo
-
-Export input(commoninfo) seq.word
-
-Export lib(commoninfo) word
-
-Export mode(commoninfo) word
-
-Export modname(commoninfo) modref
-
-Export types(commoninfo) set.mytype
-
-Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word) commoninfo
 
 Export type:symboldict
 
 Export asset(symboldict) set.symbol
 
-Export symboldict(asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo) symboldict
-
-type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word
+Export symboldict(asset:set.symbol, requires:set.symdef) symboldict
 
 Function lookupbysig(dict:symboldict, sym:symbol) set.symbol findelement2(asset.dict, sym)
 
-type symboldict is asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo
+Function lookupbysig(dict:symboldict, name:seq.word) set.symbol
+lookupbysig(dict, symbol(internalmod, name, typeint))
 
-Function symboldict(d:set.symbol, common:seq.commoninfo) symboldict
-symboldict(d, empty:set.symdef, common)
+type symboldict is asset:set.symbol, requires:set.symdef
 
-Function common(d:symboldict) commoninfo first.commonX.d
+Function symboldict(d:set.symbol) symboldict symboldict(d, empty:set.symdef)
 
 Function requires(d:symboldict, sym:symbol) seq.symbol
 if hasrequires.sym then
  let t = getSymdef(requires.d, sym),
- if isempty.t then
+  if isempty.t then
   empty:seq.symbol
- else
-  assert not.isempty.t report "requires $(sym)",
-  code.t_1
-else
- empty:seq.symbol
+  else assert not.isempty.t report "requires^(sym)", code.1_t
+else empty:seq.symbol
 
-Function empty:symboldict symboldict
-symboldict(empty:set.symbol, empty:set.symdef, empty:seq.commoninfo)
+Function restorenext(dict:symboldict) symboldict
+let thisnesting = 1_lookupbysig(dict, "for")
+let b = getCode(requires.dict, thisnesting)
+let dict1 =
+ if n.b = 2 then
+ dict - asset(b + thisnesting)
+ else dict - asset(subseq(b, 1, 2) + thisnesting) + 3_b + 4_b
+,
+dict1
+ + placeholder(".fora", resulttype.thisnesting)
+ + placeholder(".forb", resulttype.thisnesting)
+ + placeholder(".forc", resulttype.thisnesting)
 
-Function +(d:symboldict, sym:symbol) symboldict
-symboldict(asset.d + sym, requires.d, commonX.d)
+function placeholder(name:seq.word, basetype:mytype) symbol
+symbol(moduleref("internallib $for", basetype), [merge.".^(name)"], empty:seq.mytype, basetype)
 
-Function -(d:symboldict, s:set.symbol) symboldict
-symboldict(asset.d \ s, requires.d, commonX.d)
+Function addAccum(
+ dict:symboldict
+ , nextSym:symbol
+ , basetype:mytype
+ , oldnesting:set.symbol
+ , elementSym:symbol
+) symboldict
+let nestingsym = symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
+let tmp =
+ if isempty.oldnesting then
+ [nextSym, elementSym]
+ else [nextSym, elementSym, 1_oldnesting, 1_getCode(requires.dict, 1_oldnesting)]
+let a = asset.dict
+for acc = a \ asset(tmp << 2), n ∈ [".forxx", ".foryy"]
+while n.acc < n.a
+do acc + placeholder(n, basetype),
+symboldict(acc + nextSym + nestingsym, requires.dict + symdef(nestingsym, tmp, 0))
 
-Function ∪(d:symboldict, s:set.symbol) symboldict
-symboldict(asset.d ∪ s, requires.d, commonX.d)
+Function empty:symboldict symboldict symboldict(empty:set.symbol, empty:set.symdef)
 
-Function cardinality(d:symboldict) int cardinality.asset.d
+Function +(d:symboldict, sym:symbol) symboldict symboldict(asset.d + sym, requires.d)
 
-type bindinfo is dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word 
+Function -(d:symboldict, s:set.symbol) symboldict symboldict(asset.d \ s, requires.d)
+
+Function ∪(d:symboldict, s:set.symbol) symboldict symboldict(asset.d ∪ s, requires.d)
+
+Function cardinality(d:symboldict) int n.asset.d 

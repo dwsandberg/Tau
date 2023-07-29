@@ -1,10 +1,8 @@
 Module pass2
 
+use backparse
+
 use bits
-
-use seq.int
-
-use otherseq.mytype
 
 use seq.mytype
 
@@ -12,13 +10,9 @@ use standard
 
 use symbol
 
-use otherseq.symbol
-
-use stack.seq.symbol
+use seq.symbol
 
 use symbol2
-
-use symbolconstant
 
 Export type:expandresult
 
@@ -34,250 +28,152 @@ Function reorgwhen int 6000
 
 Function isverysimple(nopara:int, code:seq.symbol) boolean
 if code = [Local.1] ∧ nopara = 1 then
- true
+true
 else
- for isverysimple = length.code ≥ nopara, idx = 1, sym ∈ code
+ for isverysimple = n.code ≥ nopara, idx = 1, sym ∈ code
  while isverysimple
- do
-  next(
-   if idx ≤ nopara then
-    sym = Local.idx
-   else
-    not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
-   , idx + 1)
- /do isverysimple
+ do next(
+  if idx ≤ nopara then
+  sym = Local.idx
+  else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
+  , idx + 1
+ ),
+ isverysimple
 
 Function Callself bits bits.1
 
 Function State bits bits.4
 
-Function Hasfor bits bits.8
-
-Function Hasmerge bits bits.16
+Function HasidxNB bits bits.8
 
 Function ∈(a:bits, b:bits) boolean (a ∧ b) = a
 
 Function ismember(s:symbol) boolean
-name.module.s = "seq"_1 ∧ name.s = "∈"_1
-∧ (paratypes.s)_1 ∈ [typeint, typeword]
+name.module.s = 1_"seq" ∧ name.s = 1_"∈" ∧ 1_paratypes.s ∈ [typeint, typeword]
 
 function replace(s:seq.symbol, start:int, length:int, value:seq.symbol) seq.symbol
-subseq(s, 1, start - 1) + value + subseq(s, start + length, length.s)
+subseq(s, 1, start - 1) + value + subseq(s, start + length, n.s)
 
 type expandresult is nextvar:int, code:seq.symbol, flags:bits
 
-function isconstorlocal(p:seq.symbol) boolean
-length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
+function isconstorlocal(p:symbol) boolean isconst.p ∨ islocal.p
 
-Function expandIndex(code:seq.symbol, nextvarin:int) expandresult
-for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code do
+Function expandIndex(code:seq.symbol, nextvarin:int, typedict:typedict) expandresult
+{Expands idxNB}
+for acc = empty:seq.symbol, nextvar = nextvarin, last = Lit.1, sym ∈ code
+do
  if not.isInternal.sym then
-  next(acc + sym, nextvar, sym)
- else if wordname.sym ∈ "indexseq45 idxNB" then
-  let theseqtype = (paratypes.sym)_1
+ next(acc + sym, nextvar, sym)
+ else if wordname.sym ∈ "idxNB" then
+  let t1 = isconstorlocal.1^acc
+  let acc1 =
+   if t1 then
+    if isconstorlocal.2^acc then
+    {Neither argument is expression} acc
+    else {first argument is expression} acc >> 1 + Define.nextvar + Local.nextvar + 1^acc
+   else
+    let para2 = backparse3(acc, n.acc, true),
+     if isconstorlocal.(para2 - 1)_acc then
+      {second argument is expression} subseq(acc, 1, para2 - 2)
+      + subseq(acc, para2, n.acc)
+      + Define(nextvar + 1)
+      + (para2 - 1)_acc
+      + Local(nextvar + 1)
+     else
+      {both arguments are expressions} subseq(acc, 1, para2 - 1)
+      + Define(nextvar + 2)
+      + subseq(acc, para2, n.acc)
+      + Define(nextvar + 1)
+      + Local(nextvar + 2)
+      + Local(nextvar + 1)
+  let index = 1^acc1
+  let theseq = 2^acc1
+  let theseqtype = basetype(1_paratypes.sym, typedict)
   let seqtype = Local.nextvar
-  let newcode = 
-   if isconstorlocal.[acc_(length.acc - 1)] ∧ isconstorlocal.[last.acc] then
-    let index = last.acc
-    let theseq = acc_(length.acc - 1),
-    acc >> 2 + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
-   else
-    let t = backparse2(acc, length.acc, 2, empty:seq.int)
-    let index0 = subseq(acc, t_2, length.acc)
-    let theseq0 = subseq(acc, t_1, t_2 - 1)
-    let theseq = if isconstorlocal.theseq0 then first.theseq0 else Local(nextvar + 1)
-    let index = if isconstorlocal.index0 then first.index0 else Local(nextvar + 2),
-    subseq(acc, 1, t_1 - 1)
-    + if isconstorlocal.theseq0 then empty:seq.symbol else theseq0 + Define.value.theseq /if
-    + if isconstorlocal.index0 then empty:seq.symbol else index0 + Define.value.index /if
-    + indexseqcode(seqtype, theseq, index, theseqtype, wordname.sym ∈ "indexseq45")
-  ,
+  let newcode = acc >> 2 + indexseqcode(seqtype, theseq, index, theseqtype),
   next(newcode, nextvar + 3, sym)
- else
-  next(if name.sym ∈ "checkfornoop" then acc else acc + sym, nextvar, sym)
-/do expandresult(nextvar, acc, 0x0)
+ else next(acc + sym, nextvar, sym)
+,
+expandresult(nextvar, acc, 0x0)
 
-Function forexpisnoop(sym:symbol, acc:seq.symbol) seq.symbol
-let len = length.acc
-assert acc_(len - 1) = continue.2 ∧ nopara.acc_(len - 3) = 2 ∧ len ≥ 24
-report "SDF $(len) $(sym) $(acc)"
-let loop = acc_(len - 21),
-if not(isloopblock.loop ∧ isSequence.acc_(len - 4)) then
- empty:seq.symbol
-else
- let masteridx = acc_(len - 2)
- let cat = acc_(len - 3)
- let pcat = paratypes.cat
- assert parameter.pcat_1 ≠ pcat_2 report "XXX"
- {assert name.sym /nin" type" /or %.resulttype.sym /in [" seq.word"," seq.mytype"," seq.symbol
-  "] report" CHECK"+%.sym+%.acc}
- let element = acc_(len - 5)
- let theacc = acc_(len - 6)
- let theseq = acc_(len - 10)
- let idxNB = symbol(internalmod, "idxNB", paratypes.loop, parameter.first.paratypes.loop),
- if islocal.element ∧ value.element = value.masteridx + 1 ∧ firstvar.loop = value.theacc
- ∧ idxNB = acc_(len - 8) then
-  let empty = if isrecordconstant.theseq then acc_(len - 23) else acc_(len - 26)
-  let isempty = 
-   isrecordconstant.empty ∧ isSequence.first.fullconstantcode.empty
-   ∧ nopara.first.fullconstantcode.empty = 0
-  {assert name.sym /in" tointseq towordseq toalphaseq % function hash breakcommas typerecords constantrecords
-   AGGREGATE buildargs alphasort findelement2 profilecall tocharseq inrec asseqseqmytype" report" as"
-   +%.sym+%.acc}
-  let seqlen = 
-   if isrecordconstant.theseq then
-    Lit.nopara.last.fullconstantcode.theseq
-   else
-    Local(firstvar.loop - 1)
-  let shouldbe = 
-   [Local(firstvar.loop + 1)
-    , seqlen
-    , EqOp
-    , Br2(1, 2)
-    , theacc
-    , Exit
-    , Local(firstvar.loop + 1)
-    , Lit.1
-    , PlusOp
-    , Define.value.masteridx
-    , theseq
-    , masteridx
-    , idxNB]
-   + Define.value.element
-   + theacc
-   + element
-  assert subseq(acc, len - 20, len - 5) = shouldbe
-  report "$(theseq) shouldbe $(sym) $(acc) /p $(shouldbe)",
-  if isrecordconstant.theseq ∧ isempty then
-   subseq(acc, 1, len - 24) + theseq
-  else if islocal.theseq ∧ isempty then
-   subseq(acc, 1, len - 27) + theseq
-  else
-   let theseqtype = first.paratypes.loop,
-   if %.parameter.theseqtype ∈ ["packed2", "ptr"] then
-    {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
-   else
-    subseq(acc, 1, len - 1 - 24)
-    + symbol(moduleref("* seq", parameter.theseqtype), "+", theseqtype, theseqtype, theseqtype)
- else
-  empty:seq.symbol
+function isemptysymbol(empty:symbol) boolean
+empty = Words.""
+ ∨ 
+ isrecordconstant.empty
+ ∧ isSequence.1_fullconstantcode.empty
+ ∧ nopara.1_fullconstantcode.empty = 0
 
-function indexseqcode(seqtype:symbol
+Function checkemptycat(sym:symbol, result:seq.symbol) seq.symbol
+{???? generalize to detect any empty cat--not just words}
+if name.module.sym ∈ "seq" ∧ name.sym ∈ "+" ∧ nopara.sym = 2 then
+ let p = paratypes.sym,
+  if 1_p = 2_p then
+   if parameter.1_p ∈ [typeword, typeint, typechar] then
+    if isemptysymbol.1^result then
+    result >> 1
+    else
+     let para2 = backparse3(result, n.result, true),
+      if isemptysymbol.(para2 - 1)_result then
+      subseq(result, 1, para2 - 2) + subseq(result, para2, n.result)
+      else empty:seq.symbol
+   else empty:seq.symbol
+  else empty:seq.symbol
+else empty:seq.symbol
+
+function indexseqcode(
+ seqtype:symbol
  , theseq:symbol
- , masteridx:symbol
- , xtheseqtype:mytype
- , boundscheck:boolean) seq.symbol
+ , idx:symbol
+ , theseqtype:mytype
+) seq.symbol
 {seqtype will be a basetype}
-let seqparameter = parameter.xtheseqtype
-let theseqtype = seqof.seqparameter
-let elementtype = 
- if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then seqparameter else typeptr
+let seqparameter = parameter.theseqtype
+let elementtype = if seqparameter ∈ [typeint, typereal, typeboolean, typebyte] then seqparameter else typeptr
 let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte
-let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype),
-[theseq
- , GetSeqType
- , Define.value.seqtype
- , Start.elementtype
- , seqtype
- , Lit.1
- , GtOp
- , Br2(1, 2)]
-+ [theseq, masteridx, callidx, Exit]
-+ if boundscheck then
- [Start.typeint
-  , masteridx
-  , Lit.0
-  , GtOp
-  , Br2(1, 2)
-  , masteridx
-  , theseq
-  , GetSeqLength
-  , GtOp
-  , Br2(1, 2)
-  , outofboundssymbol
-  , symbol(internalmod, "assert", seqof.typeword, typeint)
-  , Exit
-  , seqtype
-  , Exit
-  , EndBlock
-  , Define.value.seqtype]
-else
- empty:seq.symbol
-/if
-+ if maybepacked then
- [seqtype, Lit.1, EqOp, Br2(1, 2)]
- + [theseq
-  , masteridx
-  , symbol(internalmod, "packedindex", theseqtype, typeint, elementtype)
-  , Exit]
-else
- empty:seq.symbol
-/if
-+ [theseq
- , masteridx
- , symbol(internalmod, "idxseq", seqof.elementtype, typeint, elementtype)
- , Exit
- , EndBlock]
+let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
+let idxseq = symbol(internalmod, "idxseq", seqof.elementtype, typeint, elementtype),
+[theseq, GetSeqType, Define.value.seqtype, Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)]
+ + [theseq, idx, callidx, Exit]
+ + 
+ if maybepacked then
+  [seqtype, Lit.1, EqOp, Br2(2, 1)]
+  + [theseq, idx, idxseq, Exit]
+  + [
+   theseq
+   , idx
+   , symbol(internalmod, "packedindex", theseqtype, typeint, elementtype)
+   , Exit
+   , EndBlock
+  ]
+ else [theseq, idx, idxseq, Exit, EndBlock]
 
-function exitlocations(s:seq.symbol, i:int, result:seq.int) seq.int
-let sym = s_i,
-if isstart.sym then
- [i] + result
-else if isblock.sym then
- exitlocations(s, matchblock(s, i - 1, 0) - 1, result)
-else
- exitlocations(s, i - 1, if isExit.sym then [i] + result else result)
+type track is key:int, sym:symbol
 
-function matchblock(s:seq.symbol, i:int, nest:int) int
-let sym = s_i,
-if isblock.sym then
- matchblock(s, i - 1, nest + 1)
-else if isstartorloop.sym then
- if nest = 0 then
-  if isloopblock.sym then
-   backparse2(s, i - 1, nopara.sym, empty:seq.int)_1
-  else
-   addDefine(s, i)
- else
-  matchblock(s, i - 1, nest - 1)
-else
- matchblock(s, i - 1, nest)
+type track2 is count:int, sym:symbol
 
-function addDefine(s:seq.symbol, i:int) int
-if i > 1 ∧ isdefine.s_(i - 1) then
- addDefine(s, backparse2(s, i - 2, 1, empty:seq.int)_1)
-else
- i
+use encoding.track
 
-Function backparse2(s:seq.symbol, i:int, no:int, result:seq.int) seq.int
-if no = 0 then
- result
-else
- assert i > 0 report "back parse 1a:" + toword.no + %.s + stacktrace,
- if isdefine.s_i then
-  let args = backparse2(s, i - 1, 1, empty:seq.int),
-  backparse2(s, args_1, no, result)
- else if isblock.s_i then
-  let b = matchblock(s, i - 1, 0),
-  if b = 1 then [b] + result else backparse2(s, b - 1, no - 1, [b] + result)
- else
-  let nopara = nopara.s_i
-  let first = 
-   if nopara = 0 then
-    i
-   else
-    let args = backparse2(s, i - 1, nopara, empty:seq.int)
-    assert length.args = nopara
-    report
-     "back parse 3 $(s_i)" + toword.nopara + "//"
-     + for acc = "", @e ∈ args do acc + toword.@e /do acc
-    ,
-    args_1
-  let b = 
-   if first > 1 ∧ isdefine.s_(first - 1) then
-    let c = backparse2(s, first - 2, 1, empty:seq.int),
-    c_1
-   else
-    first
-  ,
-  backparse2(s, b - 1, no - 1, [b] + result) 
+use otherseq.track
+
+use otherseq.track2
+
+Function track(s:symbol) encoding.track encode.track(n.encodingdata:track + 1, s)
+
+function hash(t:track) int key.t
+
+function =(a:track, b:track) boolean key.a = key.b
+
+function >1(a:track, b:track) ordering sym.a >1 sym.b ∧ key.a >1 key.b
+
+function >1(a:track2, b:track2) ordering count.a >1 count.b
+
+function %(t:track2) seq.word %.count.t + %.sym.t
+
+Function trackresults seq.word
+for acc = empty:seq.track2, count = 0, last = Lit.0, t ∈ sort.encodingdata:track
+do
+ if last = sym.t then
+ next(acc, count + 1, sym.t)
+ else next(setinsert(acc, track2(count, last)), 1, sym.t)
+,
+%("/br", setinsert(acc, track2(count, last))) 

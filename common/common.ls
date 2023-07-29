@@ -1,7 +1,21 @@
 Module common
 
-use file
+use bandeskopf
 
-use standard
+use barycenter
 
-Function test(input:seq.file, o:seq.word) seq.file {ENTRYPOINT}[file(filename.o, "test")] 
+use layergraph
+
+use makeDAG
+
+use matrix
+
+use point
+
+use svg2graph
+
+use timestamp
+
+use uniqueids
+
+use wordgraph 

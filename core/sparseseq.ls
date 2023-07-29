@@ -1,6 +1,6 @@
 Module sparseseq.T
 
-* lets a sequence have a default value even beyond the length of the seq.
+* lets a sequence have a default value even beyond the length of the seq. 
 
 use seq.T
 
@@ -17,52 +17,50 @@ Function >1(a:sparseele.T, b:sparseele.T) ordering start.a >1 start.b
 function _(s:sparse.T, i:int) T
 let place = binarysearch(sdata.s, sparseele(i, empty:seq.T)),
 if place = -1 then
- default.s
+default.s
 else
- let k = if place < 0 then-place - 1 else place
- let before = (sdata.s)_k
+ let k = if place < 0 then -place - 1 else place
+ let before = k_sdata.s
  let beforeindex = i - start.before + 1,
- if beforeindex > length.edata.before then default.s else (edata.before)_beforeindex
+ if beforeindex > n.edata.before then default.s else beforeindex_edata.before
 
 Function sparseseq(a:T) seq.T toseq.sparse(1, empty:seq.sparseele.T, a)
 
 Function replaceS(a:seq.T, i:int, b:seq.T) seq.T
 let d = to:sparse.T(a),
-if length.toseq.d = 0 then
- subseq(a, 1, i - 1) + b + subseq(a, i + length.b, length.a)
+if n.toseq.d = 0 then
+subseq(a, 1, i - 1) + b + subseq(a, i + n.b, n.a)
 else
  let ele = sparseele(i, b)
  let place = binarysearch(sdata.d, ele)
- let t = 
+ let t =
   if place > 0 then
    subseq(sdata.d, 1, place - 1) * ele
-   + removeoverlap(i + length.b - 1, subseq(sdata.d, place + 1, length.sdata.d), 1)
+   + removeoverlap(i + n.b - 1, subseq(sdata.d, place + 1, n.sdata.d), 1)
   else
    subseq(sdata.d, 1,-place - 1) * ele
-   + removeoverlap(i + length.b - 1, subseq(sdata.d,-place, length.sdata.d), 1)
- let last = last.t,
- toseq.sparse(start.last + length.edata.last - 1, t, default.d)
+   + removeoverlap(i + n.b - 1, subseq(sdata.d,-place, n.sdata.d), 1)
+ let last = 1^t,
+ toseq.sparse(start.last + n.edata.last - 1, t, default.d)
 
 function removeoverlap(finish:int, s:seq.sparseele.T, i:int) seq.sparseele.T
-if i > length.s then
- empty:seq.sparseele.T
-else if finish < start.s_i then
- s << (i - 1)
+if i > n.s then
+empty:seq.sparseele.T
+else if finish < start.i_s then
+s << (i - 1)
 else
- let this = s_i
- let thisfinish = start.this + length.edata.this - 1,
- if finish ≥ thisfinish then
+ let this = i_s
+ let thisfinish = start.this + n.edata.this - 1,
+  if finish ≥ thisfinish then
   removeoverlap(finish, s, i + 1)
- else
-  [sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
+  else [sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
 
 function *(a:seq.sparseele.T, e:sparseele.T) seq.sparseele.T
 if isempty.a then
- [e]
+[e]
 else
- let last = last.a
- let lastend = start.last + length.edata.last - 1,
- if lastend < start.e then
+ let last = 1^a
+ let lastend = start.last + n.edata.last - 1,
+  if lastend < start.e then
   a + e
- else
-  a >> 1 * sparseele(start.last, subseq(edata.last, 1, start.e - start.last) + edata.e) 
+  else a >> 1 * sparseele(start.last, subseq(edata.last, 1, start.e - start.last) + edata.e) 

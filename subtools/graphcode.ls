@@ -2,6 +2,8 @@ Module graphcode
 
 use standard
 
+use symbol
+
 use graph.symbol
 
 use seq.symbol
@@ -9,8 +11,6 @@ use seq.symbol
 use set.symbol
 
 use svg2graph.symbol
-
-use symbol2
 
 use seq.arc.symloc
 
@@ -35,41 +35,39 @@ function >1(a:symloc, b:symloc) ordering loc.a >1 loc.b
 function %(a:symloc) seq.word %.loc.a + %.sym.a
 
 Function tograph(s:seq.symbol) seq.word
-for acc = empty:seq.arc.symloc
- , stk = empty:stack.symloc
- , i ∈ arithseq(length.s, 1, 1)
+for acc = empty:seq.arc.symloc, stk = empty:stack.symloc, i ∈ arithseq(n.s, 1, 1)
 do
- let sym = s_i
- let sons = 
+ let sym = i_s
+ let sons =
   if sym = EndBlock then
    for stk2 = stk, sons = empty:seq.symloc, k ∈ toseq.stk
    while not.isempty.stk2 ∧ not.isstartorloop.sym.top.stk2
-   do
-    next(pop.stk2, sons + top.stk2)
-   /do sons + top.stk2
+   do next(pop.stk2, sons + top.stk2),
+   sons + top.stk2
   else
    for stk2 = stk, sons = empty:seq.symloc, count = nopara.sym, k ∈ toseq.stk
    while count > 0
-   do
-    let top = top.stk2,
-    next(pop.stk2, sons + top, if isdefine.sym.top then count else count - 1)
-   /do sons
- let newstk = pop(stk, length.sons)
+   do let top = top.stk2, next(pop.stk2, sons + top, if isdefine.sym.top then count else count - 1),
+   sons
+ let newstk = pop(stk, n.sons)
  let tail = symloc(i, sym),
- next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy) /do arcs, push(newstk, tail))
-/do drawgraph.newgraph.acc
+ next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy), arcs, push(newstk, tail))
+,
+drawgraph.newgraph.acc
 
-Function generatenode(a:set.symloc) symloc symloc(cardinality.a, Lit.0)
+Function generatenode(a:set.symloc) symloc symloc(n.a, Lit.0)
 
 Function node2text(a:symloc) seq.word
 let sy = sym.a,
 if isloopblock.sy then
- "Loop:$(firstvar.sy)"
-else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then %.sy else [name.sy]
+"Loop:^(firstvar.sy)"
+else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then
+%.sy
+else [name.sy]
 
 Function nodeTitle(a:symloc) seq.word %.sym.a
 
-Function generatenode(a:set.symbol) symbol Lit.cardinality.a
+Function generatenode(a:set.symbol) symbol Lit.n.a
 
 Function node2text(a:symbol) seq.word [name.a]
 

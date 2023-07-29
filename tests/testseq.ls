@@ -33,7 +33,7 @@ function =(a:seedtrack, b:seedtrack) boolean key.a = key.b
 function hash(a:seedtrack) int key.a
 
 Function getint(size:int) int
-let p = last.encodingdata:seedtrack
+let p = 1^encodingdata:seedtrack
 let d = pseudorandom.val.p
 let c = encode.seedtrack(key.p + 1, d),
 d mod size
@@ -59,8 +59,11 @@ function get:byte byte tobyte.getint.256
 Function testseq seq.word
 let EOL = "/br"
 let a = encode.seedtrack(1, 987)
-let all = 
- check:seq.byte(1, 22) + check:seq.byte(1, 8) + EOL + check:seq.typereal(8, 17)
+let all =
+ check:seq.byte(1, 22)
+ + check:seq.byte(1, 8)
+ + EOL
+ + check:seq.typereal(8, 17)
  + check:seq.typereal(8, 8)
  + EOL
  + check:seq.seq.word(8, 17)
@@ -74,29 +77,25 @@ let all =
  + EOL
  + sparsecheck
 ,
-if "FAIL"_1 ∉ all then "PASS testseq" else "FAIL testseq $(all)"
+if 1_"FAIL" ∉ all then "PASS testseq" else "FAIL testseq^(all)"
 
 Function sparsecheck seq.word
-let b = 
- for acc = sparseseq.101
-  , @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
- do
-  check(acc, @e)
- /do acc
+let b =
+ for acc = sparseseq.101, @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
+ do check(acc, @e),
+ acc
 ,
 "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int
-let i = r_1 mod 30 + 1
+let i = 1_r mod 30 + 1
 let c = replaceS(s, i, r)
-assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, length.s)) report "FAIL1"
-assert subseq(s, i + length.r, length.r) = subseq(c, i + length.r, length.r) report "FAIL2"
-assert subseq(c, i, i + length.r - 1) = r report "FAIL3",
+assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, n.s)) report "FAIL 1"
+assert subseq(s, i + n.r, n.r) = subseq(c, i + n.r, n.r) report "FAIL 2"
+assert subseq(c, i, i + n.r - 1) = r report "FAIL 3",
 c
 
 function random(s:seq.int, i:int, result:seq.seq.int) seq.seq.int
-if i > length.s then
- result
-else
- let len = s_i mod 5 + 2,
- random(s, i + len, result + subseq(s, i, i + len - 1)) 
+if i > n.s then
+result
+else let len = i_s mod 5 + 2, random(s, i + len, result + subseq(s, i, i + len - 1)) 

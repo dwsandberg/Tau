@@ -2,7 +2,7 @@ module bitcodesupport
 
 use UTF8
 
-use llvmconstants
+use llvm
 
 use standard
 
@@ -32,73 +32,82 @@ Function SETBID int 1
 
 Function printtype(s:seq.seq.int, i:int, llvm:boolean) seq.word
 if i = 1 then
- "conststype"
+"conststype"
 else
  {if i = 2 then" profiletype" else}
- let a = s_(i + 2)
- let tp = typeop.a_1,
- if tp = INTEGER then
-  [merge("i" + toword.a_2)]
- else if tp = ARRAY then
-  "array (" + toword.a_2 + "," + printtype(s, a_3, llvm) + ")"
- else if tp = POINTER then
-  if llvm then "$(printtype(s, a_2, llvm)) *" else "ptr.$(printtype(s, a_2, llvm))"
- else if tp = FUNCTION then
-  "function.[
-   $(for acc = "", @e ∈ subseq(a, 3, length.a) do
-   acc + printtype(s, @e, llvm) + ","
-  /do acc >> 1)
-   ]"
- else if tp = TVOID then "VOID" else if tp = DOUBLE then "double" else "?"
+ let a = (i + 2)_s
+ let tp = typeop.1_a,
+  if tp = INTEGER then
+  [merge("i" + toword.2_a)]
+  else if tp = ARRAY then
+  "array (" + toword.2_a + "," + printtype(s, 3_a, llvm) + ")"
+  else if tp = POINTER then
+   if llvm then
+   "^(printtype(s, 2_a, llvm)) *"
+   else "ptr.^(printtype(s, 2_a, llvm))"
+  else if tp = FUNCTION then
+  "function.[^(for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",", acc >> 1)]"
+  else if tp = TVOID then
+  "VOID"
+  else if tp = DOUBLE then
+  "double"
+  else "?"
 
 Function printabbr(a:seq.int) seq.word
-for acc = "", plain = true, code ∈ a do
+for acc = "", plain = true, code ∈ a
+do
  if plain then
-  next(acc + %.code, false)
+ next(acc + %.code, false)
  else if code = 0 then
-  next(acc + "Lit", true)
+ next(acc + "Lit", true)
  else if code = ABBROPFixed then
-  next(acc + "Fixed", true)
+ next(acc + "Fixed", true)
  else if code = ABBROPVBR then
-  next(acc + "VBR", true)
+ next(acc + "VBR", true)
  else if code = ABBROPArray then
-  next(acc + "Array", false)
+ next(acc + "Array", false)
  else if code = ABBROPChar6 then
-  next(acc + "Char6", false)
+ next(acc + "Char6", false)
  else if code = ABBROPBlob then
-  next(acc + "BLob", false)
- else
-  next(acc + "illegal", false)
-/do acc
+ next(acc + "BLob", false)
+ else next(acc + "illegal", false)
+,
+acc
 
 Function number(s:seq.seq.word) seq.word
-for txt = "", label = 0, p ∈ s do
- next(txt + "{$(label)} $(p) /br,", label + 1)
-/do txt >> 2
+for txt = "", label = 0, p ∈ s
+do next(
+ txt
+ + "{^(label)}^(p)
+  /br,"
+ , label + 1
+),
+txt >> 2
 
 use otherseq.int
 
 Function printrecord(id:blockop, a:seq.int) seq.word
 if id = VALUESYMTABLE then
- "function" + encodeword.tocharseq.subseq(a, 3, length.a) + "int" + toword.a_2
-else if a_1 = -1 then
- "[-1, $(decode.blockop.a_2), $(%(",", subseq(a, 2, length.a)) >> 1)]"
-else if a_1 = -2 then
- printabbr.a
-else if id = INFOBLOCK ∧ length.a = 2 ∧ a_1 = SETBID then
- "[SETBID, $(decode.blockop.a_2)]"
+"function" + encodeword.tocharseq.subseq(a, 3, n.a) + "int" + toword.2_a
+else if 1_a = -1 then
+"[-1,^(decode.blockop.2_a),^(%(",", subseq(a, 2, n.a)) >> 1)]"
+else if 1_a = -2 then
+printabbr.a
+else if id = INFOBLOCK ∧ n.a = 2 ∧ 1_a = SETBID then
+"[SETBID,^(decode.blockop.2_a)]"
 else
- let code = a_1
- let recordtype = 
+ let code = 1_a
+ let recordtype =
   if id = MODULE then
-   decode.moduleop.code
+  decode.moduleop.code
   else if id = TYPES then
-   decode.typeop.code
+  decode.typeop.code
   else if id = FUNCTIONBLK then
-   decode.instop.code
-  else if id = CONSTANTS then decode.constop.code else [toword.code]
+  decode.instop.code
+  else if id = CONSTANTS then
+  decode.constop.code
+  else [toword.code]
  ,
- if length.a = 1 then
-  "[toint.$(recordtype)]"
- else
-  "[toint.$(recordtype), $(%(",", subseq(a, 2, length.a)) >> 1)]" 
+  if n.a = 1 then
+  "[toint.^(recordtype)]"
+  else "[toint.^(recordtype),^(%(",", subseq(a, 2, n.a)) >> 1)]" 
