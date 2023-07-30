@@ -155,6 +155,11 @@ doclibrary
 +documentation subtools.html
 +subtools  frontcmd.ls doc.ls  
 
+transform
++documentation profileExampleSrc.html
++tests profileExample.ls  
+ html= noindex=
+
 
  testall testall.html
 +tests opttests.ls
@@ -199,7 +204,7 @@ wasm runcmd.wasm webcore.libsrc  symbols compilerfront
  frontcmd  baseTypeCheck  prettycompilerfront reconstructUses cleanExports genPEG  genEnumeration
 totext  + tests profile.ls
 + simple webtools2 
-+ tests testprofile.ls
++ tests profileExample.ls
 exports=runcmd
 Library=runcmd
 info=
@@ -208,11 +213,17 @@ prettybuild newrelease.bld
 +.bld release.bld
 
 
-makelib testprofile.lib common.lib 
- +tests lib.ls testprofile.ls  profile
+makelib profileExample.lib common.lib 
+ +tests lib.ls profileExample.ls  profile
  +subtools graphcode
 uses=common stdlib
  profile= info=
+ 
+ define profileExample profileExample profileExample
+
+ 
+ profileExample +documentation profileExample.html 
+
 
 makelib printbitcodes.lib  stdlib.lib 
 +printbitcodes printbitcodes.ls bitcodesupport.ls slotdesc llvm2
@@ -221,12 +232,11 @@ uses=stdlib
 
 define printbitcodes printbitcodes printbitcodes
 define regen ppp test2
-define testprofile testprofile testprofile
 
-noop testprofile.bc
-+$build testprofile.lib
+noop profileExample.bc
++$build profileExample.lib
 
- printbitcodes ppp.ls testprofile.bc bitcode= 
+ printbitcodes ppp.ls profileExample.bc bitcode= 
 
   makelib ppp.lib  ppp.ls
 +printbitcodes runcode bitcodesupport 
@@ -235,7 +245,6 @@ options = bitcode
 
   regen  regen.bc 
 
- testprofile testprofile.html 
  
 comment transform hhh.html core.libsrc bind=
  

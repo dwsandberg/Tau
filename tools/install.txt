@@ -58,6 +58,11 @@ alias usegraph="tau tools usegraph"
 
 alias transform="tau tools transform"
 
+A function can be profiled to see where the time is being spent in a program.  An example of doing this is given 
+/< a href ="./profileExampleSrc.html" >here. /< /a>  Which produces the output
+/< a href ="./profileExample.html" >here. /< /a> 
+
+
 The /keyword htmlcode cmd create html from source files pretty prints the file and adds syntax highlighting and a module index.  It is useful for examining source code.  For example 
 </ block htmlcode +built core.libsrc *> 
 
