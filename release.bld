@@ -203,7 +203,7 @@ wasm runcmd.wasm webcore.libsrc  symbols compilerfront
 +subtools doc.ls       graphcode
  frontcmd  baseTypeCheck  prettycompilerfront reconstructUses cleanExports genPEG  genEnumeration
 totext  + tests profile.ls
-+ simple webtools2 
++ webapps webtools2 
 + tests profileExample.ls
 exports=runcmd
 Library=runcmd
