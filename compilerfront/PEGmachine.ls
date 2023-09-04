@@ -44,7 +44,7 @@ do
  else if inst = /e then
  push(stk, "")
  else
-  assert inst = /length report "???"
+  assert inst = /length report "internal runMachine error"
   for acc = "", e ∈ toseq.stk << 1 do acc + e,
   push(push(empty:stack.seq.word, 1_toseq.stk), "~length^(n.acc)^(acc)")
 for acc = "", e ∈ toseq.stk do acc + e,
@@ -70,16 +70,13 @@ do
       let j = findindex(consts, str),
        if j > n.consts then
        next("", consts + str, actions + [n.consts + 1,-i])
-       else next("", consts + str, actions + [j,-i])
-   ,
+       else next("", consts + str, actions + [j,-i]),
     if isempty.str then
     machine(consts, actions.acc + actions)
     else
      let k = findindex(consts, str),
       if k > n.consts then
       machine(consts + str, actions.acc + [actions + [n.consts + 1]])
-      else machine(consts, actions.acc + [actions + k])
-  ,
-  acc
-,
+      else machine(consts, actions.acc + [actions + k]),
+  acc,
 acc0 

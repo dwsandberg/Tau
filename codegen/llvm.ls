@@ -10,13 +10,13 @@ use UTF8
 
 use seq.seq.int
 
-use encoding.slotrecord
-
 use seq.llvmtype
 
 use encoding.llvmtypeele
 
 use seq.slot
+
+use encoding.slotrecord
 
 use seq.slotrecord
 
@@ -110,8 +110,7 @@ let c =
  slotrecord(-3, rec)
  else
   let chars = for acc = empty:seq.char, @e ∈ name do acc + decodeword.@e, tointseq.acc,
-  slotrecord(-1, [n.chars] + chars + rec)
-,
+  slotrecord(-1, [n.chars] + chars + rec),
 slot(addorder.c - 1)
 
 Function %(slot:slot) seq.word
@@ -122,15 +121,9 @@ if between(toint.slot, 0, n.encodingdata:slotrecord) then
   else "{^(toint.slot)}"
 else "{^(toint.slot)}"
 
-use seq.slotrecord
-
 Function dumpslots seq.word
 for acc = "", i ∈ arithseq(n.encodingdata:slotrecord, 1, 0)
-do
- acc
- + "^(i):^(slot.i)
-  /br"
-,
+do acc + "^(i):^(slot.i) /br",
 acc
 
 Function C64(i:int) slot slot(addorder.slotrecord(typ.i64, [toint.CINTEGER, i]) - 1)
@@ -175,8 +168,7 @@ else if typ.l = typ.ptr.i64 then
 constantrecord(i64, [toint.CCAST, toint.ptrtoint, typ.ptr.i64, toint.s])
 else
  assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64]
- report "asi64 problem^(typ.l)^(stacktrace)"
- ,
+ report "asi64 problem^(typ.l)^(stacktrace)",
  slot.4_toseq.l
 
 Function constvalue(i:slot) int 2_toseq.decode.to:encoding.slotrecord(toint.i + 1)
@@ -219,21 +211,26 @@ let c =
  ∨ trunc = trunc
  ∨ MODULE = MODULE
  ∨ CNULL = CNULL
- ∨ Feq = Feq
-,
+ ∨ Feq = Feq,
 0
 
 function genEnum seq.seq.word
 [
  "newType = align values = unspecified ? ? ? align8 align16 align32 align64"
- , "newType = instop values = ? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
- , "newType = typeop values = ? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
- , "newType = blockop values = INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
+ , "newType = instop values = ? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA
+  LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+ , "newType = typeop values = ? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ?
+  ? ? FUNCTION"
+ , "newType = blockop values = INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ?
+  VALUESYMTABLE ? ? TYPES"
  , "newType = moduleop values = ? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"
- , "newType = constop values = ? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
- , "newType = castop values = trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
+ , "newType = constop values = ? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2
+  CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
+ , "newType = castop values = trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint
+  inttoptr bitcast"
  , "newType = binaryop values = add sub mul udiv sdiv urem srem shl lshr ashr and or xor"
- , "newType = cmp2op values = ? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
+ , "newType = cmp2op values = ? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
+  ? eq ne ugt uge ult ule sgt sge slt sle"
 ]
 
 <<<< Below is auto generated code >>>>
@@ -310,7 +307,8 @@ let i = toint.code,
 if between(i + 1, 1, 45) then
  let r = [
   (i + 1)
-  _"? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+  _"? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ?
+   ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
  ],
  if r ≠ "?" then r else "instop." + toword.i
 else "instop." + toword.i
@@ -473,7 +471,8 @@ let i = toint.code,
 if between(i + 1, 1, 23) then
  let r = [
   (i + 1)
-  _"? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
+  _"? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ?
+   ? ? ? ? ? CGEP ? CDATA"
  ],
  if r ≠ "?" then r else "constop." + toword.i
 else "constop." + toword.i
@@ -612,7 +611,8 @@ let i = toint.code,
 if between(i + 1, 1, 42) then
  let r = [
   (i + 1)
-  _"? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
+  _"? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule
+   sgt sge slt sle"
  ],
  if r ≠ "?" then r else "cmp2op." + toword.i
 else "cmp2op." + toword.i 

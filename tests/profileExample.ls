@@ -20,13 +20,12 @@ function since if a procedure is expaned inline, no profile results will be show
 /br 5. In the sources for the makelib command also+tests profile+subtools graphcode
 /br 6. Make sure the uses option of the makelib command include commmon. 
 
-Profiling works by adding code to the procedure that 
-tracks how much time is spent in each subprocedure that is called.
-When the results are display the largest time is found and normalized
-to 100.   All other calls are in 100th's of the largest time.  
+Profiling works by adding code to the procedure that tracks how much time is spent in each subprocedure
+that is called.When the results are display the largest time is found and normalized to 100. All other
+calls are in 100th's of the largest time. 
 
 Function profileExample(input:seq.file, o:seq.word) seq.word
-{OPTION PROFILE NOINLINE ENTRYPOINT /strong   profile Example}
+{OPTION PROFILE NOINLINE ENTRYPOINT /strong profile Example}
 let p = process.processtest(2^2 + 3)
 let p2 = subtest(2^2 + 3),
 "test^({subtest.4+} result.p)^(profileresults."time")"

@@ -66,10 +66,8 @@ do
   do
    let t = if isseq.t0 then parameter.t0 else t0
    for idx = 1, d ∈ defs while 1_d ≠ t do idx + 1,
-   coded + if isseq.t0 then -idx else idx
-  ,
-  acc + if isempty.coded then [n.acc + 1] else coded
-,
+   coded + if isseq.t0 then -idx else idx,
+  acc + if isempty.coded then [n.acc + 1] else coded,
 acc
 
 function int0 int 2
@@ -110,8 +108,7 @@ let a = [root, [typeint], [typeword], [typereal]] + a0 << 1
 let singlerow =
  for singlerow = empty:seq.seq.mytype, row ∈ a
  do if n.row = 2 then singlerow + row else singlerow,
- singlerow
-,
+ singlerow,
 close.
  if isempty.singlerow then
  a
@@ -128,8 +125,7 @@ function close(x:seq.seq.mytype) seq.seq.mytype
 for defs = empty:seq.mytype, used = empty:seq.mytype, def ∈ x
 do next(
  defs + 1_def
- ,
-  used
+ , used
   + 
    if isseq.1_def then
    [parameter.1_def]
@@ -223,8 +219,7 @@ do
     let maxencoding = n.encodingdata:tableentry
     let w = addorder.tableentry.1^t,
     next(acc + w, idx + 1, stkcount, if w > maxencoding then t else t >> 1)
-   else next(acc + -(stkcount + 1), idx + 1, stkcount + 1, t)
-,
+   else next(acc + -(stkcount + 1), idx + 1, stkcount + 1, t),
 finished
  + 
  if stkcount > 0 then
@@ -262,10 +257,8 @@ do
    do
     if val > 0 then
     next(set(p, val_map), m)
-    else next(set(p, undertop(stk,-val - 1)), if val < m then val else m)
-   ,
-   push(pop(stk,-m), obj)
-  ,
+    else next(set(p, undertop(stk,-val - 1)), if val < m then val else m),
+   push(pop(stk,-m), obj),
   next(newstk, map)
  else
   let newstk =
@@ -320,14 +313,11 @@ do
       next(set(p, val), i + 1, m)
       else if val > 0 then
       next(set(p, val_map), i + 1, m)
-      else next(set(p, undertop(stk,-val - 1)), i + 1, if val < m then val else m)
-    ,
-    push(pop(stk,-m), obj)
-  ,
+      else next(set(p, undertop(stk,-val - 1)), i + 1, if val < m then val else m),
+    push(pop(stk,-m), obj),
    if 1_rec ∈ [buildtblseq, buildtblrecord] then
    next(pop.newstk, map + bitcast:int(top.newstk))
-   else next(newstk, map)
-,
+   else next(newstk, map),
 if isempty.stk then bitcast:ptr(1^map) else top.stk
 
 function adjuststkcounts(rec:seq.int, fldtypes:seq.int, stkcount:int) seq.int
@@ -340,8 +330,7 @@ do
   acc + val
   else acc + (-stkcount - val - 1)
   , i + 1
- )
-,
+ ),
 acc
 
 Function encode2(data:seq.seq.int) seq.byte
@@ -352,8 +341,7 @@ do
   for pos = true, j ∈ rec while pos do j ≥ 0,
    if pos then
    let acc = LEBu.rec, LEBu(n.acc * 2) + acc
-   else let acc = LEBs.rec, LEBu(n.acc * 2 + 1) + acc
-,
+   else let acc = LEBs.rec, LEBu(n.acc * 2 + 1) + acc,
 LEBu.n.all + all
 
 Function inrec(b:seq.byte) ptr inrec.decode2.b
@@ -373,12 +361,10 @@ do
   while place < endplace
   do
    let x = if pos then decodeLEBu(b, place) else decodeLEBs(b, place),
-   next(acc + value.x, next.x)
-  ,
+   next(acc + value.x, next.x),
   all + acc
   , endplace
- )
-,
+ ),
 all
 
 ____________________________________

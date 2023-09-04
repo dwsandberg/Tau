@@ -153,6 +153,5 @@ do
  {add arcs to graph so path does not need to go through n}
  for arcs = empty:seq.arc.T, p ∈ toseq.predecessors(g, n)
  do for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n) do acc2 + arc(p, s), arcs + acc2,
- g + arcs
-,
+ g + arcs,
 g 

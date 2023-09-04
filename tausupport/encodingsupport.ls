@@ -39,8 +39,7 @@ let encodingno =
  1
  else if subseq(name, 1, 2) = "typename encodingsupport" then
  2
- else let newno = addorder.typename.name + 2 let discard = set(gl, newno), newno
-,
+ else let newno = addorder.typename.name + 2 let discard = set(gl, newno), newno,
 geteinfo2(encodingno, 0)
 
 Function geteinfo2(encodingno:int, dummy:int) einfo

@@ -149,12 +149,18 @@ function t043 boolean
  for acc = "code glyph", e ∈ arithseq(43, 1, 48) do acc + [toword.e, encodeword.[char.e]],
  acc
 
-function t044 boolean "^(dq) ()+,-.:= []^_{}" = standalonechars
+function t044 boolean "^(dq) ()+,-.. :: = []^_{}" = standalonechars
+
+use bits
+
+use seq.byte
 
 function standalonechars seq.word
-for acc = "", e ∈ arithseq(n.classifychar, 1, 1)
-do let class = e_classifychar, if class ∈ "0 SPACE" then acc else acc + [class],
-acc
+for acc0 = [tobyte.70], i ∈ arithseq(127 - 32, 1, 33)
+do acc0 + tobyte.i + tobyte.70 + tobyte.i + tobyte.32 + tobyte.70
+for acc1 = "F", w ∈ 1_breakparagraph.acc0
+do if w ∈ "F" ∨ n.decodeword.w > 2 ∨ w = 1^acc1 then acc1 else acc1 + w,
+acc1 << 1
 
 function t045 boolean
 {testing UNICODE to word conversion and no-break space in integer 8746}
@@ -240,18 +246,14 @@ function t051 boolean
 for acc = "", w ∈ "f g" do next(acc + w),
 acc = "f g"
 
-function t052 boolean
-{constant empty sequence}
-for acc = "d", w ∈ "" do acc + w,
-acc = "d"
+function t052 boolean {constant empty sequence} for acc = "d", w ∈ "" do acc + w, acc = "d"
 
 function t053 boolean
 {using multiple accumulators from inner loop in outer loop}
 for outer1 = 0, outer2 = 1, i ∈ [1, 2, 3, 4]
 do
  for inner1 = 1, inner2 = 2, w ∈ "X Y" do next(inner1, inner2),
- next(outer1 + i, outer2 * i * (inner2 - inner1))
-,
+ next(outer1 + i, outer2 * i * (inner2 - inner1)),
 %.outer1 + %.outer2 = "10 24"
 
 function t054 boolean

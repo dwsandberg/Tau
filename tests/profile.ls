@@ -60,7 +60,9 @@ Function profileresults(measure:seq.word) seq.word
 for d0 = empty:seq.addrsym, a ∈ addresssymbols do d0 + a
 let d = asset.d0
 for profileData2 = empty:seq.parc, e ∈ profiledata do profileData2 + e
-{, for txt ="", p /in profileData2 do txt+" /br"+%.decode (d, caller.p)+%.decode (d, callee.p)+%.counts.p+%.clocks.p+%.unused.p, txt}
+{, for txt ="", p /in profileData2 do txt+"
+ /br"+%.decode (d, caller.p)+%.decode (d, callee.p)+%.counts.p+%.clocks
+ .p+%.unused.p, txt}
 for acc0 = empty:seq.labeledarc.symbol, max = 0, arc ∈ profileData2
 do
  let m = measure(arc, measure),

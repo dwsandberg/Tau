@@ -65,7 +65,8 @@ Function =(a:byte, b:byte) boolean toint.a = toint.b
 Function tobits(a:byte) bits tobits.toint.a
 
 Builtin toint(b:byte) int
-{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e) does not become an noop since a bytseq may contain packed sequences of bytes}
+{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e) does not become
+ an noop since a bytseq may contain packed sequences of bytes}
 
 Function tobyte(a:int) byte byte.a
 
@@ -74,6 +75,5 @@ for acc = empty:seq.bits, current = bits.0, shift = 0, b ∈ a
 do
  if shift = 64 then
  next(acc + current, bits.toint.b ∧ 0xFF, 8)
- else next(acc, current ∨ (bits.toint.b ∧ 0xFF) << shift, shift + 8)
-,
+ else next(acc, current ∨ (bits.toint.b ∧ 0xFF) << shift, shift + 8),
 acc + current 

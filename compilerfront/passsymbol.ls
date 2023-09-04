@@ -161,10 +161,8 @@ do
       else symbol(modname, text.b, types.b >> 1, 1^types.b)
     else symbol4(modname, 1_text.b, 1_types.b, subseq(types.b, 2, n.types.b - 1), 1^types.b)
    assert checkwellformed.sym
-   report
-    "Must use type T in function name or parameters in parameterized module"
-    + "and T cannot be used in non-parameterized module^(input)"
-   ,
+   report "Must use type T in function name or parameters in parameterized module and T cannot be used in non
+    -parameterized module^(input)",
     if 1_input = 1_"unbound" then
     next(
      typeflds
@@ -195,8 +193,7 @@ do
     )
     else
      assert sym ∉ defines
-     report "Function" + wordname.sym + "is defined twice in module" + %.modname
-     ,
+     report "Function" + wordname.sym + "is defined twice in module" + %.modname,
      next(
       typeflds
       , paragraphno + 1
@@ -293,8 +290,7 @@ else
   let usize =
    if size = 1 then
    unknownsize
-   else unknownsize + symbol(builtinmod.fldtype, "typesize", typeint) + PlusOp
-  ,
+   else unknownsize + symbol(builtinmod.fldtype, "typesize", typeint) + PlusOp,
    if idx_binfotext ∈ ":" then
    next(flds, idx + 1, knownsize + size, usize, constructflds)
    else next(
@@ -302,8 +298,7 @@ else
     , idx + 1
     , knownsize + size
     , usize
-    ,
-     constructflds
+    , constructflds
      + 
       if fldtype = typeint ∨ isseq.fldtype then
       [Local.idx]
@@ -393,8 +388,7 @@ else
   let b = lookupbysig(dict, t2),
    if checkreturntype(b, t2) then
    next(exports + 1_b, unresolved, findindex(t2, newtext, 1_b, allsrc))
-   else next(exports, unresolved + t2, newtext)
- ,
+   else next(exports, unresolved + t2, newtext),
  passsymbols(modname.p, uses.p, defines.p, exports, unresolved, typedict.p, newtext)
 
 function checkreturntype(b:set.symbol, t2:symbol) boolean
@@ -421,8 +415,7 @@ function printunresolved(p:passsymbols) seq.word
 let txt = for acc = "", t ∈ toseq.unresolvedexports.p do acc + %.t, acc,
 if isempty.txt then
 ""
-else "module^(modname.p) contains unresolved exports:^(txt)
- /br"
+else "module^(modname.p) contains unresolved exports:^(txt) /br"
 
 Function formsymboldict(
  modset:set.passsymbols
@@ -454,14 +447,10 @@ do
         else
          let list =
           for acc2 = empty:seq.symbol, sym4 ∈ code.1_require do acc2 + replaceTsymbol(para.u, sym4),
-          acc2
-         ,
-         next(acc + setrequires.sym2, req + symdef(sym2, list, 0))
-    ,
-    partdict(acc, req)
-   ,
-   next(syms.r, req.r, 0)
-,
+          acc2,
+         next(acc + setrequires.sym2, req + symdef(sym2, list, 0)),
+    partdict(acc, req),
+   next(syms.r, req.r, 0),
 partdict(syms, requires)
 
 type partdict is syms:set.symbol, req:set.symdef
@@ -481,15 +470,12 @@ do
     for Tis = type?, idx = 1, t ∈ types.e
     do
      let S = solveT(t, idx_types.sym),
-     if S = type? then next(Tis, idx + 1) else next(S, idx + 1)
-    ,
-    Tis
-   ,
+     if S = type? then next(Tis, idx + 1) else next(S, idx + 1),
+    Tis,
     if sym >2 replaceTsymbol(z, e) = EQ then
     if sym >1 e = EQ ∨ isunbound.e then acc else acc + findabstractresult(sd, z)
     else acc
-  else acc
-,
+  else acc,
 acc
 
 type findabstractresult is sd:symdef, modpara:mytype

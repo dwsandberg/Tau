@@ -102,8 +102,7 @@ do
     , push(stk, [escape."</span>"])
     , none
    )
- else next(acc, state, result + last, stk, this)
-,
+ else next(acc, state, result + last, stk, this),
 acc + toUTF83(if last = none then result else result + [last], true)
 
 Export escapeformat word {From UTF8}
@@ -156,6 +155,5 @@ do
    next(acc, indent, newstate, result0, stk, this)
    else if last = 1_"/row" then
    next(acc, indent, newstate, result0 + LF, stk, this)
-   else next(acc, indent, newstate, result0 + last, stk, this)
-,
+   else next(acc, indent, newstate, result0 + last, stk, this),
 acc + toUTF83(if last = none then result else result + last, false) 

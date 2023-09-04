@@ -75,14 +75,13 @@ let t = sort.addrsymX
 for txt = "/p", r ∈ callstack.30 << 2
 do
  let i = binarysearch(t, addrsym(r, Lit.1)),
- txt + %.r + (if between(-i - 1, 1, n.t) then %.sym.(-i - 1)_t else "") + "/br"
-,
+ txt + %.r + (if between(-i - 1, 1, n.t) then %.sym.(-i - 1)_t else "") + "/br",
 txt
 
 ________________
 
 Function tocstr(w:word) seq.byte
-{returns 16 bytes of header followed by UTF8 bytes endding with 0 byte. }
+{returns 16 bytes of header followed by UTF8 bytes endding with 0 byte.}
 packed(toseqbyte(emptyUTF8 + decodeword.w) + tobyte.0)
 
 builtin getbytefile2(seq.byte) process.seq.byte {OPTION STATE}
@@ -92,8 +91,7 @@ for acc = empty:seq.file, fn ∈ getfilenames(args << 1)
 do
  let a = getbytefile2.tocstr.fullname.fn
  assert not.aborted.a report "Error openning file:" + fullname.fn,
- acc + file(fn, result.a + body2.a)
-,
+ acc + file(fn, result.a + body2.a),
 acc
 
 builtin createfile3(data:seq.seq.byte, filename:seq.byte) int
@@ -128,7 +126,8 @@ else
  [result.p]
 
 Function buildargcode(sym:symbol, typedict:typedict) int
-{needed because the call interface implementation for reals is different than other types is some implementations}
+{needed because the call interface implementation for reals is different than other types is some
+ implementations}
 for acc = 1, typ ∈ paratypes.sym + resulttype.sym
 do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0,
 acc

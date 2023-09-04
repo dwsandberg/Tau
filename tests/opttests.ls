@@ -1,14 +1,16 @@
 Module opttests
 
-use standard
+use UTF8
 
 use bits
 
 use real
 
-use UTF8
+use standard
 
 use otherseq.word
+
+use seq.word
 
 Function optest1 int 3 + 4
 
@@ -221,10 +223,25 @@ Function optest48(a:seq.word) seq.word
 for acc = "", w ∈ reverse.a do acc + w,
 acc
 
-use seq.word
-
 Function optest49 word
 let s = "a test"
 let i = 2
 assert i > 0 ∧ i ≤ n.s ∨ getseqtype.s > 1 report "out of bounds",
-idxNB(s, i) 
+idxNB(s, i)
+
+Function optest50(i:int, b:int) int
+{Check to see that duplicate labels are not included in Jump because LLVM requires not duplicates in
+ Switch instruction. }
+if i = 5555 then
+80
+else if i = 7 then
+70
+else if i = 2 then
+20
+else if i = 5555 then
+30
+else if i = 1 then
+60
+else if i = 5555 then
+200
+else 100 

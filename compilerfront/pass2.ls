@@ -14,6 +14,12 @@ use seq.symbol
 
 use symbol2
 
+use encoding.track
+
+use otherseq.track
+
+use otherseq.track2
+
 Export type:expandresult
 
 Export code(expandresult) seq.symbol
@@ -65,9 +71,8 @@ do
  if not.isInternal.sym then
  next(acc + sym, nextvar, sym)
  else if wordname.sym ∈ "idxNB" then
-  let t1 = isconstorlocal.1^acc
   let acc1 =
-   if t1 then
+   if isconstorlocal.1^acc then
     if isconstorlocal.2^acc then
     {Neither argument is expression} acc
     else {first argument is expression} acc >> 1 + Define.nextvar + Local.nextvar + 1^acc
@@ -90,10 +95,9 @@ do
   let theseq = 2^acc1
   let theseqtype = basetype(1_paratypes.sym, typedict)
   let seqtype = Local.nextvar
-  let newcode = acc >> 2 + indexseqcode(seqtype, theseq, index, theseqtype),
+  let newcode = acc1 >> 2 + indexseqcode(seqtype, theseq, index, theseqtype),
   next(newcode, nextvar + 3, sym)
- else next(acc + sym, nextvar, sym)
-,
+ else next(acc + sym, nextvar, sym),
 expandresult(nextvar, acc, 0x0)
 
 function isemptysymbol(empty:symbol) boolean
@@ -151,12 +155,6 @@ type track is key:int, sym:symbol
 
 type track2 is count:int, sym:symbol
 
-use encoding.track
-
-use otherseq.track
-
-use otherseq.track2
-
 Function track(s:symbol) encoding.track encode.track(n.encodingdata:track + 1, s)
 
 function hash(t:track) int key.t
@@ -174,6 +172,5 @@ for acc = empty:seq.track2, count = 0, last = Lit.0, t ∈ sort.encodingdata:tra
 do
  if last = sym.t then
  next(acc, count + 1, sym.t)
- else next(setinsert(acc, track2(count, last)), 1, sym.t)
-,
+ else next(setinsert(acc, track2(count, last)), 1, sym.t),
 %("/br", setinsert(acc, track2(count, last))) 

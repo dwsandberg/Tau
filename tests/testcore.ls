@@ -1,4 +1,28 @@
-Module testall
+Module testcore
+
+use test11a
+
+use testopt
+
+use file
+
+use seq.file
+
+use standard
+
+use testanal
+
+Function testall(input:seq.file, noseq:boolean) seq.word
+{ENTRYPOINT}
+testcore.noseq
+ + test11a.input
+ + analtests
+ + 
+ if isempty.input then
+ "no opt test file specified"
+ else if ext.fn.1_input ∈ "ls" then
+ testopt.input
+ else ""
 
 use bug7
 
@@ -10,13 +34,9 @@ use standard
 
 use test11
 
-use test11a
-
 use testencoding
 
 use testmodules
-
-use testopt
 
 use testprocess
 
@@ -25,6 +45,10 @@ use testseq
 use wordfreq
 
 use words
+
+use testPEG
+
+use testDifferentTypes
 
 function checkhash seq.word
 if
@@ -106,7 +130,7 @@ then
 "PASS hash"
 else "Fail hash"
 
-Function testall(input:seq.file, noseq:boolean) seq.word
+Function testcore(noseq:boolean) seq.word
 {ENTRYPOINT}
 test11
  + checkhash
@@ -116,12 +140,7 @@ test11
  + randomtest.500
  + testreal
  + (if noseq then "" else testseq)
- + test11a.input
  + testwordfreq
  + testprocess
- + 
- if isempty.input then
- "no opt test file specified"
- else if ext.fn.1_input ∈ "ls" then
- testopt.input
- else "" 
+ + testPEG
+ + testDiffTypes 

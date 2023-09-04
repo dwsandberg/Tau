@@ -47,8 +47,7 @@ else
   let newseq = allocatespace(blksz + 2)
   let k = subseq(s, @e, @e + blksz - 1)
   let d = for acc2 = set(set(newseq, 0), n.k), e ∈ k do set2(acc2, e), acc2,
-  set(acc, newseq)
- ,
+  set(acc, newseq),
  bitcast:seq.T(blkseq)
 
 Function blockit2(s:seq.T, ds:int) seq.T
@@ -67,6 +66,5 @@ else
   let s2 = subseq(s, @e, @e + blksz - 1)
   let newseq = allocatespace(n.s2 * ds + 2)
   let d = for acc2 = set(set(newseq, 1), n.s2), e ∈ s2 do set2(acc2, e), acc2,
-  set(acc, newseq)
- ,
+  set(acc, newseq),
  bitcast:seq.T(blkseq) 

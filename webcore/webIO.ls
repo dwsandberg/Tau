@@ -72,8 +72,6 @@ let xml =
   if hasquote = none then next(xml + w + "/nosp", w) else next(xml + w, none)
   else if w = 1_"/br" then
   next(xml + encodeword.[char.10], hasquote)
-  else next(xml + w, hasquote)
- ,
- xml
-,
+  else next(xml + w, hasquote),
+ xml,
 replacesvg(token.name, jsUTF8.toseqbyte.toUTF8.xml) 

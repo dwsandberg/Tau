@@ -75,16 +75,14 @@ let all =
  + check:seq.typerec2(16, 17)
  + check:seq.typerec2(16, 8)
  + EOL
- + sparsecheck
-,
+ + sparsecheck,
 if 1_"FAIL" ∉ all then "PASS testseq" else "FAIL testseq^(all)"
 
 Function sparsecheck seq.word
 let b =
  for acc = sparseseq.101, @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
  do check(acc, @e),
- acc
-,
+ acc,
 "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int

@@ -85,8 +85,7 @@ let r2 =
   , 1_"."
   , encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
  ]
- else [toword.intpart.r]
-,
+ else [toword.intpart.r],
 if neg then "-^(r2)" else r2
 
 Function toUTF8(rin:real, decimals:int) UTF8

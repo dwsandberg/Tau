@@ -128,8 +128,7 @@ else
   next(2_p ∈ exportlist << idx, exports2)
   else if inexport ∧ 1_p ∈ "use" then
   next(inexport, exports2 + 2_p)
-  else next(inexport, exports2)
- ,
+  else next(inexport, exports2),
  exportlist >> (n.exportlist - idx + 1) + exports2
 
 Function compilerfront3(
@@ -152,12 +151,9 @@ else
     do
      let mt = abstractModref.1_t
      let mt2 = if isAbstract.mt then replaceT(parameter.1_t, mt) else mt,
-     if mt2 = modname.m then tmp + 1_t else tmp
-    ,
-    tmp
-   ,
-   acc + passtypes(modname.m, tmp, typedict.m)
-  ,
+     if mt2 = modname.m then tmp + 1_t else tmp,
+    tmp,
+   acc + passtypes(modname.m, tmp, typedict.m),
   acc
  {figure out how to interpret text form of type}
  let modsx = resolvetypes(libpasstypes, allsrc, lib)
@@ -185,8 +181,7 @@ else
    let libmods =
     for acc5 = empty:seq.modExports, m2 ∈ toseq.modules.t5
     do acc5 + modExports(module.m2, toseq.exports.m2, empty:seq.seq.mytype),
-    acc5
-   ,
+    acc5,
    midpoint5(option, acc, requireUnbound, emptytypedict, libmods, allsrc)
   else if option = "prebind" then
   midpoint(option, prg10, typedict, toModules(typedict, toseq.modules.t5, exports), empty:seq.seq.word)
@@ -221,15 +216,11 @@ do
       let c =
        for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s)
        do c + if isencoding.t ∨ t = typechar then typeint else t,
-       c
-      ,
+       c,
       acc5 + ([resulttype.s] + c)
-    else acc5
-   ,
-   acc5
-  ,
-  acc + modExports(module.m2, exps, types)
-,
+    else acc5,
+   acc5,
+  acc + modExports(module.m2, exps, types),
 acc
 
 function roots(s1:seq.modExports) set.symbol
@@ -264,14 +255,11 @@ do
      if name.sym2 ∈ "stacktrace" then acc + sym2 else acc
      else if name.module.sym2 ∈ "builtin $for" then
      acc
-     else acc + sym2
-    ,
-    acc
- ,
+     else acc + sym2,
+    acc,
   if isempty.toexport then
   next(toprocess, processed, false)
-  else next(asset.new, processed ∪ toprocess, true)
-,
+  else next(asset.new, processed ∪ toprocess, true),
 processed
 
 Function prepareback(midin:midpoint, dependentlibs:midpoint) midpoint
@@ -285,8 +273,7 @@ let initprofile0 =
   next(acc + x, tausupport)
   else if name.modname.x ∈ "tausupport" then
   next(acc, [x])
-  else next(acc, tausupport)
- ,
+  else next(acc, tausupport),
  tausupport + acc
 let baselib =
  if isempty.initprofile0 ∨ name.modname.1_initprofile0 ∉ "tausupport" then
@@ -309,8 +296,7 @@ let libextnames0 =
   next(acc, stackTrace)
   else if name.sym.sd ∈ "stackTraceImp" then
   next(acc + sd, [sd])
-  else next(acc + sd, stackTrace)
- ,
+  else next(acc + sd, stackTrace),
  stackTrace + acc
 let libextnames = asset.libextnames0
 let libmods = libmods.midin + initprofile0
@@ -339,8 +325,7 @@ do
       sym
       , empty:seq.symbol
       , idx
-      ,
-       if isempty.sd ∨ 1_"COMPILETIME" ∉ getOptions.1_sd then
+      , if isempty.sd ∨ 1_"COMPILETIME" ∉ getOptions.1_sd then
        "ThisLibrary"
        else "ThisLibrary COMPILETIME"
      )]
@@ -356,10 +341,8 @@ do
           let basesym = basesym.sym2
           let b = getSymdef(libextnames, basesym),
           if not.isempty.b then if isFref.sym2 then Fref.sym.1_b else sym.1_b else sym2
-         else sym2
-       ,
-       acc
-      ,
+         else sym2,
+       acc,
       [
        if isrecordconstant.sym ∨ libname = library.module.sym ∨ abstract then
        symdef4(sym, code, idx, getOptionsBits.1_sd)
@@ -368,8 +351,7 @@ do
          if not.isempty.b then
          symdef(sym.1_b, empty:seq.symbol, paragraphno.1_b)
          else symdef4(sym, code, idx, "ThisLibrary^(getOptions.1_sd)")
-      ]
-  ,
+      ],
    if isempty.new then
    next(stackTrace, prgX, if abstract then idx else idx + 1)
    else if abstract then
@@ -380,8 +362,8 @@ do
 let stacktrace2 =
  if isempty.stackTrace then
  ""
- else "stacktrace =^([library.module.sym.1_stackTrace, name.module.sym.1_stackTrace, name.sym.1_stackTrace])"
-,
+ else "stacktrace =
+  ^([library.module.sym.1_stackTrace, name.module.sym.1_stackTrace, name.sym.1_stackTrace])",
 midpoint(
  option.midin
  , prgX
@@ -438,8 +420,7 @@ do
   let flds = flatflds(typedict.m, t4)
   assert not.isempty.flds report "outlib problem^(t4)",
   moretypes + ([t4] + flds)
- else moretypes
-,
+ else moretypes,
 midpoint(
  "X"
  , asset(acc + f45(empty:set.symbol, asset.rc, empty:seq.symdef))

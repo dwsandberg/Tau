@@ -32,13 +32,9 @@ do
  let p = process.checkkind(s, typedict)
  let b =
   if aborted.p then
-  "/p ERROR:^(sym.s)
-   /br^(message.p)
-   /br fullcode^(code.s)"
-  else result.p
- ,
- next(acc + b, if isempty.b then count else count + 1)
-,
+  "/p ERROR:^(sym.s) /br^(message.p) /br fullcode^(code.s)"
+  else result.p,
+ next(acc + b, if isempty.b then count else count + 1),
 if count = 0 then
 "Passed Base Type Check"
 else "Base Type Check Failed^(count) Times^(acc)"
@@ -92,8 +88,7 @@ else
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), loc, false)
     else if isExit.s then
      assert top.stk = top.pop.stk ∨ top.stk = typeint ∧ top.pop.stk = typebyte
-     report "exit type does not match block type^(top.stk)^(top.pop.stk)"
-     ,
+     report "exit type does not match block type^(top.stk)^(top.pop.stk)",
      next(pop.stk, localtypes, false)
     else if isblock.s then
     next(stk, localtypes, false)
@@ -104,8 +99,7 @@ else
     next(push(stk, if isseq.resulttype.s then typeptr else resulttype.s), localtypes, false)
     else if isbr.s then
      assert top.stk = typeboolean
-     report "if problem^(for a = "", e ∈ top(stk, 1) do a + %.e, a)"
-     ,
+     report "if problem^(for a = "", e ∈ top(stk, 1) do a + %.e, a)",
      next(pop.stk, localtypes, false)
     else if islocal.s then
      let localtype = lookup(localtypes, value.s)
@@ -116,9 +110,11 @@ else
     else
      let parakinds = for acc = empty:seq.mytype, @e ∈ paratypes.s do acc + coretype(@e, typedict), acc
      assert check5(top(stk, nopara.s), parakinds)
-     report "/br symbol type missmatch for^(s)
+     report "
+      /br symbol type missmatch for^(s)
       /br stktop^(top(stk, nopara.s))
-      /br parabasetypes^(parakinds)",
+      /br parabasetypes
+      ^(parakinds)",
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
    assert n.toseq.stk = 1 report "Expect one element on stack:^(toseq.stk)"
    assert check5([top.stk], [coretype(returntype, typedict)])
@@ -130,19 +126,14 @@ for acc = n.a = n.b, idx = 1, t ∈ a
 while acc
 do
  let t2 = idx_b,
- next(t2 = t ∨ t = typebyte ∧ t2 = typeint ∨ t2 = typebyte ∧ t = typeint, idx + 1)
-,
+ next(t2 = t ∨ t = typebyte ∧ t2 = typeint ∨ t2 = typebyte ∧ t = typeint, idx + 1),
 acc
 
 Function checkresults(prg:seq.symdef) seq.word
 for defines = asset.knownsym, uses = empty:set.symbol, sd ∈ prg
 do next(defines + sym.sd, uses ∪ asset.code.sd)
 let undefined = uses \ defines
-for
- acc10 = "/p
-  /p checkresults
-  /p"
- , h ∈ toseq.undefined
+for acc10 = "/p /p checkresults /p", h ∈ toseq.undefined
 do
  if
   isAbstract.module.h
@@ -155,15 +146,8 @@ do
   ∨ isBuiltin.h ∧ wordname.h ∈ "createthreadZ" ∧ paratypes.h = [typeptr]
  then
  acc10
- else acc10 + %.h + "/br"
-,
-"CheckResult:^(
-  if isempty.acc10 then
-  "OK"
-  else
-   acc10
-   + "/p end checkresults
-    /p")"
+ else acc10 + %.h + "/br",
+"CheckResult:^(if isempty.acc10 then "OK" else acc10 + "/p end checkresults /p")"
 
 function knownsym seq.symbol
 let typecstr = typeref."cstr fileio."

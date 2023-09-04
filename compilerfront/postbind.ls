@@ -55,8 +55,7 @@ else
    name.sym ∉ "idxNB"
    else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
    , idx + 1
-  )
- ,
+  ),
  isverysimple ∧ name.sym1 ∉ "decodeword encodeword"
 
 Function postbind(
@@ -109,13 +108,13 @@ do
       k21
       else
        for acc = empty:set.symbol, sy ∈ toseq.k21 do if isunbound.sy then acc else acc + sy,
-       if isempty.acc then k21 else acc
-     ,
+       if isempty.acc then k21 else acc,
       if isempty.k2 then
       instantiateTemplate(symz, templates)
       else
        assert n.k2 = 1
-       report "unbound problem^(symz)^(
+       report "unbound problem^(symz)
+        ^(
          if n.k2 > 1 then
          for txt = "", symt ∈ toseq.k2 do txt + "/br" + library.module.symt + %.symt, txt
          else "")"
@@ -148,8 +147,7 @@ do
       Sequence(parameter.basetype(resulttype.sym, newdict4), nopara.sym)
       else if isstart.sym then
       Start.basetype(resulttype.sym, newdict4)
-      else sym
-     ,
+      else sym,
      next(newdict4, cache, nextvar, result1 + newsym)
     else
      let sym4 = basesym.sym3
@@ -161,8 +159,7 @@ do
         newdict3
         , cache
         , nextvar
-        ,
-         if iscore4.typ ∨ isseq.typ ∨ isencoding.typ then
+        , if iscore4.typ ∨ isseq.typ ∨ isencoding.typ then
          result1
          else
           let t = flatflds(newdict3, typ),
@@ -200,26 +197,22 @@ do
        let newValue2 =
         if not.isempty.result2 ∧ 1^result2 = PreFref ∧ n.newValue ≠ 1 then
         {cannot inline Fref} [sym5]
-        else newValue
-       ,
+        else newValue,
        next(
         newdict3
         , if isempty.cache then cache + symdef(sym4, newValue, 0) else cache
         , nextvar
         , result2 + newValue2
-       )
-   ,
+       ),
    next(
     newdict4
     , symdef4(symz, result1, 0, getOptionsBits.sd) ∪ resultZ
-    ,
-     if verysimpleinline(symz, result1) ∧ not.isNOINLINE.sd then
+    , if verysimpleinline(symz, result1) ∧ not.isNOINLINE.sd then
      inlineZ + symdef(symz, result1, 0)
      else inlineZ
    )
  let aa = encodingdata:symbol,
- next(n.aa, resultZ, typedictZ, inlineZ, subseq(aa, last + 1, n.aa))
-,
+ next(n.aa, resultZ, typedictZ, inlineZ, subseq(aa, last + 1, n.aa)),
 midpoint5("", result, templates, typedict0, empty:seq.modExports, empty:seq.seq.word)
 
 function %(t:localmap2) seq.word "key: ^(key.t)^(value.t)"
@@ -233,8 +226,7 @@ do
   else if isloopblock.s then
   max(acc, firstvar.s + nopara.s - 1)
   else acc
- else acc
-,
+ else acc,
 acc
 
 function handleBuiltin(sym:symbol, newdict3:typedict) seq.symbol
@@ -270,7 +262,9 @@ else if name.sym ∈ "primitiveadd" then
  let addefuncx = symbol(moduleref("* encoding", T), "add1encoding", [typeptr, T], encodingtype)
  let discard4 = symbolref.addefuncx
  let discard3 = symbolref.add2
- {if isseq.basetype /or basetype = typeptr then [symbol (internalmod," bitcast", typeptr, typeint), PreFref, addefuncx, add2] else assert basetype = typeint report" case not handled" [PreFref, addefuncx, add2]}
+ {if isseq.basetype /or basetype = typeptr then [symbol (internalmod," bitcast", typeptr,
+  typeint), PreFref, addefuncx, add2] else assert basetype = typeint report" case not handled"
+  [PreFref, addefuncx, add2]}
  [Record.[basetype], PreFref, addefuncx, add2]
 else if name.sym ∈ "deepcopy" then
 let dc = deepcopySym.para.module.sym let discard2 = symbolref.dc, [dc]
@@ -302,10 +296,8 @@ else if name.sym ∈ "typestructure" then
        + if idx < 3 then [Word.w] else [Word.w, Record.[typeword, typeword, typeword]]
        , if idx = 3 then 1 else idx + 1
       ),
-      acctype + Sequence(typeword, n.fp / 3)
-   ,
-   accrow + Sequence(seqof.typeptr, n.row)
- ,
+      acctype + Sequence(typeword, n.fp / 3),
+   accrow + Sequence(seqof.typeptr, n.row),
  acc + Sequence(typeptr, n.tmp)
 else [
  if name.sym ∈ "outofbounds" then
@@ -347,7 +339,8 @@ symdef(sym2, empty:seq.symbol, 0)
 else
  let gx = findabstract(templates, sym2)
  assert n.gx = 1
- report "Cannot find template for X^(n.gx)^(sym2)^(
+ report "Cannot find template for X^(n.gx)^(sym2)
+  ^(
    if isempty.gx then
    ""
    else for txt = "", k ∈ gx do txt + "/br" + %.sym.sd.k + %.modpara.k, txt)"
@@ -359,7 +352,8 @@ function deepcopybody(type:mytype, typedict:typedict) seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then
 [Local.1]
 else if isseq.type then
- {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6}
+ {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.
+  packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6}
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype,
   if elementtype = typeboolean then
@@ -401,8 +395,7 @@ else
      fldno + 1
      , fldkinds + kind
      , result + [Local.1, Lit(fldno - 1), Getfld.kind, deepcopySym.fldtype]
-    )
-   ,
+    ),
    result + [Record.fldkinds]
 
 __________________________
@@ -414,7 +407,8 @@ function symbolref(sym:symbol) symbolref symbolref.addorder.sym
 _________________
 
 Function prescan2(s:seq.symdef, typedict:typedict) seq.symdef
-{removes name from locals and makes value of local unique./br changes length and getseqtype to GetSeqLength and GetSeqType
+{removes name from locals and makes value of local unique.
+ /br changes length and getseqtype to GetSeqLength and GetSeqType
  /br removes next}
 for acc = empty:seq.symdef, p ∈ s
 do
@@ -444,8 +438,7 @@ do
    do localmap2(v, [Local(v + offset)]) ∪ newmap
    let newsym =
     for acc2 = empty:seq.mytype, para ∈ paratypes.sym do acc2 + basetype(para, newdict),
-    Loopblock(acc2, nextvar, basetype(resulttype.sym, newdict))
-   ,
+    Loopblock(acc2, nextvar, basetype(resulttype.sym, newdict)),
    next(
     nextvar + nopara.sym
     , newmap
@@ -460,8 +453,7 @@ do
     if continueSize = nopara.f + 1 then
      let l = lookup(map, toint.1_%.parameter.para.module.f + nopara.f + 4),
      result >> 1 + value.1_l
-    else result >> 1
-   ,
+    else result >> 1,
    next(nextvar, map, newresult + continue.continueSize, newdict, lastloop)
   else if sym = EndBlock then
   next(nextvar, map, result + sym, newdict, if isempty.lastloop then lastloop else pop.lastloop)
@@ -476,8 +468,7 @@ do
   else next(
    nextvar
    , map
-   ,
-    result
+   , result
     + 
      if not.isBuiltin.sym then
      sym
@@ -493,10 +484,8 @@ do
      else sym
    , newdict
    , lastloop
-  )
- ,
- acc + symdef4(sym.p, result, 0, getOptionsBits.p)
-,
+  ),
+ acc + symdef4(sym.p, result, 0, getOptionsBits.p),
 acc
 
 function roots(exports:seq.word, mods:set.passsymbols, prg10:set.symdef) symbolref
@@ -514,8 +503,6 @@ do
    symbolref.sym2
    else if isAbstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2 ∨ inModFor.sym2 then
    acc3
-   else symbolref.sym2
-  ,
-  acc3
-,
+   else symbolref.sym2,
+  acc3,
 acc 

@@ -67,8 +67,7 @@ Function knownWfunc(alltypes:typedict, libname:word) seq.wfunc
   , symbol(internalmod, "packedindex", typepackedseq6, typeint, typeptr)
   , const64(6 * 8) + i64mul + const64(8 * (6 - 2)) + i64sub + i64add
  )
- ,
-  {wfunc (alltypes, symbol (internalmod," bitcast", typereal, typeptr), empty:seq.byte),}
+ , {wfunc (alltypes, symbol (internalmod," bitcast", typereal, typeptr), empty:seq.byte),}
   wfunc(alltypes, symbol(internalmod, "bitcast", typeint, typeptr), empty:seq.byte)
  , wfunc(alltypes, symbol(internalmod, "toint", typebyte, typeint), empty:seq.byte)
  , wfunc(alltypes, symbol(internalmod, "bitcast", typeptr, typeptr), empty:seq.byte)

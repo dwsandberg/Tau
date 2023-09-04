@@ -56,8 +56,6 @@ use otherseq.word
 
 use otherseq.seq.word
 
-/use stack.seq.word
-
 use words
 
 function key(p:seq.word) word
@@ -128,8 +126,7 @@ let srctext =
   do
    if paragraphno.sd = 0 then
    acc4
-   else let newwords = totext(src, sd), replace(acc4, paragraphno.sd, newwords)
-  ,
+   else let newwords = totext(src, sd), replace(acc4, paragraphno.sd, newwords),
   acc4
  else
   for acc = empty:seq.seq.word, i ∈ input2
@@ -198,10 +195,8 @@ do
        let p2 = newtext(exportinfo, pno, 2_modtext),
        if isempty.p2 ∨ moveexports then modtext else modtext + "/p" + pretty.p2
       else modtext + "/p" + pretty.p
-     else modtext + "/p" + if html then p else escapeformat.p
-    ,
-    next(txt, newmodtext, uses, pno + 1)
-,
+     else modtext + "/p" + if html then p else escapeformat.p,
+    next(txt, newmodtext, uses, pno + 1),
 if html then
  for maintxt = "", header = "", M ∈ txt
  do
@@ -211,13 +206,9 @@ if html then
    let modname = 2_M
    let indextxt = if noindex then "" else "/< hr id =^(merge.dq.[modname]) >",
    next(
-    maintxt
-    + indextxt
-    + "/keyword^(M)
-     /p"
+    maintxt + indextxt + "/keyword^(M) /p"
     , header + "/< a href =^(merge.dq("#" + modname)) >^(modname) /< /a>"
-   )
- ,
+   ),
  [file(o, if noindex then maintxt else "^(header)^(maintxt)")]
 else
  let modtodir =
@@ -229,19 +220,16 @@ else
    next(modtodir + "/br" + rename(modrenames, 2_p1) + lib, lib)
    else if 1_p1 ∈ "Library" then
    next(modtodir, merge(directory + "/" + 3_p1))
-   else next(modtodir, lib)
-  ,
+   else next(modtodir, lib),
   modtodir
  let bindpara =
   if not.bind then
   ""
   else "bind^(if isempty.patterns then "" else "patterns applied:^(patterns)")"
- let para = "^(if reorguse then "reorguse" else "")^(bindpara)^(if cleanexports then "cleanexports" else "")^(if moveexports then "moveexports" else "")^(for txt2 = "", x ∈ input2 do txt2 + "/br" + fullname.fn.x, txt2)"
- for
-  files = empty:seq.file
-  , summary = "inputs^(para)
-   /p files created"
-  , M ∈ txt
+ let para = "^(if reorguse then "reorguse" else "")^(bindpara)
+  ^(if cleanexports then "cleanexports" else "")^(if moveexports then "moveexports" else "")
+  ^(for txt2 = "", x ∈ input2 do txt2 + "/br" + fullname.fn.x, txt2)"
+ for files = empty:seq.file, summary = "inputs^(para) /p files created", M ∈ txt
  do
   if subseq(M, 1, 1) ∉ ["Module", "module"] ∨ char1."$" ∈ decodeword.2_M ∨ n.M < 2 then
   next(files, summary)
@@ -249,8 +237,7 @@ else
    let modname = 2_M
    let idx = findindex(modtodir, modname)
    let fn = filename("+" + (idx + 1)_modtodir + modname + ".ls"),
-   next(files + file(fn, M), summary + "/br" + fullname.fn)
- ,
+   next(files + file(fn, M), summary + "/br" + fullname.fn),
  files + file(o, summary)
 
 Function unusedsymbols2(
@@ -267,8 +254,7 @@ let templates =
  do
   if isAbstract.module.sym ∧ isempty.getCode(templates.m, sym) then
   acc + symdef(sym, empty:seq.symbol, 0)
-  else acc
- ,
+  else acc,
  acc
 let roots =
  for acc = empty:set.symbol, sd ∈ toseq.prg.m
@@ -281,8 +267,7 @@ let a3 =
   let b = getSymdef(prg.m, sym),
    if not.isempty.b ∧ paragraphno.1_b ≠ 0 ⊻ generated0 then
    next(acc + sym, prg + 1_b)
-   else next(acc, prg)
- ,
+   else next(acc, prg),
   if all then
   acc
   else
@@ -307,16 +292,13 @@ let outsyms =
    do
     if module.sy = module.sym.sd then
     next(internal0 + sy, external0)
-    else next(internal0, external0 + sy)
-   ,
-   next(internal0, external0)
-  ,
+    else next(internal0, external0 + sy),
+   next(internal0, external0),
   internaluse ∩ asset.exportedSymbols \ externaluse \ a3
  else a3
 for acc = empty:seq.seq.word, sym ∈ toseq.outsyms
 do if name.sym ∈ ignore then acc else acc + %.sym,
-"Unused symbols for roots^(toseq.roots)
- /p^(%n.alphasort.acc)"
+"Unused symbols for roots^(toseq.roots) /p^(%n.alphasort.acc)"
 
 function rename(renames:seq.word, name:word) word
 let i = findindex(renames, name),
@@ -344,8 +326,7 @@ let new1 =
    ∨ isRealLit.sym
   then
   acc
-  else acc + sym
- ,
+  else acc + sym,
  asset.acc \ done
 let new2 = requires(new1, templates, dict, true) \ done ∪ new1,
 if isempty.new2 then done else closeuse(done ∪ toprocess, new2, prg, templates, dict)
@@ -364,12 +345,10 @@ do
   for newcode = empty:seq.symbol, pat ∈ patterns
   do
    let tmp = replace2(if isempty.newcode then code.e else newcode, pattern.pat, replacement.pat, nopara.pat),
-   if isempty.tmp then newcode else tmp
-  ,
+   if isempty.tmp then newcode else tmp,
    if isempty.newcode then
    acc4
-   else acc4 + symdef4(sym.e, newcode, paragraphno.e, getOptionsBits.e)
-,
+   else acc4 + symdef4(sym.e, newcode, paragraphno.e, getOptionsBits.e),
 acc4
 
 function getpatterns(m:midpoint, patternmods:seq.word) seq.patternType
@@ -389,8 +368,7 @@ else
     setinsert(
      patterns
      , patternType(psym, nopara.psym, subseq(code, para1, para2 - 1), subseq(code, para2, n.code - 1))
-    )
- ,
+    ),
  patterns
 
 type patternType is psym:symbol, nopara:int, pattern:seq.symbol, replacement:seq.symbol

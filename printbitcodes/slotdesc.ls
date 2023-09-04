@@ -1,4 +1,6 @@
-module slotdesc
+Module slotdesc
+
+/use sparseseq.codefreq
 
 use UTF8
 
@@ -6,17 +8,23 @@ use bitcodesupport
 
 use bits
 
-use llvm
+use encoding.seq.char
 
-use standard
-
-use words
+use seq.encodingpair.seq.char
 
 use seq.constop
 
+use otherseq.int
+
 use set.int
 
+use llvm
+
+use otherseq.objectfldslots
+
 use seq.slotdesc
+
+use standard
 
 use otherseq.word
 
@@ -24,17 +32,13 @@ use process.word
 
 use seq.word
 
+use sparseseq.seq.word
+
 use set.word
 
 use sparseseq.word
 
-use encoding.seq.char
-
-use sparseseq.seq.word
-
-use seq.encodingpair.seq.char
-
-/use sparseseq.codefreq
+use words
 
 type slotdesc is typ:int, rec:seq.int
 
@@ -90,8 +94,7 @@ do
     if (typ.k + 1)_types ∈ ["i64", "i32"] then
     result + z
     else result + "^(z) ERROR^((typ.k + 1)_types)"
-   else result + z
-,
+   else result + z,
 result
 
 function findtype(slots:seq.slotdesc, i:int) int
@@ -129,16 +132,15 @@ do
       "0,"
       else if 4_a - 1 > n.result then
       "toint.slot (" + toword(4_a - 1) + ")+1,"
-      else "toint.^((4_a)_result)+1,"
-     ,
+      else "toint.^((4_a)_result)+1,",
       "modulerecord (^(dq)^(name)^(dq + ", [toint.GLOBALVAR, typ.")^(typ),"
       + toword.3_a
       + ","
       + init
       + %(",", subseq(a, 5, n.a)) >> 1
       + "]"
-    else "modulerecord (^(dq)^(name)^(dq + ", [toint.FUNCTIONDEC, typ.")^(typ),^(%(",", subseq(a, 3, n.a)) >> 1)]"
-   ,
+    else "modulerecord (^(dq)^(name)^(dq + ", [toint.FUNCTIONDEC, typ.")^(typ),
+     ^(%(",", subseq(a, 3, n.a)) >> 1)]",
    result + if check then new + "," + printrecord(MODULE, a) + ")" else new + ")"
   else
    let currenttype = (typ.sd + 1)_types
@@ -150,42 +152,43 @@ do
      "C32." + toword.2_a
      else currenttype + [toword.2_a]
     else
-     {if a_1 = AGGREGATE then let eletype = subseq (currenttype, 4, n.currenttype-1)" ["+@ (seperator.",", lookupconst.result,"", subseq (a, 2, n.a))+"]" else}
-     if 1_a = toint.CCAST ∧ castop.2_a = ptrtoint then
-      let objno = checkobjref(s, types, sd),
-       if objno ≥ 0 ∧ objects then
-       "obj.^(objno)"
-       else
-        assert currenttype = "i64"
-        report "not expecting type in prttoint^(currenttype)^((3_a + 1)_types)"
-        ,
-        "ptrtoint (^(lookupconst(result, 4_a)),^((3_a + 1)_types)^(if check then ",^(printrecord(CONSTANTS, a)))" else ")")"
-     else if 1_a = toint.CGEP ∧ n.a = 8 ∧ check then
-     "CGEP (^(if 2_a = 1 then "conststype" else (3_a + 1)_types),^(
-       lookupconst(result, 4_a)
-       + ","
-       + lookupconst(result, 6_a)
-       + ","
-       + lookupconst(result, 8_a)
-       + ","
-       + printrecord(CONSTANTS, a)
-       + ")")"
-     else if 1_a = toint.CGEP ∧ n.a = 8 then
-      let a8 = lookupconst(result, 8_a)
-      let a6 = lookupconst(result, 6_a),
-       (if currenttype = "ptr.i8" then "CGEPi8 (" else "CGEP (")
-       + lookupconst(result, 4_a)
-       + ","
-       + (if a6 = "C32.0" ∧ subseq(a8, 1, 2) = "C64." then [3_a8] else a6 + "," + a8)
-       + if check then ",^(printrecord(CONSTANTS, a)))" else ")"
-     else
-      assert constop.1_a ∈ [CAGGREGATE, CNULL, CDATA, CCAST]
-      report "KL^(decode.constop.1_a)" + toword.1_a
-      ,
-      "C (^(currenttype),^(printrecord(CONSTANTS, a)))"
-   ,
-   result + b
-,
+     {if a_1 = AGGREGATE then let eletype = subseq (currenttype, 4, n.currenttype-1)" ["+@
+      (seperator.",", lookupconst.result,"", subseq (a, 2, n.a))+"]" else}
+     (
+      if 1_a = toint.CCAST ∧ castop.2_a = ptrtoint then
+       let objno = checkobjref(s, types, sd),
+        if objno ≥ 0 ∧ objects then
+        "obj.^(objno)"
+        else
+         assert currenttype = "i64"
+         report "not expecting type in prttoint^(currenttype)^((3_a + 1)_types)",
+         "ptrtoint (^(lookupconst(result, 4_a)),^((3_a + 1)_types)
+          ^(if check then ",^(printrecord(CONSTANTS, a)))" else ")")"
+      else if 1_a = toint.CGEP ∧ n.a = 8 ∧ check then
+      "CGEP (^(if 2_a = 1 then "conststype" else (3_a + 1)_types),
+       ^(
+        lookupconst(result, 4_a)
+        + ","
+        + lookupconst(result, 6_a)
+        + ","
+        + lookupconst(result, 8_a)
+        + ","
+        + printrecord(CONSTANTS, a)
+        + ")")"
+      else if 1_a = toint.CGEP ∧ n.a = 8 then
+       let a8 = lookupconst(result, 8_a)
+       let a6 = lookupconst(result, 6_a),
+        (if currenttype = "ptr.i8" then "CGEPi8 (" else "CGEP (")
+        + lookupconst(result, 4_a)
+        + ","
+        + (if a6 = "C32.0" ∧ subseq(a8, 1, 2) = "C64." then [3_a8] else a6 + "," + a8)
+        + if check then ",^(printrecord(CONSTANTS, a)))" else ")"
+      else
+       assert constop.1_a ∈ [CAGGREGATE, CNULL, CDATA, CCAST]
+       report "KL^(decode.constop.1_a)" + toword.1_a,
+       "C (^(currenttype),^(printrecord(CONSTANTS, a)))"
+     ),
+   result + b,
 result
 
 function checkobjref(slots:seq.slotdesc, types:seq.seq.word, slot:slotdesc) int
@@ -206,8 +209,6 @@ if 1_a = toint.CCAST ∧ castop.2_a = ptrtoint then
   else -1
 else -1
 
-use otherseq.int
-
 Function obj2txt(objects:seq.objectfldslots, slots:seq.seq.word) seq.word
 for acc = "", e ∈ objects
 do
@@ -215,15 +216,11 @@ do
  do
   let a = (fld + 1)_slots
   let b = if subseq(a, 1, 2) = "C64." then a << 2 else a,
-  acc2 + b + ","
- ,
- acc2 >> 1 + "/br"
-,
+  acc2 + b + ",",
+ acc2 >> 1 + "/br",
 acc
 
 type objectfldslots is objno:int, slots:seq.int
-
-use otherseq.objectfldslots
 
 function %(a:objectfldslots) seq.word %.objno.a + %.slots.a
 
@@ -244,6 +241,5 @@ do
   then
    let t = 2_rec.(8_gep + 1)_slots,
    next(acc + objectfldslots(lastt, subseq(objarray, lastt + 2, t + 2 - 1)), t)
-  else next(acc, lastt)
-,
+  else next(acc, lastt),
 acc << 1 + objectfldslots(lastt, subseq(objarray, lastt + 2, n.objarray)) 

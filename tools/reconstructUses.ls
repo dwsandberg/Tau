@@ -93,8 +93,7 @@ else
   do
    if module.sym.sd = modname.md then
    next(uses + code.sd, symlist + sym.sd)
-   else next(uses, symlist)
-  ,
+   else next(uses, symlist),
   asset(uses + addtypes(symlist, modname.md, prg.m))
  {find symbols referenced in expanding templates}
  let uses6 = uses5 ∪ requires(uses5, templates.m, dict, false)
@@ -123,8 +122,7 @@ else
      let inmod = inModule(exported - sym/modref(sym, thismodule), sym),
       if n.inmod = 1 then
       next(uses + 1_inmod, unhandled, included ∪ asset.exports(m, 1_inmod))
-      else next(uses, unhandled + inmod, included)
- ,
+      else next(uses, unhandled + inmod, included),
  asset.chooseUses(uses, unhandled, modname, olduses, exported) - thismodule
 
 function chooseUses(
@@ -152,8 +150,7 @@ let tmp =
  if not.isempty.acc then
   for acc2 = empty:seq.modref, x ∈ toseq.1_acc do if %.x ∈ olduses then acc2 + x else acc2,
   acc2
- else empty:seq.modref
-,
+ else empty:seq.modref,
 if n.tmp = 1 then
 chooseUses(toseq.newuses + 1_tmp, acc, modname, olduses, exported)
 else if n.newuses > n.asset.uses then
@@ -172,8 +169,7 @@ let tmp =
   do
    if replaceTsymbol(para.module.sym, sym.sm) = sym then
    acc2 + sym/modref(sym, replaceT(in.sm, para.module.sym))
-   else acc2
-  ,
+   else acc2,
   acc2
 for acc = empty:set.modref, e ∈ tmp do acc + in.e,
 acc
@@ -193,10 +189,8 @@ do
   do
    if replaceTsymbol(para.module.sym, sym.sd) = sym then
    (if addtemplate then acc2 + sym.sd else acc2) + replaceT(para.module.sym, code.sd, dict)
-   else acc2
-  ,
-  acc + acc2
-,
+   else acc2,
+  acc + acc2,
 asset.acc
 
 function removeseq(s:seq.mytype) set.mytype
@@ -235,6 +229,5 @@ for acc = empty:seq.symbol, sym ∈ a
 do
  let b = replaceTsymbol(with, sym)
  let k = findelement2(dict, b),
- acc + if isempty.k then b else 1_k
-,
+ acc + if isempty.k then b else 1_k,
 acc 

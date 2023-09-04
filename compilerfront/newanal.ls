@@ -1,20 +1,26 @@
 Module newanal
 
+use otherseq.arc.int
+
+use set.arc.int
+
+use graph.int
+
+use otherseq.int
+
+use set.int
+
+use seq.mytype
+
 use standard
 
-use symbol
-
 use stack.stkele
+
+use symbol
 
 use otherseq.symbol
 
 use otherseq.seq.symbol
-
-use set.int
-
-use otherseq.int
-
-use seq.mytype
 
 use symbol2
 
@@ -27,8 +33,7 @@ do
  acc + Define(value.a + delta)
  else if isloopblock.a then
  acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)
- else acc + a
-,
+ else acc + a,
 acc
 
 Function checkLoopIsNoOp(syms:seq.symbol, parts:seq.seq.symbol) seq.symbol
@@ -82,14 +87,12 @@ then
        , Local(firstvar + 3)
       ]
       + cat
-      + [Local(firstvar + 2), continue.2]
-     ,
+      + [Local(firstvar + 2), continue.2],
       if [Local.idx, seqlen, EqOp] = 1_parts >> 1 ∧ lastpart = matchbrf then
        let newsyms =
         if prior << (n.prior - 3) = [GetSeqLength, Define(firstvar.loop - 1), Lit.0] then
         syms >> 4
-        else empty:seq.symbol
-       ,
+        else empty:seq.symbol,
         if isempty.newsyms then
         empty:seq.symbol
         else
@@ -121,8 +124,7 @@ do
   let newpart =
    if 1^part = NotOp then
    part >> 1 + Br2(brf.sym, brt.sym)
-   else part + Br2(brt.sym, brf.sym)
-  ,
+   else part + Br2(brt.sym, brf.sym),
   next(empty:seq.symbol, blkparts + newpart, stk, ahead)
  else if sym = EndBlock then
   let blockheader = 1^part.top.stk
@@ -130,8 +132,7 @@ do
   let checkNoOp =
    if not.nonLoop ∧ nopara.blockheader = 2 then
    checkLoopIsNoOp(part.top.stk, blkparts)
-   else empty:seq.symbol
-  ,
+   else empty:seq.symbol,
    if not.isempty.checkNoOp then
    next(checkNoOp, blkparts.top.stk, pop.stk, ahead)
    else if 1^1_blkparts = Exit ∧ nonLoop then
@@ -142,8 +143,7 @@ do
     let tmp2 =
      adjustbr(blkparts.top.stk, n.blkparts)
      + [part.top.stk >> 1 + 1_blkparts]
-     + blkparts << 1
-    ,
+     + blkparts << 1,
     next(1^tmp2 >> 1, tmp2 >> 1, pop.stk, 1^1^tmp2)
    else if isbr.ahead ∧ nonLoop then
     {combine boolean block with outer block}
@@ -154,20 +154,17 @@ do
     let tmp2 =
      adjustbr(blkparts.top.stk, n.blkparts)
      + [part.top.stk >> 1 + 1_partsA]
-     + partsA << 1
-    ,
+     + partsA << 1,
     next(1^tmp2 >> 1, tmp2 >> 1, pop.stk, 1^1^tmp2)
    else
     let recursive =
      if nonLoop ∧ ahead = EndMark then
      checkrecursive(blkparts, self, part.top.stk)
-     else empty:seq.symbol
-    ,
+     else empty:seq.symbol,
      if not.isempty.recursive then
      next(recursive, blkparts.top.stk, pop.stk, ahead)
      else next(blocktocode(part.top.stk, blkparts), blkparts.top.stk, pop.stk, ahead)
- else next(part + sym, blkparts, stk, ahead)
-,
+ else next(part + sym, blkparts, stk, ahead),
 part << 1
 
 function checkrecursive(parts:seq.seq.symbol, self:symbol, stkpart:seq.symbol) seq.symbol
@@ -178,11 +175,9 @@ do
   let newacc =
    if changed then
    acc
-   else for acc2 = empty:seq.seq.symbol, p2 ∈ acc do acc2 + adjustvar(p2, nopara), acc2
-  ,
+   else for acc2 = empty:seq.seq.symbol, p2 ∈ acc do acc2 + adjustvar(p2, nopara), acc2,
   next(true, newacc + adjustvar(p >> 2 + continue.nopara, nopara))
- else next(changed, acc + if changed then adjustvar(p, nopara) else p)
-,
+ else next(changed, acc + if changed then adjustvar(p, nopara) else p),
 if changed then
  for pvar = empty:seq.symbol, i ∈ arithseq(nopara.self, 1, 1) do pvar + Local.i,
   [Lit.0]
@@ -203,8 +198,7 @@ do
     if adjustt + adjustf ≠ 0 then
     next(replace(tmp, place, e >> 1 + Br2(brt.x + adjustt, brf.x + adjustf)), place + 1)
     else next(tmp, place + 1)
-  else next(tmp, place + 1)
-,
+  else next(tmp, place + 1),
 tmp
 
 /function %kind (i:seq.int) seq.word for acc ="", e /in i do acc+if e = 0 /or e > 4 then %.e else
@@ -259,8 +253,7 @@ do
     for arcs2 = arcs1, parts2 = parts1, arc ∈ toseq.tochange
     do next(
      arcs2 + arc(place, head.arc)
-     ,
-      if head.arc = 0 then
+     , if head.arc = 0 then
       parts2
       else
        let p3 = (head.arc)_parts2
@@ -268,8 +261,7 @@ do
        let brf = brf.1^p3
        let newpart =
         p3 >> 1
-        + Br2(if brt = tail.arc then place else brt, if brf = tail.arc then place else brf)
-       ,
+        + Br2(if brt = tail.arc then place else brt, if brf = tail.arc then place else brf),
        replace(parts2, head.arc, newpart)
     )
     let newkind = if head.chain > 0 then replace(kind1, head.chain, unreachable) else kind1,
@@ -291,10 +283,8 @@ do
    let p =
     if n.b = 1 ∧ n.sameMoreArcs = 1 then
     (head.1_sameMoreArcs)_absParts >> 2 + thispart
-    else thispart
-   ,
-   next(parts1 + p, newarcs, newkind, place + 1)
-,
+    else thispart,
+   next(parts1 + p, newarcs, newkind, place + 1),
 if n.arcs = 1 then
 result >> 1 + (tail.1_arcs)_absParts >> 1
 else
@@ -332,47 +322,38 @@ else
          , bf = findindex(placements, (brf.1^(1_haverun)_parts1)_map)
          , e ∈ haverun
         do
-         {???? should remove duplicates from run because LLVM requires not duplicates in Switch instrunction Also change so JumpOp contains all the arguments ???? remove debug assert statements}
-         assert bf ≤ n.placements0 report "PD"
          let ecode = e_parts1
          let tt = findindex(placements0, (brt.1^ecode)_map)
-         assert tt ≤ n.placements0 report "PC"
          let newfinal =
           if e = 1^haverun then
           ecode >> 2 + JumpOp + Br2(tt, bf) + final1
-          else ecode >> 4 + 3^ecode + Br2(tt, bf) + final1
-         ,
-         next([e] + placements0, newfinal, 1)
-        ,
+          else ecode >> 4 + 3^ecode + Br2(tt, bf) + final1,
+         next([e] + placements0, newfinal, 1),
         next(placements0, map, parts1, final1, empty:seq.int, idx - 1)
        else next(placements, map, parts1, final, haverun, idx - 1)
       else
        let t =
         if isempty.haverun ∧ n.newp = 4 ∧ idx_kind0 = run then
          let h = 4^newp
-         for accxx = empty:seq.int, this = newp, i = idx
+         for accxx = empty:seq.int, this = newp, i = idx, values = asset.[value.3^newp]
          while i > 0
          do
-          if n.this ≠ 4 then
-          {must be start of run. So end run} next(accxx + i, this, 0)
-          else
-           let f = findelement2(arcs, arc(i, 0)),
-            if n.f ≠ 1 ∨ head.1_f = 0 then
-             {multiple ways to get to i or no more of block to included. So i must be first in run. }
-             next(accxx + i, this, 0)
-            else
-             let i2 = head.1_f,
-              if i2_kind0 ≠ run then
-              {i2 is not right format so end run.} next(accxx + i, this, 0)
-              else
-               let p2 = i2_parts1,
-                if 4^i2_parts1 = h then
-                next(accxx + i, p2, i2)
-                else {i2 is not right format so end run.} next(accxx + i, this, 0)
-         ,
+          let f = findelement2(arcs, arc(i, 0)),
+           if n.this ≠ 4 ∨ n.f ≠ 1 then
+            {must be start of run /or multiple ways to get to i. So i must be first in run. }
+            next(accxx + i, this, 0, values)
+           else
+            let i2 = head.1_f,
+             if i2 = 0 ∨ i2_kind0 ≠ run ∨ 4^i2_parts1 ≠ h then
+              {no more of block to included or i2 is not right format so end run.}
+              next(accxx + i, this, 0, values)
+             else
+              let brvalue = value.3^i2_parts1,
+               if brvalue ∈ values then
+               {duplicate branch value so end run.} next(accxx + i, this, 0, values)
+               else next(accxx + i, i2_parts1, i2, values + brvalue),
          accxx
-        else empty:seq.int
-       ,
+        else empty:seq.int,
         if n.t ≥ 3 then
         next(placements, map, parts1, final, t, idx - 1)
         else
@@ -384,20 +365,8 @@ else
           else
            let jj = findindex(placements, j)
            let kk = findindex(placements, k)
-           assert jj ≤ n.placements report "PA"
-           assert kk ≤ n.placements
-           report
-            "PB^(idx)^(k)^(%n.absParts)"
-            + "arcs^(toseq.arcs) placements^(placements) kind^(kind0) map^(map) final^(final)^(%n.revisedParts)"
            let newfinal = newp >> 1 + Br2(jj, kk) + final,
-           next([idx] + placements, map, parts1, newfinal, haverun, idx - 1)
- ,
+           next([idx] + placements, map, parts1, newfinal, haverun, idx - 1),
  result + final + EndBlock
-
-use graph.int
-
-use set.arc.int
-
-use otherseq.arc.int
 
 function %(a:arc.int) seq.word "/br^(tail.a)^(head.a)" 

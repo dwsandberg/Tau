@@ -1,14 +1,16 @@
-module bitcodesupport
+Module bitcodesupport
 
 use UTF8
+
+use otherseq.int
+
+use seq.seq.int
 
 use llvm
 
 use standard
 
 use seq.word
-
-use seq.seq.int
 
 Function ABBROPFixed int 1
 
@@ -46,7 +48,8 @@ else
    "^(printtype(s, 2_a, llvm)) *"
    else "ptr.^(printtype(s, 2_a, llvm))"
   else if tp = FUNCTION then
-  "function.[^(for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",", acc >> 1)]"
+  "function.[
+   ^(for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",", acc >> 1)]"
   else if tp = TVOID then
   "VOID"
   else if tp = DOUBLE then
@@ -70,21 +73,12 @@ do
  next(acc + "Char6", false)
  else if code = ABBROPBlob then
  next(acc + "BLob", false)
- else next(acc + "illegal", false)
-,
+ else next(acc + "illegal", false),
 acc
 
 Function number(s:seq.seq.word) seq.word
-for txt = "", label = 0, p ∈ s
-do next(
- txt
- + "{^(label)}^(p)
-  /br,"
- , label + 1
-),
+for txt = "", label = 0, p ∈ s do next(txt + "{^(label)}^(p) /br,", label + 1),
 txt >> 2
-
-use otherseq.int
 
 Function printrecord(id:blockop, a:seq.int) seq.word
 if id = VALUESYMTABLE then
@@ -106,8 +100,7 @@ else
   decode.instop.code
   else if id = CONSTANTS then
   decode.constop.code
-  else [toword.code]
- ,
+  else [toword.code],
   if n.a = 1 then
   "[toint.^(recordtype)]"
   else "[toint.^(recordtype),^(%(",", subseq(a, 2, n.a)) >> 1)]" 

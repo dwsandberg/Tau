@@ -59,8 +59,7 @@ Function file(fn:filename, out:seq.word) file
 {OPTION NOINLINE}
 file(
  fn
- ,
-  if ext.fn ∈ "html" then
+ , if ext.fn ∈ "html" then
   toseqbyte(htmlheader + HTMLformat.out)
   else toseqbyte.textformat.out
 )
@@ -112,8 +111,7 @@ do
   else next(continue, acc + fixfilename(prefix, filename, suffix), nofile, 1_"?", [w], suffix)
  else if filename = nofile then
  next(continue, acc, w, last, prefix, suffix)
- else next(continue, acc + fixfilename(prefix, filename, suffix), w, last, prefix, suffix)
-,
+ else next(continue, acc + fixfilename(prefix, filename, suffix), w, last, prefix, suffix),
 if filename ≠ nofile ∧ continue then acc + fixfilename(prefix, filename, suffix) else acc
 
 function fixfilename(prefix:seq.word, name:word, suffix:word) filename

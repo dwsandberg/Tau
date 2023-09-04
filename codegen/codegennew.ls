@@ -22,6 +22,8 @@ use file
 
 use seq.file
 
+use otherseq.int
+
 use seq.int
 
 use seq.seq.int
@@ -56,13 +58,13 @@ use seq.slot
 
 use standard
 
+use symbol
+
 use otherseq.symbol
 
 use set.symbol
 
 use symbol2
-
-use symbol
 
 use seq.symdef
 
@@ -163,12 +165,10 @@ let bodies =
     if isInternal.sym.@e then
      let internalbody =
       for acc2 = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.@e, 1, 1) do acc2 + Local.e9,
-      acc2 + if name.sym.@e ∈ "stacktrace" then stacktracesymbol else sym.@e
-     ,
+      acc2 + if name.sym.@e ∈ "stacktrace" then stacktracesymbol else sym.@e,
      symdef4(sym.@e, internalbody, internalidx.sym.@e, "ThisLibrary^(getOptions.@e)")
     else @e
-  )
- ,
+  ),
  acc
 assert n.defines = n.bodies report "proBLEM?^(n.defines)^(n.bodies)"
 let f3a =
@@ -225,13 +225,8 @@ let cw = commonwords.xxxx,
  if 1_"info" ∈ options then
   let extsymbols =
    for acc = empty:seq.word, sd ∈ defines
-   do
-    acc
-    + "^(mangledname(prgX, sym.sd, libname))^(sym.sd)+
-     /br"
-   ,
-   acc
-  ,
+   do acc + "^(mangledname(prgX, sym.sd, libname))^(sym.sd)+/br",
+   acc,
   [file(filename."+^(dirpath.outname + merge.[libname, 1_"info"]).html", extsymbols)]
  else empty:seq.file
 
@@ -332,8 +327,7 @@ do
  let newacc2 = acc2 ∨ bits.toint.b << shift,
   if shift = 56 then
   next(acc + toint.C64.toint.newacc2, 0x0, 0)
-  else next(acc, newacc2, shift + 8)
-,
+  else next(acc, newacc2, shift + 8),
 addobject.if shift > 0 then acc + toint.C64.toint.acc2 else acc
 
 function symboladdress(
@@ -350,8 +344,7 @@ do
   let f1 = sym.sd
   let functyp = ptr.tollvmtype(typedict, f1)
   let frefslot = ptrtoint(functyp, symboltableentry([mangledname(prg, f1, libname)], functyp)),
-  addrsym + addobject([toint.frefslot] + addsymbol.f1)
-,
+  addrsym + addobject([toint.frefslot] + addsymbol.f1),
 [addobject([toint.C64.0, toint.C64.n.addrsym] + addrsym)]
 
 function addfuncdef(m2:midpoint, sd:symdef) internalbc
@@ -404,8 +397,7 @@ do
     Lcode(code, s, noblocks, regno, argstk, blocks)
     else
      let newcode = CAST(r(regno + 1), slot.top.argstk, i1, trunc),
-     Lcode(code, s, noblocks, regno + 1, argstk, blocks)
-   ,
+     Lcode(code, s, noblocks, regno + 1, argstk, blocks),
    next(
     last
     , s
@@ -465,8 +457,7 @@ do
     , toint.symboltableentry("createthread", function.[ptr.i64, i64, ptr.i64, i64])
     , 3
    )
-   + CALLFINISH(regno + 1, [-1] + top.argstk + toint.C64.buildargcode.typelist)
-  ,
+   + CALLFINISH(regno + 1, [-1] + top.argstk + toint.C64.buildargcode.typelist),
   next(last, s, newcode, lmap, noblocks, regno + 1, push(pop.argstk,-(regno + 1)), blocks)
  else if s = JumpOp then
  next(last, s, code, lmap, noblocks, regno, argstk, blocks)
@@ -556,8 +547,7 @@ do
      , regno.fldbc
      , push(pop(argstk, arg.m),-(regno + 1))
      , blocks
-    )
-,
+    ),
 BLOCKCOUNT(1, noblocks) + code + RET(r(regno + 1), slot.top.argstk)
 
 type Lcode is
@@ -571,7 +561,8 @@ code:internalbc
 type localmap is localno:int, regno:int
 
 function buildargcode(l:seq.llvmtype) int
-{needed because the call interface implementation for reals is different than other types is some implementations}
+{needed because the call interface implementation for reals is different than other types is some
+ implementations}
 for acc = 1, typ ∈ l do acc * 2 + if typ.typ = typ.double then 1 else 0,
 acc
 
@@ -625,16 +616,14 @@ do
        let nextBlk = (i + 1)_blks,
         not.isbr.sym.nextBlk
         ∨ {a standard br2} top.args.nextBlk < 0
-        ∨ {start another run} n.toseq.args.nextBlk = 2
-     ,
+        ∨ {start another run} n.toseq.args.nextBlk = 2,
       if endrun then
       next(i + 1, code + Switch(blks, beginrun, i), phi, tailphi, 0)
       else next(i + 1, code, phi, tailphi, beginrun)
     else
      let newcode =
       CAST(r.regno.l, slot.top.args.l, i1, trunc)
-      + BR(r(regno.l + 1), abs.noblocks.(i + brt)_blks, abs.noblocks.(i + brf)_blks, r.regno.l)
-     ,
+      + BR(r(regno.l + 1), abs.noblocks.(i + brt)_blks, abs.noblocks.(i + brf)_blks, r.regno.l),
      next(i + 1, code + code.l + newcode, phi, tailphi, beginrun)
 let firstblk = 1_blks
 let code1 =
@@ -644,8 +633,7 @@ let code1 =
    + BR.noblocks.firstblk
    + phiinst(regno.firstblk, top(args.firstblk, noargs), tailphi, noargs)
    + code
- else code
-,
+ else code,
 processblkresult(code1, phi)
 
 function Switch(blks:seq.Lcode, begin:int, end:int) internalbc
@@ -659,8 +647,6 @@ let new = SWITCH(r(regno.startBlk + 1), i64, slot.1_startargs, defaultBlk, switc
 for code = code.startBlk + new, l ∈ subseq(blks, begin + 1, end)
 do code + code.l + BR.defaultBlk,
 code
-
-use otherseq.int
 
 function getloc(l:seq.localmap, localno:int, i:int) int
 if localno.i_l = localno then regno.i_l else getloc(l, localno, i + 1)

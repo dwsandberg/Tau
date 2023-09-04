@@ -24,8 +24,7 @@ Function recordsym(alltypes:typedict, sym:symbol) symbol
 for acc = empty:seq.mytype, typ ∈ paratypes.sym
 do
  let kind = basetype(typ, alltypes),
- acc + if kind = typeboolean ∨ kind = typereal then kind else typeint
-,
+ acc + if kind = typeboolean ∨ kind = typereal then kind else typeint,
 symbol(moduleref."* $$record", "$$record", acc, typeint)
 
 Function initwordsbody(initprofile:seq.symbol, libname:word) seq.byte
@@ -34,8 +33,7 @@ let charseq = seqof.typeref."char standard *"
 let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint),
 funcbody(
  [i32, i64]
- ,
-  store(const32.0, empty, encodings)
+ , store(const32.0, empty, encodings)
   + store(const32.0, empty, thisencoding)
   + switchcontext.newcontext2.0
   + (if isempty.initprofile then empty:seq.byte else Wcall.1_initprofile + drop)
@@ -51,12 +49,10 @@ addf(
  , symbol(internalmod, "reclaimspace", typereal)
  , funcbody(
   [i32]
-  ,
-   store(Gcurrentprocess, Gfreeblocks, 0)
+  , store(Gcurrentprocess, Gfreeblocks, 0)
    + setGlobal(
     freeblocks
-    ,
-     Glastfree
+    , Glastfree
      + const32.toint.{will produce 32bit constant 0xFFFF0000} 0xFFFFFFFFFFFF0000
      + i32and
    )
@@ -76,15 +72,13 @@ let funccall =
  + Wlocal.1
  + i32truncf64s
  + Wcallindirect.typeindex([i64], i64)
- + Wdefine.4
-,
+ + Wdefine.4,
 addf(
  alltypes
  , symbol(internalmod, "processbody", typereal, typereal, typereal)
  , funcbody(
   [i32, i32, i64, i32]
-  ,
-   switchcontext.newcontext2.2
+  , switchcontext.newcontext2.2
    + funccall
    + Gcurrentprocess
    + Wdefine.5
@@ -98,8 +92,7 @@ addf(
    + {reclaim space} store(Wlocal.5, Gfreeblocks, 0)
    + setGlobal(
     freeblocks
-    ,
-     load(Wlocal.5, lastfree)
+    , load(Wlocal.5, lastfree)
      + const32.toint.{will produce 32bit constant 0xFFFF0000} 0xFFFFFFFFFFFF0000
      + i32and
    )
@@ -123,8 +116,7 @@ addf(
  , symbol(internalmod, "handleerror", typereal, typereal)
  , funcbody(
   [i32, i64]
-  ,
-   Wlocal.0
+  , Wlocal.0
    + i64truncf64s
    + Wdefine.2
    + Wlocal.2
@@ -146,7 +138,8 @@ addf(
 exportfunc (funcidx.sym, wordname.sym)
 
 function newcontext2(newprocess:int) seq.byte
-{newprocess is tmp to store new process. /br Update values of nextfree and last free in current process record. 
+{newprocess is tmp to store new process. 
+ /br Update values of nextfree and last free in current process record. 
  /br Get new memory segment which sets global nextfree and global lastfree
  /br create new process context record and place in currentprocess
  /br set parentprocess in new context record
@@ -183,8 +176,7 @@ addf(
  , symbol(internalmod, "critical", [typeint, typeint, typeptr, typeint], typeptr)
  , funcbody(
   [i32, i32]
-  ,
-   Gcurrentprocess
+  , Gcurrentprocess
    + Wdefine.callingprocess
    + Wlocal.runin
    + i32wrapi64
@@ -211,17 +203,14 @@ let calladd2 =
  + load64(Wlocal.data, 0)
  + Wlocal.addfunc
  + i32wrapi64
- + Wcallindirect.typeindex([i64, i64], i64)
-,
+ + Wcallindirect.typeindex([i64, i64], i64),
 addf(
  alltypes
  , symbol(internalmod, "addencoding5", [typeptr, typeptr, typeint], typeptr)
- ,
-  {parameters einfo, data, add2}
+ , {parameters einfo, data, add2}
   funcbody(
    [i32, i32]
-   ,
-    load(Wlocal.einfo + i32wrapi64, 16)
+   , load(Wlocal.einfo + i32wrapi64, 16)
     + Wdefine.owningprocess
     + Wlocal.owningprocess
     + Gcurrentprocess
@@ -231,8 +220,7 @@ addf(
     + Wif(
      i64
      , calladd2
-     ,
-      {change so space is allocate from owningprocess} switchcontext.Wlocal.owningprocess
+     , {change so space is allocate from owningprocess} switchcontext.Wlocal.owningprocess
       + {call code to add encoding} calladd2
       + {change back so space in allocated in orignal process} switchcontext.Wlocal.callingprocess
     )
@@ -276,8 +264,7 @@ Gfreeblocks
  + Wif(
  void
  , setGlobal(nextfree, const32.1 + [memorygrow, tobyte.0] + const32.2^16 + i32mul)
- ,
-  setGlobal(nextfree, Gfreeblocks)
+ , setGlobal(nextfree, Gfreeblocks)
   + setGlobal(freeblocks, load(Gfreeblocks, 0))
   + Gnextfree
   + i64extendi32u
@@ -290,8 +277,7 @@ Gfreeblocks
   {link up allocated blocks}
   store(
    Gnextfree
-   ,
-    Glastfree
+   , Glastfree
     + const32.toint.{will produce 32bit constant 0xFFFF0000} 0xFFFFFFFFFFFF0000
     + i32and
    , 0
@@ -307,8 +293,7 @@ addf(
  , allocatesym
  , funcbody(
   [i32, i32]
-  ,
-   Gnextfree
+  , Gnextfree
    + Wdefine.1
    + Wlocal.1
    + Wlocal.0
@@ -322,8 +307,7 @@ addf(
    + i32gtu
    + Wif(
     void
-    ,
-     getspace.true
+    , getspace.true
      + Gnextfree
      + Wdefine.1
      + Wlocal.1

@@ -23,7 +23,7 @@ define usegraph tools
 define front tools
 define LR1 tools
 define lextable tools
-define testall testall
+define testall testcore
 define wasm webassembly
 define libsrc stdlib
 define libsrc0 orgstdlib libsrc
@@ -80,18 +80,19 @@ makelib2 stdlib.lib
 exports= / stdlib
   info= profile=
 
-noop subtools.libsrc  tools.lib
+noop tools.libsrc  tools.lib
 
 makelib tools.lib 
-+tools   tools.ls  
-+subtools lib.ls baseTypeCheck.ls doc   
++tools  baseTypeCheck.ls doc   
 prettycompilerfront reconstructUses   frontcmd  
-+subtools graphcode   cleanExports genPEG
++tools graphcode   cleanExports genPEG
   genEnumeration 
    totext 
 +built common.lib 
 uses=common stdlib
-  info=profile=
+  entryUses=  frontcmd.callconfig
+  compilerfrontT.callconfig
+ llvmcode
 
 makelib common.lib
 +common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph 
@@ -99,10 +100,12 @@ commontests barycenter timestamp wordgraph
 uses=stdlib
 exports= / common
 
-makelib testall.lib
+makelib testcore.lib
 +tests lib.ls bug7.ls checking myseq testPoint randomphrase test11 
 test20 testencoding testmodules testprocess testseq tree wordfreq 
-testopt test11a testall seq8  testpackedseq
+testopt test11a testcore seq8  testpackedseq testPEG Helloworld
+testDifferentTypes testDifferentTypesB testanal 
++ compilerFront newanal
 uses=stdlib
  
 makelib webassembly.lib
@@ -126,7 +129,7 @@ doclibrary
 
 transform
 +documentation taudoc.html
-+tools doc.ls
++tests docsrc.ls
 html= noindex=
 
 transform
@@ -152,8 +155,8 @@ exclude = seq standard
 transform +documentation install4.html +tests enumexample.ls html= noindex=
 
 doclibrary
-+documentation subtools.html
-+subtools  frontcmd.ls doc.ls  
++documentation tools.html
++tools  frontcmd.ls doc.ls  
 
 transform
 +documentation profileExampleSrc.html
@@ -176,7 +179,7 @@ wasm wbeizer.wasm webcore.libsrc symbols.libsrc
 + webcore webProfileSupport.ls
 + tests profile
    +compilerfront object01.ls objectio LEBencoding
-   +subtools graphcode 
+   +tools graphcode 
    +common svg2graph uniqueids 
 +webapps Bcubic.html Bquadratic wbeizer.ls
 exports=wbeizer 
@@ -190,7 +193,7 @@ define cmd2html cmd2html
  +null lib +compilerfront    makeentry
 uses= stdlib
 
-cmd2html  runcmdcreateinfo.html  +subtools doc.ls frontcmd.ls   
+cmd2html  runcmdcreateinfo.html  +tools doc.ls frontcmd.ls   
   libname=runcmd 
   
   noop   runcmd.html runcmdcreateinfo.html
@@ -200,7 +203,7 @@ noop   runcmd.ls runcmdcreateinfo.html
 wasm runcmd.wasm webcore.libsrc  symbols compilerfront 
 +common svg2graph.ls uniqueids wordgraph.ls
 +built runcmd.html runcmd.ls 
-+subtools doc.ls       graphcode
++tools doc.ls       graphcode
  frontcmd  baseTypeCheck  prettycompilerfront reconstructUses cleanExports genPEG  genEnumeration
 totext  + tests profile.ls
 + webapps webtools2 
@@ -215,7 +218,7 @@ prettybuild newrelease.bld
 
 makelib profileExample.lib common.lib 
  +tests lib.ls profileExample.ls  profile
- +subtools graphcode
+ +tools graphcode
 uses=common stdlib
  profile= info=
  
@@ -248,5 +251,27 @@ options = bitcode
  
 comment transform hhh.html core.libsrc bind=
  
-transform  transform1info.html +built  stdlib.libsrc  common  tools   webassembly testall printbitcodes 
+transform  transform1info.html  +built  stdlib.libsrc  common  tools   webassembly testcore printbitcodes + tests lib.ls  opttests profile profileExample  profileCompile enumexample+ webcore lib.ls JS.ls SpecialExports SpecialImports  webHTTP  webIO  webIOtypes  webProfileSupport +webapps lib wbeizer cmd2html webtools2
+
+comment code for profileCompiler
+
+define makelibP stdlibP makelib
+define profileCompile  profileCompile
+
+
+
+makelib stdlibP.lib 
++stdlib updatestate.ls main2  stdlib.ls
++built core.libsrc symbols  codegen tausupport compilerfront common
+exports= / stdlib / common 
+  info= profile=
+
+
+makelibP profileCompile +tests profileCompile.ls profile.ls
++tools graphcode 
+uses=stdlibP
+exports= profileCompile
+ profile= 
+
+profileCompile profileCompile.html +stdlib updatestate.ls main2  stdlib.ls+built core.libsrc symbols  codegen tausupport compilerfront exports= / stdlib library=stdlib5  
 

@@ -22,13 +22,23 @@ use format
 
 use llvmcode
 
+use makeentry
+
 use objectio.midpoint
 
 use newPretty
 
 use standard
 
+use otherseq.word
+
+use otherseq.seq.word
+
 use seq.seq.word
+
+Function entrypoint(input:seq.file, entryUses:seq.word) seq.word
+{ENTRYPOINT}
+%("/p", modEntry(breakparagraph.input, entryUses))
 
 Function libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word) seq.file
 {ENTRYPOINT}
@@ -50,9 +60,10 @@ function subcompilelib(
  , options:seq.word
  , libname:seq.word
  , exports:seq.word
+ , entryUses:seq.word
 ) seq.file
 {OPTION XPROFILE First line of src.m was added by compilerFront so remove it}
-let m = compilerFront:callconfig("bitcode^(options)", input, libname, exports)
+let m = compilerFront:callconfig("bitcode^(options)", input, libname, exports, entryUses)
 let m2 = outlib.m
 for all = "", lib = "", libs = empty:seq.file, p ∈ src.m << 1 + ["Library = ?"]
 do
@@ -60,23 +71,20 @@ do
  next(
   all + "/p" + lib
   , p
-  ,
-   if isempty.lib ∨ name.outname = 3_lib then
+  , if isempty.lib ∨ name.outname = 3_lib then
    libs
    else libs + file(filename("+^(dirpath.outname)" + 3_lib + ".libsrc"), lib)
  )
  else next(
   all
-  ,
-   lib
+  , lib
    + "/p"
    + 
     if subseq(p, 1, 1) ∈ ["Function", "function", "Export", "type"] then
     prettyNoChange.p
     else escapeformat.p
   , libs
- )
-,
+ ),
 compilerback(m, outname, options)
  + file(changeext(outname, "libinfo"), outbytes:midpoint([m2]))
  + file(changeext(outname, "libsrc"), all)
@@ -90,6 +98,7 @@ Function makebitcode(
  , info:boolean
  , profile:boolean
  , showllvm:seq.word
+ , entryUses:seq.word
 ) seq.file
 {OPTION ENTRYPOINT}
 let options =
@@ -98,11 +107,7 @@ let options =
  + if not.isempty.showllvm then "showllvm =^(showllvm)" else ""
 let outname = filename."+built^(libname).bc"
 let tmp = "Library =^(libname) uses =^(uses)"
-let p = process.subcompilelib([file("??.ls", tmp)] + input, outname, options, libname, exports),
+let p = process.subcompilelib([file("??.ls", tmp)] + input, outname, options, libname, exports, entryUses),
 if aborted.p then
-[file(
- "error.html"
- , "COMPILATION ERROR in libray:^(libname)
-  /br^(message.p)"
-)]
+[file("error.html", "COMPILATION ERROR in libray:^(libname) /br^(message.p)")]
 else result.p 

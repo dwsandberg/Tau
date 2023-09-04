@@ -2,6 +2,8 @@ Module PEGrules
 
 use bits
 
+use otherseq.pegpart
+
 use seq.pegpart
 
 use otherseq.pegrule
@@ -9,8 +11,6 @@ use otherseq.pegrule
 use seq.pegrule
 
 use set.pegrule
-
-use seq.recoveryEntry
 
 use standard
 
@@ -32,29 +32,28 @@ for
  , parts = empty:seq.pegpart
  , lasthead = ""
  , begin = startstate + 1
+ , Non = empty:set.word
  , e1 ∈ break(s, "/br /", true) + ["./action"]
 do
  if isempty.e1 ∨ e1 ∈ ["/br"] then
- next(rules, parts, lasthead, begin)
+ next(rules, parts, lasthead, begin, Non)
  else
   let z = break(e1, "/action", false)
-  assert n.z ∈ [2]
-  report "PEGgrammar: expected one /action in^(e1)
-   /br^(s)"
+  assert n.z ∈ [2] report "PEGgrammar: expected one /action in^(e1) /br^(s)"
   let part1 = if 1_1_z ∈ "/br" then 1_z << 1 else 1_z
   let replacement = 1^z
   let thiskind = if 1_part1 ∈ "/ *" then 1_part1 else 1_"d"
   let thispart = pegpart(if n.z = 3 then 2_z else if thiskind ∈ "*" then part1 << 2 else part1 << 1, replacement),
    if thiskind ∈ "/" then
-   next(rules, parts + thispart, lasthead, begin)
+   next(rules, parts + thispart, lasthead, begin, Non)
    else
     let thishead = if thiskind ∈ "* !" then subseq(part1, 1, 2) else [1_part1],
      if isempty.lasthead then
-     next(rules, [thispart], thishead, begin)
+     next(rules, [thispart], thishead, begin, Non)
      else
-      let newrule = rule(if 1_lasthead ∈ "* !" then 1_lasthead else 1_"d", (n.lasthead)_lasthead, parts, begin),
-      next(rules + newrule, [thispart], thishead, begin + nostates.newrule)
-,
+      let newrule = rule(if 1_lasthead ∈ "* !" then 1_lasthead else 1_"d", (n.lasthead)_lasthead, parts, begin)
+      assert leftside.newrule ∉ Non report "Duplicate Non-Terminal:^(leftside.newrule)",
+      next(rules + newrule, [thispart], thishead, begin + nostates.newrule, Non + leftside.newrule),
 rules
 
 Function smallest(costs:set.t5, w:word) seq.word
@@ -79,18 +78,13 @@ do
     while not.isempty.R
     do
      let l = lookup(costs, t5(w, "")),
-     if isempty.l then R + w else if isempty.right.1_l then "" else R + right.1_l
-    ,
-    R << 1
-   ,
-   if isempty.R then next(minpart, min(n.part.p, min)) else next(R, min)
-  ,
-  if between(n.minpart, 1, min) then minpart else ""
- ,
+     if isempty.l then R + w else if isempty.right.1_l then "" else R + right.1_l,
+    R << 1,
+   if isempty.R then next(minpart, min(n.part.p, min)) else next(R, min),
+  if between(n.minpart, 1, min) then minpart else "",
   if isempty.p then
   next(acc + r, costs)
-  else next(acc, asset.[t5(leftside.r, p)] ∪ costs)
-,
+  else next(acc, asset.[t5(leftside.r, p)] ∪ costs),
 if n.gram = n.acc then
 assert isempty.acc report "PROBLEM BB^(acc)", costs
 else BB(acc, costs)
@@ -111,8 +105,7 @@ do
  else
   let rnew = clean(r, lambda)
   let nolambda = for nolambda = true, p ∈ parts.rnew while nolambda do not.isempty.part.p, nolambda,
-  if nolambda then next(acc + rnew, lambda) else next(acc, lambda + leftside.rnew)
-,
+  if nolambda then next(acc + rnew, lambda) else next(acc, lambda + leftside.rnew),
 if n.gram = n.acc ∧ lambdain = lambda then acc else removelambda(acc, lambda)
 
 function clean(r:pegrule, lambda:seq.word) pegrule
@@ -124,10 +117,8 @@ do
   next(acc, w)
   else if last ∈ "!" ∨ w ∈ lambda then
   next(acc, w)
-  else next(acc + w, w)
- ,
- acc2 + pegpart(acc, "")
-,
+  else next(acc + w, w),
+ acc2 + pegpart(acc, ""),
 pegrule(kind.r, leftside.r, acc2, nostates.r, begin.r)
 
 function %(r:pegrule) seq.word
@@ -139,8 +130,7 @@ while match = Match
 do
  if e = leftside.r ∧ not.has! then
  next(acc, MatchNT.acc)
- else next(acc + nostates.r, match)
-,
+ else next(acc + nostates.r, match),
 match
 
 type pegrule is kind:word, leftside:word, parts:seq.pegpart, nostates:int, begin:state
@@ -157,9 +147,24 @@ Export part(pegpart) seq.word
 
 Export replacement(pegpart) seq.word
 
+Export begin(pegrule) state
+
 type pegpart is part:seq.word, replacement:seq.word
 
-type tableEntry is action:state, match:word, Sstate:state, Fstate:state
+type tableEntry is
+action:state
+, match:word
+, Sstate:state
+, Fstate:state
+, recover:seq.word
+
+Export tableEntry(
+ action:state
+ , match:word
+ , Sstate:state
+ , Fstate:state
+ , recover:seq.word
+) tableEntry
 
 Export type:pegrule
 
@@ -169,9 +174,11 @@ Export Fstate(tableEntry) state
 
 Export Sstate(tableEntry) state
 
+Export action(tableEntry) state
+
 Export match(tableEntry) word
 
-Export action(tableEntry) state
+Export recover(tableEntry) seq.word
 
 Function textGrammar(g:seq.pegrule) seq.word
 for acc = "", Non = empty:set.word, rightsides = "", message = "", r ∈ g
@@ -179,173 +186,157 @@ do
  let parts =
   for parts = "", p ∈ parts.r
   do parts + "^(if n.parts < 10 then "" else "/br") /^(part.p)",
-  parts << 1
- ,
+  parts << 1,
  next(
   acc + "/br^(if kind.r ∈ "*" then [kind.r] else "")^(leftside.r) ←^(parts)"
   , Non + leftside.r
   , rightsides + parts
-  ,
-   if leftside.r ∈ Non then
-    message
-    + "Duplicate non-terminal: ^(leftside.r)
-     /br"
+  , if leftside.r ∈ Non then
+   message + "Duplicate non-terminal: ^(leftside.r) /br"
    else message
  )
 let terms = asset.rightsides \ Non \ asset."/ ! /br"
 let unusedNon = toseq(Non \ asset.rightsides - leftside.1_g),
-"^(message)^(if isempty.unusedNon then "" else "/br Unused non-termials:^(unusedNon)")
- /br Non-termials:^(alphasort.toseq.Non)
+"^(message)^(if isempty.unusedNon then "" else "/br Unused non-terminals:^(unusedNon)")
+ /br Non-terminals:
+ ^(alphasort.toseq.Non)
  /br Terminals:^(alphasort.toseq.terms)^(acc)"
 
-function nostates2(a:pegpart, kind:word, parts:seq.pegpart) int
-if isempty.part.a then
-1
-else
- let extrastate =
-  if kind ∈ "*" then
-   if n.parts = 1 ∧ replacement.1_parts = "/All" ∨ replacement.a = "/Discard" then
-   0
-   else 1
-  else 0
- for acc = extrastate, e ∈ part.a do if e ∈ "!" then acc else acc + 1,
- acc
+function nostates(a:pegpart) int
+for acc = 0, e ∈ part.a do if e ∈ "!" then acc else acc + 1,
+acc
 
 function goallength int 1
 
 function rule(kind:word, leftside:word, p:seq.pegpart, begin:state) pegrule
-for acc = 0, e ∈ p do acc + nostates2(e, kind, p),
+for acc = 0, e ∈ p do acc + nostates.e,
 pegrule(kind, leftside, p, acc, begin)
 
 function >1(a:pegrule, b:pegrule) ordering leftside.a >1 leftside.b
 
-Function makeTbl(gin:seq.pegrule) seq.tableEntry
+function failmatch(s:pegrule, partno:int, nextpart:state, reduce:int) state
+if n.parts.s > partno then
+if isempty.part.(partno + 1)_parts.s then Reduce(reduce + 1) else nextpart
+else if kind.s ∈ "*" then
+ let replacement = replacement.partno_parts.s,
+  if replacement = "/All" then
+  All
+  else if replacement = "/Discard" then
+  SuccessDiscard*
+  else Success*
+else Fail
+
+function =(a:tableEntry, b:tableEntry) boolean
+action.a = action.b ∧ Fstate.a = Fstate.b ∧ Fstate.a = Fstate.b
+
+Function makeTbl(gin:seq.pegrule, recover:boolean) seq.tableEntry
+let small = if recover then smallest.gin else empty:set.t5
 let gset = asset.gin
-for table = [tableEntry(S.2, leftside.1_gin, Reduce.1, Fail)], reduce0 = 2, s ∈ gin
+for table = [tableEntry(MatchNT.S.2, 1_"?", Reduce.1, Reduce.0, "")], reduce0 = 2, s ∈ gin
 do
  for
-  nextstate2 = begin.s
+  lastnextstate2 = S.0
+  , nextstate2 = begin.s
   , ruletableentries = empty:seq.tableEntry
-  , reduce = reduce0
-  , remainingparts = n.parts.s
+  , partno = 1
   , p ∈ parts.s
  do
-  let nextpart = nextstate2 + nostates2(p, kind.s, parts.s)
-  let failmatch =
-   if remainingparts > 1 then
-   nextpart
-   else if kind.s ∈ "*" then
-   if replacement.1_parts.s = "/All" then All else Success*
-   else Fail
-  ,
-   if isempty.part.p then
-   next(
-    nextpart
-    , ruletableentries + tableEntry(Reduce.reduce, 1_"?", state.0, state.0)
-    , reduce + 1
-    , remainingparts - 1
-   )
+  let reduce = partno + reduce0 - 1
+  let nextpart = nextstate2 + nostates.p
+  for
+   parttableentries = ruletableentries
+   , thisstate = nextstate2
+   , last = 1_"?"
+   , count = 1
+   , e ∈ part.p
+  do
+   if e ∈ "!" then
+   next(parttableentries, thisstate, e, count + 1)
    else
-    for
-     parttableentries = empty:seq.tableEntry
-     , thisstate = nextstate2
-     , last = 1_"?"
-     , count = 1
-     , e ∈ part.p
-    do
-     if e ∈ "!" then
-     next(parttableentries, thisstate, e, count + 1)
+    let success1 =
+     if count = n.part.p then
+      if kind.s ∈ "*" then
+       if replacement.p ∈ ["/Discard", "/All"] then
+       Discard*.begin.s
+       else Reduce(reduce, begin.s)
+      else if replacement.p ∈ ["/All"] then
+      All
+      else Reduce.reduce
+     else thisstate + 1
+    let fail1 = failmatch(s, partno, nextpart, reduce)
+    for RecoverEnding = "", last0 = 1_"?", w ∈ if recover then part.p << (count - 1) else ""
+    do next(if w ∈ "!" ∨ last0 ∈ "!" then RecoverEnding else RecoverEnding + smallest(small, w), w)
+    let C =
+     if e ∈ "any" then
+     tableEntry(MatchAny, 1_"?", success1, fail1, RecoverEnding)
      else
-      let successmatch =
-       if count = n.part.p then
-        if kind.s ∈ "*" then
-         if replacement.p ∈ ["/Discard"] ∨ failmatch = All then
-         Discard*.index.begin.s
-         else thisstate + 1
-        else if replacement.p ∈ ["/All"] then
-        All
-        else Reduce.reduce
-       else thisstate + 1
-      let C =
-       if e ∈ "any" then
-       tableEntry(MatchAny, e, successmatch, failmatch)
+      let look = lookup(gset, pegrule(1_"?", e, empty:seq.pegpart, 0, S.0)),
+       if isempty.look then
+        if last ∈ "!" then
+        tableEntry(!Match, e, fail1, success1, RecoverEnding)
+        else tableEntry(Match, e, success1, fail1, RecoverEnding)
        else
-        let look = lookup(gset, pegrule(1_"?", e, empty:seq.pegpart, 0, S.0)),
-         if isempty.look then
-          if last ∈ "!" then
-          tableEntry(!Match, e, successmatch, failmatch)
-          else
-           {On failure do not reparse common prefix between this part and next part}
-           let followpart = nextpart(s, remainingparts)
-           let len = n.parttableentries,
-            if len > 0 ∧ subseq(part.p, 1, len) = subseq(part.followpart, 1, len) then
-             if n.part.followpart = len then
-              let tmp =
-               if kind.s ∈ "*" then
-               nextpart + nostates2(followpart, 1_"X", empty:seq.pegpart)
-               else Reduce(reduce + 1)
-              ,
-              tableEntry(MatchNext, e, successmatch, tmp)
-             else tableEntry(MatchNext, e, successmatch, nextpart + n.parttableentries)
-            else tableEntry(Match, e, successmatch, failmatch)
-         else if last ∈ "!" then
-          assert kind.1_look ∉ "*" report "NNN" + e,
-          tableEntry(MatchNT.begin.1_look, e, !.successmatch, failmatch)
-         else
-          let followpart = nextpart(s, remainingparts)
-          let len = n.parttableentries,
-           if
-            len > 0
-            ∧ subseq(part.p, 1, len) = subseq(part.followpart, 1, len)
-            ∧ len ≠ n.part.followpart
-           then
-           tableEntry(MatchNT.begin.1_look, e, successmatch, P.index(nextpart + n.parttableentries))
-           else tableEntry(MatchNT.begin.1_look, e, successmatch, failmatch)
-      ,
-      next(parttableentries + C, thisstate + 1, e, count + 1)
-    ,
-    next(
-     nextpart
-     ,
-      if Sstate.1^parttableentries = thisstate then
-      ruletableentries + parttableentries + tableEntry(Reduce.reduce, 1_"?", begin.s, state.0)
-      else ruletableentries + parttableentries
-     , reduce + 1
-     , remainingparts - 1
-    )
- ,
- next(table + ruletableentries, reduce0 + if kind.s ∈ "!" then 0 else n.parts.s)
-,
-table
+        let success2 = if last ∈ "!" then !.success1 else success1,
+        tableEntry(MatchNT.begin.1_look, 1_"?", success2, fail1, RecoverEnding)
+    let newpt =
+     if
+      partno > 1
+      ∧ count > 0
+      ∧ subseq(part.(partno - 1)_parts.s, 1, count) = subseq(part.p, 1, count)
+     then
+      {part shares prefix with previous part so avoid backtracking. }
+      let zidx = 2 + (index.thisstate - index.nextstate2)
+      let z = zidx_parttableentries,
+       if action.z = Match then
+       replace(parttableentries, zidx, tableEntry(MatchNext, match.z, Sstate.z, Sstate.C, recover.z))
+       else if action.action.z ∈ [MatchNT, !Match, MatchAny] then
+       replace(parttableentries, zidx, tableEntry(action.z, match.z, Sstate.z, Sstate.C, recover.z))
+       else
+        assert action.action.z ∈ [MatchAny, MatchNext]
+        report "Pegrules^(action.z) Sstate:^(Sstate.C)::^(action.Sstate.C)" + part.p,
+        parttableentries
+     else parttableentries,
+    next(newpt + C, thisstate + 1, e, count + 1),
+  next(nextstate2, nextpart, parttableentries, partno + 1),
+ next(table + ruletableentries, reduce0 + if kind.s ∈ "!" then 0 else n.parts.s),
+stateX.table
 
-type recoveryEntry is action:state, match:seq.word, Sstate:state
-
-Export type:recoveryEntry
-
-Export action(recoveryEntry) state
-
-Export Sstate(recoveryEntry) state
-
-Export match(recoveryEntry) seq.word
-
-Export recoveryEntry(action:state, match:seq.word, Sstate:state) recoveryEntry
-
-Function recover(table:seq.tableEntry, gin:seq.pegrule) seq.recoveryEntry
-let small = smallest.gin
-for acc = empty:seq.recoveryEntry, te ∈ table
+function stateX(tbl:seq.tableEntry) seq.tableEntry
+for acc = empty:seq.tableEntry, e ∈ tbl
 do
- if action.te = Match ∨ action.te = MatchNext ∨ action.te = MatchAny then
- acc + recoveryEntry(Match, [match.te], Sstate.te)
- else if action.action.te = S.0 then
- acc + recoveryEntry(Match, smallest(small, match.te), Sstate.te)
- else acc + recoveryEntry(action.te, "", Sstate.te)
-,
+ acc
+ + tableEntry(stateX(action.e, tbl), match.e, stateX(Sstate.e, tbl), stateX(Fstate.e, tbl), recover.e),
 acc
 
-function nextpart(s:pegrule, remainingparts:int) pegpart
-if remainingparts < 2 then
-pegpart("", "")
-else (n.parts.s - remainingparts + 2)_parts.s
+function stateX(s:state, tbl:seq.tableEntry) state
+if index.s = 0 then
+s
+else
+ let tblaction = action.action.(index.s)_tbl,
+  if tblaction = MatchNT then
+  s
+  else
+   let action =
+    if tblaction = Match then
+    Match.index.s
+    else if tblaction = MatchAny then
+    MatchAny.index.s
+    else if tblaction = MatchNext then
+    MatchNext.index.s
+    else assert tblaction = !Match report "XX genPEGY", !Match.index.s,
+    if action.s = S then
+    action
+    else if action.s = Discard* then
+    Discard*.action
+    else if action.s = MatchNT then
+    MatchNT.action
+    else
+     assert action.s = Reduce report "XX genPEGX^(%.s)^(tblaction)^(%table.tbl)",
+     Reduce(reduceNo.s, action)
+
+use otherseq.tableEntry
+
+function %(p:pegpart) seq.word "/br^(part.p)"
 
 Function postprocess(table:seq.tableEntry, old:seq.word, new:seq.word) seq.tableEntry
 if isempty.old then
@@ -356,11 +347,10 @@ else
  do
   newtable
   + 
-   if action.e = Match ∨ action.e = !Match then
+   if action.e ∈ [Match, !Match, MatchNext] then
     let i = findindex(old, match.e),
-    if i > n.old then e else tableEntry(action.e, i_new, Sstate.e, Fstate.e)
-   else e
- ,
+    if i > n.old then e else tableEntry(action.e, i_new, Sstate.e, Fstate.e, "")
+   else e,
  newtable
 
 Function wordReplace(s:seq.word, old:seq.word, new:seq.word) seq.word
@@ -373,16 +363,22 @@ for Ncount = "/0", last = 1_"?", e ∈ part.p
 do
  if e ∈ "!" ∨ last ∈ "!" ∨ e ∉ "any" ∧ match(last ∈ "!", e, gin) = Match then
  next(Ncount, e)
- else next(Ncount + merge."/^(n.Ncount)", e)
-,
+ else next(Ncount + merge."/^(n.Ncount)", e),
 Ncount
+
+function esc(w:word) seq.word
+if w ∈ "/cell /row <* *> /em /strong /p" then
+"^(escapeformat)^(w)^(escapeformat)"
+else [w]
+
+use UTF8
 
 Function %table(t:seq.tableEntry) seq.word
 for acc = "", rowno = 1, a ∈ t
 do next(
  acc
  + 
-  if action.action.a = actionReduce then
+  if action.action.a = Reduce then
   "/row^(rowno)^(action.a) /cell^(Fstate.a) /cell^(Sstate.a) /cell"
   else "/row^(rowno)^(action.a) /cell^(match.a) /cell^(Sstate.a) /cell^(Fstate.a)"
  , rowno + 1
@@ -392,68 +388,143 @@ do next(
 function >1(a:state, b:state) ordering toint.a >1 toint.b
 
 Function %(s:state) seq.word
-let list = "S !Match MatchAny Match MatchNext Fail P Success* Reduce Unused Discard* All"
-let actionName = (toint.action.s + 1)_list,
-(if is!.s then "!." else "")
+let actionName = 1^decode.action.s,
+if bits.toint.s >> (actionBits - 1) = 0x0 then
+[actionName]
+else
+ (if is!.s then "!." else "")
  + 
- if actionName ∈ "S Reduce Discard* P" then
- "^(actionName).^(index.s)"
- else [actionName]
-
-type state is toint:int
-
-Export type:state
-
-Export state(int) state
+  if actionName ∈ "Reduce" then
+   let idx = nextState.s,
+   if idx = S.0 then "Reduce.^(reduceNo.s)" else "Reduce (^(reduceNo.s),^(idx))"
+  else if actionName ∈ "Discard* MatchNT" then
+  "^(actionName).^(nextState.s)"
+  else "^(actionName).^(index.s)"
 
 Export ∈(state, seq.state) boolean {From seq.state}
 
-function shift int 32
+function mask(nobits:int) bits {move to bits????} tobits.-1 >> (64 - nobits)
 
-Function index(i:state) int toint.i / shift
+function actionBits int 5
 
-Function =(a:state, b:state) boolean toint.a = toint.b
+function reduceBits int 15
 
-function MatchNT(state:state) state state
+function shiftIndex int actionBits + reduceBits + actionBits
 
-Function S(i:int) state state(i * shift)
+function state(action:state, tblidx:int, reduceNo:int, tblaction:state) state
+{OPTION INLINE}
+state.toint(
+ tobits.tblidx << (reduceBits + 2 * actionBits)
+ ∨ tobits.toint.action.tblaction << (reduceBits + actionBits)
+ ∨ tobits.reduceNo << actionBits
+ ∨ tobits.toint.action.action
+)
 
-Function P(i:int) state state(i * shift + toint.actionP)
+function state(action:state, tblidx:int) state
+state.toint(tobits.tblidx << (reduceBits + 2 * actionBits) ∨ tobits.toint.action.action)
 
-Function Reduce(partno:int) state state(partno * shift + toint.actionReduce)
+Function index(s:state) int toint(tobits.toint.s >> shiftIndex)
 
-Function Discard*(Sstate:int) state state(Sstate * shift + toint.actionDiscard*)
+Function reduceNo(s:state) int toint(tobits.toint.s >> actionBits ∧ mask.reduceBits)
 
-function actionReduce*(partno:int) state state.partno
+Function action(s:state) state state.toint(bits.toint.s ∧ mask(actionBits - 1))
 
-function +(s:state, i:int) state state(toint.s + i * shift)
+Function MatchNT(state:state) state state(MatchNT, index.state, 0, action.state)
 
-Function action(s:state) state state.toint(bits.toint.s ∧ 0xF)
+Function S(i:int) state state(S, i)
+
+Function Match(i:int) state state(Match, i)
+
+Function MatchNext(i:int) state state(MatchNext, i)
+
+Function MatchAny(i:int) state state(MatchAny, i)
+
+Function !Match(i:int) state state(!Match, i)
+
+Function Reduce(partno:int) state state(Reduce, 0, partno, S.0)
+
+Function Reduce(partno:int, state:state) state
+state(Reduce, index.state, partno, action.state)
+
+Function nextState(s:state) state
+state.toint(
+ tobits.toint.s >> (actionBits + reduceBits) ∧ mask(actionBits - 1)
+ ∨ tobits.toint.s >> shiftIndex << shiftIndex
+)
+
+Function Discard*(state:state) state state(Discard*, index.state, 0, action.state)
+
+function +(s:state, i:int) state state(toint.s + toint(tobits.i << shiftIndex))
 
 Function !(s:state) state state.toint(bits.toint.s ∨ 0x10)
 
 Function is!(s:state) boolean (bits.toint.s ∧ 0x10) = 0x10
 
-Function !Match state {T} state.1
+Function startstate state S.1
 
-Function MatchAny state {T} state.2
+The state MatchNext is like Match but does not rollback result on failure.Similarly actionP but does
+not rollback result on failure.
 
-Function Match state {T} state.3
+function genEnum seq.seq.word
+["newType = state values = S !Match MatchAny Match MatchNext Fail ? Success* Reduce Discard* All
+ SuccessDiscard* MatchNT"]
 
-Function MatchNext state {T} state.4
+<<<< Below is auto generated code >>>>
 
-Function Fail state {NT} state.5
+type state is toint:int
 
-Function actionP state state.6
+Export toint(state) int
 
-Function Success* state {NT} state.7
+Export state(i:int) state
 
-Function actionReduce state {NT} state.8
+Export type:state
 
-Function actionDiscard* state {NT} state.10
+Function =(a:state, b:state) boolean toint.a = toint.b
 
-Function All state {NT} state.11
+Function S state state.0
 
-/Function actionMatchNT state state.0
+Function !Match state state.1
 
-Function startstate state state.shift 
+Function MatchAny state state.2
+
+Function Match state state.3
+
+Function MatchNext state state.4
+
+Function Fail state state.5
+
+Function Success* state state.7
+
+Function Reduce state state.8
+
+Function Discard* state state.9
+
+Function All state state.10
+
+Function SuccessDiscard* state state.11
+
+Function MatchNT state state.12
+
+Function decode(code:state) seq.word
+let discard = [
+ S
+ , !Match
+ , MatchAny
+ , Match
+ , MatchNext
+ , Fail
+ , Success*
+ , Reduce
+ , Discard*
+ , All
+ , SuccessDiscard*
+ , MatchNT
+]
+let i = toint.code,
+if between(i + 1, 1, 13) then
+ let r = [
+  (i + 1)
+  _"S !Match MatchAny Match MatchNext Fail ? Success* Reduce Discard* All SuccessDiscard* MatchNT"
+ ],
+ if r ≠ "?" then r else "state." + toword.i
+else "state." + toword.i 

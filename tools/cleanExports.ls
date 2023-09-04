@@ -65,8 +65,7 @@ do
     acc + org.e
     else acc + org.e + b
   else acc + org.e
- else acc
-,
+ else acc,
 acc
 
 Function newtext(a:set.myExport, modname:word) seq.word
@@ -98,12 +97,9 @@ do
       let t = getSymdef(prg.m, sym),
        if isempty.t ∨ paragraphno.1_t = 0 ∨ name.module.sym ≠ newname then
        acc2 + sym
-       else acc2
-     ,
-     acc2
-   ,
-   acc
-  ,
+       else acc2,
+     acc2,
+   acc,
   next(exportinfo, newname, newexports, pno + 1)
  else if 1_p ∈ "Export" then
   let clean = cleanexportpara.p
@@ -115,13 +111,10 @@ do
       let md = %.module.sym,
       acc5 + myExport(modname, sym, if 1_md = modname then "0" else md, p, pno + 1)
      else acc5
-    else acc5
-   ,
-   acc5
-  ,
+    else acc5,
+   acc5,
   next(exportinfo + kkkl, modname, exports, pno + 1)
- else next(exportinfo, modname, exports, pno + 1)
-,
+ else next(exportinfo, modname, exports, pno + 1),
 asset.exportinfo
 
 function cleanexportpara(s:seq.word) seq.word
@@ -136,8 +129,7 @@ do
  next(acc + ")", w)
  else if isempty.acc then
  next(acc, w)
- else next(acc + w, w)
-,
+ else next(acc + w, w),
 if isempty.acc ∨ 1_acc ∉ "(" then
 if subseq(s, 2, 3) = "type:" then getExportName.s << 2 else ""
 else acc << 1 >> 1 

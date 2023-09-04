@@ -72,11 +72,12 @@ else
  acc
 
 Function drawscript:T seq.word
-"/< script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).getBBox () ; arcs.forEach (function (idval, index) {if (index > 0) {let element = document.getElementById (idval) ; let d =^(ldq."M")"
- + "+(bb.x+bb.width)+^(ldq.",")"
- + "+(bb.y+bb.height)+element.getAttribute (^(ldq."d")"
- + ").substring (5) ; element.setAttribute (^(ldq."d")"
- + ", d) ;}}) ;} /< /script> /< style>.arcs {fill:none ; stroke:black ; stroke-width:.07 ;}.nodes {font-size:.03em; stroke-width:.1 ;} svg g:hover text {opacity:1;} svg g:hover rect {opacity:1;} /< /style>"
+"/< script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).
+ getBBox () ; arcs.forEach (function (idval, index) {if (index > 0) {let element =
+ document.getElementById (idval) ; let d =^(ldq."M")+(bb.x+bb.width)+^(ldq.",")+(bb.y+bb.height)+element.getAttribute (
+ ^(ldq."d")).substring (5) ; element.setAttribute (^(ldq."d"), d) ;}}) ;} /< /script> /< style>.arcs {fill:none ; stroke:black ; stroke-width:.
+ 07 ;}.nodes {font-size:.03em; stroke-width:.1 ;} svg g:hover text {opacity:1;}
+ svg g:hover rect {opacity:1;} /< /style>"
  + encodeword.[char.10]
 
 unbound node2text(T) seq.word
@@ -88,8 +89,7 @@ for arclist = empty:seq.arc.T, a ∈ arcs
 do
  if head.a ∈ exclude ∨ not.isempty.include ∧ tail.a ∉ include then
  arclist
- else arclist + a
-,
+ else arclist + a,
 drawgraph.newgraph.arclist
 
 Function drawgraph(xxx:graph.T, labels:set.labeledarc.T) seq.word
@@ -108,10 +108,8 @@ let arcpaths0 =
     d + "L" + print(3, toreal.y.xy * scalex) + print(3, toreal.x.xy * scaley)
     , from1
     , x.xy
-   )
-  ,
-  asset.[arcpath(arc(1_a, 1^a), d, from0)] ∪ ap
- ,
+   ),
+  asset.[arcpath(arc(1_a, 1^a), d, from0)] ∪ ap,
  ap
 let arcpaths =
  if not.haslabels then
@@ -121,8 +119,7 @@ let arcpaths =
   do
    if isempty.grp ∨ head.arc.1^grp = head.arc.p then
    next(acc, grp + p)
-   else next(acc + addgroup.grp, [p])
-  ,
+   else next(acc + addgroup.grp, [p]),
   asset(acc + addgroup.grp)
 for
  txt = ""
@@ -141,8 +138,8 @@ do
    let succ = toseq.successors(xxx, n.n)
    let hovertext = nodeTitle.n.n
    let svg =
-    "/< text id =^(ldq.[toword.id]) class =^(ldq."nodes") x =^(ldq.print(3, nodex))"
-    + "y =^(ldq.print(3, nodey)) >^(node2text.n.n) /< /text>"
+    "/< text id =^(ldq.[toword.id]) class =^(ldq."nodes") x =^(ldq.print(3, nodex)) y =
+     ^(ldq.print(3, nodey)) >^(node2text.n.n) /< /text>"
     + encodeword.[char.10]
     + 
      for arctxt = "", j = id + 1, s ∈ succ
@@ -152,8 +149,7 @@ do
       let path =
        if isempty.paths then
        "L^(print(3, toreal.y.xy * scalex))^(print(3, toreal.x.xy * scaley))"
-       else d.1_paths
-      ,
+       else d.1_paths,
       next(
        arctxt
        + "/< path id =^(ldq.[toword.j]) class =^(ldq."arcs") d =^(ldq."M 0 0^(path)")"
@@ -165,15 +161,13 @@ do
           if isempty.lab then
           ""
           else
-           "/< text class =^(ldq."nodes") > /< textPath href =^(ldq.[merge("#" + toword.j)])"
-           + "startOffset =^(ldq."100%") text-anchor =^(ldq."end")"
-           + "> /< tspan dy =^(ldq."-0.1") >^(label.1_lab)"
-           + "/< /tspan> /< /textPath> /< /text>"
+           "/< text class =^(ldq."nodes") > /< textPath href =^(ldq.[merge("#" + toword.j)]) startOffset =
+            ^(ldq."100%") text-anchor =^(ldq."end") > /< tspan dy =^(ldq."-0.1") >
+            ^(label.1_lab) /< /tspan> /< /textPath> /< /text>"
            + encodeword.[char.10]
         else ""
        , j + 1
-      )
-     ,
+      ),
      arctxt
    let newdraw =
     if n.succ > 0 then
@@ -181,8 +175,7 @@ do
      while k ≤ id + n.succ
      do next(drawtxt + toword.k + ",", k + 1),
      "[^(drawtxt >> 1)],"
-    else ""
-   ,
+    else "",
    next(
     txt + svg
     , i + 1
@@ -194,11 +187,10 @@ do
    )
   else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e, svg2,
-"^(drawscript:T) /< svg id =^(ldq."svg10") ldqns =^(ldq."http://www.w3.org/2000/svg")"
- + "width =^(ldq."100%")"
- + "viewBox =^(ldq("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.3)))"
- + "onload =^(ldq."[^(draw >> 1)].forEach (shiftstart)") >^(txt + hovertxt)"
- + "+/< /svg>"
+"^(drawscript:T) /< svg id =^(ldq."svg10") ldqns =^(ldq."http://www.w3.org/2000/svg") width =
+ ^(ldq."100%") viewBox =
+ ^(ldq("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.3))) onload =
+ ^(ldq."[^(draw >> 1)].forEach (shiftstart)") >^(txt + hovertxt)+/< /svg>"
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
 
@@ -210,13 +202,10 @@ EQ
 else GT
 
 function assvg(h:hovertext.T) seq.word
-"/< g> /< rect opacity =^(ldq."0.0") x =^(ldq.print(2, nodex.h)) y =^(ldq.print(2, nodey.h - 0.5))"
- + "height =^(ldq."0.5") width =^(ldq."1")"
- + "> /< /rect> /< rect pointer-events =^(ldq."none") fill =^(ldq."white")"
- + "opacity =^(ldq."0.0") x =^(ldq.print(2, nodex.h))"
- + "y =^(ldq.print(2, nodey.h - 0.5)) height =^(ldq."1")"
- + "width =^(ldq."100") > /< /rect> /< text pointer-events =^(ldq."none")"
- + "class =^(ldq."nodes") x =^(ldq.print(2, nodex.h))"
- + "y =^(ldq.print(2, nodey.h)) opacity =^(ldq."0.0") >^(text.h)"
- + "/< /text> /< /g>"
+"/< g> /< rect opacity =^(ldq."0.0") x =^(ldq.print(2, nodex.h)) y =
+ ^(ldq.print(2, nodey.h - 0.5)) height =^(ldq."0.5") width =^(ldq."1") > /< /rect> /< rect pointer-events =
+ ^(ldq."none") fill =^(ldq."white") opacity =^(ldq."0.0") x =^(ldq.print(2, nodex.h)) y =
+ ^(ldq.print(2, nodey.h - 0.5)) height =^(ldq."1") width =^(ldq."100") > /< /rect> /< text pointer-events =
+ ^(ldq."none") class =^(ldq."nodes") x =^(ldq.print(2, nodex.h)) y =
+ ^(ldq.print(2, nodey.h)) opacity =^(ldq."0.0") >^(text.h) /< /text> /< /g>"
  + encodeword.[char.10] 

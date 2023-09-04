@@ -76,14 +76,14 @@ function typesused(sym:symbol) seq.mytype
 for acc = empty:seq.mytype, t ∈ types.sym
 do
  let typ = if isseq.t ∨ isencoding.t then parameter.t else t,
- if iscore4.typ ∨ typ = typeT then acc else acc + typ
-,
+ if iscore4.typ ∨ typ = typeT then acc else acc + typ,
 acc
 
 function resolvetypesize(prg1:seq.typeentry) typedict
 let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5
-report "recursive type problem:/br^(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "/br", acc10)"
+report "recursive type problem:
+ /br^(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "/br", acc10)"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d),
 acc
 
@@ -98,8 +98,7 @@ do
  next(known + p, notflat)
  else
   let new = expandflat(p, types),
-  if isflat.new then next(known + new, notflat) else next(known, notflat + new)
-,
+  if isflat.new then next(known + new, notflat) else next(known, notflat + new),
 if isempty.notflat ∨ n.unknown = n.notflat then
 checkflatresult2(known, notflat)
 else checkflat(known, notflat)
@@ -143,8 +142,7 @@ else
         if isempty.f3 then
         next(acc + t, unchanged)
         else next(acc + replaceT(parameter.t, flatflds.1_f3), false)
-    else next(acc + flatflds.1_f, false)
- ,
+    else next(acc + flatflds.1_f, false),
  if unchanged then flatflds else expandflat(type, acc, types)
 
 function replaceT(with:mytype, typs:seq.mytype) seq.mytype
@@ -181,8 +179,7 @@ let need = acc \ (asset.[typeint, typeboolean, typeptr, typereal, typeword] ∪ 
 for new = empty:set.typeentry, t ∈ toseq.need
 do
  let x = lookup(totypedict.all, typeentry(t, empty:seq.mytype)),
- if isempty.x ∧ isseq.t then new + typeentry(t, [t]) else new ∪ x
-,
+ if isempty.x ∧ isseq.t then new + typeentry(t, [t]) else new ∪ x,
 if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new))
 
 Function basetype(typ:mytype, alltypes:typedict) mytype

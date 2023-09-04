@@ -36,10 +36,8 @@ do
    if name.codesym ∈ "name for" then
    arcs
    else arcs + arc(sym, indexsymbol.resulttype.codesym)
-  else arcs + arc(sym, codesym)
- ,
- arcs
-,
+  else arcs + arc(sym, codesym),
+ arcs,
 outer
 
 function removesinks(
@@ -47,8 +45,10 @@ function removesinks(
  , g:graph.symbol
  , toprocess:seq.symbol
 ) seq.arc.symbol
-{removes sinks that are not unbound and parameter of module is typeT /br do a transitiveClosure and only keep arcs whose head is a sink
- /br looking for relation of function to the unbound functions it can call.This are not quite yet that relation. }
+{removes sinks that are not unbound and parameter of module is typeT
+ /br do a transitiveClosure and only keep arcs whose head is a sink
+ /br looking for relation of function to the unbound functions it can call.This are not quite yet
+ that relation. }
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess
 do
  if isunbound.n ∨ para.module.n ≠ typeT then
@@ -56,8 +56,7 @@ do
  else next(keep, pred ∪ predecessors(g2, n), deletenode(g2, n))
 let newsinks =
  for acc = empty:seq.symbol, p ∈ toseq.pred do if outdegree(g, p) = 0 then acc + p else acc,
- acc
-,
+ acc,
 if isempty.newsinks then
  for acc = empty:seq.arc.symbol, a ∈ toseq.arcs.transitiveClosure.g2
  do if head.a ∈ keep then acc + a else acc,
@@ -89,8 +88,7 @@ do
       acc
       + symdef(
        sym.p
-       ,
-        code
+       , code
         + [
          if issimplename.sym then
          symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
@@ -104,10 +102,8 @@ do
     assert 1_symsrc ∈ "Function function" report symsrc
     let dict = symboldict(syms.partdict, req.partdict)
     let code = parser(symsrc, dict, typedict.m, textmode),
-    acc + symdef4(sym.p, code, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
- ,
- prg + acc
-,
+    acc + symdef4(sym.p, code, paragraphno.p, commentoptions(symsrc, nopara.sym.p)),
+ prg + acc,
 prg
 
 Function addExportOptions(
@@ -132,10 +128,8 @@ do
        , commentoptions(symsrc, nopara.sym.p) + getOptions.1_sd
       )
       ∪ acc
-   else acc
- ,
- acc
-,
+   else acc,
+ acc,
 prg
 
 function commentoptions(s:seq.word, nopara:int) seq.word
@@ -151,7 +145,8 @@ else
 
 Function buildrequires(prg:seq.symdef) set.symdef
 let g3 = newgraph.abstractarcs.prg
-{graph g3 has three kinds of sinks./br 1:is unbound and module parameter is T
+{graph g3 has three kinds of sinks.
+ /br 1:is unbound and module parameter is T
  /br 2:is not unbound and module parameter is T
  /br 3:module parameter is not T
  /br examples:otherseq.T:= (T, T) boolean ; otherseq.T:step (arithmeticseq.T) T ;
@@ -167,6 +162,5 @@ else
   let list0 = if last ≠ tail.a then empty:seq.symbol else list
   let newlist = if isunbound.head.a then list0 + head.a else list0
   let newacc = if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list, 0) else acc,
-  next(newacc, tail.a, newlist)
- ,
+  next(newacc, tail.a, newlist),
  if isempty.list then acc else acc + symdef(last, list, 0) 

@@ -110,10 +110,10 @@ let r =
  + "Suc"
  + print.toseq.successors(g, n2)
  + "sinks"
- + print.sinks(g, asset.[n5])
-,
+ + print.sinks(g, asset.[n5]),
 r
- = "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8, 2, 1, 3] Suc [4] sinks [4, 7, 8]"
+ = "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8
+ , 2, 1, 3] Suc [4] sinks [4, 7, 8]"
 
 function t506 boolean
 let g = newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4)]

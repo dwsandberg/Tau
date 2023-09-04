@@ -107,8 +107,7 @@ do
      let lastsym = 1^code
      let sd = symdef(
       firstsym
-      ,
-       if isSequence.lastsym then
+      , if isSequence.lastsym then
        [Lit.0, Lit.nopara.lastsym] + code >> 1
        else assert isRecord.lastsym report "codegen nnn^(sym.cc)^(code.cc)", code >> 1
       , 0
@@ -177,8 +176,7 @@ do
  buildspecial(ele, alltypes)
  else if isInternal.ele ∧ internalidx.ele = 1 then
  call(alltypes, ele, 1_"CALL", name.ele)
- else acc
-,
+ else acc,
 processconst(isrecordconstant, alltypes)
 
 Function processconst(toprocess:seq.symdef, alltypes:typedict) int
@@ -198,19 +196,19 @@ do
   next(args + toint.C64.0, true)
   else
    let tp = findtemplate.ele,
-   if isempty.tp then next(args, false) else next(args + arg.1_tp, true)
- ,
+   if isempty.tp then next(args, false) else next(args + arg.1_tp, true),
   if defined then
    let discard = addtemplate(sym.xx, 0, emptyinternalbc, 1_"ACTARG", slot.addobject.args),
    notprocessed
-  else notprocessed + xx
-,
+  else notprocessed + xx,
 if n.encodingdata:match5 = initvalue then
 assert isempty.notprocessed report "processconst problem", 0
 else processconst(notprocessed, alltypes)
 
 Function internalidx(s:symbol) int
-{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"}
+{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint
+ getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace
+ processisaborted addencoding getinstance"}
 let l = [
  "stacktrace"
  , "not boolean"

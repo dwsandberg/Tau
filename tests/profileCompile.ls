@@ -1,5 +1,15 @@
 Module profileCompile
 
+use file
+
+use seq.file
+
+use main2
+
+use profile
+
+use standard
+
 Function profileCompile(
  input:seq.file
  , library:seq.word
@@ -8,15 +18,5 @@ Function profileCompile(
  , o:seq.word
 ) seq.word
 {ENTRYPOINT}
-let discard = makebitcode(input, library, exports, uses, false, false, ""),
-profileresults."time"
-
-use main2
-
-use file
-
-use seq.file
-
-use profile
-
-use standard 
+let discard = makebitcode(input, library, exports, uses, false, false, "", ""),
+profileresults."time" 

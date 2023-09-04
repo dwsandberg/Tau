@@ -34,6 +34,8 @@ use seq.mytype
 
 use seq.seq.mytype
 
+use newanal
+
 use pass2
 
 use standard
@@ -59,13 +61,22 @@ use seq.seq.word
 use set.word
 
 Function compilerFront:T(option:seq.word, input:seq.file) midpoint
-compilerFront:T(option, input, "", "")
+compilerFront:T(option, input, "", "", "")
 
 Function compilerFront:T(
  option:seq.word
  , input:seq.file
  , libname0:seq.word
  , exports0:seq.word
+) midpoint
+compilerFront:T(option, input, libname0, exports0, "")
+
+Function compilerFront:T(
+ option:seq.word
+ , input:seq.file
+ , libname0:seq.word
+ , exports0:seq.word
+ , entryUses:seq.word
 ) midpoint
 {OPTION XPROFILE}
 for libinfo = empty:midpoint, data = empty:seq.byte, i ∈ input
@@ -96,12 +107,11 @@ let m =
   let EPname = merge.[libname, 1_"$EP"],
   compilerfront3(
    option
-   , allsrc + ["Module^(EPname)"] + modEntry2.allsrc
+   , allsrc + ["Module^(EPname)"] + modEntry(allsrc, entryUses)
    , libname
    , exports + EPname
    , libinfo
-  )
-,
+  ),
 if 1_option.m ∈ "library text pass1 pass1a prebind" then
 m
 else
@@ -124,8 +134,7 @@ else
      , libmods.m + modExports(module.profinit, [profinit, profdata], empty:seq.seq.mytype)
      , src.m
     )
-  else midpoint5(option, prg5, templates.m, typedict.m, libmods.m, src.m)
- ,
+  else midpoint5(option, prg5, templates.m, typedict.m, libmods.m, src.m),
   if 1_"bitcode" ∈ option then
    let m3 = prepareback(m2, libinfo),
    midpoint5(option.m3, prg.m3, templates.m3, typedict.m3, libmods.m3, src.m3 + allsrc)
@@ -150,7 +159,9 @@ Function pass2:T(
  , libname:word
 ) set.symdef
 {OPTION XPROFILE}
-{for idxNBsyms = empty:seq.symdef, tp ∈ packedtypes+typeint+typereal+typeboolean+typeptr+typebyte do idxNBsyms+symdef4 (symbol (internalmod," idxNB", seqof.tp, typeint, tp), empty:seq.symbol, 0," COMPILETIME")}
+{for idxNBsyms = empty:seq.symdef, tp ∈ packedtypes+typeint+typereal+typeboolean+
+ typeptr+typebyte do idxNBsyms+symdef4 (symbol (internalmod," idxNB", seqof.tp, typeint
+ , tp), empty:seq.symbol, 0," COMPILETIME")}
 for knownsymbols = empty:set.symdef, pele0 ∈ toseq.prg
 do
  if isempty.code.pele0 then
@@ -162,8 +173,7 @@ do
   let sd = symdef4(sym.pele0, acc, paragraphno.pele0, getOptions.pele0),
    if isrecordconstant.sym.sd then
    let discard = registerConstant.sd, knownsymbols
-   else knownsymbols + sd
-,
+   else knownsymbols + sd,
 if 1_"addpass" ∈ option then
 additionalpass:T(librarymap, toseq.knownsymbols, knownsymbols, t, libname)
 else
@@ -191,13 +201,10 @@ do
   else if n.code < 30 then
    let t = firstopt:T(librarymap, core, pele, true, typedict, libname),
    if isINLINE.t then next(big, small, t ∪ core) else next(big, t ∪ small, core)
-  else next(big + pele, small, core)
-,
+  else next(big + pele, small, core),
 if n.toseq.corein = n.toseq.core then
 additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict, libname)
 else subpass2:T(librarymap, big, core, small, count + 1, typedict, libname)
-
-use newanal
 
 Function additionalpass:T(
  librarymap:seq.word
@@ -211,8 +218,7 @@ for acc = start, prgele ∈ p
 do
  if isempty.code.prgele then
  prgele ∪ acc
- else firstopt:T(librarymap, acc, prgele, false, typedict, libname) ∪ acc
-,
+ else firstopt:T(librarymap, acc, prgele, false, typedict, libname) ∪ acc,
 acc
 
 function firstopt:T(
@@ -239,7 +245,7 @@ let code = code.a2
 let code1 = if HasidxNB ∈ flags then code.expandIndex(code, nextvar, typedict) else code
 let options = getOptions.sd
 let newoptions1 =
- if between(n.code1, 1, 21) ∧ not.isNOINLINE.sd ∧ self ∉ code1 then
+ if between(n.code1, 1, 25) ∧ not.isNOINLINE.sd ∧ self ∉ code1 then
  if isverysimple(nopara, code1) then "INLINE VERYSIMPLE" else "INLINE"
  else ""
 let newoptions =
@@ -247,8 +253,7 @@ let newoptions =
  newoptions1
  else if options = newoptions1 then
  options
- else toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
-,
+ else toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1),
 symdef4(self, code1, paragraphno.sd, newoptions)
 
 function scancode:T(
@@ -287,8 +292,7 @@ do
       localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap
       , parano + 1
      ),
-     pmap
-    ,
+     pmap,
     next(
      flags
      , result + Loopblock(paratypes.sym, nextvar, resulttype.sym)
@@ -326,8 +330,7 @@ do
      let t = n.z + 2
      for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1
      do next(acc + [var, w, EqOp] + Br2(t - idx, 1), idx + 1),
-     acc + [var, 1^z, EqOp, Exit, Littrue, Exit, EndBlock]
-   ,
+     acc + [var, 1^z, EqOp, Exit, Littrue, Exit, EndBlock],
     if nonew then
     next(flags, result >> 2 + newcode, nextvar, map)
     else next(flags, result >> 1 + Define.nextvar + newcode, nextvar + 1, map)
@@ -346,8 +349,7 @@ do
      for allconstant = true, sy ∈ args while allconstant do isconst.sy,
       if allconstant then
       {let discard100 = track.sym} interpretCompileTime:T(librarymap, args, sym, typedict)
-      else empty:seq.symbol
-   ,
+      else empty:seq.symbol,
     if not.isempty.compiletime then
      let newconst = if n.compiletime > 1 then Constant2(libname, compiletime) else 1_compiletime,
      next(flags, result >> nopara + newconst, nextvar, map)
@@ -400,6 +402,5 @@ do
           , true
          )
          let expandresult = subseq(result, 1, idx) + Define.nextvarExpand + paracode + code.r,
-         next(flags ∨ flags.r, expandresult, nextvar.r, map)
-,
+         next(flags ∨ flags.r, expandresult, nextvar.r, map),
 expandresult(nextvar, result, flags) 

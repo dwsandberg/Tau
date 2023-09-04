@@ -15,15 +15,19 @@ let zz = break(1_",", subseq(yy, findindex(yy, 1_"[") + 1, n.yy - 1))
 for auto = empty:seq.seq.word, z ∈ zz
 do
  let p = subseq(z, 2, n.z - 1)
- {???? add check to for first work in existingType newTYpe and other checks}
+ let values = extractValue(p, "values")
+ let existingType = extractValue(p, "existingType")
+ let newType = extractValue(p, "newType")
+ assert (isempty.existingType ∨ isempty.newType) ∧ not.isempty(newType + existingType)
+ report "genEnum: Either existingType = or newType = must specify a type name in^(p)"
+ assert not.isempty.values report "genEnum: values = must not be empty^(p)",
   auto
   + enumerate(
-   extractValue(p, [1_p])
-   , extractValue(p, "values")
-   , 1_p ∈ "existingType"
+   newType + existingType
+   , values
+   , not.isempty.existingType
    , isempty(extractValue(p, "decodeName"), "decode")
-  )
-,
+  ),
 auto
 
 function enumerate(
@@ -41,8 +45,7 @@ let codes =
    else next(acc, 1, w)
   for txt = "", e ∈ acc do txt + e,
   txt
- else codes0
-,
+ else codes0,
 (
  if existingtype then
  empty:seq.seq.word
@@ -63,15 +66,14 @@ let codes =
    let cvt =
     if existingtype then
     if type = "int" then "" else [merge."to^(type)"] + "."
-    else type + "."
-   ,
+    else type + ".",
    acc + "Function^(i_codes)^(type)^(cvt)^(i - 1)"
    , list + i_codes + ","
-  )
- ,
+  ),
   acc
   + (
-   "Function^(decodename) (code:^(type)) seq.word^(list >> 1)] let i =^(if type = "int" then "" else "toint.")"
+   "Function^(decodename) (code:^(type)) seq.word^(list >> 1)] let i =
+    ^(if type = "int" then "" else "toint.")"
    + "code, if between (i+1, 1,"
    + toword.n.codes
    + ") then let r = [(i+1)_^(dq.codes)],"
@@ -155,7 +157,8 @@ let i = toint.code,
 if between(i + 1, 1, 98) then
  let r = [
   (i + 1)
-  _"? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op1 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op2"
+  _"? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op1 ? ? ?
+   ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op2"
  ],
  if r ≠ "?" then r else "byte." + toword.i
 else "byte." + toword.i

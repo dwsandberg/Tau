@@ -19,8 +19,7 @@ for lines = "M^(c1)", curve = "M^(c1)", i ∈ arithseq(no, 2, 2)
 do
  let c2 = getattributes([merge.[1_"c", toword.i]], "cx cy")
  let c3 = getattributes([merge.[1_"c", toword(i + 1)]], "cx cy"),
- next(lines + "L" + c2 + "L" + c3, curve + "Q" + c2 + c3)
-,
+ next(lines + "L" + c2 + "L" + c3, curve + "Q" + c2 + c3),
 setAttribute("lines", "d", lines) + setAttribute("curve", "d", curve)
 
 function split(c:seq.word) seq.seq.word
@@ -37,8 +36,7 @@ let new =
    + 
     if thisid = id then
     let t = toint.1_c, [c, [toword(t + 1)] + c << 1, [toword(t + 2)] + c << 1]
-    else [c]
- ,
+    else [c],
  txt
 let svg =
  for svg = "", i = 1, c ∈ new
@@ -53,8 +51,7 @@ let svg =
    + "r =^(dq.".3")"
    + "/>"
    , i + 1
-  )
- ,
+  ),
  svg
 let k = replaceSVG("grp1", svg)
 let t = setAttribute("grp1", "data-segments", [toword(no + 1)]),

@@ -1,20 +1,20 @@
 Module llvm2
 
+use bitcodesupport
+
+use bits
+
+use seq.bits
+
 use seq.block
+
+use seq.byte
 
 use seq.seq.int
 
 use llvm
 
-use bits
-
-use seq.byte
-
 use standard
-
-use seq.bits
-
-use bitcodesupport
 
 type block is bits:SBIT, start:int, len:int, abbrevlen:int, blockid:int
 
@@ -126,7 +126,8 @@ Function getinfo(
  , blockid:int
  , abbrdef:seq.seq.int
 ) content
-{if blockid = toint.CONSTANTS then assert false report" X"+toword.idx+@ (seperator." /br", printrecord.toint.CONSTANTS,"", recs) content (recs, blocks) else}
+{if blockid = toint.CONSTANTS then assert false report" X"+toword.idx+@ (seperator."
+ /br", printrecord.toint.CONSTANTS,"", recs) content (recs, blocks) else}
 if n.r > 0 then
  {working on record}
  if noargs = 0 then
@@ -135,13 +136,15 @@ if n.r > 0 then
   let next =
    if blockid = toint.CONSTANTS ∧ 1_r = toint.CINTEGER then
    getvbrsigned(b, idx, 6)
-   else getvbr(b, idx, 6)
-  ,
+   else getvbr(b, idx, 6),
   getinfo(b, noargs - 1, r + val.next, idx.next, recs, blocks, abbrvlen, blockid, abbrdef)
 else
- {assert not (blockid = toint.CONSTANTS) report" KK"+toword.length.orderadded.blockabbre+@ (seperator." /br", printabbr,"", abbrdef)}
+ {assert not (blockid = toint.CONSTANTS) report" KK"+toword.length.orderadded.
+  blockabbre+@ (seperator."
+  /br", printabbr,"", abbrdef)}
  let t = {getvbr (b, abbrvlen, bits.0, 0, idx, 0)} getfixed(b, idx, abbrvlen)
- {assert val.t = val.getvbr (b, abbrvlen, bits.0, 0, idx, 0) report" XX"+toword.val.t+toword.abbrvlen+toword.val.getvbr (b, abbrvlen, bits.0, 0, idx, 0)}
+ {assert val.t = val.getvbr (b, abbrvlen, bits.0, 0, idx, 0) report" XX"+toword.
+  val.t+toword.abbrvlen+toword.val.getvbr (b, abbrvlen, bits.0, 0, idx, 0)}
   if val.t = 3 then
    {record}
    let inst = getvbr(b, idx.t, 6)
@@ -154,9 +157,12 @@ else
    let alg = align32.abbrlen
    let len = getvbr(b, idx.alg, 32)
    let finish = idx.len + val.len * 32
-   {assert not (val.newblockid = 0) report" abbrlen"+toword.val.abbrlen+" bits"+@ (+, toword,"", @ (+, toint, empty:seq.int, @ (+,_.b, empty:SBIT, arithseq (val.len * 32, 1, idx.len))))}
+   {assert not (val.newblockid = 0) report" abbrlen"+toword.val.abbrlen+" bits"+@ (+
+    , toword,"", @ (+, toint, empty:seq.int, @ (+,_.b, empty:SBIT, arithseq (val
+    .len * 32, 1, idx.len))))}
    let subblock = block(b, idx.len, val.len, val.abbrlen, val.newblockid)
-   {let discard = if blockid.subblock = 0 then processabbr (recs.getinfo.subblock, 1, 0, empty:seq.seq.int) else 0}
+   {let discard = if blockid.subblock = 0 then processabbr (recs.getinfo.subblock, 1, 0,
+    empty:seq.seq.int) else 0}
    getinfo(
     b
     , 0

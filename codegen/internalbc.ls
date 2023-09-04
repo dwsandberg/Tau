@@ -10,6 +10,8 @@ use bitstream
 
 use seq.instop
 
+use otherseq.int
+
 use seq.seq.int
 
 use llvm
@@ -72,8 +74,7 @@ do
    "Firstpara^(toint.bits.e)"
    else if nobits = Relocsigned then
    "Relocsigned^(signedvalue.e)"
-   else "^(nobits)^(bits.e)"
-,
+   else "^(nobits)^(bits.e)",
 acc
 
 function +(a:seq.templatepart, b:bitstream) seq.templatepart
@@ -146,8 +147,7 @@ do
      if a ≥ offset then ", % /nosp^(a - offset)" else ",^(slot.a)"
     else if i = 3 ∧ inst = LOAD then
     decode.align.argval
-    else %.argval
-   ,
+    else %.argval,
    next(acc + more, tmp)
   else
    assert idx.place < n.parts.place report "unexpected end"
@@ -164,12 +164,10 @@ do
       assert nobits = Relocsigned report "SDF^(idx.args)^(acc)",
       "## /nosp^({slotin+1-} {offset-} signedvalue.e)"
     , pbc(0, 0x0, idx.place + 1, parts.place, 0x0)
-   )
- ,
+   ),
   if inst ∈ [BR, SWITCH] then
   next(place, acc + "/br^(block + 1):", slot, block + 1)
-  else next(place, acc, slot, block)
-,
+  else next(place, acc, slot, block),
 %.offset + %.n.constantrecords + dumpslots + resultin
 
 type pbc is nobits:int, bits:bits, idx:int, parts:seq.templatepart, r1:bits
@@ -239,8 +237,7 @@ do
   addvbr6(result, toint.bits.valx)
   else if nobits = Relocsigned then
   addvbrsigned6(result, offset - signedvalue.valx)
-  else result
-,
+  else result,
 result
 
 function add(val:int, b:internalbc) internalbc
@@ -462,8 +459,6 @@ Function SWITCH(slot:slot, a1:llvmtype, a2:slot, default:int, s:seq.int) interna
 for code = emptyinternalbc, i ∈ reverse.s do add(i, code),
 addstartbits(toint.SWITCH, n.s + 3, add(typ.a1, addaddress(slot, a2, add(default, code))))
 
-use otherseq.int
-
 Function PHI(slot:int, a1:int, s:seq.int) internalbc
 addstartbits(toint.PHI, n.s + 1, add(a1, subphi(slot, emptyinternalbc, s, n.s)))
 
@@ -486,8 +481,7 @@ let t =
   acc = emptyinternalbc
   , @e ∈ arithseq(n.tailphi / (nopara + 1),-nopara - 1, n.tailphi - nopara)
  do addpair(acc, tailphi, slot + p, p, @e),
- acc
-,
+ acc,
 addstartbits(toint.PHI, n.tailphi / (nopara + 1) * 2 + 1, add(p_typ, t))
 
 function addsignedaddress(loc:slot, a:slot, bc:internalbc) internalbc
@@ -613,8 +607,7 @@ let a7 =
  for acc = a6, bodytxt ∈ bodytxts
  do
   let fheader = addblockheader(acc, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN),
-  finishblock(addtobitstream(offset, fheader, bodytxt), length.fheader, FUNCABBRVLEN)
- ,
+  finishblock(addtobitstream(offset, fheader, bodytxt), length.fheader, FUNCABBRVLEN),
  acc
 {sym table}
 let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
@@ -629,8 +622,7 @@ let a7 =
  for acc = a6, bodytxt ∈ bodies
  do
   let fheader = addblockheader(acc, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN),
-  finishblock(addrecords(fheader, FUNCABBRVLEN, bodytxt), length.fheader, FUNCABBRVLEN)
- ,
+  finishblock(addrecords(fheader, FUNCABBRVLEN, bodytxt), length.fheader, FUNCABBRVLEN),
  acc
 {sym table}
 let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
@@ -687,8 +679,7 @@ let a5 = addrecords(a4, MODABBREVLEN, deflist)
 {const block}
 let g =
  for acc = trackconst(a5,-1, 0), @e ∈ constantrecords << n.deflist do constrecords(acc, @e),
- acc
-,
+ acc,
 finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
 
 function constrecords(z:trackconst, l:slotrecord) trackconst
@@ -715,10 +706,8 @@ else
    let a1 =
     if n.rec < 32 then
     add(bits2, bits(((n.rec - 1) * 64 + tp) * 16 + 3), 16)
-    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), n.rec - 1)
-   ,
-   addvbr6(a1, subseq(rec, 2, n.rec))
- ,
+    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), n.rec - 1),
+   addvbr6(a1, subseq(rec, 2, n.rec)),
  trackconst(bs, typ.l, if newblock then length.bits else blockstart.z)
 
 Function symentries(bits:bitstream, s:seq.slotrecord, i:int) bitstream
@@ -735,8 +724,7 @@ else
     else
      let a1 = addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), {rec type entry} 1), n.name + 1), i - 1),
      addvbr6(a1, name)
-  else bits
- ,
+  else bits,
  symentries(bs, s, i + 1)
 
 type trackconst is bits:bitstream, lasttype:int, blockstart:int

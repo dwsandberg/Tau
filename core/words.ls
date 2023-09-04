@@ -45,7 +45,8 @@ Function =(a:word, b:word) boolean {OPTION COMPILETIME} asencoding.a = asencodin
 Function >1(a:word, b:word) ordering asencoding.a >1 asencoding.b
 
 Function merge(a:seq.word) word
-{OPTION COMPILETIME /br make multiple words into a single word. }
+{OPTION COMPILETIME
+ /br make multiple words into a single word. }
 for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e,
 encodeword.acc
 
@@ -65,9 +66,7 @@ Function towordseq(a:seq.alphaword) seq.word
 for acc = empty:seq.word, @e ∈ a do acc + toword.@e,
 acc
 
-Function alphasort(a:seq.word) seq.word
-{perform alphabetical sort}
-towordseq.sort.toalphaseq.a
+Function alphasort(a:seq.word) seq.word {perform alphabetical sort} towordseq.sort.toalphaseq.a
 
 type alphawords is toseq:seq.alphaword
 

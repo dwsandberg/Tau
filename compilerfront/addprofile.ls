@@ -53,8 +53,7 @@ do
    ]
  else
   let offset = valueofencoding.encode.parc2(sym.sd, sym) * 6 + (2 - 6),
-  acc2 + profileCallNR(offset, sym, n.code.sd + n.acc2, sym ∈ recursive)
-,
+  acc2 + profileCallNR(offset, sym, n.code.sd + n.acc2, sym ∈ recursive),
 acc2
 
 Function addprofile(prg:set.symdef, libname:word) set.symdef
@@ -63,8 +62,7 @@ for acc = empty:set.symdef, sd ∈ toseq.prg
 do
  if isPROFILE.sd ∧ not.isAbstract.module.sym.sd then
  acc + symdef4(sym.sd, subaddprofile(sd, recursive), paragraphno.sd, getOptionsBits.sd)
- else acc
-,
+ else acc,
 acc ∪ initProfileDefinition.libname
 
 function profiledata symbol
@@ -141,8 +139,7 @@ let data =
   + Define.2
   + [profiledata]
   + Local.1
-  + setSym.typeptr
-,
+  + setSym.typeptr,
 asset.[
  symdef(symbol(moduleref.[libname, 1_"initialize"], "initProfile", typeptr), data, 0)
  , symdef(
@@ -162,13 +159,11 @@ do
   let calls =
    for acc2 = empty:set.symbol, sym ∈ code.sd
    do if isconstantorspecial.sym ∨ isInternal.sym then acc2 else acc2 + sym,
-   acc2 \ acc
-  ,
+   acc2 \ acc,
   next(
    if isempty.calls then acc + sym.sd else acc
    , (for acc2 = arcs, x ∈ toseq.calls do acc2 + arc(sym.sd, x), acc2)
-  )
-,
+  ),
 cyclenodes.newgraph.toseq.arcs
 
 function removeSinksSources(g:graph.symbol) graph.symbol

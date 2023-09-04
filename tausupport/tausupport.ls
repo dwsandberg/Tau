@@ -191,8 +191,7 @@ else
  let discard =
   for acc = set(set(blkseq, blockseqtype:byte), n.s), @e ∈ arithseq(noblks, blksz, 1)
   do set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1))),
-  acc
- ,
+  acc,
  bitcast:seq.byte(blkseq)
 
 Function toseqseqbyte(b:seq.bits, bytestowrite:int) seq.seq.byte
@@ -202,8 +201,7 @@ for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0)
 do
  let new = packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
  let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8)),
- acc + bitcast:seq.byte(toptr.new)
-,
+ acc + bitcast:seq.byte(toptr.new),
 acc
 
 Function toseqseqbyte(s:seq.byte) seq.seq.byte

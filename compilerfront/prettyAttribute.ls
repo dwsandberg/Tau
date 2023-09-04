@@ -19,13 +19,7 @@ assert
  true
  ∨ min(width, 10000) = width.text
  ∨ escapeformat ∈ text
- ∨ 
-  not.isempty.text
-  ∧ 
-   1^text
-   ∈ "/br
-    /p
-    /row"
+ ∨ not.isempty.text ∧ 1^text ∈ "/br /p /row"
 report "DIFF^(width.text)^(width)^(text)^(showZ.text)^(stacktrace)",
 prettyR(prec, width, text, 0)
 
@@ -68,8 +62,7 @@ do
  {assert false report %.strcount+s} next(10000, strcount, w)
  else if strcount > 0 then
  next(acc + n.decodeword.w + 1, strcount + 1, w)
- else next(acc + wordwidth(last, w), strcount, w)
-,
+ else next(acc + wordwidth(last, w), strcount, w),
 acc
 
 function wordwidth(last:word, w:word) int
@@ -79,28 +72,31 @@ else if w ∈ "(,) /ldq /sp" then
 1
 else n.decodeword.w + 1
 
-Function matchR(txt:seq.word) int
+function matchR(txt:seq.word) int
 let close = 1^txt
 let open = if close ∈ "*>" then 1_"<*" else if close ∈ ")" then 1_"(" else 1_"?",
 if open ∈ "?" then
 0
 else
- for idx = 1, count = 1, match = "", w ∈ reverse(txt >> 1)
+ for idx = 1, count = 1, inescape = false, w ∈ reverse(txt >> 1)
  while count > 0
  do
-  if isempty.match then
-   if w = escapeformat then
-   next(idx + 1, count, dq)
-   else if w = open then
-   next(idx + 1, count - 1, match)
-   else if w = close then
-   next(idx + 1, count + 1, match)
-   else next(idx + 1, count, match)
-  else if w = escapeformat then
-  next(idx + 1, count, "")
-  else next(idx + 1, count, match)
+  if w = escapeformat then
+  next(idx + 1, count, not.inescape)
+  else if inescape then
+  next(idx + 1, count, inescape)
+  else if w = open then
+  next(idx + 1, count - 1, inescape)
+  else if w = close then
+  next(idx + 1, count + 1, inescape)
+  else next(idx + 1, count, inescape)
  assert count = 0 report "formatproblem2^(count)^(idx)^(showZ.txt)",
  idx
+
+Function blockIsLast(text:seq.word) boolean
+if isempty.text ∨ 1^text ∉ "*>" then
+false
+else let i = matchR.text, subseq(text, n.text - i + 1, n.text - i + 2) = "<* block"
 
 Function removeblock(a:seq.word) seq.word
 if subseq(a, 1, 2) = "<* block" ∧ 1^a ∈ "*>" then
@@ -166,8 +162,7 @@ else
       else checkbr(
        subseq(acc, n.acc - i + 1, left)
        , "^(if 1^result ∈ "/br" then result >> 1 else result) *>"
-      )
-     ,
+      ),
      next(n.acc - i, len - 1, newtext, if hasforif then forif else state)
    else
     {e = (}
@@ -182,11 +177,9 @@ else
        0
        else if w ∈ "<*" then
        1
-       else 2
-      ,
+       else 2,
       state2 = 0
-     else false
-    ,
+     else false,
      if outerparen then
       if state = 0 then
       next(n.acc - i, len - 1, subseq(acc, n.acc - i + 2, n.acc - 1), paren)
@@ -206,17 +199,14 @@ else
          let c = acc >> i
          let d = checkbr(subseq(a, n.acc - i + 2, left), result),
           if
-           subseq(c, n.c - 3, n.c)
-           = "}^(escapeformat) *>
-            /br"
+           subseq(c, n.c - 3, n.c) = "}^(escapeformat) *> /br"
            ∧ subseq(d, 1, 2) = "<* block"
            ∧ isempty.b
            ∧ subseq(c, 1, 6) = "<* block <* comment^(escapeformat) {"
           then
           next(n.acc - i, len - 1, c + d << 2, skip)
           else next(n.acc - i, len - 1, d, changed)
-       else next(n.acc - i, len - 1, "", 0)
- ,
+       else next(n.acc - i, len - 1, "", 0),
  if state = 0 then a else checkbr(subseq(a, 1, left), result)
 
 function removeX(a:seq.word) seq.word
@@ -245,15 +235,7 @@ else
   , last = space
   , w ∈ in << 1
  do
-  if
-   linelength > maxwidth
-   ∨ 
-    w
-    ∈ "/br
-     /p
-     /row"
-  then
+  if linelength > maxwidth ∨ w ∈ "/br /p /row" then
   next(result + escapeformat + "/br" + escapeformat + w, wordwidth(last, w), w)
-  else next(result + w, linelength + wordwidth(last, w), w)
- ,
+  else next(result + w, linelength + wordwidth(last, w), w),
  result + escapeformat 

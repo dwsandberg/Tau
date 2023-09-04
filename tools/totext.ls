@@ -1,32 +1,46 @@
 Module totext
 
+use UTF8
+
+use backparse
+
+use format
+
+use otherseq.int
+
+use seq.int
+
+use seq.seq.int
+
+use otherseq.mytype
+
+use seq.mytype
+
+use newPretty
+
+use otherseq.paravalues
+
 use standard
 
 use symbol
 
-use stack.seq.word
-
-use seq.mytype
-
 use otherseq.symbol
 
-use newPretty
+use otherseq.word
 
-use format
+use seq.word
+
+use otherseq.seq.word
 
 use seq.seq.word
 
-use seq.seq.int
-
-use seq.int
+use stack.seq.word
 
 type paravalues is parano:int, value:seq.symbol
 
 function >1(a:paravalues, b:paravalues) ordering parano.a >1 parano.b
 
 function %(p:paravalues) seq.word "::^(parano.p)^(value.p)"
-
-use otherseq.paravalues
 
 Function replace(
  code:seq.symbol
@@ -36,8 +50,6 @@ Function replace(
 ) seq.symbol
 let tmp = replace2(code, pattern, replacement, nopara),
 if isempty.tmp then code else tmp
-
-use seq.word
 
 function eq2(p:mytype, a:mytype) boolean
 abstracttypename.p = 1_"*"
@@ -51,8 +63,6 @@ while same
 do let ptype = idx_tomatch, next(eq2(ptype, atype), idx + 1)
 assert true report "^(tomatch)^(types.a)^(if same then "same" else "")",
 same
-
-use otherseq.mytype
 
 Function replace2(
  code:seq.symbol
@@ -71,8 +81,7 @@ else
   else
    let p = patternidx_pattern,
     if islocal.p ∧ value.p ≤ nopara then
-     let z = backparse3(code, place, nopara - n.A = 1)
-     {assert false report" KL^(value.p)"+%.subseq (code, z, place)+" /p"+%.subseq (code, 1, place)}
+     let z = backparse3(code, place, nopara - n.A = 1),
      next(A + [value.p, z, place], place - z, patternidx - 1, place - 1)
     else if
      name.module.p = name.module.sym
@@ -81,8 +90,7 @@ else
      ∧ sametypes(p, sym)
     then
     next(if patternidx = n.pattern then [place] else A, skip, patternidx - 1, place - 1)
-    else next(empty:seq.int, 0, n.pattern, place - 1)
- ,
+    else next(empty:seq.int, 0, n.pattern, place - 1),
   if isempty.A ∨ patternidx ≠ 0 then
   empty:seq.symbol
   else
@@ -97,8 +105,6 @@ else
     replace(code >> (n.code - place + skip), pattern, replacement, nopara)
     + new
     + code << 1_A
-
-use otherseq.int
 
 Function totext(src:seq.seq.word, sd:symdef) seq.word
 let src2 = (paragraphno.sd)_src
@@ -125,8 +131,7 @@ let newtext =
      "≥"
      else if name.last = 1_">" then
      "≤"
-     else [name.last]
-    ,
+     else [name.last],
      if name.last ≠ 1_newname then
      next(stk, symbol(internalmod, newname, 1_paratypes, 2_paratypes, typeboolean))
      else next(newstk(last, stk), sym)
@@ -140,11 +145,14 @@ let newtext =
     ∧ isString.top.pop.stk
    then
    next(stk, sym)
-   else next(newstk(last, stk), sym)
-  ,
+   else next(newstk(last, stk), sym),
   top.newstk(last, stk)
 {pretty twice to clean up expressions (a+(b+d))}
 pretty.towords.textformat.pretty.newtext
+
+Function showZ(out:seq.word) seq.word
+for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
+acc
 
 function newstk(sym:symbol, stk:stack.seq.word) stack.seq.word
 if isstart.sym then
@@ -192,8 +200,7 @@ then
    ∨ not.oktocombine(1_args, 2_args)
   then
   "^(1_args)+^(2_args)"
-  else 1_args >> 1 + 2_args << 1
- ,
+  else 1_args >> 1 + 2_args << 1,
  push(pop(stk, 2), result)
 else if nopara.sym = 2 ∧ name.sym ∈ binaryops ∧ n.toseq.stk ≥ 2 then
  let args = top(stk, 2)
@@ -204,8 +211,7 @@ else if nopara.sym = 2 ∧ name.sym ∈ "^" then
  let new =
   if 1_2_args ∈ dq ∧ 1_1_args ∈ dq then
   1_args >> 1 + 2_args << 1
-  else 1_args >> 1 + "^" + "(" + 2_args + ")" + dq
- ,
+  else 1_args >> 1 + "^" + "(" + 2_args + ")" + dq,
  push(pop(stk, 2), new)
 else if name.sym ∈ "$mergecode" then
 let args = top(stk, 2), push(pop(stk, 2), 1_args + 2_args)
@@ -224,21 +230,18 @@ else if name.sym ∈ "$fortext" then
   let tmp =
    if i = n.accNames then
    if name ∈ "." then "" else "^(name) ∈^(i_args),"
-   else "^(name) =^(i_args),"
-  ,
+   else "^(name) =^(i_args),",
   next(acc6 + tmp, i + 1)
  let forexp =
   acc6 >> 1
   + (if whileexp = "true" then "" else "while^(whileexp)")
-  + "do^((n.args - 1)_args),"
- {assert 1_" 123" /nin top.pop.pop.stk report"^(sym)^(%n.toseq.stk)^FOR^(forexp)"}
+  + "do^((n.args - 1)_args),",
  push(pop(stk, nopara.sym), forexp)
 else if n.toseq.stk ≥ nopara.sym then
  for plist = "", t ∈ top(stk, nopara.sym) do plist + t + ",",
  push(
   pop(stk, nopara.sym)
-  ,
-   if isSequence.sym then
+  , if isSequence.sym then
    "[^(plist >> 1)]"
    else if nopara.sym = 0 then
    fullname.sym
@@ -247,21 +250,12 @@ else if n.toseq.stk ≥ nopara.sym then
 else stk
 
 function oktocombine(a:seq.word, b:seq.word) boolean
+{???? remove}
 for w1 = 0, last = 1_"?", e ∈ reverse.a
-while not(
- e
- ∈ "/br
-  /p"
- ∨ e ∈ "+" ∧ last ∈ dq
-)
+while not(e ∈ "/br /p" ∨ e ∈ "+" ∧ last ∈ dq)
 do next(w1 + wordwidth.e, e)
-for w2 = 0, e ∈ b
-while
- e
- ∉ "/br
-  /p"
-do w2 + wordwidth.e,
-w1 + w2 < 100
+for w2 = 0, e ∈ b while e ∉ "/br /p" do w2 + wordwidth.e,
+w1 + w2 < 10000
 
 function wordwidth(w:word) int
 if w ∈ ("<* *> /keyword: ./nosp" + escapeformat) then
@@ -270,14 +264,8 @@ else if w ∈ "(,) /ldq /sp" then
 1
 else n.decodeword.w + 1
 
-use otherseq.seq.word
-
-use otherseq.word
-
 function isString(b:seq.word) boolean let b1 = subseq(b, n.b - 1, n.b), 1^b1 ∈ dq
 
 function binaryops seq.word "=+_^∩ ∪ \-* / << >> > < ? >1 >2 ∈ mod ∧ ∨ ⊻ ≠ ∉ ≥ ≤"
-
-use backparse
 
 Export backparse3(s:seq.symbol, i:int, includeDefine:boolean) int 

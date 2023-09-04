@@ -61,8 +61,7 @@ check(
   , print(3, (for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e, acc)) = "38.000"
   , "23.45000-18.45000" = print(5, 23.45) + print(5, 5.0 - 23.45)
   ,-2^4 = -16
-  ,
-   alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
+  , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
    = "1 C addcomma function i int merge s segment seq seq toword toword word"
   , (
    for acc = "", @e ∈ alphasort.["z b", "a b", "a a", "test 23", "test 20"]
@@ -97,8 +96,7 @@ let y = [
  , result.process.arg4(1, 2, 3, 4) = 10
  , {20} message.process.result.process.testout.4 = "no result of aborted process"
  , isprefix("unexpected character in real literal", message.process.45t6.3)
- ,
-  a.result.process.testprocess3 = 4
+ , a.result.process.testprocess3 = 4
   ∧ b.result.process.testprocess3 = 40
   ∧ c.result.process.testprocess3 = "a test"
  , t513
@@ -145,8 +143,7 @@ let r =
  for acc = empty:seq.int, i ∈ randomint.samplesize
  do
   for acc2 = acc, j ∈ arithseq(16, 4, 0) do acc2 + (toint(tobits.i >> j ∧ 0xF) + 4 * j),
-  acc2
- ,
+  acc2,
  sort.acc
 for acc = empty:seq.int, last =-1, count =-1, sum = 0, t ∈ r
 do

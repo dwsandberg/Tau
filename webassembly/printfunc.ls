@@ -29,8 +29,7 @@ else
  for text = "", place = next.d2, e ∈ constantseq(value.d2, 1)
  do
   let d3 = decodeLEBu(a, place),
-  next(text + constantseq(value.d3, 1_%.wtype.(next.d3)_a), next.d3 + 1)
- ,
+  next(text + constantseq(value.d3, 1_%.wtype.(next.d3)_a), next.d3 + 1),
  "(^(text))
   /br^(zzz(nocheck, argtypes >> 2 + text, subseq(a, place, n.a - 1), %.sym.f))"
 
@@ -107,8 +106,7 @@ do
      stk
      else
       assert not.isempty.stk ∧ top.stk = top.blkstk
-      report "type problem else^(toseq.stk)+^(top.blkstk)"
-      ,
+      report "type problem else^(toseq.stk)+^(top.blkstk)",
       pop.stk
     else if byte ∈ [return, drop] then
     pop.stk
@@ -119,10 +117,7 @@ do
      stk
      else
       assert top.blkstk = 1_"void" ∨ not.isempty.stk ∧ top.stk = top.blkstk
-      report "type problem end^(toseq.stk)
-       /br^(toseq.blkstk)
-       /br^(text)"
-      ,
+      report "type problem end^(toseq.stk) /br^(toseq.blkstk) /br^(text)",
       stk
     else newstack(byte, stk, text)
    let newblkstk = if byte ∈ [END] then pop.blkstk else blkstk,
@@ -146,8 +141,7 @@ do
    assert
     byte
     ∈ [i32const, i64const, localset, localget, localtee, call, callindirect, brif, br, tobyte.255]
-   report "OPCODE^(decodeop.byte):^(text + stacktrace)"
-   ,
+   report "OPCODE^(decodeop.byte):^(text + stacktrace)",
    next(text, byte, 0x0, shift, "startLEBarg", stk, blkstk, lastop)
  else if state = "inf64const" then
   if shift = 7 then
@@ -187,15 +181,13 @@ do
      stk
      else if op = localset then
       assert between(arg + 1, 1, n.locals)
-      report "??? localset problem /br^(text + decodeop.op)" + toword.arg + xx
+      report "?? localset problem /br^(text + decodeop.op)" + toword.arg + xx
       assert top.stk = (arg + 1)_locals
       report "type problem localset" + toword.arg + "locals" + locals + "/br" + text,
       pop.stk
      else if op = call then
       assert top(stk, n.xx - 4) = subseq(xx, 3, n.xx - 2)
-      report "types nomatch call stk:^(top(stk, n.xx - 4)) xx^(xx)
-       /br^(text)"
-      ,
+      report "types nomatch call stk:^(top(stk, n.xx - 4)) xx^(xx) /br^(text)",
       push(pop(stk, n.xx - 4), 1^xx)
      else if op = callindirect then
       assert n.xx > 0 report "call indirect^(printtypeidx.arg)"
@@ -228,17 +220,15 @@ do
          + "/br"
          + toseq.blkstk
          + "/br"
-         + text
-        ,
+         + text,
         pop.stk
      else
       assert op ∈ [localtee] report "OPCODEX^(decodeop.op):^(text) stk^(toseq.stk)"
       assert between(arg + 1, 1, n.locals)
-      report "??? localtee problem /br^(text)^(decodeop.op)" + toword.arg + xx
+      report "?? localtee problem /br^(text)^(decodeop.op)" + toword.arg + xx
       assert top.stk = (arg + 1)_locals
       report "type problem localtee" + toword.arg + "locals" + locals + "/br" + text,
-      stk
-    ,
+      stk,
     next(
      text + decodeop.op + toword.arg + xx
      , op
@@ -253,8 +243,7 @@ do
    next(text, op, c, 7, "inLEB", stk, blkstk, lastop)
    else
     let newresult = result ∨ c << shift,
-    next(text, op, newresult, shift + 7, state, stk, blkstk, lastop)
-,
+    next(text, op, newresult, shift + 7, state, stk, blkstk, lastop),
 "P^(text)"
 
 function newstack(op:byte, stk:stack.word, text:seq.word) stack.word
@@ -299,6 +288,5 @@ let d =
  ["", ""]
  else assert false report "newstack^(decodeop.op)", ["", ""]
 assert n.toseq.stk ≥ n.1_d ∧ top(stk, n.1_d) = 1_d
-report "type problem^(decodeop.op) stk: ^(toseq.stk)
- /br^(text)",
+report "type problem^(decodeop.op) stk: ^(toseq.stk) /br^(text)",
 if isempty.2_d then pop(stk, n.1_d) else push(pop(stk, n.1_d), 1_2_d) 

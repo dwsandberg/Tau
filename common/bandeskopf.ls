@@ -94,7 +94,8 @@ function crossings(
  , l:int
  , l1:int
 ) seq.arc.T
-{(k0, l) and (k1, l1) both inner.crossings of (k0, l) have been found for (?, j) for j< k0.find arcs (?, n) where n > l and n < l1 that cross (k0, l) or (k1, l1)}
+{(k0, l) and (k1, l1) both inner.crossings of (k0, l) have been found for (?, j) for
+ j< k0.find arcs (?, n) where n > l and n < l1 that cross (k0, l) or (k1, l1)}
 for acc = empty:seq.arc.T, @e ∈ arithseq(l1 - 1 - (l + 1) + 1, 1, l + 1)
 do acc + w1(g, upperlayer, k0, k1, currentlayer, @e),
 acc
@@ -178,7 +179,6 @@ else
  let preds = toseq.predecessors(g, node),
   if n.preds > 0 then
    let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(lastlayer, @e), acc
-   {medianleft and medianright are same value ????}
    let medianleft = ((n.upperidx + 1) / 2)_upperidx
    let medianright = ((n.upperidx + 1) / 2)_upperidx,
     if r > medianright ∧ medianright_lastlayer ∉ assigned then
@@ -201,7 +201,9 @@ function assignvert(
  , x:int
  , result:seq.nodeinfo.T
 ) set.nodeinfo.T
-{look for other nodes in vertical assignment.Do this recursively to assign all nodes in vertical assignmentnodes collecting the max value of x in each layer Vertarcs always increate level by 1.The final value of x is assigned to all nodes in the vertical assignment}
+{look for other nodes in vertical assignment.Do this recursively to assign all nodes in vertical
+ assignmentnodes collecting the max value of x in each layer Vertarcs always increate level by 1.
+ The final value of x is assigned to all nodes in the vertical assignment}
 let lastassignedx =
  if RtoL then
  for acc = x, @e ∈ toseq.assigned do min(acc, findx(RtoL, q, @e)), acc
@@ -296,7 +298,8 @@ function assignx(
  , vertarcs:seq.arc.T
  , i:int
 ) set.nodeinfo.T
-{assign x values.Direction can either be Right to left or left to Right.Negative x's are assign when RtoL '}
+{assign x values.Direction can either be Right to left or left to Right.Negative x's are assign
+ when RtoL '}
 if i > n.list then
 assigned
 else
@@ -346,10 +349,8 @@ let paths =
   else
    let path = [tail.a] + followpath(head.a, g.lg, nodes.g)
    let acc1 = if arc(1_path, 1^path) ∈ arcs.g then acc + path else acc,
-   if arc(1^path, 1_path) ∈ arcs.g then acc1 + reverse.path else acc1
- ,
- acc
-,
+   if arc(1^path, 1_path) ∈ arcs.g then acc1 + reverse.path else acc1,
+ acc,
 graphlayout(g.lg, assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg), paths)
 
 function followpath(a:T, lg:graph.T, nodes:set.T) seq.T

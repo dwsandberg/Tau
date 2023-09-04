@@ -119,8 +119,7 @@ do
  next(0, result)
  else if state = match then
  next(done, x)
- else next(if x = libname then match else nomatch, result)
-,
+ else next(if x = libname then match else nomatch, result),
 result
 
 Function changelibrary(s:symbol, map:seq.word) symbol
@@ -225,8 +224,7 @@ else
  let newhash =
   if true ∨ not.isunbound.sym ∨ isAbstract.newmodule then
   flags.sym
-  else (unboundbit ⊻ bits.-1) ∧ flags.sym
- ,
+  else (unboundbit ⊻ bits.-1) ∧ flags.sym,
  symbol(worddata.sym, newmodule, newtypes, raw.sym, newhash)
 
 function symbolZ(
@@ -356,8 +354,7 @@ else if isrecordconstant.s then
 else if isFref.s then
 "FREF^(basesym.s)"
 else if isloopblock.s then
-"Loop^(fsig2(wordname.s, nametype.s, paratypes.s) << 1)^(para.module.s)
- /br"
+"Loop^(fsig2(wordname.s, nametype.s, paratypes.s) << 1)^(para.module.s) /br"
 else if not.isspecial.s then
  (if name.module.s ∈ "internal" then "" else %.module.s + ":")
  + fsig2(wordname.s, nametype.s, paratypes.s)
@@ -365,8 +362,7 @@ else if not.isspecial.s then
 else if isdefine.s then
 "Define^(name.s)"
 else if isstart.s then
-"Start (^(resulttype.s))
- /br"
+"Start (^(resulttype.s)) /br"
 else if isblock.s then
 "EndBlock /br"
 else if isExit.s then
@@ -632,8 +628,7 @@ let kind2 =
  typeptr
  else if isencoding.fldtype ∨ fldtype = typeword then
  typeint
- else fldtype
-,
+ else fldtype,
 symbol(builtinmod.kind2, "fld", typeptr, typeint, kind2)
 
 type symdef is sym:symbol, code:seq.symbol, bits:bits
@@ -683,8 +678,7 @@ function A1(opts:seq.word) bits
 for acc = 0x0, w ∈ opts
 do
  let i = findindex("ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE ENTRYPOINT", w),
- acc ∨ 0x1 << (47 + i)
-,
+ acc ∨ 0x1 << (47 + i),
 acc
 
 Function symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:seq.word) symdef

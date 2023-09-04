@@ -73,10 +73,8 @@ do
     next(0, result)
     else if state = match then
     next(done, typedef(name.t, modname.t, x))
-    else next(if x = library.t then match else nomatch, result)
-   ,
-   result
-,
+    else next(if x = library.t then match else nomatch, result),
+   result,
 mytype.acc
 
 Function =(a:mytype, b:mytype) boolean typerep.a = typerep.b
@@ -237,9 +235,7 @@ do
    for state = 0, w ∈ m << 1
    do if state < 2 then 2 else if state = 2 ∧ w ∈ "." then 1 else 3,
    state = 2
-  report "incorrect format in module:^(mref)
-   /br^(m)"
-  ,
+  report "incorrect format in module:^(mref) /br^(m)",
   next(knownmods, s, defines, unresolveduses + m << 1, unresolvedexports, mref)
  else if 1_m ∈ "type" then
   let newdefines =
@@ -247,7 +243,8 @@ do
    + newtype(
     if
      2_m
-     ∈ "process boolean ptr seq encoding word bits byte char packed2 packed3 packed4 packed5 packed6 encodingpair encodingstate typename index"
+     ∈ "process boolean ptr seq encoding word bits byte char packed2 packed3 packed4 packed5 packed6
+      encodingpair encodingstate typename index"
     then
     modref(1_"*", name.mref, para.mref)
     else mref
@@ -285,17 +282,8 @@ else
  R(acc, knownmods, cnt)
 
 function printunresolved(p:passtypes) seq.word
-for acc = "", t ∈ unresolveduses.p
-do
- acc
- + "use^(t)
-  /br"
-for txt = acc, t2 ∈ unresolvedexports.p
-do
- txt
- + "Export type:^(t2)+
-  /br"
-,
+for acc = "", t ∈ unresolveduses.p do acc + "use^(t) /br"
+for txt = acc, t2 ∈ unresolvedexports.p do txt + "Export type:^(t2)+/br",
 if isempty.acc then
 ""
 else "module^(modname.p) contains lines that cannot be resolved:^(txt)"
@@ -310,8 +298,7 @@ let p1 = passtypes(modname.p, defines.p, unresolveduses.p, x, exports, uses.p)
 for uses = uses.p, x2 = empty:seq.seq.word, t3 ∈ unresolveduses.p
 do
  let b = resolveuse(dict, knownmods, t3),
- if isempty.b then next(uses, x2 + t3) else next(uses + 1_b, x2)
-,
+ if isempty.b then next(uses, x2 + t3) else next(uses + 1_b, x2),
 passtypes(modname.p, defines.p, x2, unresolvedexports.p1, exports.p1, uses)
 
 Function >1(a:passtypes, b:passtypes) ordering name.modname.a >1 name.modname.b
@@ -387,6 +374,5 @@ do
    , empty:set.modref
   )
  ),
- if isempty.a then r else r ∪ exports.1_a
-,
+ if isempty.a then r else r ∪ exports.1_a,
 r ∪ defines.this 

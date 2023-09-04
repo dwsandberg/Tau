@@ -367,8 +367,7 @@ do
  let new = removeJump.code.sd,
   if n.new = n.code.sd then
   acc + sd
-  else acc + symdef4(sym.sd, new, paragraphno.sd, getOptionsBits.sd)
-,
+  else acc + symdef4(sym.sd, new, paragraphno.sd, getOptionsBits.sd),
 acc
 
 Function removeJump(a:seq.symbol) seq.symbol
@@ -380,6 +379,5 @@ do
   else if modify ∧ isIntLit.last then
   next(acc >> 1 + local + last + EqOp + sym, true, local, sym)
   else next(acc + sym, false, local, sym)
- else next(acc + sym, modify, local, sym)
-,
+ else next(acc + sym, modify, local, sym),
 acc 

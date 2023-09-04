@@ -142,6 +142,5 @@ else
     if n.toseq.stk < nopara.sym then
     next(false, stk)
     else next(ok, push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
-  else next(false, stk)
- ,
+  else next(false, stk),
  if ok then toseq.stk else empty:seq.int 

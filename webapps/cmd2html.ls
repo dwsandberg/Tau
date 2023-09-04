@@ -4,13 +4,19 @@ use file
 
 use seq.file
 
+use makeentry
+
 use standard
 
 use otherseq.word
 
-use set.word
+use otherseq.seq.word
 
 use seq.seq.word
+
+use set.seq.word
+
+use set.word
 
 function desc&options2(s:seq.word, i:int, result:seq.word, name:seq.word) seq.seq.word
 if i > n.s then
@@ -22,21 +28,15 @@ else
  desc&options2(
   s
   , newi
-  ,
-   result
-   + "/< br> /< label> /< input type = radio id =^(name) name =^(name) value =^((i + 2)_s)^(if isempty.result then "checked" else "")"
+  , result
+   + "/< br> /< label> /< input type = radio id =^(name) name =^(name) value =^((i + 2)_s)
+    ^(if isempty.result then "checked" else "")"
    + ">^(subseq(s, i + 3, newi - 1))"
    + "/< /label>"
   , name
  )
 
-use set.seq.word
-
 function ldq(s:seq.word) seq.word "/ldq^(s)^(dq)"
-
-Function entrypoint(input:seq.file, o:seq.word) seq.word
-{ENTRYPOINT}
-modEntry.breakparagraph.input
 
 Function cmd2html(input:seq.file, libname:seq.word, o:seq.word) seq.file
 {ENTRYPOINT}
@@ -77,8 +77,7 @@ do
        if kind ∈ "boolean" then
        next(
         codepara + ", getElementValue.^(id.idxp) =^(dq."true")"
-        ,
-         txt2
+        , txt2
          + "/br /< label> /< input type =^(ldq."checkbox") id =^(id.idxp) />^(argname)"
          + "/< /label>^(argdesc)"
         , idxp + 1
@@ -87,8 +86,7 @@ do
         let value = if argname ∈ "o" then "value =^(ldq."^(cmdname).html")" else "",
         next(
          codepara + ", getElementValue.^(id.idxp)"
-         ,
-          txt2
+         , txt2
           + 
            if isempty.options then
            "/br /< label>^(argname) /< input id =^(id.idxp)^(value) /> /< /label>^(argdesc)"
@@ -96,13 +94,12 @@ do
             {" /< select name =^(id.idxp) id =^(id.idxp) >^(options) /< /select>^(argdesc)"}
             "^(argdesc)^(options)"
          , idxp + 1
-        )
-     ,
+        ),
      [
       codepara
-      ,
-       txt
-       + "/p /< button onclick =^(ldq."runcmd1 (^(idx))") >^(cmdname) /< /button>^(cmddesc)"
+      , txt
+       + "
+        /p /< button onclick =^(ldq."runcmd1 (^(idx))") >^(cmdname) /< /button>^(cmddesc)"
        + "<* block^(txt2)"
        + "*>"
      ]
@@ -110,10 +107,7 @@ do
     let para = 1^tmp,
     next(
      uses + lastmod
-     ,
-      code
-      + "if cmdno =^(idx).0 then^(callname) (input^(codepara))
-       /br else"
+     , code + "if cmdno =^(idx).0 then^(callname) (input^(codepara)) /br else"
      , para
      , idx + 1 + n.args
      , lastmod
@@ -126,23 +120,24 @@ let ls =
  other.outname
  + "/p use"
  + %("/p use", toseq.uses) >> 2
- + "/p Function runcmd2 (p2:JS.HTTPstate.real) int
+ + "
+  /p Function runcmd2 (p2:JS.HTTPstate.real) int
   /br let s = fromJS.p2,
   /br let cmdno = args.s, let input = files.s
-  /br let discard = setElementValue (^(dq."pageready"),^(dq("ready^" + "(print (3, cmdno))"))"
- + ") /br let files =^(code) empty:seq.file
+  /br let discard = setElementValue (^(dq."pageready"),
+  ^(dq("ready^" + "(print (3, cmdno))"))"
+ + ")
+  /br let files =^(code) empty:seq.file
   /br if isempty.files then
   /br setElementValue (^(dq) pageready^(dq),^(dq) no output^(dq))
   /br else
-  /br let t = writefiles (files, 0.0,^(dq) runcmd3^(dq)), 0"
-,
+  /br let t = writefiles (files, 0.0,
+  ^(dq) runcmd3^(dq)), 0",
 [
  file("+built^(outname).html", html)
  , file("+built^(outname).ls", ls)
  , file(outfn, "cmd2html created files: (outname).html^(outname).ls")
 ]
-
-use otherseq.seq.word
 
 function id(i:int) seq.word ldq.[merge.[1_"I", toword.i]]
 
@@ -167,17 +162,19 @@ function other(outname:word) seq.word
  /br let filenames = getfilenames (getElementValue.^(dq) input^(dq)),
  /br for acc = empty:seq.file, fn ∈ filenames do
  /br acc+file (fn, empty:seq.byte)
- /br, let discard = setElementValue (^(dq) pageready^(dq),^(dq) readyz^"
+ /br, let discard = setElementValue (
+ ^(dq) pageready^(dq),^(dq) readyz^"
  + "(%n.filenames)^(dq))
  /br let z = readfiles (acc, i,^(dq) runcmd2^(dq)), 0
  /p Function runcmd3 (p2:JS.HTTPstate.real) int
- /br let links = for txt =^(dq)^(dq), f /in files.fromJS.p2 do
+ /br let links = for txt =
+ ^(dq)^(dq), f /in files.fromJS.p2 do
  /br let name = fullname.fn.f
  /br txt+^(dq)^(merge("/<" + space)) a href =^"
  + "(merge (^(dq)../^(dq)+name)) >^"
  + "(name)^(merge("/<" + space)) /a>^(dq), txt
- /br setElementValue (^(dq) pageready^(dq),^(dq) results: ^"
+ /br setElementValue (^(dq) pageready^(dq),
+ ^(dq) results: ^"
  + "(links)^(dq))
- /p Function^(outname) int setElementValue (^(dq) pageready^(dq),^(dq) ready^(dq))"
-
-use makeentry 
+ /p Function^(outname) int setElementValue (^(dq) pageready^(dq),^(dq) ready
+ ^(dq))" 

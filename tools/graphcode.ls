@@ -51,8 +51,7 @@ do
    sons
  let newstk = pop(stk, n.sons)
  let tail = symloc(i, sym),
- next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy), arcs, push(newstk, tail))
-,
+ next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy), arcs, push(newstk, tail)),
 drawgraph.newgraph.acc
 
 Function generatenode(a:set.symloc) symloc symloc(n.a, Lit.0)

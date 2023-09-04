@@ -43,8 +43,7 @@ let b = getCode(requires.dict, thisnesting)
 let dict1 =
  if n.b = 2 then
  dict - asset(b + thisnesting)
- else dict - asset(subseq(b, 1, 2) + thisnesting) + 3_b + 4_b
-,
+ else dict - asset(subseq(b, 1, 2) + thisnesting) + 3_b + 4_b,
 dict1
  + placeholder(".fora", resulttype.thisnesting)
  + placeholder(".forb", resulttype.thisnesting)

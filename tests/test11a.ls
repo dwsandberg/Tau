@@ -87,22 +87,11 @@ let z = [
 check(z, "test11a") + checkprec
 
 function testcomp2(in:seq.file, s:seq.word) seq.word
-let txt = "Library = testcomp uses = stdlib exports = testit /p module testit
- /p use standard
- /p^(s)"
+let txt = "Library = testcomp uses = stdlib exports = testit /p module testit /p use standard /p^(s)"
 let p = process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in),
 if aborted.p then
 message.p
-else
- for acc = "", sd ∈ toseq.prg.result.p
- do
-  acc
-  + "/br
-   /br"
-  + %.sym.sd
-  + %.code.sd
- ,
- acc
+else for acc = "", sd ∈ toseq.prg.result.p do acc + "/br /br" + %.sym.sd + %.code.sd, acc
 
 function compare(in:seq.file, exp1:seq.word, exp2:seq.word) boolean
 testcomp2(in, "Function f1 (a:int, b:int, c:int) int^(exp1)")
@@ -114,9 +103,7 @@ function testerror(in:seq.file, m:seq.word, code:seq.word) boolean
 let r = testcomp2(in, code)
 let a = isprefix(m, r)
 assert isprefix(m, r)
-report "Fail test11a expected:^(m)
- /br got:^(subseq(r, 1, n.m))
- /p^(code)",
+report "Fail test11a expected:^(m) /br got:^(subseq(r, 1, n.m)) /p^(code)",
 a
 
 type checkprec is toseq:seq.word

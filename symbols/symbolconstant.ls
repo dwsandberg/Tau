@@ -34,7 +34,8 @@ else
 Function fullconstantcode(s:symbol) seq.symbol
 let t = findencode.symdef(s, empty:seq.symbol, 0)
 assert not.isempty.t
-report "unregister symbolconstant^(s)^(for txt = "", sd ∈ toseq.constantsymbols.1_"X" do txt + "/p" + %.sym.sd + %.code.sd, txt)",
+report "unregister symbolconstant^(s)
+ ^(for txt = "", sd ∈ toseq.constantsymbols.1_"X" do txt + "/p" + %.sym.sd + %.code.sd, txt)",
 code.1_t
 
 Function Constant2(libname:word, args:seq.symbol) symbol

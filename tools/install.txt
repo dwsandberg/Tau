@@ -11,7 +11,7 @@ Modify < PATH > environment variable to include absolute path to <Tau>/bin.
 
 Open terminal and change direcotry to <Tau>.
 
-Run "bash bin/buildtau.sh release.bld".  This is likely to generate a warning message about the llvm spec. 
+Run "bash bin/taubuild.sh release.bld".  This is likely to generate a warning message about the llvm spec. 
 
 
 <* section HelloWorld *>

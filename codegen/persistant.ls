@@ -85,8 +85,7 @@ for acc = empty:seq.char, c ∈ bcwords
 do
  if c = bcwordsep then
  let discard0 = encodeword.acc let discard = encode.word3.acc, empty:seq.char
- else acc + c
-,
+ else acc + c,
 0
 
 Function wordreps2(wordstoadd:seq.encoding.word3) int
@@ -94,8 +93,7 @@ for acc = [toint.C64.0, toint.C64.n.wordstoadd], w ∈ wordstoadd
 do
  let s = tointseq.chars.decode.w
  for acc2 = [toint.C64.0, toint.C64.n.s], ch ∈ s do acc2 + toint.C64.ch,
- acc + addobject.acc2
-,
+ acc + addobject.acc2,
 addobject.acc
 
 Function addobject2(name:seq.word, data:seq.int) int

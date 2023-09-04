@@ -61,10 +61,8 @@ do
      if addbreak then txt + "/br" + space + p else txt + p
      , if p ∈ "+=" then have + p else have
      , if addbreak then 0 else lastbreak + 1
-    )
-  ,
-  acc + "/p" + txt
-,
+    ),
+  acc + "/p" + txt,
 [file(o, acc)]
 
 type defines is name:word, lib:word, cmds:seq.word
@@ -96,7 +94,7 @@ Function updatestate2(
  , builddir:seq.word
  , debug:boolean
 ) seq.file
-{ENTRYPOINT ???? different case in directory names causes confusion.}
+{ENTRYPOINT}
 let lines = toseq(asset.breaklines.data.1_input ∩ asset.breaklines.data.2_input)
 let unchanged =
  if isempty.lines then
@@ -116,15 +114,11 @@ let changed = toseq(
 let outdated = reachable(complement.g, changed) \ asset.changed
 {relink changed}
 let out =
- for
-  acc2 = "set^(space)-e
-   /br # relink changed files"
-  , n ∈ changed
+ for acc2 = "set^(space)-e /br # relink changed files", n ∈ changed
  do if name.n ∈ "shell" then acc2 else acc2 + "/br checksrc" + fullname.n
  for acc = acc2 + "/br # remove outdated files", dated ∈ toseq.outdated
  do acc + "/br rm^(space)-f" + fullname.dated,
- createorder(subgraph(g, outdated), defs2.r, acc)
-,
+ createorder(subgraph(g, outdated), defs2.r, acc),
 if debug then
 [
  file(o, out)
@@ -158,8 +152,7 @@ do
        if n.cmd = 2 then
        next(newcmds + defines(1_cmd, 2_cmd, [1_cmd]), "")
        else next(newcmds + defines(1_cmd, 2_cmd, cmd << 2), "")
-      else next(newcmds, cmd + w)
-     ,
+      else next(newcmds, cmd + w),
      newcmds
     )
    )
@@ -181,8 +174,7 @@ do
       else arcs
      , defs2 + cmdpara(tail, filenames, rest, 1_bb)
      , defines
-    )
-,
+    ),
 result(acc, defs2)
 
 function createorder(g:graph.filename, defs:set.cmdpara, out:seq.word) seq.word
@@ -193,8 +185,7 @@ else
  for txt = out, p ∈ if isempty.sinks then toseq.nodes.g else sinks
  do
   let cmdpara = lookup(defs, cmdpara(p, empty:seq.filename, empty:seq.word, defines(1_"noop", 1_"noop", ""))),
-  if isempty.cmdpara then txt else txt + tosetvars(1_cmdpara, p)
- ,
+  if isempty.cmdpara then txt else txt + tosetvars(1_cmdpara, p),
  createorder(subgraph(g, nodes.g \ asset.sinks), defs, txt + "/br #________________")
 
 Function >1(a:filename, b:filename) ordering
@@ -219,13 +210,17 @@ else if cmds.cmd = "makelib" then
  let opts = extractValue(data.cmdpara, "options")
  let options = if isempty.opts then opts else "options =^(opts)"
  let out = changeext(fn, "libsrc"),
-  "/p #makelibrary^(name.fn)
-   /br libexe^(lib.cmd) makebitcode+$build^(libinfo)+.ls^(parts << 1) libname =^(name.fn)^(data.cmdpara)"
-  + "o =^(1_parts)
-   /br dependlibs^(eq + dq.depends)
-   /br linklibrary^(name.fn)"
-else "/p #^(dq.[node])
- /br libexe^(
+ "
+  /p #makelibrary^(name.fn)
+  /br libexe^(lib.cmd) makebitcode+$build^(libinfo)+.ls
+  ^(parts << 1) libname =^(name.fn)^(data.cmdpara) o =^(1_parts)
+  /br dependlibs
+  ^(eq + dq.depends)
+  /br linklibrary^(name.fn)"
+else "
+ /p #^(dq.[node])
+ /br libexe
+ ^(
   [lib.cmd]
   + cmds.cmd
   + parts << 1

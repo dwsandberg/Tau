@@ -38,6 +38,8 @@ use otherseq.wfunc
 
 use process.seq.word
 
+use seq.seq.word
+
 use encoding.word5
 
 use seq.word5
@@ -47,8 +49,6 @@ use words
 use encoding.wtype
 
 use seq.wtype
-
-use seq.seq.word
 
 Function =(a:wtype, b:wtype) boolean val.a = val.b
 
@@ -167,8 +167,7 @@ let forlater = [
  txt
  , (
   for txt = "", cnt = 2, f ∈ eledata do next(txt + "^(cnt):^(f)", cnt + 1),
-  "tableelements^(txt)
-   /p"
+  "tableelements^(txt) /p"
  )
  , (
   for txt = "", offset = n.beforecode + n.LEBu.n.codevector + 1, p2 ∈ funcswithcode
@@ -176,8 +175,7 @@ let forlater = [
    txt
    + %.tobits.offset
    + %.sym.p2
-   + "funcidx =^(funcidx.p2) typidx =^(printtypeidx.typeidx.p2)
-    /p"
+   + "funcidx =^(funcidx.p2) typidx =^(printtypeidx.typeidx.p2) /p"
    + %.p2
    + "/p"
    , offset + n.LEBu.n.code.p2 + n.code.p2
@@ -199,12 +197,10 @@ let total =
    do
     for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)
     do next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1),
-    acc2
-   ,
+    acc2,
    acc
   )
- ]
-,
+ ],
 if info then
 [
  file(fn, total)
@@ -224,10 +220,8 @@ let b =
   do
    if last = t then
    next(result, count + 1, segcount, t)
-   else next(result + LEBu.count + val.last, 1, segcount + 1, t)
-  ,
-  LEBu.segcount + result + LEBu.count + val.last
-,
+   else next(result + LEBu.count + val.last, 1, segcount + 1, t),
+  LEBu.segcount + result + LEBu.count + val.last,
 vector(b + code + END)
 
 type efuncidx is sym:symbol
@@ -241,8 +235,7 @@ let x = encodingdata:efuncidx
 for acc = empty:seq.symbol, j ∈ arithseq(n.x - i + 1, 1, i)
 do
  let sym = sym.decode.to:encoding.efuncidx(j),
- if isempty.findencode.wfunc(sym, empty:seq.byte, 0, 0) then acc + sym else acc
-,
+ if isempty.findencode.wfunc(sym, empty:seq.byte, 0, 0) then acc + sym else acc,
 acc
 
 Function funcidx(sym:symbol) int value.funcidx(addorder.efuncidx.sym - 1)
@@ -327,8 +320,7 @@ do
   let xx = printtypeidx.typeidx.p >> 5
   assert not.isempty.xx report "KLJ^(printtypeidx.typeidx.p)",
   xx
- else acc
-,
+ else acc,
 acc
 
 Function Wcall(sym:symbol) seq.byte [call] + LEBu.funcidx.sym
@@ -353,8 +345,7 @@ Function initialwordconst(libname:word) symbol
 for acc2 = empty:seq.symbol, p ∈ encodingdata:word5
 do
  for acc = empty:seq.symbol, c ∈ chars.p do acc + Lit.toint.c,
- acc2 + Constant2(libname, acc + Sequence(seqof.typeint, n.acc))
-,
+ acc2 + Constant2(libname, acc + Sequence(seqof.typeint, n.acc)),
 Constant2(libname, acc2 + Sequence(seqof.seqof.typeint, n.acc2))
 
 ________________
@@ -428,6 +419,5 @@ do
   getoffset(worddata.sym, libname)
   else if isword.sym then
   value.wordconst.wordname.sym
-  else assert isrecordconstant.sym report "problem getoffset^(sym)", getoffset(sym, libname)
-,
+  else assert isrecordconstant.sym report "problem getoffset^(sym)", getoffset(sym, libname),
 allocateconstspace(1_".", elements) 

@@ -1,16 +1,16 @@
-module runcode
+Module runcode
 
 use bitcodesupport
-
-use llvm
-
-use standard
 
 use seq.instop
 
 use otherseq.int
 
+use seq.seq.int
+
 use sparseseq.int
+
+use llvm
 
 use seq.llvmtype
 
@@ -18,11 +18,11 @@ use seq.slot
 
 use seq.slotrecord
 
+use standard
+
 use seq.track
 
 use otherseq.word
-
-use seq.seq.int
 
 Export type:track
 
@@ -38,26 +38,22 @@ Function CGEP(typ:llvmtype, p:slot, a:slot, b:slot, org:seq.int) slot
 let t1 = consttype.p
 let new = [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.consttype.a, toint.a, typ.consttype.b, toint.b]
 assert new = org
-report "DIFF^(printrecord(CONSTANTS, org))
- /br new^(printrecord(CONSTANTS, new))"
+report "DIFF^(printrecord(CONSTANTS, org)) /br new^(printrecord(CONSTANTS, new))"
 let typa =
  if typ.t1 ∈ [1, 2] then
  i64
- else llvmtype.(1^(typ.t1 + 1)_typerecords + 1)_typerecords
-,
+ else llvmtype.(1^(typ.t1 + 1)_typerecords + 1)_typerecords,
 C(ptr.typa, new)
 
 Function modulerecord(name:seq.word, rec:seq.int, org:seq.int) slot
 assert rec = org
-report "DIFF^(printrecord(MODULE, org))
- /br new^(printrecord(MODULE, rec))",
+report "DIFF^(printrecord(MODULE, org)) /br new^(printrecord(MODULE, rec))",
 modulerecord(name, rec)
 
 Function ptrtoint(i:slot, typ:llvmtype, org:seq.int) slot
 let new = [toint.CCAST, 9, typ.typ, toint.i]
 assert new = org
-report "DIFF^(printrecord(CONSTANTS, org))
- /br new^(printrecord(CONSTANTS, new))",
+report "DIFF^(printrecord(CONSTANTS, org)) /br new^(printrecord(CONSTANTS, new))",
 C(i64, new)
 
 Function ptrtoint(i:slot, typ:llvmtype) slot
@@ -144,13 +140,10 @@ let new =
        else
         let slot = 1^rec
         let t2 = if e > 0 then slot - e - 1 + 1 else slot - (offset + (-e + 1)_labels) - 1,
-        if t2 ≥ 0 then t2 * 2 else -t2 * 2 + 1
-      ,
-      next(acc + this, not.isblock)
-     ,
+        if t2 ≥ 0 then t2 * 2 else -t2 * 2 + 1,
+      next(acc + this, not.isblock),
      acc
-    else rec
- ,
+    else rec,
  new
 let chk = check(orgrecs.t, new, 1, "")
 assert chk = "" report "ERROR^(chk) labels:^(%n.labels.t)",
@@ -165,8 +158,7 @@ else check(
  old
  , new
  , i + 1
- ,
-  result
+ , result
   + "/br old"
   + printrecord(FUNCTIONBLK, i_old)
   + "/br new"
@@ -218,8 +210,7 @@ else
  let newrec =
   if tp = PHI then
   data.next + (slot.t + 1)
-  else doargs(labels.t, offset.t, slot.t + 1, data.next, argtypes.next)
- ,
+  else doargs(labels.t, offset.t, slot.t + 1, data.next, argtypes.next),
  track(offset.t, slot.t + slotinc, recs.t + newrec, orgrecs.t, newlabels, blockinc + blockno.t)
 
 Function +(t:track, s:seq.int) track
@@ -242,8 +233,6 @@ do
   slot - i_data - 1 + 1
   else
    assert true report "P" + toword.(-i_data + 1)_labels + toword.slot + toword.offset,
-   slot - (offset + (-i_data + 1)_labels) - 1
- ,
- next(i + 1, result + val)
-,
+   slot - (offset + (-i_data + 1)_labels) - 1,
+ next(i + 1, result + val),
 result 

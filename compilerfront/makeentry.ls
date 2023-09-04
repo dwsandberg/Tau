@@ -10,20 +10,19 @@ use otherseq.seq.word
 
 use set.seq.word
 
-Function modEntry2(src:seq.seq.word) seq.seq.word
-for acc = empty:seq.seq.word, paragraph = empty:seq.word, w ∈ modEntry.src
+Function modEntry(src:seq.seq.word, entryUses:seq.word) seq.seq.word
+{The format of entryUses is flexible}
+for acc0 = empty:seq.seq.word, state = 0, w ∈ entryUses
 do
- if w ∈ "/p" then
- next(if isempty.paragraph then acc else acc + paragraph, "")
- else if w ∈ "/br" then
- next(acc, paragraph)
- else next(acc, paragraph + w)
-,
-acc << 1 + paragraph
-
-Function modEntry(src:seq.seq.word) seq.word
+ if w ∈ "use, /p" then
+ next(acc0, state)
+ else if w ∈ "." then
+ next(acc0, 1)
+ else if state = 0 then
+ next(acc0 + ("use" + w), 0)
+ else next(acc0 >> 1 + (1^acc0 + ".^(w)"), 0)
 let tbl = entrygrammar
-for acc = "", lastmod = 1_"?", uses = empty:set.seq.word, p ∈ src
+for acc = "", lastmod = 1_"?", uses = asset.acc0, p ∈ src
 do
  if subseq(p, 1, 1) = "Module" then
  next(acc, 2_p, uses)
@@ -41,40 +40,32 @@ do
      let runcmd =
       if 2_1_t ∈ "files" then
       "^(cmd)^(buildCommandArgs.t)"
-      else "[file (extractValue (args,^(dq."o")),^(cmd)^(buildCommandArgs.t))]"
-     ,
-     acc + "/br else if cmd /in^(dq.cmd) then^(runcmd)"
+      else "[file (extractValue (args,^(dq."o")),^(cmd)^(buildCommandArgs.t))]",
+     acc + "else if cmd /in^(dq.cmd) then^(runcmd)"
      , lastmod
-     ,
-      {???? figure out how to remove use tools}
-      if abstract then
-       uses
-       + "use tools /p"
-       + "use^(lastmod).callconfig
-        /p"
-      else uses + ("use" + lastmod + "/p")
-    )
-,
+     , if abstract then uses else uses + ("use" + lastmod)
+    ),
 if isempty.uses then
-""
-else "Module entrypoint /p use standard
- /p use file
- /p use llvmcode
- /p use seq.file
- /p use bits
- /p use seq.byte
- /p use process.UTF8
- /p^(toseq.uses)
- /p Export addbcwords (seq.byte) int
- /p Function entrypoint (args:UTF8) UTF8
- /br let p = process.entrypoint2 (args),
- /br if aborted.p then finishentry.[file (^(dq."error.html"), message.p)] else result.p
- /p function entrypoint2 (args0:UTF8) UTF8
- /br let args = towords.args0,
- /br let cmd = 1_args,
- /br let input = getfiles.args
- /br finishentry.^(acc << 2)
- /br else assert false report^(dq."No command named;")+cmd empty:seq.file"
+empty:seq.seq.word
+else
+ [
+  "use standard"
+  , "use file"
+  , "use llvmcode"
+  , "use seq.file"
+  , "use bits"
+  , "use seq.byte"
+  , "use process.UTF8"
+ ]
+ + toseq.uses
+ + [
+  "Export addbcwords (seq.byte) int"
+  , "Function entrypoint (args:UTF8) UTF8 let p = process.entrypoint2 (args), if aborted.p
+   then finishentry.[file (^(dq."error.html"), message.p)] else result.p"
+  , "function entrypoint2 (args0:UTF8) UTF8 let args = towords.args0, let cmd = 1_args, let
+   input = getfiles.args finishentry.^(acc << 1) else assert false report
+   ^(dq."No command named")+cmd empty:seq.file"
+ ]
 
 function buildCommandArgs(a:seq.seq.word) seq.word
 for txt2 = "", p ∈ a << 1
@@ -89,12 +80,12 @@ do
    ", extractFlag (args,^(name))"
    else if kind ∈ "files" then
    ", input"
-   else ", ?"
-,
+   else ", ?",
 if isempty.txt2 then "" else "(^(txt2 << 1))"
 
 Function entrygrammar PEGtable
-maketable."S Header {CompilerOptions ENTRYPOINT options A4 /action /e /1 /length /3 /br Header Function any (FP FP') Type /action /1 /4 //br /2 /3
+maketable."S Header {CompilerOptions ENTRYPOINT options A4 /action /e /1 /length /3
+ /br Header Function any (FP FP') Type /action /1 /4 //br /2 /3
  /br / Function any:T (FP FP') Type /action /1 /4 //br /2 /3
  /br / Function any Type /action /1 /2
  /br * FP', FP /action /0 //br /1
@@ -120,17 +111,17 @@ maketable."S Header {CompilerOptions ENTRYPOINT options A4 /action /e /1 /length
  /br / NOINLINE /action discard"
 
 Function apply(tbl:PEGtable, p:seq.word) seq.seq.word
-let a = run2(tbl, p),
-if 1_a ∈ "Fail" then
+let tmp = run(tbl, p),
+if 1_tmp ∈ "Failed" then
 empty:seq.seq.word
 else
- let divide = toint.2_a + 2
+ let divide = toint.3_tmp + 3
  for
-  final = break(subseq(a, 3, divide), "/br", false)
+  final = break(subseq(tmp, 4, divide), "/br", false)
   , acc = ""
   , count =-1
   , last = 1_"?"
-  , w ∈ a << divide + "X"
+  , w ∈ tmp << divide + "X"
  do
   if count > 0 then
   next(final, acc + w, count - 1, w)
@@ -138,8 +129,7 @@ else
   next(merge(final, acc), "",-1, w)
   else if last ∈ "~length" then
   next(final, acc, toint.w, w)
-  else next(final, acc, count, w)
- ,
+  else next(final, acc, count, w),
  final
 
 function merge(a:seq.seq.word, b:seq.word) seq.seq.word

@@ -47,8 +47,7 @@ let xxx =
  do
   let t = decodeLEBs(acc, next)
   let tu = decodeLEBu(acc, next.t),
-  next(ok + [value.t = j, value.tu = j], next.tu)
- ,
+  next(ok + [value.t = j, value.tu = j], next.tu),
   [
    value.d1 = 127
    , value.d2 = 128
@@ -74,8 +73,7 @@ let byte = value ∧ bits.127
 let value1 =
  if toint.value < 0 ∧ toint.signbit ≠ 0 then
  bits.-1 << (64 - 7) ∨ value >> 7
- else value >> 7
-,
+ else value >> 7,
 if toint.value1 = 0 ∧ toint(byte ∧ signbit) = 0 then
 result + tobyte.byte
 else if toint.value1 = -1 ∧ toint.byte ≥ toint.signbit then
@@ -104,8 +102,7 @@ do
  let newresult = result ∨ c << shift,
   if c = byte then
   next(acc + toint.newresult, 0x0, 0)
-  else next(acc, newresult, shift + 7)
-,
+  else next(acc, newresult, shift + 7),
 acc
 
 Function decodeLEBs:seq.int(a:seq.byte) seq.int
@@ -118,11 +115,9 @@ do
    let val =
     if (byte ∧ 0x40) = 0x0 ∨ toint.newresult < 0 then
     newresult
-    else newresult ∨ tobits.-1 << (shift + 7)
-   ,
+    else newresult ∨ tobits.-1 << (shift + 7),
    next(acc + toint.val, 0x0, 0)
-  else next(acc, newresult, shift + 7)
-,
+  else next(acc, newresult, shift + 7),
 acc
 
 Function LEBs(s:seq.int) seq.byte for acc = empty:seq.byte, e ∈ s do acc + LEBs.e, acc

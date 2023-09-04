@@ -44,7 +44,8 @@ Function toUTF8(n:int) UTF8
 UTF8.if n < 0 then [tobyte.toint.hyphenchar] + toUTF8(n, 10) else toUTF8(-n, 10)
 
 function toUTF8(n:int, base:int) seq.byte
-{n should always be negative. This is to handle the smallest integer in the twos complement representation of integers}
+{n should always be negative. This is to handle the smallest integer in the twos complement
+ representation of integers}
 if base + n > 0 then
 [tobyte(48 - n)]
 else toUTF8(n / base, base) + tobyte(48 + n / base * base - n)
@@ -78,12 +79,12 @@ do
    else next(5, (x - 252) * 64, result)
   else if state = 1 then
   next(0, 0, result + (x + val - 128))
-  else next(state - 1, (val + (x - 128)) * 64, result)
-,
+  else next(state - 1, (val + (x - 128)) * 64, result),
 tocharseq.result
 
 Function toword(n:int) word
-{OPTION NOINLINE COMPILETIME /br Covert integer to sequence of characters represented as a single word. }
+{OPTION NOINLINE COMPILETIME
+ /br Covert integer to sequence of characters represented as a single word. }
 encodeword.decodeUTF8.toUTF8.n
 
 Function toint(w:word) int
@@ -104,8 +105,7 @@ if n.s > 2 ∧ 2_s ∈ decodeword.1_"Xx" then
    b << 4 ∨ bits(i - 1)
    else
     assert c ∈ [char1."x", char1."X", nbspchar] report "invalid hex digit" + encodeword.s,
-    b
- ,
+    b,
  toint.b
 else
  let validdigits = decodeword.1_"0123456789"
@@ -140,8 +140,10 @@ Function toUTF8(s:seq.word) UTF8 {OPTION INLINE} toUTF83(s, false)
 Function escapeformat word merge."/ escapeformat"
 
 Function toUTF83(s:seq.word, escapehtml:boolean) UTF8
-{OPTION INLINE /br nospace means add no space before word
- /br if the first character of a multi-character word is char.0 then the character is discarded.
+{OPTION INLINE
+ /br nospace means add no space before word
+ /br if the first character of a multi-character word is char.0 then the character is discarded
+ .
  /br This is to allow format with format meaning to be escaped.}
 for cmd = true, result = emptyUTF8, nospace = true, this ∈ s
 do
@@ -163,8 +165,7 @@ do
       decodeword.1_"&lt"
       else if ch = char1."&" then
       decodeword.1_"&amp"
-      else [ch]
-     ,
+      else [ch],
      next(cmd, if nospace then result + d else result + char.32 + d, false)
   else if this ∈ ". : " then
   {no space before or after} next(cmd, result + chars, true)
@@ -195,10 +196,7 @@ do
        decodeword.1_"&lt"
        else if c = char1."&" then
        decodeword.1_"&amp"
-       else [c]
-     ,
-     acc
-   ,
-   next(cmd, chars2, false)
-,
+       else [c],
+     acc,
+   next(cmd, chars2, false),
 result 

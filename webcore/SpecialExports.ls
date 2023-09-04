@@ -50,8 +50,7 @@ do
    tobits.representation.randomfunc
    ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)
   )
- )
-,
+ ),
 acc
 
 Function blockseqtype real {used by template.js} toreal.blockseqtype:byte 
