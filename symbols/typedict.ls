@@ -28,9 +28,9 @@ type typedict is totypedict:set.typeentry
 
 Function emptytypedict typedict typedict.empty:set.typeentry
 
-function >1(a:typeentry, b:typeentry) ordering 1_totypeseq.a >1 1_totypeseq.b
+function >1(a:typeentry, b:typeentry) ordering 1#totypeseq.a >1 1#totypeseq.b
 
-function type(a:typeentry) mytype 1_totypeseq.a
+function type(a:typeentry) mytype 1#totypeseq.a
 
 function flatflds(a:typeentry) seq.mytype totypeseq.a << 1
 
@@ -66,7 +66,7 @@ else
 
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype) typedict
 for typesused = empty:seq.mytype, sym ∈ toseq.syms do typesused + typesused.sym
-for typesyms = empty:set.typeentry, tp ∈ types do typesyms + typeentry(1_tp, tp << 1)
+for typesyms = empty:set.typeentry, tp ∈ types do typesyms + typeentry(1#tp, tp << 1)
 for acc3 = toseq.typesyms, q ∈ toseq.asset.typesused
 do let z = typeentry(q, empty:seq.mytype), if z ∈ typesyms then acc3 else acc3 + z,
 resolvetypesize.acc3
@@ -83,7 +83,7 @@ function resolvetypesize(prg1:seq.typeentry) typedict
 let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5
 report "recursive type problem:
- /br^(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "/br", acc10)"
+/br^(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "/br", acc10)"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d),
 acc
 
@@ -125,7 +125,7 @@ if isempty.flatflds then
  let f3 = lookup(types, typeentry(abstracttype.type, empty:seq.mytype)),
   if isempty.f3 then
   flatflds
-  else expandflat(type, replaceT(parameter.type, flatflds.1_f3), types)
+  else expandflat(type, replaceT(parameter.type, flatflds.1#f3), types)
 else
  for acc = empty:seq.mytype, unchanged = true, t ∈ flatflds
  do
@@ -141,8 +141,8 @@ else
        let f3 = lookup(types, typeentry(t2, empty:seq.mytype)),
         if isempty.f3 then
         next(acc + t, unchanged)
-        else next(acc + replaceT(parameter.t, flatflds.1_f3), false)
-    else next(acc + flatflds.1_f, false),
+        else next(acc + replaceT(parameter.t, flatflds.1#f3), false)
+    else next(acc + flatflds.1#f, false),
  if unchanged then flatflds else expandflat(type, acc, types)
 
 function replaceT(with:mytype, typs:seq.mytype) seq.mytype
@@ -163,7 +163,7 @@ typedict(totypedict.alltypes + typeentry(t, flatflds))
 
 Function flatflds(alltypes:typedict, type:mytype) seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype)),
-if isempty.t then empty:seq.mytype else flatflds.1_t
+if isempty.t then empty:seq.mytype else flatflds.1#t
 
 Function subdict(all:typedict, t:mytype) typedict
 let sub = typedict.lookup(totypedict.all, typeentry(t, empty:seq.mytype)),
@@ -207,9 +207,10 @@ else
   else flatflds1
  let fldsize = n.flatflds,
   if fldsize = 1 then
-  coretype(1_flatflds, alltypes, empty:seq.mytype)
+  coretype(1#flatflds, alltypes, empty:seq.mytype)
   else if fldsize = 0 then
   typ
   else if fldsize - 1 > n.maxsize then
   typeptr
-  else (fldsize - 1)_maxsize 
+  else (fldsize - 1)#maxsize
+ 

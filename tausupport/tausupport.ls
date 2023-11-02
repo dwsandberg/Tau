@@ -211,7 +211,7 @@ for acc = empty:seq.seq.byte, start ∈ arithseq(noblks, blksz, 1)
 do acc + packedbytes.subseq(s, start, start + blksz - 1),
 acc
 
-____________
+-------------------------------
 
 Function cat(obj1:ptr, obj2:ptr, typ:word) ptr
 if typ ∈ "int" then

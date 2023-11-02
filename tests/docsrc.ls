@@ -1,10 +1,10 @@
-/escapeformat <style><!--span.code1 { border:solid; border-width: thin;} 
- span.code { font-family:italic;}--> </style> 
-/escapeformat
+/tag <style><!--span.code1 { border:solid; border-width: thin;} 
+ span.code { font-family:italic;}--> /tag </style> 
+ 
 
-<* code this /<  br> is a test *>
+<* code this /tag <br> is a test *> 
 
-<* section The Tau Programming Language *>
+/tag <h1> The Tau Programming Language  /tag </h1>
 
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
 
@@ -21,10 +21,11 @@ Functional languages tend to use recursion to replace the control structures of 
 The full power of recursion is seldom needed. 
 We introduce a  new control structure  to cover many of the simple uses of recursion.
 
-Instruction for downloading and install Tau in /escapeformat <a href="install.html"> here </a> /escapeformat if you would
+Instruction for downloading and install Tau in /tag <a /sp href="installdoc.html"> here 
+/tag </a> /sp  if you would
 like to try out the examples below for yourself.
 
-<* section Basic Structure *>
+/tag <h2> Basic Structure /tag </h2> 
 
 Tau is word based rather than character based. A source file for Tau is a UTF-8 encoded file. 
  View  blank lines in the file as breaking the
@@ -32,22 +33,19 @@ file into a sequence of paragraphs.  Spaces seperate words.
 Some characters such as + form a word of a single character even when there
 is no space before or after. Paragraphs are further group into \em modules. 
 
+/tag <h3> Converting UTF-8 to a sequence of paragraphs /tag </h3> 
 
-Tau transforms the bytes of the UTF-8 encoded file into a sequence of paragraphs by classify the
-bytes into 5 groups.
+Tau transforms the bytes of the UTF-8 encoded file into a sequence of paragraphs by classify the bytes into 5 groups.
 <* block
 /br The LF group is the ASCII linefeed character.
 /br The Space group is the ASCII space and the carriage return.
   The  carriage return is added.
   to handle the end of line representation in DOS.
-/br The StandAlone group is the ASCII characters ()+,-..:=[]^_{} and the double quote.
+/br The StandAlone group is the ASCII characters ()+,-..:=[]^#{} and the double quote.
 /br The other group which contains any byte not included in the other three groups. 
 *>
 By considering the class of each byte(the current byte) and the next byte (The Lookahead)
-the bytes can be a seqence of paragraphs with each paragraph containing a sequence of words. 
-Each word will be a sequence of unicode code points. The table below contain the Action 
-to take for each combination of the clas of current and lookahead. For
-combination not present in the table just advance to the next byte without taking any other action.
+the bytes can be a seqence of paragraphs with each paragraph containing a sequence of words. Each word will be a sequence of unicode code points. The table below contain the Action to take for each combination of the clas of current and lookahead. For combination not present in the table just advance to the next byte without taking any other action.
   <* table
   /row /strong Current /cell /strong Lookahead /cell /strong Action
   /row  LF /cell  space /cell     Keep LF as current 
@@ -61,11 +59,12 @@ combination not present in the table just advance to the next byte without takin
      other the word of the current is formed. 
 *>
     
+/tag <h3> PEG grammars /tag </h3> 
 
 
 We will be us in   Parsing Expression Grammar(PEG) to describe the syntax of Tau. 
 See Wikipedia for an introduction to PEG.  We be using a similar syntax to that 
-descibe in Wikipedia but  will not include the operators: ?, +, and  &. Also * is moved from
+descibe in Wikipedia but  will not include the operators: ?  and  &. Also * is moved from
 the right side to left side of the rule and parentheses are not meta characters.   Here is how strings with
 balance parenthesis would be represented:
 <* table
@@ -76,6 +75,9 @@ balance parenthesis would be represented:
 The non-terminals are /em Start, /em N, /em any. The non-terminal, /em any, will
 match any termial.  The terminal explicitly used are the open and close 
 paranethesis. The terminal alphabet could be much larger.
+
+/tag <h3> Structure of Tau source file /tag </h3> 
+
 
 Here is a PEG grammar describing the structure of a Tau source file
 where /em /p represents one or more  blank lines:
@@ -103,35 +105,28 @@ where /em /p represents one or more  blank lines:
 /row Id /cell ← !, !] !) !:!.! dq any
 *>   
 
-Any text matching the "/ ! Module Words " rule above is treated as a comment and can be omitted without 
-changing the semantics.  This will be any paragraph not beginning with one of the following words: 
-Module module Function function use Export type Builtin builtin unbound.  This grammar does not
-specifiy the detailed syntax of paragraphs.
+Any text matching the "/ ! Module Words " rule above is treated as a comment and can be omitted without changing the semantics.  This will be any paragraph not beginning with one of the following words: 
+Module module Function function use Export type Builtin builtin unbound.  This grammar does not specifiy the detailed syntax of paragraphs.
 
 Each module defines a set of functions and types.  Paragraphs beginning
 with Function, function and type declare function and types. 
- Only function and types that are exported 
-can be used outside of a module.  The Export clause will export a function or type. 
+ Only function and types that are exported can be used outside of a module.  The Export clause will export a function or type. 
 A function is also exported if the first letter of the paragraph defining
 the function is capitalize. 
 
 The use clause determines which functions from other modules are available. 
 
-The module standard defines often used function and types. 
- A full list of
-functions is  /escapeformat   <a href ='./stdlibdoc.html#standard'>  here </a>  /escapeformat
-Many of the functions are defined in other modules and only exported from the standard module. 
-A few note worth types and functions are list below.
+The module /em standard defines often used function and types. 
+ A full list of functions is /sp
+/tag  <a /sp href ='./stdlibdoc.html#standard'>  here /tag </a>. 
+Many of the functions are defined in other modules and only exported from the standard module. A few note worth types and functions are list below.
 
-This document itself can be feed directly to a Tau compiler.  Modules  with names ending in a question mark like in the next paragraph  are introduced solely for the purpose of allowing the document to compile. 
-The following paragraphs define a  module  that exports some functions and types
-from the module standard 
+This document itself can be feed directly to a Tau compiler.  Modules  with names ending in a question mark like in the next paragraph  are introduced solely for the purpose of allowing this document to compile. The following paragraphs define a  module  that exports some functions and types from the module standard. 
 
 Module standard?
 
-This modules reexports some common function from the module standard
-
-The paragraph below makes visible in module standard? the function and types in the module standard.
+This modules re-exports some common function from the module standard. The use paragraph below makes visible in module standard? the function and types in the module standard.
+The type /em int is always visible so cannot be exported but if it could be the paragraph would look like: <* block Export type:int *>
 
 use standard
 
@@ -146,8 +141,6 @@ Export ∧(boolean, boolean) boolean
 
 Export ∨(boolean, boolean) boolean
 {The second operatand is evaluated if and only if the first operatand does not determine the result}
-
-/Export type:int
 
 Export +(int,int) int { this exports the infix operator +}
 
@@ -167,8 +160,8 @@ Export GT ordering
 
 Function >1(a:int, b:int) ordering if a > b then GT else if a = b then EQ else LT
 
-/Function ∧(a:ordering, b:ordering)ordering 
-  if a = EQ   then b   else a
+Export ∧(a:ordering, b:ordering)ordering 
+  { if a = EQ   then b   else a}
 
 Export %(n:int) seq.word
 {By convention function that begin with a % have a return type of seq.word, supply a human
@@ -176,7 +169,113 @@ Export %(n:int) seq.word
 
 Export %(w:word) seq.word
 
-<* section Expressions *>
+/tag <h3> Converting words to UTF8 /tag </h3>
+
+A sequence of tau words must be transformed back to UTF8 format to communicate with the outside world. When a file is read the white space is striped out and must be added back in. 
+
+The basic rules for adding spaces is to add a space after each word except when:
+/br 1. If the word is /sp+-#.. :^/sp then the space before and after the word is suppressed. 
+/br 2. If the word is /sp)]}," then the space before the word is suppressed.
+/br 3. If the word is ([{then the space after the word is suppressed. "
+
+There are a set of addition commands that provide additional formatting.  Examples are given in the table below. 
+ 
+<* table /tag <caption> Markup Commands
+/tag <tr><th> Example /tag  <th>  with format /tag  <th> note
+/row first /keyword
+/p second /cell first
+/p second /cell paragraph break
+/row first /keyword
+/br second /cell first
+/br second /cell line break
+/row /keyword /em example /cell /em example /cell
+/row /keyword /strong example /cell /strong example /cell
+/row /keyword /keyword example /cell /keyword example /cell
+/row /keyword <* /keyword literal this is an example /keyword *> /cell <* literal this is an example *> /cell
+/row /keyword <* /keyword keyword this is an example /keyword *> /cell <* keyword this is an example *> /cell
+/row /keyword <* /keyword comment this is an example /keyword *> /cell <* comment this is an example *> /cell
+/row parent
+/br block /keyword <* /keyword block Indented block. 
+/br /keyword
+/br second line /keyword *> /cell parent block <* block Indented block. 
+/br second line *> /cell Indented block
+/row +/keyword /sp+ /cell  +/sp+/cell  add space after last word
+/row +/keyword /sp /keyword /sp+ /cell  +/sp /sp+ /cell only adds space not already there.
+/row * /keyword /tag example * /cell  * /tag  example *   /cell removes space before and after word.
+/row /keyword /tag <hr>   /cell /tag <hr> /cell /keyword /tag also does not escape < &
+in <hr> for html output.
+/row  a /keyword /sp /keyword /tag "b" c /cell a   /sp   /tag "b" c /cell spacing around quotes
+/row  /keyword <* /keyword table   <rows of table> /keyword *> /cell /cell Defines a table
+/row../keyword /cell../keyword /cell.. /cell /cell Defines a row with three columns. 
+/br Must be placed within table. 
+/row /keyword <* /keyword table  
+/br /keyword
+/row 1 /keyword /cell 2 /keyword /cell 3
+/br /keyword
+/row 3 /keyword /cell 4 /keyword /cell 5 /keyword *> /cell <* table  
+/row 1 /cell 2 /cell 3
+/row 3 /cell 4 /cell 5 *> /cell 
+/row /keyword /escapeformat /escapeformat /br /cell /escapeformat /tag &#32; /keyword /escapeformat /cell /escapeformat  /br /cell /escapeformat  /cell
+Toggles whether to interpret commands.
+*>
+
+The above rules are represented by the grammar below.
+The non-terminal /em N represents no following space the word is pending
+and /em S represents there is a space pending. 
+
+
+<* table 
+   /row /cell /cell Action
+   /row N   /cell  ← S BA  /cell Do not add pending space to S
+  /row    /cell  ← S A /cell Add pending space to S
+  /row    /cell  ←   BA 
+  /row   /cell  ←  A 
+  /row   + S /cell B  /cell Do not add pending space
+  /row /cell ← ! BA ! A  any /cell Add pending space
+    /row  A  /cell  ← ( /[ /{ /cell suppress space (A)fter 
+  /row  B  /cell ←  ) /] /} / , / " /"/cell suppress space (B)efore 
+  /row  BA /cell ← + /- /#/./. / :/: /^ /cell suppress space (B) before and (A)fter
+*>
+
+There are a set of commands that alter these rules 
+
+<* table 
+ /row CN /cell  ← NSBA /cell    
+ /row /cell  ← /em /sp /cell   if last char is not space add one.
+ /row /cell  ← /em /tag ! /sp /tag / escapeformat  /sp any /cell   
+ /row /cell  ←  /sp /tag / br /cell   add a line break.
+ /row /cell  ← /em /p /cell   add a paragraph break.
+ /row /cell  ← /em <* /em block CN /em  *>  
+ /row /cell  ← /em <* /em table CN /em  *> 
+   /row /cell  ← ec N /cell    
+ /row /cell  ← CS NSBA /cell    
+ /row /cell  ← CS A /cell    
+ /row /cell  ← CS /cell    
+ /row /cell  ← NSBA /cell   
+ /row /cell  ← A /cell   
+ /row +CS /cell  ← NSB /cell   
+ /row /cell  ← /em /keyword any
+ /row /cell  ← /em /em any
+ /row /cell  ← /em /strong any
+   /row /cell  ←  /em /cell  /cell    
+ /row /cell  ← /em /row /cell    
+ /row /cell  ←  /em <* ! block ! table any CN /em *>
+ /row /cell  ←  /em  /sp 
+  /row /cell  ← ! BA ! B /escapeformat !
+ /p ! /strong ! /em ! /br ! <* ! *> ! ec ! /tag any /escapeformat *>
+
+
+Line breaks are handled by inserting formatting words. The simplest formatting rules are  /br for a
+line break and  /p for a paragraph break. 
+
+Since an opening quote mark should be treated differently than a closing quote mark and the ASCII character
+set does not distinguish between opening and closing quote marks, /em /ldq inserts a double quote suppressing
+the space after it. Adding /em /sp will force a space after a word and /em /tag will suppress the space before and after the next word. 
+
+The format words are interpreted differently when producing plain text or HTML. For example, /keyword
+/p produces LF LF for plain text and   <p>  for HTML. Different functions are provide to do this. When creating files from seq.word for output, if file extension is html then the output is HTML otherwise plain text.
+
+/tag <h2>   Expressions /tag </h2>
 
 We would like an expression such as a+3 * b^2^-2 to evaluation to what a mathematician would expect
 where /sp^/sp is the exponent operator. Adding parenthesis specifies the order of evaluation: a+(3 * (
@@ -193,13 +292,13 @@ in further processing, but the grammar takes care of the right associative natur
 /row * Product' /cell ← * Unary
 /row Unary /cell ←-Unary / Power
 /row Power /cell ← Atom Power'
-/row * Power' /cell ←_Unary /^Unary
+/row * Power' /cell ←#Unary /^Unary
 /row Atom /cell ← (E) / Id
 /row Id /cell ← !, !) !:!.! dq any *>
 
 Tau has many more binary operators than the above grammar handles. Here is then full list. Operators
 on the same line are of the same precedence. <* block
-/br_^
+/br#^
 /br unary minus
 /br * / mod ∪ ∩ \
 /br+-∈ ∉
@@ -224,13 +323,13 @@ Here is the syntax for a procedure call and if expression: <* table
 /row * EL' /cell ←, E
 /row * IF /cell ← else if E then E *>
 
-A function call with a single argument can be expressed one of two ways: <* block f1.a *> or <* block f1 /nosp (a) *> This allows expressions
+A function call with a single argument can be expressed one of two ways: <* block f1.a *> or <* block f1 /tag(a) *> This allows expressions
 to be written with fewer parentheses. Note how the order of evaluation differs in the following expression
 :<* block not (a ∧ b) ≠ (not.a ∧ b) *>
 
-The operators ≤ ≥ ≠ are abbreviations for not /nosp (a > b), not /nosp (a < b), not /nosp (a = b) respectively. 
+The operators ≤ ≥ ≠ are syntatical abbreviations for not /tag (a > b), not /tag (a < b), not /tag (a = b) respectively. 
 
-<* section Function Declarations *>
+/tag <h2> Function Declarations /tag </h2>
 
 Here are exampls of two function definitions:
 
@@ -242,15 +341,11 @@ The follow paragraph is need for the second function to compile:
 
 use real
 
-If two function differ in name, number of parameters, or types of the parmeters they are consider distinct
-functions. Capatilizing the first letter of Function implies the function is export from the module
-. If the first letter is lower case the function is not exported unless an Export clause for the function
-is include like
+If two function differ in name, number of parameters, or types of the parmeters they are consider distinct functions. Capatilizing the first letter of Function implies the function is Export from the module. If the first letter is lower case the function is not exported unless an Export clause for the function is include like:
 
 Export quadratic(a:int, b:int, c:int, x:int) int
 
-Here is the syntax for function definitions. It includes a non-termial, Declare, which we define
-later.
+Here is the syntax for function definitions. It includes a non-terminal, /em Declare, which we define later.
 
 <* table
 /row S /cell ← function Name (FPL) Type Declare' E
@@ -281,16 +376,14 @@ Export ^(int, int) int
 Any expression has excatly one type that can be determine from the subexpression using the return type
 of the function called. 
 
-When calling a function the types of action arguments MUST match the type given in the definition of
-the function. 
+When calling a function the types of actual arguments MUST match the types given in the definition of the function. 
 
 When defining a function the type of the expression must match the return type of the function. 
 
-<* section Literals *>
+/tag <h2> Literals /tag </h2>
 
 Below is a grammar than shows how characters are combined to form three types of literals with the names
-/em int, /em bits /and /em real. Examples of int are 0 1 1000 1234. Exampes of bits are 0x1 0x0000
-0X0a 0X0B. Examples of real are 0.0 1.0 1000.0 and 1234.456. 
+/em int, /em bits and /em real. Examples of int are 0 1 1000 1234. Exampes of bits are 0x1 0x0000 0X0a 0X0B. Examples of real are 0.0 1.0 1000.0 and 1234.456.  Unlike most other PEG grammars in this document the grammar below has an alphabet of characters rather than words.
 
 <* table
 /row Digit /cell ← 0 / 1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9
@@ -302,32 +395,28 @@ Below is a grammar than shows how characters are combined to form three types of
 /row real /cell ← Digit Digit'.Digit Digit' *>
 
 String in Tau are defined as a sequence of words (seq.word). An example literal for a sequence of words
-is" this is a sample string of 8 words" A simple grammar for strings would be <* block
-/br String ←" Str2"
-/br * Str2 ← !" any *> But Tau uses allows a string to include an expression of type /em seq.word. The
+is /sp /tag " this is a sample string of 8 words" A simple grammar for strings would be <* block
+ String ←" Str2"
+/br * Str2 ← !" any *> But Tau   allows a string to include an expression of type /em seq.word. The
 example literal above could also be represented as" this is a^(" sample string") of 8 words" So
 the grammar becomes <* table
-/row String /cell ←" String' Str2"
-/row * String' /cell ← str2^(E)
-/row /cell / Str2^
-/row /cell / Str2
-/row * Str2 /cell ← !" !^any *>
+/row String /cell ← /cell" String' Str2"
+/row * String' /cell ← /cell ^(E)
+/row /cell / /cell Str2
+/row + Str2 /cell ← /cell !" !^any *>
 
-There is two function named /em dq in the stardard package. The first that takes no arguments and returns
-the sequence of words with one word consisting of single doublequote character. The second function
-takes a sequence of words as an argument and returns the args with a doublequote added to the begining
-and end. 
+There are two function named /em dq in the stardard package. The first that takes no arguments and returns the sequence of words with one word consisting of single doublequote character. The second function takes a sequence of words as an argument and returns the args with a doublequote added to the begining and end. 
 
-These function allow a double quote within a string use. For example:
-<* block /ldq hello world without quotes;
+These function allow a double quote within a string. For example:
+<* block /tag " hello world without quotes;
 ^(dq) hello world^(dq) with quotes" *> is the same as writing 
-<* block /ldq hello world without quotes;" /sp+/sp dq
-/sp+/sp /ldq hello world"+/sp dq /sp+/sp" /nosp with quotes" *> Since^(...) can receive any expression we could also write
-<* block" /nosp hello world without quotes^(dq./ldq hello world") with quotes" *> Since /ldq^(" functions as an escape in
-strings, it can be include within a string as" /nosp^(/ldq^") (" Note that just the /dq^" is escaped as
-/ldq^(" /nosp^(")" will raise an error because the escape in the inner qoute is not properly formed.
+<* block /tag " hello world without quotes;" /sp+/sp dq
+/sp+/sp /tag " hello world"+/sp dq /sp+/sp /tag "   with quotes" *> Since^(...) can receive any expression we could also write
+<* block   /tag "   hello world without quotes^(dq./tag " hello world") with quotes" *> Since  /sp /tag "^(" functions as an escape in
+strings, it can be include within a string as /sp /tag"^(/tag"^") (" Note that just the / /sp ^ /sp is escaped as
+/sp"^( /tag " ^(")" will raise an error because the escape in the inner qoute is not properly formed.
 
-<* section Declarations *>
+/tag <h2> Declarations /tag </h2>
 
 This section explains the constructs used in the following function:
 
@@ -354,12 +443,10 @@ Here is the grammar for constructs used in this section: <* table
 /row * N /cell ← Comment / str1 *>
 
 A /keyword let declaration in a function allows an name to be given to the value of an expression so the name
-references the value in the following expression. A let statement DOES NOT define a variable that can
+references the value in the following expressions. A let statement DOES NOT define a variable that can
 change values.
 
-Comments are enclossed in curly brackets:{} and can be nested. Comments are traditionally defined
-at the lexical level. In tau they are defined as a prefix operator so that they can easily be included
-in a parse tree. Comments can occur as a declaration or as a unary operator within expressions. 
+Comments are enclosed in curly brackets:{} and can be nested. Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree. Comments can occur as a declaration or as a unary operator within expressions. 
 
 The /keyword assert construct evaluates the first expression which must be of type boolean. If the first expression
 is false the second expression is evaluated and must be of type seq.word. The value of the second exporess
@@ -393,30 +480,9 @@ function the comma cannot be left out or a error will occur as
 
 Function neccessaryComma int let b = 1,-b
 
-<* section Converting words to UTF8 *>
 
-A sequence of tau words must be transformed back to UTF8 format to communicate with the outside world
-. When a file is read the white space is striped out and must be added back in. 
 
-The basic rules for adding spaces is to add a space after each word except when:
-/br 1. If the word is /sp+-_.. :^/sp then the space before and after the word is suppressed. 
-/br 2. If the word is /sp)]}," then the space before the word is suppressed.
-/br 3. If the word is ([{then the space after the word is suppressed. "
-
-Line breaks are handled by inserting formatting words. The simplest formatting rules are  /br for a
-line break and  /p for a paragraph break. 
-
-Since an opening quote mark should be treated differently than a closing quote mark and the ASCII character
-set does not distinguish between opening and closing quote marks, / /nosp ldq inserts a double quote suppressing
-the space after it. Adding / /nosp sp will force a space after a word and / /nosp nosp will suppress the Space
-normally added after a word. 
-
-The format words are interpreted differently when producing plain text or HTML. For example, /keyword
-/p produces LF LF for plain text and <* LF <p> *>. Different functions are provide to do this. When creating
-files from seq.word for output, if file extension is html then the output is HTML otherwise plain text
-.
-
-<* section Sequences *>
+/tag <h2> Sequences /tag </h2>
 
 A sequence is a function whose domain is the integers and whose range is some type. A literal for a
 sequence of integers is coded as <* code [2, 4, 8, 16, 32] *> and has a type of <* code seq.type *>. 
@@ -433,9 +499,9 @@ use seq.T
 
 Export n(seq.T) int {the length of the sequence.}
 
-Export _(i:int, a:seq.T) T {Return ith element of sequence. 1_a is the first element}
+Export #(i:int, a:seq.T) T {Return ith element of sequence. 1#a is the first element}
 
-Export ^(i:int, a:seq.T) T {Same as (n.a+1-i)_i. 1^a is the last element}
+Export ^(i:int, a:seq.T) T {Same as i#(n.a+1-i). 1^a is the last element}
 
 Export empty:seq.T seq.T {Returns the sequence of type seq.T with zero elements}
 
@@ -459,19 +525,19 @@ Function testseq seq.word
 let s1 = "This is a test sequence with 9 words.",
 if
  n.s1 = 9
- ∧ 3_s1 = 1_"a"
- ∧ 2^s1 = 1_"words"
+ ∧ 3#s1 = 1#"a"
+ ∧ 2^s1 = 1#"words"
  ∧ subseq(s1, 4, 5) = "test sequence"
  ∧ subseq(s1, 4, 3) = empty:seq.word
  ∧ subseq(s1, 1, 5) + subseq(s1, 6, n.s1) = s1
- ∧ [1_"Hello", 1_"World!"] = "Hello World!"
+ ∧ [1#"Hello", 1#"World!"] = "Hello World!"
  ∧ empty:seq.word = ""
  ∧ subseq([11, 12, 13, 14], 1, 2) = [11, 12]
 then
 "PASS"
 else "FAIL"
 
-<* section User Types *>
+/tag <h2> User Types /tag </h2>
 
 The module below defines a user defined type. 
 
@@ -514,7 +580,7 @@ Function %(p:point2d) seq.word "(^(x.p),^(y.p))"
 
 Function testpoint seq.word %(point2d(2, 3) + point2d(4, 5))
 
-<* section Module to run tests in this document *> 
+/tag <h2> Module to run tests in this document /tag </h2> 
 
 Module testdoc
 
@@ -534,15 +600,13 @@ use exampleEncoding
 
 use geotest
 
-Function testdoc(input:seq.file, o:seq.word) seq.file
-{ENTRYPOINT}
-[file(
- o
- , "testseq^(testseq) point2d^(testpoint) testlistset^(testlistset) testdict^(testdict) exampleEncoding^(testExampleEncoding)
+Function testdoc(input:seq.file) seq.word
+{COMMAND}
+ "testseq^(testseq) point2d^(testpoint) testlistset^(testlistset) testdict^(testdict) exampleEncoding^(testExampleEncoding)
   /p geotest^(geotest)"
-)]
 
-<* section Parameterized Module *>
+
+/tag <h2> Parameterized Module /tag </h2>
 
 A type can have a single type parameter named T. The T can be used anywhere a type can be used.
 
@@ -580,7 +644,7 @@ for acc = empty:listset.T, ele ∈ s do acc + ele , acc
 
   Export isempty(seq.T)boolean
 
-  Export_(int,seq.T )T
+  Export #(int,seq.T )T
 
   Function lookup(s:listset.T, ele:T)seq.T lookup(toseq.s, ele) 
 
@@ -597,8 +661,8 @@ let set1 = tolistset."A A B C A C B"
 let set2 = tolistset."D B E",
 if
  toseq.set1 = "C B A"
- ∧ 1_"C" ∈ set1
- ∧ 1_"D" ∉ set1
+ ∧ 1#"C" ∈ set1
+ ∧ 1#"D" ∉ set1
  ∧ toseq(set1 ∪ set2) = "D E C B A"
 then
 "PASS"
@@ -614,14 +678,14 @@ type myentry is key:int, data:seq.word
 function =(a:myentry, b:myentry) boolean key.a = key.b
 
 Now a set of entries will be a dictionary. From the mathematical view of the set each entry is an representation
-of an integer. The integer 3 could be represented by myentry (3, /ldq X"), myentry (3, /ldq A B C") or and
+of an integer. The integer 3 could be represented by myentry (3, /sp /tag "X"), myentry (3, /sp /tag" A B C") or and
 infinite number of other possibilities. But only one representation will be used in any listset.myentry
 .
 
 Looking up an entry in the dictionary is just looking up the representation used in the set.  The last
 function in the /em listset module does just that.  The A ∪ B function in the listset module is carefully crafted
 so that if an element is in both A and B  the representation of used in A is used in the result.  Thus 
- listset.[myentry(3,  "/ns X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,  /ldq X") or  B /cup [myentry(3,  /ldq X")] will not redefine the entry in B.  
+ listset.[myentry(3,/sp /tag  "  X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,  /sp /tag" X") or  B /cup [myentry(3,  /sp /tag" X")] will not redefine the entry in B.  
  By convention, the result  of a binary operation on sets   uses the representation of in the left operand -- not the one on the right.
    
 Module testdict
@@ -652,7 +716,7 @@ let l1 = lookup(dict, 4) ,
 if print.dict = "(3, mult),(2, sub),(1, add)"
  ∧ print.dict2 = "(4, divide),(2, subtract)"
  ∧ isempty.lookup(dict, 4)
- ∧ data.1_lookup(dict, 2)  = "sub"
+ ∧ data.1#lookup(dict, 2)  = "sub"
  ∧ print(dict2 ∪ dict)
  = "(1, add),(3, mult),(4, divide),(2, subtract)"then
  "PASS testdict"
@@ -664,7 +728,7 @@ For the type listset.word, the unbound function = in the listset module is bound
 For the type listset.myentry, then unbound = is bound to =(a:myentry, b:myentry)boolean
 
 
-<* section Order of evaluation *>
+/tag <h2> Order of evaluation /tag </h2>
 
 The arguments of a function are evaluate from left to right before the function is called.
 
@@ -678,7 +742,7 @@ The compiler will do inline expansion and the above expression becomes <* block 
 
 This behavior is required for the ∧ operator on booleans.
 
-<* section Bindings *>
+/tag <h2> Bindings /tag </h2>
 
 Consider the following example code:
 
@@ -718,7 +782,7 @@ The type of the expression that defines a function much match the return type of
 
 
 
-<* section Encodings *>
+/tag <h2> Encodings /tag </h2>
 
 A type can be mapped to positive integers in an encoding. 
 
@@ -793,9 +857,9 @@ Function testExampleEncoding seq.word
   { all the encodings are now in encodingdata:myencoding. It is now easy to print out 
   instruction that will evaluate common subexpressions only once},
        for acc="" ,idx=1,   e /in encodingdata:myencoding do 
-       let newacc=acc+"/br"+idx_R + "=" +if op.e /in"+,*" then 
-                [(valueofencoding.1_(operands.e))_R ,op.e        
-                ,(valueofencoding.2_(operands.e))_R]
+       let newacc=acc+"/br"+idx#R + "=" +if op.e /in"+,*" then 
+                [(valueofencoding.1#(operands.e))#R ,op.e        
+                ,(valueofencoding.2#(operands.e))#R]
       else  [op.e] ,
       next(newacc,idx+1)
       , acc  
@@ -818,7 +882,7 @@ Consider the sequence of calls, C, in the execution of the program to the functi
 Then <* block S_i = S_j if and only if encoding(E_i)= encoding(E_j)*> and <* block decode(E_i)is identical to S_j where j = min t where S_t = E_i *> and <* encoding(E_i)> 0 *>
 
 
-<* section Process statement *>
+/tag <h2> Process statement /tag </h2>
 
 Process are included in Tau for three reasons.
 
@@ -868,7 +932,7 @@ Export result(process.T) T { result return upon successful completion. }
 The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
 
 
-<* section Defining Sequences *>
+/tag <h2> Defining Sequences /tag </h2>
 
 Some times it is usefully to define a new type of sequence.  Here we defined a geometric sequence moduled after the arithmetic seq
 define in otherseq.T
@@ -896,9 +960,9 @@ As with any parameterized module  a type definition
 must contain an element that uses T so that multiple 
 instances of the module does not produce duplicate symbols.
 
-Every sequence must have a_function defined on it:
+Every sequence must have a#function defined on it:
 
-Function _(s:geometricseq.T, i:int) T start.s *  (step.s) ^ (i-1)
+Function sequenceIndex(s:geometricseq.T, i:int) T start.s *  (step.s) ^ (i-1)
 
 We need a constructor of our sequence. Note the use of a toseq function. 
 This is defined implicitly by the sequence type definition to change the type 
@@ -933,7 +997,7 @@ Function  %(a:real) seq.word print(10,a)
 End of module geotest.
 
 
-<* section Tail Recursion *>
+/tag <h2> Tail Recursion /tag </h2>
 
 A function is tail recursive if the last function called is itself. A compiler can take advantage of this and reuse the activation record on the call stack resulting in less space taken up by the stack during execution.
 
@@ -942,12 +1006,12 @@ Sometimes a recursive function can be rewritten to make it tail recursive. Consi
  use seq.int
 
   function reverse2(l:seq.int)seq.int 
-  if isempty.l    then l   else reverse2.subseq(l, 2, n.l)+ 1_l
+  if isempty.l    then l   else reverse2.subseq(l, 2, n.l)+ 1#l
 
 The last call in this function is to +. Here is a rewritten version that is tail recursive:
 
   function reverse3(l:seq.int, accumalator:seq.int)seq.int 
- if isempty.l then accumalator   else reverse3(subseq(l, 2, n.l), accumalator + 1_l)
+ if isempty.l then accumalator   else reverse3(subseq(l, 2, n.l), accumalator + 1#l)
 
   function reverse3(l:seq.int)seq.int reverse3(l, empty:seq.int)
 
@@ -969,39 +1033,6 @@ In this case the tau compiler will remove the bounds checking when indexing the 
 was built up out of smaller sequences, it may also break the sequence into the smaller parts and process
 them separately. 
 
-<* section markup *>
-
-<* table Markup Commands
-/row Example /cell with format /cell note
-/row first /keyword
-/p second /cell first
-/p second /cell paragraph break
-/row first /keyword
-/br second /cell first
-/br second /cell line break
-/row /keyword /em example /cell /em example /cell
-/row /keyword /strong example /cell /strong example /cell
-/row /keyword /keyword example /cell /keyword example /cell
-/row /keyword <* /keyword literal this is an example /keyword *> /cell <* literal this is an example *> /cell
-/row /keyword <* /keyword keyword this is an example /keyword *> /cell <* keyword this is an example *> /cell
-/row /keyword <* /keyword comment this is an example /keyword *>; /cell <* comment this is an example *> /cell
-/row parent
-/br block /keyword <* /keyword block Indented block. 
-/br /keyword
-/br second line /keyword *> /cell parent block <* block Indented block. 
-/br second line *> /cell Indented block
-/row /escape /nosp format <hr/> /escape /nosp format /cell <hr> /cell
-/row < /nosp * table <caption> <rows of table> * /nosp > /cell /cell Defines a table
-/row /keyword
-/row../keyword /cell../keyword /cell.. /cell /cell Defines a row with three columns. 
-/br Must be placed within table. 
-/row /keyword <* /keyword table Sample Table
-/br /keyword
-/row 1 /keyword /cell 2 /keyword /cell 3
-/br /keyword
-/row 3 /keyword /cell 4 /keyword /cell 5 /keyword *> /cell <* table Sample Table
-/row 1 /cell 2 /cell 3
-/row 3 /cell 4 /cell 5 *> /cell *>
 
 END
 

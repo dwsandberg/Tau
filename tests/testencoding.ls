@@ -79,7 +79,7 @@ encodingdata:testrecord
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char
 
 function testdeep1 testdeep
-testdeep("A BC DEF", tree("LIT 1", [tree."PARAM 1"]), decodeword.1_"TEST")
+testdeep("A BC DEF", tree("LIT 1", [tree."PARAM 1"]), decodeword.1#"TEST")
 
 function =(a:testdeep, b:testdeep) boolean
 fld1.a = fld1.b ∧ fld2.a = fld2.b ∧ fld3.a = fld3.b 

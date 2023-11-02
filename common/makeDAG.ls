@@ -25,7 +25,7 @@ if i > n.l then
  let r = for acc = asset.empty:seq.arc.T, @e ∈ reversed do acc + backarc.@e, acc,
  replacearcs(g, asset.reversed, r)
 else
- let n = i_l
+ let n = i#l
  let succs = successors(g, n),
  make(
   g
@@ -46,7 +46,7 @@ if n(predecessors(g, n) \ b) = 0 then asset.[n] else empty:set.T
 function ordernodes(g:graph.T, b:set.T, first:seq.T, last:seq.T) seq.T
 let a = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sources2(g, b, @e), acc
 let d = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b) do acc ∪ sinks2(g, b, @e), acc,
-if {### B} n.a + {### B} n.d = 0 then
+if n.a + n.d = 0 then
  let u = nodes.g \ b,
- if isempty.u then first + last else ordernodes(g, b + 1_u, first + 1_u, last)
+ if isempty.u then first + last else ordernodes(g, b + 1#u, first + 1#u, last)
 else ordernodes(g, b ∪ a ∪ d, first + toseq.a, toseq.d + last) 

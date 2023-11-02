@@ -359,7 +359,7 @@ option:seq.word
 , libmods:seq.modExports
 , src:seq.seq.word
 
-Function libname(info:midpoint) word 1_extractValue(1_src.info, "Library")
+Function libname(info:midpoint) word 1#extractValue(1#src.info, "Library")
 
 Function removeJump(prg:set.symdef) set.symdef
 for acc = empty:set.symdef, sd ∈ toseq.prg
@@ -375,7 +375,7 @@ for acc = empty:seq.symbol, modify = false, local = Lit.0, last = Lit.0, sym ∈
 do
  if isbr.sym then
   if last = JumpOp then
-  next(acc >> 1 + EqOp + sym, true, (n.acc - 2)_acc, sym)
+  next(acc >> 1 + EqOp + sym, true, (n.acc - 2)#acc, sym)
   else if modify ∧ isIntLit.last then
   next(acc >> 1 + local + last + EqOp + sym, true, local, sym)
   else next(acc + sym, false, local, sym)

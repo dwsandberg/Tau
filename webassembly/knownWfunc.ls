@@ -16,7 +16,8 @@ use wasm2
 
 Function abortfunc symbol symbol(internalmod, "abortfunc", typereal, typereal)
 
-Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
+Function callprocessfunc symbol
+symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
 Function knownWfunc(alltypes:typedict, libname:word) seq.wfunc
 [
@@ -114,12 +115,12 @@ Function knownWfunc(alltypes:typedict, libname:word) seq.wfunc
  )
  , wfunc(
   alltypes
-  , symbol4(internalmod, 1_"bitcast", seqof.typeint, [typereal], seqof.typeint)
+  , symbol4(internalmod, 1#"bitcast", seqof.typeint, [typereal], seqof.typeint)
   , [i64reinterpretf64]
  )
  , wfunc(
   alltypes
-  , symbol4(internalmod, 1_"bitcast", seqof.typebyte, [typereal], seqof.typebyte)
+  , symbol4(internalmod, 1#"bitcast", seqof.typebyte, [typereal], seqof.typebyte)
   , [i64reinterpretf64]
  )
  , wfunc(

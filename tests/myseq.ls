@@ -38,21 +38,21 @@ Function clength(s:seq.T, i:int) int
 if i > n.s then
 0
 else
- assert i_s > 0 report "invalid",
-  if i_s < 128 then
+ assert i#s > 0 report "invalid",
+  if i#s < 128 then
   1 + clength(s, i + 1)
-  else assert i_s < 128 + 64 + 32 report "invalid", 1 + clength(s, i + 2)
+  else assert i#s < 128 + 64 + 32 report "invalid", 1 + clength(s, i + 2)
 
 Function cindex(s:seq.T, i:int, idx:int) T
 if idx = 1 then
-if i_s < 128 then i_s else (i + 1)_s - 128 + (i_s - 128 - 64) * 64
-else cindex(s, i + if i_s < 128 then 1 else 2, idx - 1)
+if i#s < 128 then i#s else (i + 1)#s - 128 + (i#s - 128 - 64) * 64
+else cindex(s, i + if i#s < 128 then 1 else 2, idx - 1)
 
 We need a constructor of our sequence.Note the use of a toseq function.This is defined implicitly by
 the sequence type definition to change the type from myseq (T) to seq (T).
 
 Function myseq(d:seq.T) seq.T toseq.myseq(clength(d, 1), d)
 
-Every sequence must have a_function defined on it which is below for mseq.T
+Every sequence must have a _ function defined on it which is below for mseq.T
 
-Function _(a:myseq.T, idx:int) T cindex(data.a, 1, idx) 
+Function sequenceIndex(a:myseq.T, idx:int) T cindex(data.a, 1, idx) 

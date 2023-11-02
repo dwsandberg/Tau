@@ -6,7 +6,7 @@ use UTF8
 
 use bits
 
-use format
+use file
 
 use real
 
@@ -64,14 +64,14 @@ Function callevent(id:seq.word, event:seq.word) int
 intpart.callevent2(token.id, token.event)
 
 Function replaceSVG(name:seq.word, xml0:seq.word) real
-let none = 1_"N"
+let none = 1#"N"
 let xml =
  for xml = "", hasquote = none, w ∈ xml0
  do
   if w ∈ dq then
-  if hasquote = none then next(xml + w + "/nosp", w) else next(xml + w, none)
-  else if w = 1_"/br" then
+  if hasquote = none then next(xml + "/tag" + w, w) else next(xml + w, none)
+  else if w = 1#"/br" then
   next(xml + encodeword.[char.10], hasquote)
   else next(xml + w, hasquote),
  xml,
-replacesvg(token.name, jsUTF8.toseqbyte.toUTF8.xml) 
+replacesvg(token.name, jsUTF8.toseqbyte.textformat.xml) 

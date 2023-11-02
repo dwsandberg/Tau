@@ -66,20 +66,20 @@ for acc = "", e ∈ parts.bc
 do
  let nobits = bitcount.e,
   acc
-  + "/br"
-  + 
+   + "/br"
+   + 
    if nobits = Reloc then
    "Reloc^(signedvalue.e)"
    else if nobits = Firstpara then
    "Firstpara^(toint.bits.e)"
    else if nobits = Relocsigned then
    "Relocsigned^(signedvalue.e)"
-   else "^(nobits)^(bits.e)",
+   else %.nobits + %.bits.e,
 acc
 
 function +(a:seq.templatepart, b:bitstream) seq.templatepart
 assert length.b ≤ 56 report "NOT handled",
-a + templatepart(toint.1_bits.b, length.b)
+a + templatepart(toint.1#bits.b, length.b)
 
 Function %2(bc:internalbc, nopara:int) seq.word
 let offset = n.constantrecords
@@ -110,13 +110,13 @@ do
  let inst = instop.toint.r1.op
  let slotinc = if inst ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
  let slot = slotinc + slotin
- let slottxt = if slotinc = 1 then "% /nosp^(slot - offset) =" else ""
+ let slottxt = if slotinc = 1 then "% /tag^(slot - offset) =" else ""
  for
   acc = resultin + "/br^(slottxt)^(decode.inst)"
   , place = args
   , i ∈ arithseq(toint.r1.args, 1, 1)
  do
-  if nobits.place > 0 ∨ idx.place < n.parts.place ∧ bitcount.(idx.place)_parts.place < 58 then
+  if nobits.place > 0 ∨ idx.place < n.parts.place ∧ bitcount.(idx.place)#parts.place < 58 then
    let tmp = getvbr6.place
    let argval = toint.r1.tmp
    let more =
@@ -128,41 +128,40 @@ do
     decode.binaryop.argval
     else if
      {type} i = 1 ∧ inst ∈ [PHI, SWITCH]
-     ∨ i = 2 ∧ inst ∈ [LOAD, CAST, GEP]
-     ∨ i = 3 ∧ inst = CALL
+      ∨ i = 2 ∧ inst ∈ [LOAD, CAST, GEP]
+      ∨ i = 3 ∧ inst = CALL
     then
     %.llvmtype.argval
     else if
      i = 1 ∧ inst ∈ [CAST, CMP2, BINOP, LOAD, STORE, RET]
-     ∨ i = 2 ∧ inst ∈ [CMP2, BINOP, STORE, SWITCH]
-     ∨ i = 3 ∧ inst ∈ [BR, GEP]
-     ∨ i = 4 ∧ inst = GEP
-     ∨ i > 3 ∧ inst = CALL
+      ∨ i = 2 ∧ inst ∈ [CMP2, BINOP, STORE, SWITCH]
+      ∨ i = 3 ∧ inst ∈ [BR, GEP]
+      ∨ i = 4 ∧ inst = GEP
+      ∨ i > 3 ∧ inst = CALL
     then
-     let a = slotin + 1 - argval,
-     if a ≥ offset then "% /nosp^(a - offset)" else "^(slot.a)"
+    let a = slotin + 1 - argval, if a ≥ offset then "% /tag^(a - offset)" else %.slot.a
     else if inst = PHI ∧ i mod 2 = 0 then
      let sign = if argval mod 2 = 0 then 1 else -1
      let a = slot - argval / 2 * sign,
-     if a ≥ offset then ", % /nosp^(a - offset)" else ",^(slot.a)"
+     if a ≥ offset then ", % /tag^(a - offset)" else ",^(slot.a)"
     else if i = 3 ∧ inst = LOAD then
     decode.align.argval
     else %.argval,
    next(acc + more, tmp)
   else
    assert idx.place < n.parts.place report "unexpected end"
-   let e = (idx.place)_parts.place
+   let e = (idx.place)#parts.place
    let nobits = bitcount.e,
    next(
     acc
-    + 
+     + 
      if nobits = Reloc then
-     "# /nosp^(slotin + 1 + signedvalue.e))"
+     "#/tag^(slotin + 1 + signedvalue.e))"
      else if nobits = Firstpara then
      "'%^(slotin + 1 - toint.bits.e)"
      else
       assert nobits = Relocsigned report "SDF^(idx.args)^(acc)",
-      "## /nosp^({slotin+1-} {offset-} signedvalue.e)"
+      "##/tag^({slotin+1-} {offset-} signedvalue.e)"
     , pbc(0, 0x0, idx.place + 1, parts.place, 0x0)
    ),
   if inst ∈ [BR, SWITCH] then
@@ -177,7 +176,7 @@ if nobits.p ≥ size then
  let mask = tobits.-1 << size ⊻ tobits.-1,
  pbc(nobits.p - size, bits.p >> size, idx.p, parts.p, bits.p ∧ mask)
 else
- let part = (idx.p)_parts.p
+ let part = (idx.p)#parts.p
  assert bitcount.part < 58
  report "PROBLEM getbits^(bitcount.part)^(idx.p)^(internalbc.parts.p)",
  getbits(
@@ -193,7 +192,7 @@ if shift = 0 then b else pbc(nobits.b, bits.b, idx.b, parts.b, r1.b << shift ∨
 
 function tail(b:internalbc) seq.templatepart parts.b << 1
 
-function val(b:internalbc) templatepart 1_parts.b
+function val(b:internalbc) templatepart 1#parts.b
 
 Function emptyinternalbc internalbc internalbc.empty:seq.templatepart
 
@@ -257,7 +256,7 @@ let bits = bitcount.t,
 if bits < 58 then
 [t]
 else if bits = Substitue then
- let arg = (ibcsubpara.t)_args,
+ let arg = (ibcsubpara.t)#args,
   if arg < 0 then
   parts.add(deltaoffset + ibcsubslot.t + arg, emptyinternalbc)
   else [templatepart(arg - ibcsubslot.t - deltaoffset + 1, Reloc)]
@@ -290,7 +289,7 @@ if a ≤ 0 then
 let v = slot + a let c = if v ≥ 0 then 2 * v else 2 * -v + 1, add(c, b)
 else addplaceholder(templatepart(a - slot + 1, Relocsigned), b)
 
-_____________________________
+-------------------------------
 
 Function BLOCKCOUNT(slot:int, a1:int) internalbc
 addstartbits(1, 1, add(a1, emptyinternalbc))
@@ -417,10 +416,10 @@ Function CALLFINISH(slot:int, rest:seq.int) internalbc
 args(slot, emptyinternalbc, rest, n.rest)
 
 function args(slot:int, t:internalbc, rest:seq.int, i:int) internalbc
-if i = 0 then t else args(slot, addaddress(slot, i_rest, t), rest, i - 1)
+if i = 0 then t else args(slot, addaddress(slot, i#rest, t), rest, i - 1)
 
 function args(slot:slot, t:internalbc, rest:seq.slot, i:int) internalbc
-if i = 0 then t else args(slot, addaddress(slot, i_rest, t), rest, i - 1)
+if i = 0 then t else args(slot, addaddress(slot, i#rest, t), rest, i - 1)
 
 Function PHI(
  slot:slot
@@ -464,11 +463,11 @@ addstartbits(toint.PHI, n.s + 1, add(a1, subphi(slot, emptyinternalbc, s, n.s)))
 
 function subphi(slot:int, b:internalbc, s:seq.int, i:int) internalbc
 if i > 1 then
-subphi(slot, addsignedaddress(slot, (i - 1)_s, add(i_s, b)), s, i - 2)
+subphi(slot, addsignedaddress(slot, (i - 1)#s, add(i#s, b)), s, i - 2)
 else b
 
 function addpair(a:internalbc, tailphi:seq.int, slot:int, p:int, b:int) internalbc
-addsignedaddress(slot, (b + p)_tailphi, add(b_tailphi, a))
+addsignedaddress(slot, (b + p)#tailphi, add(b#tailphi, a))
 
 Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int) internalbc
 for acc = emptyinternalbc, @e ∈ arithseq(nopara, 1, 1)
@@ -482,7 +481,7 @@ let t =
   , @e ∈ arithseq(n.tailphi / (nopara + 1),-nopara - 1, n.tailphi - nopara)
  do addpair(acc, tailphi, slot + p, p, @e),
  acc,
-addstartbits(toint.PHI, n.tailphi / (nopara + 1) * 2 + 1, add(p_typ, t))
+addstartbits(toint.PHI, n.tailphi / (nopara + 1) * 2 + 1, add(p#typ, t))
 
 function addsignedaddress(loc:slot, a:slot, bc:internalbc) internalbc
 addsignedaddress(-toint.loc, toint.a, bc)
@@ -519,7 +518,7 @@ else if toint.leftover > 0 then
 else if i > n.s then
 if bitstoadd = 0 then r else add(r, b, bitstoadd)
 else
- let v = i_s,
+ let v = i#s,
   if v < 32 then
   addvbr6(b ∨ bits.v << bitstoadd, bitstoadd + 6, bits.0, s, r, i + 1)
   else addvbr6(
@@ -579,7 +578,7 @@ acc
 
 function addrecord(bits:bitstream, abbrevlength:int, a:seq.int) bitstream
 let a1 = addvbr(bits, UNABBREVRECORD, abbrevlength)
-let a2 = addvbr6(addvbr6(a1, 1_a), n.a - 1)
+let a2 = addvbr6(addvbr6(a1, 1#a), n.a - 1)
 for acc = a2, @e ∈ subseq(a, 2, n.a) do addvbr6(acc, @e),
 acc
 
@@ -661,8 +660,8 @@ let pge = finishblock(
   , TYPEABBREVLEN
   , [
    [3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18]
-   + [3]
-   + 
+    + [3]
+    + 
     for acc = empty:seq.char, @e ∈ "no-frame-pointer-elim-non-leaf"
     do acc + decodeword.@e,
     tointseq.acc + [0]
@@ -698,10 +697,10 @@ else
   bits
   else addvbr6(add(bits, bits((1 * 64 + 1) * 16 + 3), 16), typ.l)
  let rec = record.l
- let tp = 1_rec
+ let tp = 1#rec
  let bs =
   if tp = toint.CINTEGER then
-  addvbrsigned6(add(bits2, bits((1 * 64 + toint.CINTEGER) * 16 + 3), 16), 2_rec)
+  addvbrsigned6(add(bits2, bits((1 * 64 + toint.CINTEGER) * 16 + 3), 16), 2#rec)
   else
    let a1 =
     if n.rec < 32 then
@@ -714,7 +713,7 @@ Function symentries(bits:bitstream, s:seq.slotrecord, i:int) bitstream
 if i > n.s then
 bits
 else
- let l = i_s
+ let l = i#s
  let bs =
   if ismoduleblock.l then
    let abbrevlength = 4

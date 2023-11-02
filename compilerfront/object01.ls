@@ -58,14 +58,14 @@ Function formatTypeDef(defs0:seq.seq.mytype) seq.seq.int
 let defs = fix5.defs0
 for acc = empty:seq.seq.int, def ∈ defs
 do
- if isseq.1_def then
-  let idx = for idx = 1, d ∈ defs while 1_d ≠ parameter.1_def do idx + 1, idx,
+ if isseq.1#def then
+  let idx = for idx = 1, d ∈ defs while 1#d ≠ parameter.1#def do idx + 1, idx,
   acc + [-idx]
  else
   for coded = empty:seq.int, t0 ∈ def << 1
   do
    let t = if isseq.t0 then parameter.t0 else t0
-   for idx = 1, d ∈ defs while 1_d ≠ t do idx + 1,
+   for idx = 1, d ∈ defs while 1#d ≠ t do idx + 1,
    coded + if isseq.t0 then -idx else idx,
   acc + if isempty.coded then [n.acc + 1] else coded,
 acc
@@ -102,8 +102,7 @@ table and negative elements refer to objects on the stack. After the object is b
 are pop from the stack. }
 
 Function fix5(a0:seq.seq.mytype) seq.seq.mytype
-{if length.root = 2 ∧ isseq.root_2 then [[root_2, parameter.root_2]]+a0 else}
-let root = 1_a0
+let root = 1#a0
 let a = [root, [typeint], [typeword], [typereal]] + a0 << 1
 let singlerow =
  for singlerow = empty:seq.seq.mytype, row ∈ a
@@ -115,20 +114,20 @@ close.
  else
   {remove555 types not represented by a record}
   for result = empty:seq.seq.mytype, row2 ∈ a
-  do result + for acc = [1_row2], t ∈ row2 << 1 do acc + sub(t, singlerow), acc
+  do result + for acc = [1#row2], t ∈ row2 << 1 do acc + sub(t, singlerow), acc
   for acc = empty:seq.seq.mytype, row ∈ result
-  do if n.row = 2 ∧ not.isseq.1_row then acc else acc + row,
+  do if n.row = 2 ∧ not.isseq.1#row then acc else acc + row,
   acc
 
 function close(x:seq.seq.mytype) seq.seq.mytype
 {add types used but not defined}
 for defs = empty:seq.mytype, used = empty:seq.mytype, def ∈ x
 do next(
- defs + 1_def
+ defs + 1#def
  , used
   + 
-   if isseq.1_def then
-   [parameter.1_def]
+   if isseq.1#def then
+   [parameter.1#def]
    else
     for acc = empty:seq.mytype, d ∈ def << 1
     do if not.isseq.d then acc + d else if not.isseq.parameter.d then acc else acc + parameter.d,
@@ -144,17 +143,17 @@ if t ∈ [typeint, typeword, typereal] then
 t
 else if isseq.t then
 seqof.sub(parameter.t, singlerow)
-else for acc = t, row ∈ singlerow do if t = 1_row then 1^row else acc, acc
+else for acc = t, row ∈ singlerow do if t = 1#row then 1^row else acc, acc
 
 Function outrec(inobj:ptr, allpatterns:seq.seq.int) seq.seq.int
 allpatterns + [-1] + outrec(empty:seq.seq.int, inobj, allpatterns,-1)
 
 function resulttype(packedsize:int, elementtypeidx:int) word
 if elementtypeidx ∈ [word0, int0] then
-1_"int"
+1#"int"
 else if elementtypeidx = real0 then
-1_"real"
-else packedsize_"ptr packed2 packed3 packed4 packed5 packed6"
+1#"real"
+else packedsize#"ptr packed2 packed3 packed4 packed5 packed6"
 
 function outrec(
  finished0:seq.seq.int
@@ -162,10 +161,10 @@ function outrec(
  , allpatterns:seq.seq.int
  , patternidx:int
 ) seq.seq.int
-let pattern = if patternidx < 0 then empty:seq.int else patternidx_allpatterns,
-if patternidx < 0 ∨ n.pattern = 1 ∧ 1_pattern < 0 then
- let eletypeidx = if patternidx < 0 then -patternidx else -1_patternidx_allpatterns
- let elepattern = packedpattern(eletypeidx_allpatterns, eletypeidx)
+let pattern = if patternidx < 0 then empty:seq.int else patternidx#allpatterns,
+if patternidx < 0 ∨ n.pattern = 1 ∧ 1#pattern < 0 then
+ let eletypeidx = if patternidx < 0 then -patternidx else -1#patternidx#allpatterns
+ let elepattern = packedpattern(eletypeidx#allpatterns, eletypeidx)
  let packedsize = if n.elepattern > 6 then 1 else n.elepattern
  let obj = packobject(resulttype(packedsize, eletypeidx), inobj)
  let seqlen = n.bitcast:seq.int(obj),
@@ -215,7 +214,7 @@ do
   next(acc + w, idx + 1, stkcount, if maxencoding < w then finished + te else finished)
  else
   let t = outrec(finished, fld:ptr(obj, idx), allpatterns, typ),
-   if 1_1^t ∈ [buildtblrecord, buildtblseq] then
+   if 1#1^t ∈ [buildtblrecord, buildtblseq] then
     let maxencoding = n.encodingdata:tableentry
     let w = addorder.tableentry.1^t,
     next(acc + w, idx + 1, stkcount, if w > maxencoding then t else t >> 1)
@@ -226,7 +225,7 @@ finished
  adjuststkcounts(acc, fldtypes, stkcount)
  else if buildtype = buildrecord ∧ n.acc < 10 then
  [buildtblrecord] + acc << 1
- else if buildtype = buildseq ∧ (n.acc < 10 ∨ 2_acc = word0 ∧ n.acc < 300) then
+ else if buildtype = buildseq ∧ (n.acc < 10 ∨ 2#acc = word0 ∧ n.acc < 300) then
  [buildtblseq] + acc << 1
  else acc
 
@@ -239,34 +238,34 @@ for txt = "/br finished", r ∈ finished do txt + "/br" + %.r,
 txt
 
 Function inrec(inrecs:seq.seq.int) ptr
-let allpatterns = for idx = 0, pat ∈ inrecs while 1_pat ≠ -1 do idx + 1, subseq(inrecs, 1, idx)
+let allpatterns = for idx = 0, pat ∈ inrecs while 1#pat ≠ -1 do idx + 1, subseq(inrecs, 1, idx)
 for stk = empty:stack.ptr, map = empty:seq.int, rec ∈ inrecs << (n.allpatterns + 1)
 do
- if 1_rec = buildword then
+ if 1#rec = buildword then
   {add word entry to map}
   next(stk, (for acc = empty:seq.char, i ∈ rec << 1 do acc + char.i, map + hash.encodeword.acc))
- else if 1_rec = buildblock then
-  let noblocks = 3_rec
-  let eletypeidx = 2_rec
-  let seqelepat = eletypeidx_allpatterns
+ else if 1#rec = buildblock then
+  let noblocks = 3#rec
+  let eletypeidx = 2#rec
+  let seqelepat = eletypeidx#allpatterns
   let elepattern = packedpattern(seqelepat, eletypeidx)
   let obj = allocatespace(noblocks + 2)
-  let firstp = set(set(obj, blocktype.resulttype(n.elepattern, eletypeidx)), 4_rec)
+  let firstp = set(set(obj, blocktype.resulttype(n.elepattern, eletypeidx)), 4#rec)
   let newstk =
    for p = firstp, m = 0, val ∈ rec << 4
    do
     if val > 0 then
-    next(set(p, val_map), m)
+    next(set(p, val#map), m)
     else next(set(p, undertop(stk,-val - 1)), if val < m then val else m),
    push(pop(stk,-m), obj),
   next(newstk, map)
  else
   let newstk =
-   if 1_rec = buildseq ∨ 1_rec = buildtblseq then
-    let eletypeidx = 2_rec
-    let seqelepat = eletypeidx_allpatterns
+   if 1#rec = buildseq ∨ 1#rec = buildtblseq then
+    let eletypeidx = 2#rec
+    let seqelepat = eletypeidx#allpatterns
     let elepattern = packedpattern(seqelepat, eletypeidx)
-    let seqlen = 3_rec
+    let seqlen = 3#rec
     let packedsize = n.elepattern
     let fldtypes = constantseq(seqlen * packedsize, elepattern)
     let blksize = 100
@@ -289,11 +288,11 @@ do
       if newblksize = 0 then
       p
       else set(set(1^newobjs, if packedsize = 1 then 0 else 1), newblksize / packedsize)
-     let val = i_rec,
+     let val = i#rec,
       if typ ∈ [int0, real0] then
       next(set(newp, val), i + 1, m, newobjs)
       else if val > 0 then
-      next(set(newp, val_map), i + 1, m, newobjs)
+      next(set(newp, val#map), i + 1, m, newobjs)
       else next(set(newp, undertop(stk,-val - 1)), i + 1, if val < m then val else m, newobjs)
     let resulttype = resulttype(packedsize, eletypeidx)
     for acc = obj, o ∈ objs do cat(acc, o, resulttype)
@@ -301,21 +300,21 @@ do
     assert not.isempty.fx report "??",
     fx
    else
-    assert 1_rec ∈ [buildtblrecord, buildrecord] report "PROBLEM object01"
+    assert 1#rec ∈ [buildtblrecord, buildrecord] report "PROBLEM object01"
     {buildrecord}
-    let pattern = (2_rec)_allpatterns
+    let pattern = (2#rec)#allpatterns
     assert n.pattern < 8000 report "to big of a pattern"
     let obj = allocatespace.n.pattern
     for p = obj, i = 3, m = 0, typ ∈ pattern
     do
-     let val = i_rec,
+     let val = i#rec,
       if typ ∈ [int0, real0] then
       next(set(p, val), i + 1, m)
       else if val > 0 then
-      next(set(p, val_map), i + 1, m)
+      next(set(p, val#map), i + 1, m)
       else next(set(p, undertop(stk,-val - 1)), i + 1, if val < m then val else m),
     push(pop(stk,-m), obj),
-   if 1_rec ∈ [buildtblseq, buildtblrecord] then
+   if 1#rec ∈ [buildtblseq, buildtblrecord] then
    next(pop.newstk, map + bitcast:int(top.newstk))
    else next(newstk, map),
 if isempty.stk then bitcast:ptr(1^map) else top.stk
@@ -324,7 +323,7 @@ function adjuststkcounts(rec:seq.int, fldtypes:seq.int, stkcount:int) seq.int
 let k = n.rec - n.fldtypes
 for acc = subseq(rec, 1, k), i = k + 1, typ ∈ fldtypes
 do
- let val = i_rec,
+ let val = i#rec,
  next(
   if typ ∈ [int0, real0, word0] ∨ val > 0 then
   acc + val
@@ -337,7 +336,7 @@ Function encode2(data:seq.seq.int) seq.byte
 for all = empty:seq.byte, rec ∈ data
 do
  all
- + 
+  + 
   for pos = true, j ∈ rec while pos do j ≥ 0,
    if pos then
    let acc = LEBu.rec, LEBu(n.acc * 2) + acc
@@ -367,12 +366,12 @@ do
  ),
 all
 
-____________________________________
+-------------------------------
 
 function packedpattern(seqelementpat:seq.int, eletypeidx:int) seq.int
 if
  not.between(n.seqelementpat, 2, {must match packed seqs in implementation} 6)
- ∨ 1_seqelementpat = 0
+  ∨ 1#seqelementpat = 0
 then
 [eletypeidx]
 else seqelementpat 

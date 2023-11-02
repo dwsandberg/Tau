@@ -8,34 +8,22 @@ export tauopen=open
 #export tauDylib="tauexe "
  
 function checksrc {
-     mkdir -p "$build/src/$(dirname $1)"
-    ln  -f $1 "$build/src/$1" 
+ for fn in $@ 
+ do
+     mkdir -p "$build/src/$(dirname $fn)"
+    ln  -f $fn "$build/src/$fn" 
+ done 
 }
 
-function libexe {
- rm -f error.html
- allargs="$@"
- if [ -z "$norun" ];then
- echo "building ${allargs#*o=}"
- restargs="${allargs#*\ }"
- echo "$build/${tauDylib}$1.lib $restargs > /dev/null"
-$build/${tauDylib}$1.lib $restargs > /dev/null
- else
-   echo "make built/${allargs#*o=}"
-fi
- if  [ -e  error.html ] ; then
-  $tauopen  error.html  
-#  mv sums.txt built/oldsums.txt
-  exit 1
- fi
-}
+
 
 function linklibrary { 	 
  if [ -z "$norun" ];then
    if [ -z $tauDylib ];then         
        echo '#define  BT long long int' > $build/$1.c 
 		echo "BT entrypoint$1(BT,BT); BT mainentry(BT a,BT b){return entrypoint$1(a,b);}" >> $build/$1.c 
-		cmd="clang -lm -pthread stdlib/*.c $build/$1.c $dependlibs $build/$1.bc -o $build/$1.lib  "
+		dependlibs="dependlibs_$1"    
+		cmd="clang -lm -pthread stdlib/*.c $build/$1.c ${!dependlibs} $build/$1.bc -o $build/$1.lib  "
 		echo $cmd
 		$cmd
 	 else 
@@ -64,27 +52,37 @@ mkdir $build
  checksrc stdlib/tauthreads.c
  checksrc stdlib/tau.h
  checksrc bin/putfile.c
-
 fi
 
 h11=$(echo $@ | shasum )
-sharoot=${h11::10}.txt
 
+scriptname=$build/build
 
-cd ./built/src
-list=$(find  . -type f -print)
-cd ../..
-rm -f $build/$sharoot; touch $build/$sharoot
-for x in $list
+for x in $@ 
 do
- if [[  -f $x ]] ;then
- shasum $x >> $build/$sharoot
- fi
+ scriptname=${scriptname}_$(basename $x .bld) 
 done
 
-if [[ ! -f $build/old$sharoot ]] ; then
-    echo "X" >  $build/old$sharoot 
+scriptname=${scriptname}_${h11::10}.sh
+
+
+sharoot=$build/sharoot.txt
+
+oldscript=${scriptname}old
+
+rm -f  $sharoot; touch  $sharoot ; touch $oldscript
+if [[ -f $oldscript ]] ;then
+makehash=true
+source $oldscript
+rm -f  $sharoot; touch  $sharoot ;  
+for x in $changelist $unchangelist 
+do
+ if [[  -f $x ]] ;then
+ shasum $x >> $sharoot
  fi
+done
+makehash=
+fi
 
 if [[   $1 == "-n" ]]; then
 tmpnorun=true
@@ -94,16 +92,28 @@ fi
 
 checksrc $1
 
-libexe orgstdlib updatestate2 +$build old$sharoot  $sharoot +.bld $@ builddir=+built o=+$build update2.sh 
+rm -f error.html
+
+
+
+$build/orgstdlib.lib makeScript2  $@ builddir=+$build hashes= $sharoot $oldscript   o=$scriptname 
+
+
+
+if [ -e error.html ] ; then
+$tauopen error.html
+exit 1
+fi
 
 norun=$tmpnorun
 
-source built/update2.sh
+
+
+source $scriptname
 
 if  [ -z "$norun" ];then
-mv  $build/old$sharoot $build/oldold$sharoot
-mv  $build/$sharoot $build/old$sharoot
+mv  $scriptname $oldscript  
 cd $build
-tar -zcf  ~/backup2/$(date +%Y%m%d%H%M).tar.gz --exclude='./built/*' src
+tar -zcf  ~/backup2/$(date +%Y%m%d%H%M).tar.gz --exclude='./$build/*' src
 echo "finish tar"
 fi 

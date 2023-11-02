@@ -12,7 +12,7 @@ type stack is toseq:seq.T
 
 Function top(f:stack.T, n:int) seq.T subseq(toseq.f, n.toseq.f - n + 1, n.toseq.f)
 
-Function top(f:stack.T) T (n.toseq.f)_toseq.f
+Function top(f:stack.T) T (n.toseq.f)#toseq.f
 
 Function push(f:stack.T, t:T) stack.T stack(toseq.f + t)
 
@@ -28,4 +28,4 @@ Function empty:stack.T stack.T stack.empty:seq.T
 
 Function isempty(f:stack.T) boolean n.toseq.f = 0
 
-Function undertop(f:stack.T, n:int) T (n.toseq.f - n)_toseq.f 
+Function undertop(f:stack.T, n:int) T (n.toseq.f - n)#toseq.f 

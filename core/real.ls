@@ -82,7 +82,7 @@ let r2 =
  if decimals > 0 then
  [
   toword.intpart.r
-  , 1_"."
+  , 1#"."
   , encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
  ]
  else [toword.intpart.r],
@@ -96,8 +96,8 @@ else
  let r = rin + 1.0 / toreal(a * 2),
   if decimals > 0 then
    toUTF8.intpart.r
-   + encodeUTF8.periodchar
-   + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+    + encodeUTF8.periodchar
+    + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
   else toUTF8.intpart.r
 
 Function reallit(s:UTF8) real reallit(decodeUTF8.s,-1, 1, 0, 1)
@@ -106,20 +106,21 @@ function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int) real
 if i > n.s then
  let r = if decimals < 1 then toreal.val else toreal.val / toreal.decimals,
  if neg < 1 then -1.0 * r else r
-else if between(toint.i_s, 48, 57) then
+else if between(toint.i#s, 48, 57) then
 reallit(
  s
  , if decimals = -1 then -1 else decimals * 10
  , i + 1
- , 10 * val + toint.i_s - 48
+ , 10 * val + toint.i#s - 48
  , neg
 )
-else if i_s = char.32 ∨ i_s = commachar then
+else if i#s = char.32 ∨ i#s = commachar then
 reallit(s, decimals, i + 1, val, neg)
-else if i < 3 ∧ i_s = hyphenchar then
+else if i < 3 ∧ i#s = hyphenchar then
 reallit(s, decimals, i + 1, val,-1)
-else if i < 3 ∧ i_s = char1."+" then
+else if i < 3 ∧ i#s = char1."+" then
 reallit(s, decimals, i + 1, val, 1)
 else
- assert i_s = periodchar report "unexpected character in real literal" + encodeword.s,
- reallit(s, 1, i + 1, val, neg) 
+ assert i#s = periodchar report "unexpected character in real literal" + encodeword.s,
+ reallit(s, 1, i + 1, val, neg)
+ 

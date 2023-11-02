@@ -22,15 +22,15 @@ use testDifferentTypesB
 
 Function testDiffTypes seq.word
 if
- "^(AA."H") /p^(BB."HH")"
- = "set order: a B, a A, b H, b J, lookup:b H findelement2:b H b J
-  /p set order: a B, a A, b J, b HH, lookup:b HH findelement2:b J b HH"
+ AA."H" + "/p" + BB."HH"
+  = "set order: a B, a A, b H, b J, lookup:b H findelement2:b H b J
+ /p set order: a B, a A, b J, b HH, lookup:b HH findelement2:b J b HH"
 then
 "Pass testDifferentTypes"
 else "Fail testDifferentTypes"
 
 function AA(w:seq.word) seq.word
-let last = bug17(1_"b", 1_w)
-let data = asset.[bug17(1_"a", 1_"A"), bug17(1_"a", 1_"B"), bug17(1_"b", 1_"J"), last],
-"set order: ^(%(",", toseq.data)) lookup:^(toseq.lookup(data, last))"
- + "findelement2:^(toseq.findelement2(data, last))" 
+let last = bug17(1#"b", 1#w)
+let data = asset.[bug17(1#"a", 1#"A"), bug17(1#"a", 1#"B"), bug17(1#"b", 1#"J"), last],
+"set order: ^(%(",", toseq.data)) lookup:^(toseq.lookup(data, last)) findelement2:
+^(toseq.findelement2(data, last))" 

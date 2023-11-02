@@ -55,7 +55,9 @@ Function HasidxNB bits bits.8
 Function ∈(a:bits, b:bits) boolean (a ∧ b) = a
 
 Function ismember(s:symbol) boolean
-name.module.s = 1_"seq" ∧ name.s = 1_"∈" ∧ 1_paratypes.s ∈ [typeint, typeword]
+name.module.s = 1#"seq"
+ ∧ name.s = 1#"∈"
+ ∧ 1#paratypes.s ∈ [typeint, typeword]
 
 function replace(s:seq.symbol, start:int, length:int, value:seq.symbol) seq.symbol
 subseq(s, 1, start - 1) + value + subseq(s, start + length, n.s)
@@ -78,22 +80,22 @@ do
     else {first argument is expression} acc >> 1 + Define.nextvar + Local.nextvar + 1^acc
    else
     let para2 = backparse3(acc, n.acc, true),
-     if isconstorlocal.(para2 - 1)_acc then
+     if isconstorlocal.(para2 - 1)#acc then
       {second argument is expression} subseq(acc, 1, para2 - 2)
-      + subseq(acc, para2, n.acc)
-      + Define(nextvar + 1)
-      + (para2 - 1)_acc
-      + Local(nextvar + 1)
+       + subseq(acc, para2, n.acc)
+       + Define(nextvar + 1)
+       + (para2 - 1)#acc
+       + Local(nextvar + 1)
      else
       {both arguments are expressions} subseq(acc, 1, para2 - 1)
-      + Define(nextvar + 2)
-      + subseq(acc, para2, n.acc)
-      + Define(nextvar + 1)
-      + Local(nextvar + 2)
-      + Local(nextvar + 1)
+       + Define(nextvar + 2)
+       + subseq(acc, para2, n.acc)
+       + Define(nextvar + 1)
+       + Local(nextvar + 2)
+       + Local(nextvar + 1)
   let index = 1^acc1
   let theseq = 2^acc1
-  let theseqtype = basetype(1_paratypes.sym, typedict)
+  let theseqtype = basetype(1#paratypes.sym, typedict)
   let seqtype = Local.nextvar
   let newcode = acc1 >> 2 + indexseqcode(seqtype, theseq, index, theseqtype),
   next(newcode, nextvar + 3, sym)
@@ -104,20 +106,20 @@ function isemptysymbol(empty:symbol) boolean
 empty = Words.""
  ∨ 
  isrecordconstant.empty
- ∧ isSequence.1_fullconstantcode.empty
- ∧ nopara.1_fullconstantcode.empty = 0
+  ∧ isSequence.1#fullconstantcode.empty
+  ∧ nopara.1#fullconstantcode.empty = 0
 
 Function checkemptycat(sym:symbol, result:seq.symbol) seq.symbol
 {???? generalize to detect any empty cat--not just words}
 if name.module.sym ∈ "seq" ∧ name.sym ∈ "+" ∧ nopara.sym = 2 then
  let p = paratypes.sym,
-  if 1_p = 2_p then
-   if parameter.1_p ∈ [typeword, typeint, typechar] then
+  if 1#p = 2#p then
+   if parameter.1#p ∈ [typeword, typeint, typechar] then
     if isemptysymbol.1^result then
     result >> 1
     else
      let para2 = backparse3(result, n.result, true),
-      if isemptysymbol.(para2 - 1)_result then
+      if isemptysymbol.(para2 - 1)#result then
       subseq(result, 1, para2 - 2) + subseq(result, para2, n.result)
       else empty:seq.symbol
    else empty:seq.symbol
@@ -141,8 +143,8 @@ let idxseq = symbol(internalmod, "idxseq", seqof.elementtype, typeint, elementty
  + 
  if maybepacked then
   [seqtype, Lit.1, EqOp, Br2(2, 1)]
-  + [theseq, idx, idxseq, Exit]
-  + [
+   + [theseq, idx, idxseq, Exit]
+   + [
    theseq
    , idx
    , symbol(internalmod, "packedindex", theseqtype, typeint, elementtype)

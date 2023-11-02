@@ -29,4 +29,4 @@ else "normal exit"
 
 Function result(p:process.T) T
 assert not.aborted.p report "no result of aborted process",
-1_body1.p 
+1#body1.p 

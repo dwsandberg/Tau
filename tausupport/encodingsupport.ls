@@ -47,8 +47,8 @@ let cp = currentprocess
 let a = evector.cp,
 if encodingno = encodingno.thisone.a then
 thisone.a
-else if encodingno ≤ n.vector.a ∧ encodingno.encodingno_vector.a > 0 then
- let this = encodingno_vector.a
+else if encodingno ≤ n.vector.a ∧ encodingno.encodingno#vector.a > 0 then
+ let this = encodingno#vector.a
  let discard = set(set(toptr.a, toptr.vector.a), toptr.this),
  this
 else evectorUpdate.einfo(empty:encodingstate.typename, encodingno, cp)

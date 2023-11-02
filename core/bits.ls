@@ -28,7 +28,7 @@ Builtin ⊻(a:bits, b:bits) bits {OPTION COMPILETIME}
 
 Function =(a:bits, b:bits) boolean toint.a = toint.b
 
-function hexdigit(b:bits) char (1 + toint(b ∧ 0x0F))_decodeword.1_"0123456789ABCDEF"
+function hexdigit(b:bits) char (1 + toint(b ∧ 0x0F))#decodeword.1#"0123456789ABCDEF"
 
 function hexword(b:bits) word
 encodeword.[hexdigit(b >> 12), hexdigit(b >> 8), hexdigit(b >> 4), hexdigit.b]
@@ -56,7 +56,7 @@ t32
  + t16
  + t8
  + t4
- + (toint.d4 + 1)_[0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]
+ + (toint.d4 + 1)#[0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]
 
 type byte is rep:int
 
@@ -65,8 +65,8 @@ Function =(a:byte, b:byte) boolean toint.a = toint.b
 Function tobits(a:byte) bits tobits.toint.a
 
 Builtin toint(b:byte) int
-{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e) does not become
- an noop since a bytseq may contain packed sequences of bytes}
+{???? use builtin rather than rep.b so for acc = empty:seq.int, e /in s do toint.e where s
+is a byte sequence does not become an noop since s may contain packed sequences of bytes}
 
 Function tobyte(a:int) byte byte.a
 

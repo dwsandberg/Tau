@@ -60,7 +60,7 @@ let xxx =
    , decodeLEBs:seq.int(LEBs.sample) = sample
    , LEBu.127 + LEBu.128 + LEBu.2^16 + LEBu.624485 + LEBs.127 + LEBs.-123456 = r
   ]
-  + ok
+   + ok
 for acc = empty:seq.int, i = 1, e ∈ xxx do next(if e then acc else acc + i, i + 1),
 if isempty.acc then "PASS testLEB" else "FAIL testLEB numbers:^(acc)"
 
@@ -88,7 +88,7 @@ function decodeLEB2(a:seq.byte, i:int, signbit:bits) decoderesult
 {outside}
 for acc = 0x0, lastbyte = 0x80, j = 0, jj ∈ [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 while (lastbyte ∧ 0x80) ≠ 0x0
-do let byte = tobits.(i + j)_a, next(acc ∨ (byte ∧ 0x7F) << (j * 7), byte, j + 1)
+do let byte = tobits.(i + j)#a, next(acc ∨ (byte ∧ 0x7F) << (j * 7), byte, j + 1)
 let value = if (lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc else acc ∨ tobits.-1 << (j * 7),
 decoderesult(toint.value, i + j)
 

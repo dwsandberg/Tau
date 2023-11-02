@@ -58,7 +58,7 @@ function HTTP(
 {OPTION INLINE}
 jsHTTP(
  token.name
- , jsUTF8.toseqbyte.toUTF8.header
+ , jsUTF8.toseqbyte.textformat.header
  , jsUTF8.body
  , token.followfunc
  , bitcast:JS.HTTPstate.seq.word(toptr.toJS.state)
@@ -69,7 +69,7 @@ let s = fromJS.h2
 let newfiles =
  if between(idx.s, 1, n.files.s) ∧ method.s = "GET" then
   {update file with result ???? need to handle errors}
-  replace(files.s, idx.s, file(fn.(idx.s)_files.s, result.fromJS.h))
+  replace(files.s, idx.s, file(fn.(idx.s)#files.s, result.fromJS.h))
  else files.s
 let newstate = HTTPstate(newfiles, args.s, idx.s + 1, finalcall.s, method.s),
 if idx.s = n.files.s then
@@ -79,7 +79,7 @@ else if idx.s > n.files.s then
 newstate
 else
  let nameprefix = if method.s = "GET" then "/" else "../cgi-bin/putfile.cgi?"
- let this = (idx.newstate)_files.s
+ let this = (idx.newstate)#files.s
  let t = HTTP(nameprefix + fullname.fn.this, method.s, data.this, "decodeZ", newstate)
  {never gets here}
  newstate

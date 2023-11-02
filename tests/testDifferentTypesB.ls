@@ -23,7 +23,7 @@ function >1(a:bug17, b:bug17) ordering part1.a >1 part1.b ∧ part2.a >1 part2.b
 function >2(a:bug17, b:bug17) ordering part1.a >1 part1.b
 
 Function BB(w:seq.word) seq.word
-let last = bug17(1_"b", 1_w)
-let data = asset.[bug17(1_"a", 1_"A"), bug17(1_"a", 1_"B"), bug17(1_"b", 1_"J"), last],
-"set order: ^(%(",", toseq.data)) lookup:^(toseq.lookup(data, last))"
- + "findelement2:^(toseq.findelement2(data, last))" 
+let last = bug17(1#"b", 1#w)
+let data = asset.[bug17(1#"a", 1#"A"), bug17(1#"a", 1#"B"), bug17(1#"b", 1#"J"), last],
+"set order: ^(%(",", toseq.data)) lookup:^(toseq.lookup(data, last)) findelement2:
+^(toseq.findelement2(data, last))" 

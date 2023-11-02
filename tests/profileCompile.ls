@@ -15,8 +15,7 @@ Function profileCompile(
  , library:seq.word
  , exports:seq.word
  , uses:seq.word
- , o:seq.word
 ) seq.word
-{ENTRYPOINT}
+{COMMAND}
 let discard = makebitcode(input, library, exports, uses, false, false, "", ""),
 profileresults."time" 

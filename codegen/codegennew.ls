@@ -97,14 +97,14 @@ builtin basewords seq.seq.char
 
 Function compilerback(m:midpoint, outname:filename, options:seq.word) seq.file
 {OPTION PROFILE}
-let uses = extractValue(1_src.m, "uses")
+let uses = extractValue(1#src.m, "uses")
 let libname = libname.m
-let baselib = 1_extractValue(1_src.m, "baselib")
+let baselib = 1#extractValue(1#src.m, "baselib")
 let initprofile =
  for acc = empty:seq.symbol, x ∈ libmods.m
  do if name.modname.x ∈ "initialize" then acc + exports.x else acc,
  toseq.asset.acc
-let bcwordFilename = filename."+^(dirpath.outname + baselib).bcword"
+let bcwordFilename = filename."+^(dirpath.outname)^(baselib).bcword"
 let baselibwords = if isempty.uses then empty:seq.seq.char else basewords
 let bcwords = if isempty.uses then empty:seq.char else getbcwords.bcwordFilename
 let typedict = typedict.m
@@ -113,7 +113,7 @@ let prgX = prg.m
 let t5a = getSymdef(
  prgX
  , symbol(
-  moduleref.[libname, 1_"entrypoint"]
+  moduleref.[libname, 1#"entrypoint"]
   , "entrypoint"
   , typeref."UTF8 UTF8 *"
   , typeref."UTF8 UTF8 *"
@@ -125,7 +125,7 @@ let t5 =
  else getSymdef(
   prgX
   , symbol(
-   moduleref.[libname, merge.[libname, 1_"$EP"]]
+   moduleref.[libname, merge.[libname, 1#"$EP"]]
    , "entrypoint"
    , typeref."UTF8 UTF8 *"
    , typeref."UTF8 UTF8 *"
@@ -135,7 +135,7 @@ assert not.isempty.t5
 report
  for txt = "", p ∈ toseq.prgX do if name.sym.p ∈ "entrypoint" then txt + %.sym.p else txt,
  "CodeGen:cannot find entrypoint^(txt)"
-let entrypointsym = sym.1_t5
+let entrypointsym = sym.1#t5
 let tobepatched = typ.conststype + toint.symboltableentry("list", conststype)
 let discard0 = initwordref(baselibwords, bcwords)
 let liblist =
@@ -143,23 +143,23 @@ let liblist =
  for
   acc = empty:seq.slot
   , w ∈ if isempty.uses then uses else [baselib] + toseq(asset.uses \ asset.[baselib])
- do acc + symboltableentry([merge("liblib_" + w)], function.[ptr.i64]),
+ do acc + symboltableentry([merge("liblib _" + w)], function.[ptr.i64]),
   acc
-  + modulerecord(
-   [merge("liblib_" + libname)]
+   + modulerecord(
+   [merge("liblib _" + libname)]
    , [toint.FUNCTIONDEC, typ.function.[ptr.i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
   )
 let discard1 = initmap5.liblist
 let defines = stepone(typedict, prgX, libname, isbase, initprofile)
 let symboladdress = symboladdress(prgX, typedict, libname, defines)
-let stacktraceinfo = extractValue(1_src.m, "stacktrace")
-assert n(stacktraceinfo >> 1) = 2 report "No stackTraceImp^(1_src.m)"
+let stacktraceinfo = extractValue(1#src.m, "stacktrace")
+assert n(stacktraceinfo >> 1) = 2 report "No stackTraceImp^(1#src.m)"
 let stacktracesymbol = symbol(moduleref(stacktraceinfo >> 1), stacktraceinfo << 2, seqof.typeword)
 let bodies =
  for acc = empty:seq.internalbc, @e ∈ defines
  do
   acc
-  + addfuncdef(
+   + addfuncdef(
    m
    ,
     if isInternal.sym.@e then
@@ -187,8 +187,8 @@ let wordreps2 = wordreps2.if isbase then xxxx else empty:seq.encoding.word3
 let liblib = slot.addobject2("liblib" + libname, symboladdress + wordreps2 + symboladdress)
 let bodytxts =
  [BLOCKCOUNT(1, 1) + RET(r.1, liblib)]
- + (if isbase then bodies + initializeWordsBody(typedict, prgX, baselib, liblist) else bodies)
- + entrypointbody(
+  + (if isbase then bodies + initializeWordsBody(typedict, prgX, baselib, liblist) else bodies)
+  + entrypointbody(
   entrypointsym
   , typedict
   , prgX
@@ -204,17 +204,17 @@ for showcontent = "", i = 1, e ∈ if isempty.showllvm then empty:seq.symdef els
 do next(
  if name.sym.e ∉ showllvm then
  showcontent
- else showcontent + %.sym.e + %2(i_bodies, nopara.sym.i_defines)
+ else showcontent + %.sym.e + %2(i#bodies, nopara.sym.i#defines)
  , i + 1
 )
 let patchlist = [[toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0]]
 let trec = typerecords
-let adjust = [1_trec, [toint.ARRAY, n.data, 0]] + trec << 2
+let adjust = [1#trec, [toint.ARRAY, n.data, 0]] + trec << 2
 let bcdata = llvm(patchlist, bodytxts, adjust)
 let cw = commonwords.xxxx,
 [
  file(outname, bcdata)
- , file(filename."+^(dirpath.outname + baselib).bcword", bytes.1 + bytes.n.cw + cw)
+ , file(filename."+^(dirpath.outname)^(baselib).bcword", bytes.1 + bytes.n.cw + cw)
 ]
  + (
  if isempty.showcontent then
@@ -222,12 +222,12 @@ let cw = commonwords.xxxx,
  else [file(filename."+^(dirpath.outname) showllvm.html", showcontent)]
 )
  + 
- if 1_"info" ∈ options then
+ if 1#"info" ∈ options then
   let extsymbols =
    for acc = empty:seq.word, sd ∈ defines
-   do acc + "^(mangledname(prgX, sym.sd, libname))^(sym.sd)+/br",
+   do acc + (%.mangledname(prgX, sym.sd, libname) + %.sym.sd + "+/br"),
    acc,
-  [file(filename."+^(dirpath.outname + merge.[libname, 1_"info"]).html", extsymbols)]
+  [file(filename."+^(dirpath.outname)^(merge.[libname, 1#"info"]).html", extsymbols)]
  else empty:seq.file
 
 function initializeWordsBody(
@@ -247,11 +247,11 @@ assert not.isempty.getSymdef(prgX, addwords) report "No addencodings function"
 let functyp2 = tollvmtype(typedict, addwords),
 [
  BLOCKCOUNT(2, 1)
- + CALL(r.2, 0, 32768, function.[ptr.i64], 1^liblist)
- + GEP(r.3, i64, r.2, C64.1)
- + LOAD(r.4, r.3, i64)
- + CAST(r.5, r.4, ptr.i64, inttoptr)
- + CALL(
+  + CALL(r.2, 0, 32768, function.[ptr.i64], 1^liblist)
+  + GEP(r.3, i64, r.2, C64.1)
+  + LOAD(r.4, r.3, i64)
+  + CAST(r.5, r.4, ptr.i64, inttoptr)
+  + CALL(
   r.6
   , 0
   , 32768
@@ -260,7 +260,7 @@ let functyp2 = tollvmtype(typedict, addwords),
   , r.1
   , r.5
  )
- + RETURN
+  + RETURN
 ]
 
 function entrypointbody(
@@ -282,7 +282,7 @@ function entrypointbody(
    let functyp = tollvmtype(typedict, sym),
    next(
     acc
-    + CALL(r.reg, 0, 32768, functyp, symboltableentry([mangledname(prgX, sym, libname)], functyp), r.1)
+     + CALL(r.reg, 0, 32768, functyp, symboltableentry([mangledname(prgX, sym, libname)], functyp), r.1)
     , reg + 1
    )
  let more =
@@ -295,9 +295,9 @@ function entrypointbody(
    assert not.isempty.getSymdef(prgX, addbcwords2) report "PROBLEM3"
    let functypA = tollvmtype(typedict, addbcwords2),
     acc
-    + CAST(r.reg, CGEPi8(bcwordfilenameslot, 0), i64, ptrtoint)
-    + CAST(r(reg + 1), r.reg, ptr.i64, inttoptr)
-    + CALL(
+     + CAST(r.reg, CGEPi8(bcwordfilenameslot, 0), i64, ptrtoint)
+     + CAST(r(reg + 1), r.reg, ptr.i64, inttoptr)
+     + CALL(
      r(reg + 2)
      , 0
      , 32768
@@ -309,7 +309,7 @@ function entrypointbody(
  let offset = if bcwords then reg + 3 else reg
  let entryfunctyp = tollvmtype(typedict, entrypointsym),
   more
-  + CALL(
+   + CALL(
    r.offset
    , 0
    , 32768
@@ -318,7 +318,7 @@ function entrypointbody(
    , r.1
    , r.2
   )
-  + RET(r(offset + 1), r.offset)
+   + RET(r(offset + 1), r.offset)
 ]
 
 function topackedbyteobject(x:seq.byte) int
@@ -428,14 +428,14 @@ do
    let blks = top(blocks, no)
    assert n.blks = no report "XXXXXX arg"
    let rblk = processblk(blks, BR(noblocks - 1))
-   let firstblkargs = args.1_blks,
-    if isstart.sym.1_blks then
+   let firstblkargs = args.1#blks,
+    if isstart.sym.1#blks then
      let newstack = push(pop.firstblkargs,-(regno + 1))
      let newcode = code.rblk + phiinst(regno.1^blks, [top.firstblkargs], phi.rblk, 1),
      next(last, s, newcode, lmap, noblocks, regno + 1, newstack, pop(blocks, no))
     else
-     assert isloopblock.sym.1_blks report "Code Gen--not expecting first blk kind"
-     let nopara2 = nopara.sym.1_blks
+     assert isloopblock.sym.1#blks report "Code Gen--not expecting first blk kind"
+     let nopara2 = nopara.sym.1#blks
      {stack from top is kind, noexps, firstvar, exptypes, exps}
      let rt = undertop(firstblkargs, nopara2)
      let newstack = push(pop(firstblkargs, 2 * nopara2 + 1),-(regno + 1))
@@ -444,12 +444,12 @@ do
  else if isBuiltin.s ∧ wordname.s ∈ "createthreadZ" then
   let types2 = tollvmtypelist(
    typedict
-   , basesym.if isFref.lastLast then lastLast else let tmp = getCode(prg.m2, last), (n.tmp - 1)_tmp
+   , basesym.if isFref.lastLast then lastLast else let tmp = getCode(prg.m2, last), (n.tmp - 1)#tmp
   )
-  let typelist = types2 << 2 + 1_types2
+  let typelist = types2 << 2 + 1#types2
   let newcode =
    code
-   + CALLSTART(
+    + CALLSTART(
     regno + 1
     , 0
     , 32768
@@ -457,7 +457,7 @@ do
     , toint.symboltableentry("createthread", function.[ptr.i64, i64, ptr.i64, i64])
     , 3
    )
-   + CALLFINISH(regno + 1, [-1] + top.argstk + toint.C64.buildargcode.typelist),
+    + CALLFINISH(regno + 1, [-1] + top.argstk + toint.C64.buildargcode.typelist),
   next(last, s, newcode, lmap, noblocks, regno + 1, push(pop.argstk,-(regno + 1)), blocks)
  else if s = JumpOp then
  next(last, s, code, lmap, noblocks, regno, argstk, blocks)
@@ -466,12 +466,12 @@ do
   assert not.isempty.ee
   report
    "codegen error:no code template for^(s) in library"
-   + library.module.s
-   + "from"
-   + %.sym.sd
-  let m = 1_ee
+    + library.module.s
+    + "from"
+    + %.sym.sd
+  let m = 1#ee
   let action = action.m,
-   if action = 1_"CALL" then
+   if action = 1#"CALL" then
     let noargs = arg.m
     let args = top(argstk, noargs)
     let c = usetemplate(m, regno, empty:seq.int) + CALLFINISH(regno + 1, [-1] + args),
@@ -485,9 +485,9 @@ do
      , push(pop(argstk, noargs),-(regno + 1))
      , blocks
     )
-   else if action = 1_"ACTARG" then
+   else if action = 1#"ACTARG" then
    next(last, s, code, lmap, noblocks, regno, push(argstk, arg.m), blocks)
-   else if action = 1_"TEMPLATE" then
+   else if action = 1#"TEMPLATE" then
     if length.m = 0 then
     next(last, s, code, lmap, noblocks, regno, argstk, blocks)
     else
@@ -503,9 +503,9 @@ do
       , push(pop(argstk, noargs),-(regno + length.m))
       , blocks
      )
-   else if action = 1_"SET" then
+   else if action = 1#"SET" then
    assert false report "in SET", next(last, s, code, lmap, noblocks, regno, argstk, blocks)
-   else if action = 1_"LOOPBLOCK" then
+   else if action = 1#"LOOPBLOCK" then
     let varcount = arg.m
     let bodymap =
      for acc = lmap, @e ∈ arithseq(varcount, 1, 1) do addloopmapentry(acc, firstvar.m, regno, @e),
@@ -523,8 +523,8 @@ do
      , empty:stack.int
      , push(blocks, exitblock)
     )
-   else if action = 1_"SEQUENCE" then
-    let fldbc = sequencecode(top(argstk, arg.m), 1_llvmtypelist.m, regno, false),
+   else if action = 1#"SEQUENCE" then
+    let fldbc = sequencecode(top(argstk, arg.m), 1#llvmtypelist.m, regno, false),
     next(
      last
      , s
@@ -536,7 +536,7 @@ do
      , blocks
     )
    else
-    assert action = 1_"RECORD" report "code gen unknown" + action
+    assert action = 1#"RECORD" report "code gen unknown" + action
     let fldbc = recordcode(top(argstk, arg.m), llvmtypelist.m, regno, false),
     next(
      last
@@ -562,7 +562,7 @@ type localmap is localno:int, regno:int
 
 function buildargcode(l:seq.llvmtype) int
 {needed because the call interface implementation for reals is different than other types is some
- implementations}
+implementations}
 for acc = 1, typ ∈ l do acc * 2 + if typ.typ = typ.double then 1 else 0,
 acc
 
@@ -592,10 +592,10 @@ do
    let newtailphi = [noblocks.l - 1] + top(pop(args.l, 1 + noargs), noargs),
    next(i + 1, code, phi, newtailphi, beginrun)
   else if iscontinue.sym.l then
-   assert isloopblock.sym.1_blks report "incorrect format on block"
+   assert isloopblock.sym.1#blks report "incorrect format on block"
    let noargs = nopara.sym.l
    let newtailphi = tailphi + [noblocks.l - 1] + top(args.l, noargs)
-   let newcode = BR.noblocks.1_blks,
+   let newcode = BR.noblocks.1#blks,
    next(i + 1, code + code.l + newcode, phi, newtailphi, beginrun)
   else if isstart.sym.l then
   next(i + 1, code + code.l, phi, tailphi, beginrun)
@@ -613,43 +613,43 @@ do
       if brf > 0 then
       true
       else
-       let nextBlk = (i + 1)_blks,
+       let nextBlk = (i + 1)#blks,
         not.isbr.sym.nextBlk
-        ∨ {a standard br2} top.args.nextBlk < 0
-        ∨ {start another run} n.toseq.args.nextBlk = 2,
+         ∨ {a standard br2} top.args.nextBlk < 0
+         ∨ {start another run} n.toseq.args.nextBlk = 2,
       if endrun then
       next(i + 1, code + Switch(blks, beginrun, i), phi, tailphi, 0)
       else next(i + 1, code, phi, tailphi, beginrun)
     else
      let newcode =
       CAST(r.regno.l, slot.top.args.l, i1, trunc)
-      + BR(r(regno.l + 1), abs.noblocks.(i + brt)_blks, abs.noblocks.(i + brf)_blks, r.regno.l),
+       + BR(r(regno.l + 1), abs.noblocks.(i + brt)#blks, abs.noblocks.(i + brf)#blks, r.regno.l),
      next(i + 1, code + code.l + newcode, phi, tailphi, beginrun)
-let firstblk = 1_blks
+let firstblk = 1#blks
 let code1 =
  if isloopblock.sym.firstblk then
   let noargs = nopara.sym.firstblk,
    code.firstblk
-   + BR.noblocks.firstblk
-   + phiinst(regno.firstblk, top(args.firstblk, noargs), tailphi, noargs)
-   + code
+    + BR.noblocks.firstblk
+    + phiinst(regno.firstblk, top(args.firstblk, noargs), tailphi, noargs)
+    + code
  else code,
 processblkresult(code1, phi)
 
 function Switch(blks:seq.Lcode, begin:int, end:int) internalbc
 {adding Switch only gave very slight improvement in performance}
-let defaultBlk = noblocks.(end + brf.sym.end_blks - 1)_blks
-let startBlk = begin_blks
+let defaultBlk = noblocks.(end + brf.sym.end#blks - 1)#blks
+let startBlk = begin#blks
 let startargs = top(args.startBlk, 2)
 for i2 = begin, switchArgs = empty:seq.int, l ∈ subseq(blks, begin, end)
-do next(i2 + 1, switchArgs + [top.args.l, noblocks.(i2 + brt.sym.l - 1)_blks])
-let new = SWITCH(r(regno.startBlk + 1), i64, slot.1_startargs, defaultBlk, switchArgs)
+do next(i2 + 1, switchArgs + [top.args.l, noblocks.(i2 + brt.sym.l - 1)#blks])
+let new = SWITCH(r(regno.startBlk + 1), i64, slot.1#startargs, defaultBlk, switchArgs)
 for code = code.startBlk + new, l ∈ subseq(blks, begin + 1, end)
 do code + code.l + BR.defaultBlk,
 code
 
 function getloc(l:seq.localmap, localno:int, i:int) int
-if localno.i_l = localno then regno.i_l else getloc(l, localno, i + 1)
+if localno.i#l = localno then regno.i#l else getloc(l, localno, i + 1)
 
 function addloopmapentry(l:seq.localmap, baselocal:int, regbase:int, i:int) seq.localmap
 [localmap(baselocal + i - 1,-regbase - i)] + l 

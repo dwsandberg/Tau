@@ -13,14 +13,14 @@ use standard
 use testanal
 
 Function testall(input:seq.file, noseq:boolean) seq.word
-{ENTRYPOINT}
+{COMMAND}
 testcore.noseq
  + test11a.input
  + analtests
  + 
  if isempty.input then
  "no opt test file specified"
- else if ext.fn.1_input ∈ "ls" then
+ else if ext.fn.1#input ∈ "ls" then
  testopt.input
  else ""
 
@@ -54,13 +54,12 @@ function checkhash seq.word
 if
  for
   l = empty:seq.int
-  , w ∈
-   "Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL"
-   + ">>, ()].:^(dq)_^.384 52 3 [2 4 5 a b c d e 1"
-   + "k+= {} 1 2∪ this is test three four five test11 0 SPACE 2∪ code glyph 48 49 50 51 53 54 6"
+  , w ∈ "Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].:
+  ^(dq) _^.384 52 3 [2 4 5 a b c d e 1 k+= {} 1 2∪ this is test three four five test11 0 SPACE 2∪ code
+  glyph 48 49 50 51 53 54 6"
  do l + hash.decodeword.w,
   l
-  = [
+   = [
    1606469939
    , 3611716215
    , 3408990482
@@ -131,7 +130,7 @@ then
 else "Fail hash"
 
 Function testcore(noseq:boolean) seq.word
-{ENTRYPOINT}
+{COMMAND}
 test11
  + checkhash
  + testencoding

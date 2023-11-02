@@ -37,19 +37,19 @@ if i = 1 then
 "conststype"
 else
  {if i = 2 then" profiletype" else}
- let a = (i + 2)_s
- let tp = typeop.1_a,
+ let a = (i + 2)#s
+ let tp = typeop.1#a,
   if tp = INTEGER then
-  [merge("i" + toword.2_a)]
+  [merge("i" + toword.2#a)]
   else if tp = ARRAY then
-  "array (" + toword.2_a + "," + printtype(s, 3_a, llvm) + ")"
+  "array (" + toword.2#a + "," + printtype(s, 3#a, llvm) + ")"
   else if tp = POINTER then
    if llvm then
-   "^(printtype(s, 2_a, llvm)) *"
-   else "ptr.^(printtype(s, 2_a, llvm))"
+   printtype(s, 2#a, llvm) + "*"
+   else "ptr.^(printtype(s, 2#a, llvm))"
   else if tp = FUNCTION then
   "function.[
-   ^(for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",", acc >> 1)]"
+  ^(for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",", acc >> 1)]"
   else if tp = TVOID then
   "VOID"
   else if tp = DOUBLE then
@@ -82,15 +82,15 @@ txt >> 2
 
 Function printrecord(id:blockop, a:seq.int) seq.word
 if id = VALUESYMTABLE then
-"function" + encodeword.tocharseq.subseq(a, 3, n.a) + "int" + toword.2_a
-else if 1_a = -1 then
-"[-1,^(decode.blockop.2_a),^(%(",", subseq(a, 2, n.a)) >> 1)]"
-else if 1_a = -2 then
+"function" + encodeword.tocharseq.subseq(a, 3, n.a) + "int" + toword.2#a
+else if 1#a = -1 then
+"[-1,^(decode.blockop.2#a),^(%(",", subseq(a, 2, n.a)) >> 1)]"
+else if 1#a = -2 then
 printabbr.a
-else if id = INFOBLOCK ∧ n.a = 2 ∧ 1_a = SETBID then
-"[SETBID,^(decode.blockop.2_a)]"
+else if id = INFOBLOCK ∧ n.a = 2 ∧ 1#a = SETBID then
+"[SETBID,^(decode.blockop.2#a)]"
 else
- let code = 1_a
+ let code = 1#a
  let recordtype =
   if id = MODULE then
   decode.moduleop.code
@@ -103,4 +103,5 @@ else
   else [toword.code],
   if n.a = 1 then
   "[toint.^(recordtype)]"
-  else "[toint.^(recordtype),^(%(",", subseq(a, 2, n.a)) >> 1)]" 
+  else "[toint.^(recordtype),^(%(",", subseq(a, 2, n.a)) >> 1)]"
+ 

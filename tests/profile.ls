@@ -51,7 +51,7 @@ builtin addresssymbols seq.seq.addrsym
 
 builtin profiledata seq.seq.parc
 
-Function decode(d:set.addrsym, i:int) symbol sym.1_lookup(d, addrsym(i, Lit.0))
+Function decode(d:set.addrsym, i:int) symbol sym.1#lookup(d, addrsym(i, Lit.0))
 
 function %(p:parc) seq.word
 %.caller.p + %.callee.p + %.counts.p + %.clocks.p + %.unused.p
@@ -61,8 +61,8 @@ for d0 = empty:seq.addrsym, a ∈ addresssymbols do d0 + a
 let d = asset.d0
 for profileData2 = empty:seq.parc, e ∈ profiledata do profileData2 + e
 {, for txt ="", p /in profileData2 do txt+"
- /br"+%.decode (d, caller.p)+%.decode (d, callee.p)+%.counts.p+%.clocks
- .p+%.unused.p, txt}
+/br"+%.decode (d, caller.p)+%.decode (d, callee.p)+%.counts.p+%.clocks
+.p+%.unused.p, txt}
 for acc0 = empty:seq.labeledarc.symbol, max = 0, arc ∈ profileData2
 do
  let m = measure(arc, measure),
@@ -71,7 +71,7 @@ do
   else next(acc0 + arc(decode(d, caller.arc), decode(d, callee.arc), [toword.m]), max(max, m))
 for acc = empty:seq.labeledarc.symbol, arc2 ∈ acc0
 do
- let m = toint.1_label.arc2,
+ let m = toint.1#label.arc2,
   if m < max / 100 ∨ tail.arc.arc2 = head.arc.arc2 then
   acc
   else acc + arc(tail.arc.arc2, head.arc.arc2, [toword(m * 100 / max)])

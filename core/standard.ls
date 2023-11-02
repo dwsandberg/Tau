@@ -64,7 +64,7 @@ Export +(seq.char, seq.char) seq.char {From seq.char}
 
 Export =(seq.char, seq.char) boolean {From seq.char}
 
-Export _(int, seq.char) char
+Export #(int, seq.char) char
 
 Export empty:seq.char seq.char {From seq.char}
 
@@ -74,7 +74,7 @@ Export type:seq.int {From seq.int}
 
 Export isempty(seq.int) boolean {From seq.int}
 
-Export _(int, seq.seq.word) seq.word {From seq.seq.word}
+Export #(int, seq.seq.word) seq.word {From seq.seq.word}
 
 Export +(seq.int, int) seq.int {From seq.int}
 
@@ -82,7 +82,7 @@ Export +(seq.int, seq.int) seq.int {From seq.int}
 
 Export =(seq.int, seq.int) boolean {From seq.int}
 
-Export _(int, seq.int) int {From seq.int}
+Export #(int, seq.int) int {From seq.int}
 
 Export empty:seq.int seq.int {From seq.int}
 
@@ -116,7 +116,7 @@ Export =(seq.word, seq.word) boolean {From seq.word}
 
 Export >>(s:seq.word, i:int) seq.word {* removes i words from end of s} {From seq.word}
 
-Export _(int, seq.word) word {From seq.word}
+Export #(int, seq.word) word {From seq.word}
 
 Export ^(int, seq.word) word {From seq.word}
 
@@ -154,8 +154,6 @@ Function dq(s:seq.word) seq.word dq + s + dq
 
 type ordering is toint:int
 
-Function space word encodeword.[char.32]
-
 Function EQ ordering ordering.1
 
 Function GT ordering ordering.2
@@ -168,7 +166,7 @@ toint.a >1 toint.b
 
 Function =(a:ordering, b:ordering) boolean toint.a = toint.b
 
-Function toword(o:ordering) word (toint.o + 1)_"LT EQ GT"
+Function toword(o:ordering) word (toint.o + 1)#"LT EQ GT"
 
 Function ∧(a:ordering, b:ordering) ordering if a = EQ then b else a
 
@@ -189,7 +187,7 @@ Function ∧(a:boolean, b:boolean) boolean if a then b else false
 
 Function ∨(a:boolean, b:boolean) boolean if a then true else b
 
-______________
+-------------------------------
 
 Function -(i:int) int 0 - i
 
@@ -229,7 +227,7 @@ Function ^(i:int, n:int) int
 for acc = 1, @e ∈ constantseq(n, i) do acc * @e,
 acc
 
-_______________
+-------------------------------
 
 Function hash(a:seq.int) int for acc = hashstart, @e ∈ a do hash(acc, @e), finalmix.acc
 
@@ -256,19 +254,34 @@ let nosep = if includeseperator then 0 else 1
 for l = empty:seq.int, j = 1, e ∈ s
 do next(l + if e ∈ seperators then [j] else empty:seq.int, j + 1)
 for acc = empty:seq.seq.word, i = 1, ele ∈ l + (n.s + 1)
-do next(acc + subseq(s, if i = 1 then 1 else (i - 1)_l + nosep, ele - 1), i + 1),
+do next(acc + subseq(s, if i = 1 then 1 else (i - 1)#l + nosep, ele - 1), i + 1),
 acc
 
 Function extractValue(s:seq.word, name:seq.word) seq.word
-for value = "", last = 1_"=", p ∈ break(s + "? =", "=", false)
-do next(if last ∈ name then value + p >> 1 else value, if isempty.p then 1_"=" else 1^p),
+for value = "", invalue = false, last = 1#"?", found = false, w ∈ s
+while not.found
+do
+ if invalue then
+  if w ∈ "=:" then
+  next(value >> 1, invalue, w, true)
+  else next(value + w, invalue, w, false)
+ else if w ∈ "=:" ∧ last ∈ name then
+ next(value, true, w, false)
+ else next(value, false, w, false),
 value
 
 Function extractFlag(s:seq.word, name:seq.word) boolean
-for last = 1_"=", p ∈ break(s + "? =", "=", false)
-while last ∉ name
-do if isempty.p then 1_"=" else 1^p,
-last ∈ name
+for value = "", invalue = false, last = 1#"?", found = false, w ∈ s
+while not.found
+do
+ if invalue then
+  if w ∈ "=:" then
+  next(value >> 1, invalue, w, true)
+  else next(value + w, invalue, w, false)
+ else if w ∈ "=:" ∧ last ∈ name then
+ next(value, true, w, false)
+ else next(value, false, w, false),
+found ∧ value ≠ "false"
 
 type char is toint:int
 

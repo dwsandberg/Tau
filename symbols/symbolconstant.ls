@@ -35,8 +35,11 @@ Function fullconstantcode(s:symbol) seq.symbol
 let t = findencode.symdef(s, empty:seq.symbol, 0)
 assert not.isempty.t
 report "unregister symbolconstant^(s)
- ^(for txt = "", sd ∈ toseq.constantsymbols.1_"X" do txt + "/p" + %.sym.sd + %.code.sd, txt)",
-code.1_t
+^(
+ for txt = "", sd ∈ toseq.constantsymbols.1#"X" do txt + "/p" + %.sym.sd + %.code.sd,
+ txt
+)",
+code.1#t
 
 Function Constant2(libname:word, args:seq.symbol) symbol
 for hasfref = false, sym ∈ args while not.hasfref do hasfref.sym
@@ -44,7 +47,7 @@ let flags = if hasfref then constbit ∨ hasfrefbit else constbit
 let i = addorder.symbolconstant(args, flags)
 let sym2 = symbol(
  moduleref."internallib $constant"
- , [merge.[libname, 1_".", toword.i]]
+ , [merge.[libname, 1#".", toword.i]]
  , empty:seq.mytype
  , typeptr
  , flags

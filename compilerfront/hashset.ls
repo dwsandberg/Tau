@@ -32,7 +32,7 @@ unbound hash(T) int
 
 Function lookup(s:hashset.T, ele:T) seq.T
 let h = hash.ele
-for acc = empty:seq.T, e ∈ (h mod n.table.s + 1)_table.s
+for acc = empty:seq.T, e ∈ (h mod n.table.s + 1)#table.s
 do if data.e = ele then acc + data.e else acc,
 acc
 
@@ -42,7 +42,7 @@ let mask = bits.-1 >> (65 - floorlog2.tablesize)
 for acc = empty:seq.T, idx = 1
 while idx ≤ tablesize
 do next(
- for acc2 = acc, e ∈ idx_table.h
+ for acc2 = acc, e ∈ idx#table.h
  do if (bits.hash.e ∧ mask) = bits(idx - 1) then acc2 + data.e else acc2,
  acc2
  , idx + 1
@@ -57,7 +57,7 @@ let tablesize = n.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
-for acc = empty:seq.hashelement.T, found = false, e ∈ dataindex_table.h
+for acc = empty:seq.hashelement.T, found = false, e ∈ dataindex#table.h
 do
  if data.e = ele then
  next(acc + e, true)
@@ -77,7 +77,7 @@ let tablesize = n.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
-for acc = [ele], found = false, e ∈ dataindex_table.h
+for acc = [ele], found = false, e ∈ dataindex#table.h
 do
  if data.e = data.ele then
  next(acc, true)

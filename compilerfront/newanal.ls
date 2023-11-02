@@ -41,15 +41,15 @@ let prior = syms >> 1
 let loop = 1^syms,
 if
  n.parts = 3
- ∧ n.3_parts ∈ [13, 14]
- ∧ 2_parts = [Lit.0, Exit]
- ∧ nopara.loop = 2
- ∧ prior << (n.prior - 1) = [Lit.0]
- ∧ isseq.1_paratypes.loop
+  ∧ n.3#parts ∈ [13, 14]
+  ∧ 2#parts = [Lit.0, Exit]
+  ∧ nopara.loop = 2
+  ∧ prior << (n.prior - 1) = [Lit.0]
+  ∧ isseq.1#paratypes.loop
 then
- let lastpart = 3_parts
+ let lastpart = 3#parts
  let theseqtype = resulttype.3^lastpart
- let theseq = 5_lastpart,
+ let theseq = 5#lastpart,
   if %.parameter.theseqtype ∈ ["packed2", "ptr"] then
   {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
   else
@@ -61,7 +61,7 @@ then
     else if iswords.theseq then
     Lit.n.worddata.theseq
     else Local(firstvar - 1)
-   let symidx = 7_lastpart,
+   let symidx = 7#lastpart,
     if nopara.symidx ≠ 2 then
     empty:seq.symbol
     else
@@ -86,9 +86,9 @@ then
        , Local.firstvar
        , Local(firstvar + 3)
       ]
-      + cat
-      + [Local(firstvar + 2), continue.2],
-      if [Local.idx, seqlen, EqOp] = 1_parts >> 1 ∧ lastpart = matchbrf then
+       + cat
+       + [Local(firstvar + 2), continue.2],
+      if [Local.idx, seqlen, EqOp] = 1#parts >> 1 ∧ lastpart = matchbrf then
        let newsyms =
         if prior << (n.prior - 3) = [GetSeqLength, Define(firstvar.loop - 1), Lit.0] then
         syms >> 4
@@ -97,9 +97,9 @@ then
         empty:seq.symbol
         else
          newsyms
-         + symbol(moduleref("* seq", parameter.theseqtype), "+", theseqtype, theseqtype, theseqtype)
-         + Define.firstvar
-         + Lit.0
+          + symbol(moduleref("* seq", parameter.theseqtype), "+", theseqtype, theseqtype, theseqtype)
+          + Define.firstvar
+          + Lit.0
       else empty:seq.symbol
 else empty:seq.symbol
 
@@ -135,15 +135,15 @@ do
    else empty:seq.symbol,
    if not.isempty.checkNoOp then
    next(checkNoOp, blkparts.top.stk, pop.stk, ahead)
-   else if 1^1_blkparts = Exit ∧ nonLoop then
+   else if 1^1#blkparts = Exit ∧ nonLoop then
     {remove block with just one Exit}
-    next(part.top.stk >> 1 + 1_blkparts >> 1, blkparts.top.stk, pop.stk, ahead)
+    next(part.top.stk >> 1 + 1#blkparts >> 1, blkparts.top.stk, pop.stk, ahead)
    else if ahead = Exit ∧ nonLoop then
     {combine current block with outer block}
     let tmp2 =
      adjustbr(blkparts.top.stk, n.blkparts)
-     + [part.top.stk >> 1 + 1_blkparts]
-     + blkparts << 1,
+      + [part.top.stk >> 1 + 1#blkparts]
+      + blkparts << 1,
     next(1^tmp2 >> 1, tmp2 >> 1, pop.stk, 1^1^tmp2)
    else if isbr.ahead ∧ nonLoop then
     {combine boolean block with outer block}
@@ -153,8 +153,8 @@ do
      next([p1] + partsA, brt + 1, brf + 1)
     let tmp2 =
      adjustbr(blkparts.top.stk, n.blkparts)
-     + [part.top.stk >> 1 + 1_partsA]
-     + partsA << 1,
+      + [part.top.stk >> 1 + 1#partsA]
+      + partsA << 1,
     next(1^tmp2 >> 1, tmp2 >> 1, pop.stk, 1^1^tmp2)
    else
     let recursive =
@@ -181,10 +181,10 @@ do
 if changed then
  for pvar = empty:seq.symbol, i ∈ arithseq(nopara.self, 1, 1) do pvar + Local.i,
   [Lit.0]
-  + pvar
-  + Loopblock(paratypes.self, nopara + 1, resulttype.self)
-  + adjustvar(subseq(stkpart, 2, n.stkpart - 1), nopara)
-  + blocktocode(empty:seq.symbol, acc)
+   + pvar
+   + Loopblock(paratypes.self, nopara + 1, resulttype.self)
+   + adjustvar(subseq(stkpart, 2, n.stkpart - 1), nopara)
+   + blocktocode(empty:seq.symbol, acc)
 else empty:seq.symbol
 
 function adjustbr(parts:seq.seq.symbol, amount:int) seq.seq.symbol
@@ -202,7 +202,7 @@ do
 tmp
 
 /function %kind (i:seq.int) seq.word for acc ="", e /in i do acc+if e = 0 /or e > 4 then %.e else
-[e_" same sameMore unreachable run"] acc
+[e#" same sameMore unreachable run"] acc
 
 function blocktocode(result:seq.symbol, parts:seq.seq.symbol) seq.symbol
 let same = 1
@@ -232,13 +232,13 @@ do
       if 2^p0 = JumpOp then
       p0 >> 2 + EqOp + Br2(brt, brf)
       else if isIntLit.y then
-      p0 >> 2 + 4^(place - 1)_absParts + y + EqOp + Br2(brt, brf)
+      p0 >> 2 + 4^(place - 1)#absParts + y + EqOp + Br2(brt, brf)
       else p0 >> 1 + Br2(brt, brf)
    for sameArcs = empty:seq.arc.int, sameMoreArcs = empty:seq.arc.int, e2 ∈ toseq.b
    do
-    if head.e2 = 0 ∨ (head.e2)_kind0 = same then
+    if head.e2 = 0 ∨ (head.e2)#kind0 = same then
     next(sameArcs + e2, sameMoreArcs)
-    else if (head.e2)_kind0 = sameMore then
+    else if (head.e2)#kind0 = sameMore then
     next(sameArcs, sameMoreArcs + e2)
     else next(sameArcs, sameMoreArcs)
    let chainArcs =
@@ -256,12 +256,12 @@ do
      , if head.arc = 0 then
       parts2
       else
-       let p3 = (head.arc)_parts2
+       let p3 = (head.arc)#parts2
        let brt = brt.1^p3
        let brf = brf.1^p3
        let newpart =
         p3 >> 1
-        + Br2(if brt = tail.arc then place else brt, if brf = tail.arc then place else brf),
+         + Br2(if brt = tail.arc then place else brt, if brf = tail.arc then place else brf),
        replace(parts2, head.arc, newpart)
     )
     let newkind = if head.chain > 0 then replace(kind1, head.chain, unreachable) else kind1,
@@ -269,7 +269,7 @@ do
    let newkind =
     if isbr then
      kind1
-     + 
+      + 
       if brf.1^thispart = brt.1^thispart ∧ isconst.2^thispart then
       if n.thispart = 2 then same else sameMore
       else if 2^thispart = EqOp ∧ isIntLit.3^thispart ∧ islocal.4^thispart then
@@ -282,11 +282,11 @@ do
     else arcs1
    let p =
     if n.b = 1 ∧ n.sameMoreArcs = 1 then
-    (head.1_sameMoreArcs)_absParts >> 2 + thispart
+    (head.1#sameMoreArcs)#absParts >> 2 + thispart
     else thispart,
    next(parts1 + p, newarcs, newkind, place + 1),
 if n.arcs = 1 then
-result >> 1 + (tail.1_arcs)_absParts >> 1
+result >> 1 + (tail.1#arcs)#absParts >> 1
 else
  for
   placements = empty:seq.int
@@ -297,20 +297,20 @@ else
   , idx = n.absParts
   , p ∈ reverse.absParts
  do
-  if idx_kind0 = unreachable then
+  if idx#kind0 = unreachable then
   next(placements, replace(map, idx, n.map + 1), revisedParts, final, haverun, idx - 1)
   else
    let x = 1^p,
     if not.isbr.x then
      for j = n.revisedParts
-     while j_kind0 = unreachable ∨ j_revisedParts ≠ idx_revisedParts
+     while j#kind0 = unreachable ∨ j#revisedParts ≠ idx#revisedParts
      do j - 1,
       if j = idx then
       next([j] + placements, map, revisedParts, p + final, haverun, idx - 1)
       else next(placements, replace(map, idx, j), revisedParts, final, haverun, idx - 1)
     else
-     let j = (brt.x)_map
-     let k = (brf.x)_map
+     let j = (brt.x)#map
+     let k = (brf.x)#map
      let changed = j ≠ brt.x ∨ k ≠ brf.x
      let newp = if changed then p >> 1 + Br2(j, k) else p
      let parts1 = if changed then replace(revisedParts, idx, newp) else revisedParts,
@@ -319,11 +319,11 @@ else
         for
          placements0 = placements
          , final1 = final
-         , bf = findindex(placements, (brf.1^(1_haverun)_parts1)_map)
+         , bf = findindex(placements, (brf.1^(1#haverun)#parts1)#map)
          , e ∈ haverun
         do
-         let ecode = e_parts1
-         let tt = findindex(placements0, (brt.1^ecode)_map)
+         let ecode = e#parts1
+         let tt = findindex(placements0, (brt.1^ecode)#map)
          let newfinal =
           if e = 1^haverun then
           ecode >> 2 + JumpOp + Br2(tt, bf) + final1
@@ -333,7 +333,7 @@ else
        else next(placements, map, parts1, final, haverun, idx - 1)
       else
        let t =
-        if isempty.haverun ∧ n.newp = 4 ∧ idx_kind0 = run then
+        if isempty.haverun ∧ n.newp = 4 ∧ idx#kind0 = run then
          let h = 4^newp
          for accxx = empty:seq.int, this = newp, i = idx, values = asset.[value.3^newp]
          while i > 0
@@ -343,21 +343,21 @@ else
             {must be start of run /or multiple ways to get to i. So i must be first in run. }
             next(accxx + i, this, 0, values)
            else
-            let i2 = head.1_f,
-             if i2 = 0 ∨ i2_kind0 ≠ run ∨ 4^i2_parts1 ≠ h then
+            let i2 = head.1#f,
+             if i2 = 0 ∨ i2#kind0 ≠ run ∨ 4^i2#parts1 ≠ h then
               {no more of block to included or i2 is not right format so end run.}
               next(accxx + i, this, 0, values)
              else
-              let brvalue = value.3^i2_parts1,
+              let brvalue = value.3^i2#parts1,
                if brvalue ∈ values then
                {duplicate branch value so end run.} next(accxx + i, this, 0, values)
-               else next(accxx + i, i2_parts1, i2, values + brvalue),
+               else next(accxx + i, i2#parts1, i2, values + brvalue),
          accxx
         else empty:seq.int,
         if n.t ≥ 3 then
         next(placements, map, parts1, final, t, idx - 1)
         else
-         for l = n.parts1 while l > idx ∧ l_parts1 ≠ newp do l - 1
+         for l = n.parts1 while l > idx ∧ l#parts1 ≠ newp do l - 1
          let lr = findindex(placements, l),
           if lr ≤ n.placements then
            {equivalent has aleady been added to final}

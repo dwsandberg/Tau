@@ -44,11 +44,11 @@ Function randomintimp(i:int) seq.int
 for acc = empty:seq.int, e ∈ constantseq(i, 0)
 do
  acc
- + toint(
+  + toint(
   tobits.representation.randomfunc << 16
-  ⊻ (
+   ⊻ (
    tobits.representation.randomfunc
-   ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)
+    ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)
   )
  ),
 acc

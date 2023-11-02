@@ -34,23 +34,28 @@ if hasrequires.sym then
  let t = getSymdef(requires.d, sym),
   if isempty.t then
   empty:seq.symbol
-  else assert not.isempty.t report "requires^(sym)", code.1_t
+  else assert not.isempty.t report "requires^(sym)", code.1#t
 else empty:seq.symbol
 
 Function restorenext(dict:symboldict) symboldict
-let thisnesting = 1_lookupbysig(dict, "for")
+let thisnesting = 1#lookupbysig(dict, "for")
 let b = getCode(requires.dict, thisnesting)
 let dict1 =
  if n.b = 2 then
  dict - asset(b + thisnesting)
- else dict - asset(subseq(b, 1, 2) + thisnesting) + 3_b + 4_b,
+ else dict - asset(subseq(b, 1, 2) + thisnesting) + 3#b + 4#b,
 dict1
  + placeholder(".fora", resulttype.thisnesting)
  + placeholder(".forb", resulttype.thisnesting)
  + placeholder(".forc", resulttype.thisnesting)
 
 function placeholder(name:seq.word, basetype:mytype) symbol
-symbol(moduleref("internallib $for", basetype), [merge.".^(name)"], empty:seq.mytype, basetype)
+symbol(
+ moduleref("internallib $for", basetype)
+ , [merge.".^(name)"]
+ , empty:seq.mytype
+ , basetype
+)
 
 Function addAccum(
  dict:symboldict
@@ -63,7 +68,7 @@ let nestingsym = symbol(moduleref("internallib $for", basetype), "for", empty:se
 let tmp =
  if isempty.oldnesting then
  [nextSym, elementSym]
- else [nextSym, elementSym, 1_oldnesting, 1_getCode(requires.dict, 1_oldnesting)]
+ else [nextSym, elementSym, 1#oldnesting, 1#getCode(requires.dict, 1#oldnesting)]
 let a = asset.dict
 for acc = a \ asset(tmp << 2), n ∈ [".forxx", ".foryy"]
 while n.acc < n.a

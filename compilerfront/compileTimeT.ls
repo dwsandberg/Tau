@@ -62,39 +62,39 @@ else
   empty:seq.symbol
   else if name.ctsym ∈ "idxNB" then
    let ptypes = paratypes.ctsym,
-    if isseq.1_ptypes ∧ parameter.1_ptypes ∈ [typeint, typeword, typechar] then
-     let s = bitcast:seq.int(1_stk)
-     let idx = if 2_ptypes = typeint then 2_stk else 0,
+    if isseq.1#ptypes ∧ parameter.1#ptypes ∈ [typeint, typeword, typechar] then
+     let s = bitcast:seq.int(1#stk)
+     let idx = if 2#ptypes = typeint then 2#stk else 0,
       if between(idx, 1, n.s) then
-      tocode:T(idx_s, parameter.1_ptypes, typedict)
+      tocode:T(idx#s, parameter.1#ptypes, typedict)
       else empty:seq.symbol
     else empty:seq.symbol
-  else if name.ctsym ∈ "_" then
+  else if name.ctsym ∈ "#" then
    let ptypes = paratypes.ctsym,
-    if isseq.2_ptypes ∧ parameter.2_ptypes ∈ [typeint, typeword, typechar] then
-     let s = bitcast:seq.int(2_stk)
-     let idx = if 1_ptypes = typeint then 1_stk else 0,
+    if isseq.2#ptypes ∧ parameter.2#ptypes ∈ [typeint, typeword, typechar] then
+     let s = bitcast:seq.int(2#stk)
+     let idx = if 1#ptypes = typeint then 1#stk else 0,
       if between(idx, 1, n.s) then
-      tocode:T(idx_s, resulttype.ctsym, typedict)
+      tocode:T(idx#s, resulttype.ctsym, typedict)
       else empty:seq.symbol
     else empty:seq.symbol
   else if module.ctsym = moduleref."* words" ∧ name.ctsym ∈ "merge encodeword decodeword" then
    if name.ctsym ∈ "merge" then
-   [Word.merge.bitcast:seq.word(1_stk)]
+   [Word.merge.bitcast:seq.word(1#stk)]
    else if name.ctsym ∈ "encodeword" then
-   [Word.encodeword.bitcast:seq.char(1_stk)]
+   [Word.encodeword.bitcast:seq.char(1#stk)]
    else
     {999 decodeword}
-    let charseq = decodeword.bitcast:word(1_stk),
+    let charseq = decodeword.bitcast:word(1#stk),
     tocode:T(bitcast:int(toptr.charseq), resulttype.ctsym, typedict)
   else if name.ctsym ∈ "makereal" ∧ paratypes.ctsym = [seqof.typeword] then
-  [Reallit.representation.makereal.bitcast:seq.word(1_stk)]
+  [Reallit.representation.makereal.bitcast:seq.word(1#stk)]
   else if module.ctsym = moduleref."* UTF8" ∧ name.ctsym ∈ "toword" then
-  [Word.toword.1_stk]
+  [Word.toword.1#stk]
   else
    let ctsym2 = changelibrary(ctsym, librarymap)
    let t = callfunc:T(ctsym2, typedict, stk),
-   if isempty.t then empty:seq.symbol else tocode:T(1_t, resulttype.ctsym2, typedict)
+   if isempty.t then empty:seq.symbol else tocode:T(1#t, resulttype.ctsym2, typedict)
 
 function tocode:T(r:int, typ:mytype, typedict:typedict) seq.symbol
 if typ = typeword then
@@ -136,11 +136,12 @@ else
   next(ok, push(stk, 0))
   else if isrecordconstant.sym then
    let t = buildargs:T(fullconstantcode.sym),
-   next(not.isempty.t, if isempty.t then push(stk, 0) else push(stk, 1_t))
+   next(not.isempty.t, if isempty.t then push(stk, 0) else push(stk, 1#t))
   else if isSequence.sym then
    let nopara = nopara.sym,
     if n.toseq.stk < nopara.sym then
     next(false, stk)
     else next(ok, push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
   else next(false, stk),
- if ok then toseq.stk else empty:seq.int 
+ if ok then toseq.stk else empty:seq.int
+ 

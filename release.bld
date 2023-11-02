@@ -1,181 +1,215 @@
 
-comment this is a comment.  Blank lines divide this file into paragraphs. If paragraph begins with a comment then the paragraph is ignored.  The first word of a paragraph is a command. 
+# this is a comment.  Blank lines divide this file into paragraphs. If paragraph begins with a comment then the paragraph is ignored.  The first word of a paragraph is a command. 
 
-comment Paragraphs that begin with "define" declares commands.  The next word is the name of the command.  The second word is the library the command is defined in. If a third word is present that is the name of the command in the library. Otherwise the command name in the library is the first word. Multiple commands can be defined in the same library.  The command cannot be used before it is defined
+# Paragraphs that begin with "define" declares commands.  The next word is the name of the command.  The second word is the library the command is defined in. If a third word is present that is the name of the command in the library. Otherwise the command name in the library is the first word. Multiple commands can be defined in the same library.  The command cannot be used before it is defined
 
-comment Commands are followed by a  list of file paths followed by a list of options.   An option starts with the name followed by = and runs to the next option or end of paragraph.
+# Commands are followed by a  list of file paths followed by a list of options.   An option starts with the name followed by = and runs to the next option or end of paragraph.
 For example consider "mycmd file.lib built/file.ls  opt1=this is a test op2=" which has a file list of "file.lib built/file.ls ", opt1 with a value "this is a test op2" and opt2 whose value is empty.  If an option is not listed it has an value of empty but the command may give it a default value. 
    
-comment A list of file paths can be abbreviated.    "built/core.libdesc core/bits.ls core/set.ls stdlib/ptr/bb.txt stdlib/test.html" will be an example.
+# A list of file paths can be abbreviated.    "built/core.libdesc core/bits.ls core/set.ls stdlib/ptr/bb.txt stdlib/test.html" will be an example.
   The default directory path is "built" so "built/" can be dropped from the core.libdesc.
     "+core" sets the directory path for files until it is set again.  This gives
     "core.libdesc +core bits.ls  set.ls + stdlib ptr/bb.txt  test.html"
     
-comment The file extension can alse be abbreviated. Specifying an extension     ".ls" sets the file extension on the previous file and following files without an extension. This we get  "  core.libdesc +core bits.ls set +stdlib ptr bb.txt .html test".  Note that .html does not set the extension on bb.txt sense the proceeding .txt is an extension and not a file. 
+# The file extension can alse be abbreviated. Specifying an extension     ".ls" sets the file extension on the previous file and following files without an extension. This we get  "  core.libdesc +core bits.ls set +stdlib ptr bb.txt .html test".  Note that .html does not set the extension on bb.txt sense the proceeding .txt is an extension and not a file. 
 
-comment The order the commands are listed may not be the order the commands are executed.
+# The order the commands are listed may not be the order the commands are executed.
 Each command has a target  of the first file in the file list.
 Each  command has a source list of the remaining files in the file list and the library that is specified in the definition of the command.  All the source files must exists before the command is executed to create the target file. 
 
-define doclibrary tools
-define transform tools
-define usegraph tools
-define front tools
-define LR1 tools
-define lextable tools
-define testall testcore
-define wasm webassembly
-define libsrc stdlib
-define libsrc0 orgstdlib libsrc
-define makelib stdlib makelib
-define makelib1 stdlib1 makelib
-define makelib2 stdlib2 makelib
-define makelib0 orgstdlib makelib
-define prettybuild stdlib prettystate
-define start shell  startfresh 
-define noop shell #
+define docsource tools
 
-start start.ls
-+bin taubuild.sh stdlib.bc putfile.c
+define transform tools
+
+define usegraph tools
+
+define front tools
+
+define testall testcore
+
+
+define makelib stdlib makebitcode
+
+define makelib1 stdlib1 makebitcode
+
+define makelib2 stdlib2 makebitcode
+
+define makelib0 orgstdlib makebitcode
+
+#define prettybuild stdlib prettystate
+
+#define libsrc0 orgstdlib libsrc
+ 
+
+shell  startfresh >= orgstdlib.lib <=
++bin taubuild.sh stdlib.bc putfile.c 
 + stdlib tau.c tauthreads.c tau.h
 
 
-
-noop compilerfront.libsrc stdlib1.lib
-
-noop core.libsrc stdlib1.lib
-
-noop symbols.libsrc stdlib1.lib
-
-noop tausupport.libsrc stdlib1.lib
-
-noop codegen.libsrc  stdlib1.lib
-
-makelib0 stdlib1.lib 
-+stdlib updatestate.ls main2 stdlib.ls
-+core lib.ls bits.ls encoding format graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq textio file ptr indirect
+makelib0 >=stdlib1.lib  <=
++stdlib makescript.ls main2 stdlib.ls
++core lib.ls bits.ls encoding format1 format4 graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq textio file ptr indirect
+PEGrules
 +symbols lib.ls symbol2.ls typedict mytype symbolconstant symbol
 +compilerfront lib.ls   
 +compilerfront compilerfrontT.ls compilerfront  pass2 
 hashset localmap2 passparse passsymbol postbind symboldict 
 compileTimeT object01 objectio LEBencoding addprofile 
- makeentry PEG.ls PEGrules PEGmachine newPretty prettyAttribute functionHeader
+   cmd2html PEG.ls  PEGmachine PEGparse newPretty prettyAttribute functionHeader
  symbolMode  
   parser
  backparse
  newanal
 +codegen lib.ls persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmcode
 +tausupport lib.ls   taublockseq bitcast tausupport encodingsupport
-+built    start.ls
-exports= / stdlib
++built    start.ls libname=stdlib1
+exports= / stdlib 
 
-makelib1 stdlib2.lib 
-+stdlib updatestate.ls main2  stdlib.ls
+shell # >=compilerfront.libsrc <=stdlib1.lib
+
+shell # >=core.libsrc <=stdlib1.lib
+
+shell # >=tausupport.libsrc <=stdlib1.lib
+
+shell # >=symbols.libsrc <=stdlib1.lib
+
+shell # >=codegen.libsrc <=stdlib1.lib
+
+makelib1 >=stdlib2.lib <=
++stdlib makescript.ls main2  stdlib.ls
 +built core.libsrc symbols compilerfront codegen tausupport
-exports= / stdlib
+exports= / stdlib libname=stdlib2
 
-makelib2 stdlib.lib 
-+stdlib updatestate.ls main2  stdlib.ls
+makelib2 >=stdlib.lib <=
++stdlib makescript.ls main2  stdlib.ls
 +built core.libsrc symbols  codegen tausupport compilerfront
-exports= / stdlib
+exports= / stdlib libname=stdlib
   info= profile=
+  
+makelib >=common.lib <= stdlib.libinfo
++common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph 
+commontests barycenter timestamp wordgraph
+uses=stdlib libname=common
+exports= / common
 
-noop tools.libsrc  tools.lib
 
-makelib tools.lib 
+makelib >=tools.lib <= common.libinfo stdlib  
 +tools  baseTypeCheck.ls doc   
 prettycompilerfront reconstructUses   frontcmd  
 +tools graphcode   cleanExports genPEG
   genEnumeration 
-   totext 
+   totext PEGdebug usegraph  tau? 
+PEGgenNoTable.ls
 +built common.lib 
+libname=tools
 uses=common stdlib
   entryUses=  frontcmd.callconfig
   compilerfrontT.callconfig
  llvmcode
-
-makelib common.lib
-+common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph 
-commontests barycenter timestamp wordgraph
-uses=stdlib
-exports= / common
-
-makelib testcore.lib
+ 
+ 
+ 
+ makelib >=testcore.lib <=stdlib.libinfo
 +tests lib.ls bug7.ls checking myseq testPoint randomphrase test11 
 test20 testencoding testmodules testprocess testseq tree wordfreq 
 testopt test11a testcore seq8  testpackedseq testPEG Helloworld
 testDifferentTypes testDifferentTypesB testanal 
 + compilerFront newanal
-uses=stdlib
- 
-makelib webassembly.lib
-+webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile
-uses=stdlib
+uses=stdlib libname=testcore 
 
-libsrc webcore.libsrc core.libsrc tausupport
+testall >=testall.html <=
++tests opttests.ls
++$build stdlib.libinfo
+
+
+define libsrc stdlib
+
+
+
+makelib  >= webassembly.lib <=stdlib.libinfo
++webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile
+uses=stdlib libname= webassembly 
+
+define wasm webassembly
+
+
+libsrc  >= webcore.libsrc <=core.libsrc tausupport
 +webassembly template.js
 +webcore webIOtypes.ls webIO SpecialExports JS webHTTP SpecialImports
 +null lib
 +common   barycenter layergraph makeDAG bandeskopf
 
+#### documentation
 
-doclibrary
+docsource  >=
 +documentation stdlibdoc.html
-+$build stdlib.libsrc
+<=+$build stdlib.libsrc
 
-doclibrary
+docsource  >=
 +documentation commondoc.html
-+$build common.libsrc
+<=+$build common.libsrc
 
-transform
+define tau? tools 
+
+#tau?  >= +documentationm cmddoc.html <= out=full
+
+
+transform >=
 +documentation taudoc.html
-+tests docsrc.ls
-html= noindex=
+ <= +tests docsrc.ls  doccmd docPEGsrc.ls   
++tests docpatterns docprofileExampleSrc.ls enumexample
+html= h1 h2 h3 h4 h5 h6
 
-transform
+makelib  >= doccomp.lib   <=stdlib.libinfo  +tmp PEGex.ls PEGex2 PEGex3 +tests docsrc.ls +tests docpatterns
++enumexample.ls
+uses= stdlib libname=doccomp
+
+
+transform  >= xxx1.html  <=+tests docPEGsrc.ls  
+
+shell # >= +tmp PEGex.ls  <=+built xxx1.html
+
+shell # >= +tmp PEGex2.ls  <=+built xxx1.html
+
+shell # >= +tmp PEGex3.ls  <=+built xxx1.html
+
+
+transform  >=
 +documentation installdoc.html
-+tools install.txt
-html= noindex=
+ <=+tools install.txt
+html= noindex
 
-usegraph
-+documentation install1.html
-+$build core.libsrc
+usegraph  >=
++documentation Ex1usegraph.html
+ <=+$build core.libsrc
 
-usegraph
-+documentation install2.html
-+$build core.libsrc
+usegraph  >=
++documentation Ex2usegraph.html
+ <=+$build core.libsrc
 exclude = seq standard
 
-usegraph
-+documentation install3.html
-+$build core.libsrc
+usegraph  >=
++documentation Ex3usegraph.html
+ <=+$build core.libsrc
 include = UTF8 words standard textio xxhash
 exclude = seq standard
 
-transform +documentation install4.html +tests enumexample.ls html= noindex=
-
-doclibrary
-+documentation tools.html
-+tools  frontcmd.ls doc.ls  
-
-transform
+#transform
 +documentation profileExampleSrc.html
-+tests profileExample.ls  
- html= noindex=
++tests docprofileExampleSrc.ls  
+ html= Module
+
+####
 
 
- testall testall.html
-+tests opttests.ls
-+$build stdlib.libinfo
-
- front baseTypeCheck.html stdlib.libsrc
+ front   >= baseTypeCheck.html  <=stdlib.libsrc
 out=baseTypeCheck
 
-comment front callgraphwithin.html tools.libsrc stdlib.libinfo common.libinfo
+# front callgraphwithin.html tools.libsrc stdlib.libinfo common.libinfo
 mods=genPEG
 within=
 
-wasm wbeizer.wasm webcore.libsrc symbols.libsrc 
+wasm   >= wbeizer.wasm <= webcore.libsrc  symbols.libsrc 
 + webcore webProfileSupport.ls
 + tests profile
    +compilerfront object01.ls objectio LEBencoding
@@ -187,91 +221,91 @@ Library=wbeizer
  info=  profile=
 
 
-define cmd2html cmd2html
+define cmd2html stdlib
 
- makelib cmd2html.lib stdlib.libinfo +webapps lib.ls cmd2html.ls 
- +null lib +compilerfront    makeentry
-uses= stdlib
 
-cmd2html  runcmdcreateinfo.html  +tools doc.ls frontcmd.ls   
+cmd2html    >= runcmdcreateinfo.html   <=+tools usegraph.ls doc.ls frontcmd.ls   
   libname=runcmd 
   
-  noop   runcmd.html runcmdcreateinfo.html
+ shell # >=    runcmd.html  <= runcmdcreateinfo.html
 
-noop   runcmd.ls runcmdcreateinfo.html
+shell # >=    runcmd.ls  <= runcmdcreateinfo.html
 
-wasm runcmd.wasm webcore.libsrc  symbols compilerfront 
+
+wasm   >= runcmd.wasm  <=webcore.libsrc  symbols compilerfront 
 +common svg2graph.ls uniqueids wordgraph.ls
 +built runcmd.html runcmd.ls 
-+tools doc.ls       graphcode
- frontcmd  baseTypeCheck  prettycompilerfront reconstructUses cleanExports genPEG  genEnumeration
-totext  + tests profile.ls
++tools doc.ls  usegraph    graphcode
+ frontcmd  baseTypeCheck  prettycompilerfront reconstructUses cleanExports genPEG PEGgenNoTable genEnumeration
+totext 
+ + tests profile.ls
 + webapps webtools2 
-+ tests profileExample.ls
++ tests docProfileExampleSrc.ls
 exports=runcmd
 Library=runcmd
 info=
 
-prettybuild newrelease.bld
-+.bld release.bld
-
-
-makelib profileExample.lib common.lib 
- +tests lib.ls profileExample.ls  profile
+makelib >= profileExample.lib <=common.libinfo stdlib 
+ +tests lib.ls docProfileExampleSrc.ls  profile
  +tools graphcode
-uses=common stdlib
+uses=common stdlib libname=profileExample
  profile= info=
  
  define profileExample profileExample profileExample
 
  
- profileExample +documentation profileExample.html 
+  profileExample >= +documentation profileExample.html 
 
 
-makelib printbitcodes.lib  stdlib.lib 
+makelib >= printbitcodes.lib  <=stdlib.libinfo 
 +printbitcodes printbitcodes.ls bitcodesupport.ls slotdesc llvm2
 runcode
-uses=stdlib
+uses=stdlib libname=printbitcodes
 
 define printbitcodes printbitcodes printbitcodes
-define regen ppp test2
 
-noop profileExample.bc
-+$build profileExample.lib
 
- printbitcodes ppp.ls profileExample.bc bitcode= 
 
-  makelib ppp.lib  ppp.ls
-+printbitcodes runcode bitcodesupport 
-uses = stdlib
+printbitcodes >= ppp.ls <= profileExample.bc profileExample.lib  bitcode= 
+
+  makelib >= ppp.lib  <= stdlib.libinfo ppp.ls
++printbitcodes runcode bitcodesupport  
+uses = stdlib libname=ppp
 options = bitcode
 
-  regen  regen.bc 
+ define regen ppp test2
+
+
+regen  >= regen.bc 
 
  
-comment transform hhh.html core.libsrc bind=
+# transform hhh.html core.libsrc bind=
  
-transform  transform1info.html  +built  stdlib.libsrc  common  tools   webassembly testcore printbitcodes + tests lib.ls  opttests profile profileExample  profileCompile enumexample+ webcore lib.ls JS.ls SpecialExports SpecialImports  webHTTP  webIO  webIOtypes  webProfileSupport +webapps lib wbeizer cmd2html webtools2
+ transform  >=transform1info.html  <=+built  stdlib.libsrc  common  tools   webassembly testcore printbitcodes + tests lib.ls  opttests profile   profileCompile + webcore lib.ls JS.ls SpecialExports SpecialImports  webHTTP  webIO  webIOtypes  webProfileSupport +webapps lib wbeizer  webtools2
 
-comment code for profileCompiler
+#code for profileCompiler
 
-define makelibP stdlibP makelib
+define makelibP stdlibP makebitcode
+
 define profileCompile  profileCompile
 
-
-
-makelib stdlibP.lib 
-+stdlib updatestate.ls main2  stdlib.ls
+makelib  >= stdlibP.lib
+<=+stdlib makescript.ls main2  stdlib.ls
 +built core.libsrc symbols  codegen tausupport compilerfront common
-exports= / stdlib / common 
+exports= / stdlib / common  libname=stdlibP
   info= profile=
 
 
-makelibP profileCompile +tests profileCompile.ls profile.ls
+makelibP  >= profileCompile.lib   
+<=stdlibP.libinfo +tests profileCompile.ls profile.ls
 +tools graphcode 
 uses=stdlibP
-exports= profileCompile
+exports= profileCompile libname=profileCompile
  profile= 
 
-profileCompile profileCompile.html +stdlib updatestate.ls main2  stdlib.ls+built core.libsrc symbols  codegen tausupport compilerfront exports= / stdlib library=stdlib5  
+profileCompile >=profileCompile.html <=+stdlib makescript.ls main2  stdlib.ls+built core.libsrc symbols  codegen tausupport compilerfront exports= / stdlib library=stdlib5  
+
+define buildhelp tools
+
+buildhelp >= +tmp/tools  tau?.ls <= +tools tau?.ls  +built tools.libsrc  stdlib webassembly
 

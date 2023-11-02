@@ -115,7 +115,7 @@ let a = [
  , x.1 + x.2 + x.3
  , x.1 * x.2 * x.3
  , (x.1)^(x.2)^x.3
- , (x.1)_(x.2)_x.3
+ , (x.1)#(x.2)#x.3
  ,-x.1 * (x.2)^x.3
  , x.1 * x.2 + x.3
  , x.1 + x.2 * x.3
@@ -136,7 +136,7 @@ let b = [
  , "((1+2)+3)"
  , "((1 * 2) * 3)"
  , "(1^" + "(2^3))"
- , "(1_(2_3))"
+ , "(1#(2#3))"
  , "((-1) * (2^3))"
  , "((1 * 2)+3)"
  , "(1+(2 * 3))"
@@ -156,7 +156,7 @@ for acc = empty:seq.seq.word, e ∈ a do acc + toseq.e,
 check(acc, b, "precedence test")
 
 function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word) seq.word
-let x = for acc = "", i ∈ arithseq(n.y, 1, 1) do if i_y = i_b then acc else acc + toword.i, acc,
+let x = for acc = "", i ∈ arithseq(n.y, 1, 1) do if i#y = i#b then acc else acc + toword.i, acc,
 if x = "" then
 "PASS^(testname)"
 else "<* literal FAILED *> test^(x) in^(testname)"
@@ -170,10 +170,11 @@ function uni(a:checkprec) checkprec checkprec."(uni^(toseq.a))"
 function ^(a:checkprec, b:checkprec) checkprec
 checkprec."(^(toseq.a)^^(toseq.b))"
 
-function _(a:checkprec, b:checkprec) checkprec
-checkprec."(^(toseq.a)_^(toseq.b))"
+function #(a:checkprec, b:checkprec) checkprec
+checkprec."(^(toseq.a)#^(toseq.b))"
 
-function *(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) *^(toseq.b))"
+function *(a:checkprec, b:checkprec) checkprec
+checkprec."(^(toseq.a) *^(toseq.b))"
 
 function +(a:checkprec, b:checkprec) checkprec
 checkprec."(^(toseq.a)+^(toseq.b))"
@@ -181,8 +182,11 @@ checkprec."(^(toseq.a)+^(toseq.b))"
 function =(a:checkprec, b:checkprec) checkprec
 checkprec."(^(toseq.a) =^(toseq.b))"
 
-function >(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) >^(toseq.b))"
+function >(a:checkprec, b:checkprec) checkprec
+checkprec."(^(toseq.a) >^(toseq.b))"
 
-function ∧(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) ∧^(toseq.b))"
+function ∧(a:checkprec, b:checkprec) checkprec
+checkprec."(^(toseq.a) ∧^(toseq.b))"
 
-function ∨(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) ∨^(toseq.b))" 
+function ∨(a:checkprec, b:checkprec) checkprec
+checkprec."(^(toseq.a) ∨^(toseq.b))" 

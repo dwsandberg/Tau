@@ -26,11 +26,17 @@ Function blocksize:T int 8160
 
 Function blockseqtype:T int getseqtype.toseq.blockseq(1, empty:seq.T)
 
+function sequenceIndex(a:blockseq.T, i:int) T
+assert between(i, 1, n.toseq.a) report "out of bounds"
+let blksz = n.dummy.a
+let blk = getfld(a, (i - 1) / blksz + 2),
+((i - 1) mod blksz + 1)#blk
+
 Function _(a:blockseq.T, i:int) T
 assert between(i, 1, n.toseq.a) report "out of bounds"
 let blksz = n.dummy.a
 let blk = getfld(a, (i - 1) / blksz + 2),
-((i - 1) mod blksz + 1)_blk
+((i - 1) mod blksz + 1)#blk
 
 Function blockit3(s:seq.T) seq.T
 let blksz = blocksize:T,
@@ -67,4 +73,5 @@ else
   let newseq = allocatespace(n.s2 * ds + 2)
   let d = for acc2 = set(set(newseq, 1), n.s2), e ∈ s2 do set2(acc2, e), acc2,
   set(acc, newseq),
- bitcast:seq.T(blkseq) 
+ bitcast:seq.T(blkseq)
+ 

@@ -17,9 +17,9 @@ Export type:attribute
 Function prettyR(prec:int, width:int, text:seq.word) prettyR
 assert
  true
- ∨ min(width, 10000) = width.text
- ∨ escapeformat ∈ text
- ∨ not.isempty.text ∧ 1^text ∈ "/br /p /row"
+  ∨ min(width, 10000) = width.text
+  ∨ escapeformat ∈ text
+  ∨ not.isempty.text ∧ 1^text ∈ "/br /p /row"
 report "DIFF^(width.text)^(width)^(text)^(showZ.text)^(stacktrace)",
 prettyR(prec, width, text, 0)
 
@@ -44,16 +44,16 @@ Function attribute(p:prettyR) attribute attribute.[p]
 Function prettyR(s:seq.word) seq.prettyR [prettyR(0, width.s, s)]
 
 Function attr(s:seq.word, b:attribute) seq.prettyR
-[prettyR(0, width.s + width.1_parts.b, s + text.1_parts.b)]
+[prettyR(0, width.s + width.1#parts.b, s + text.1#parts.b)]
 
-Function width1(a:attribute) int width.1_parts.a
+Function width1(a:attribute) int width.1#parts.a
 
-Function text1(a:attribute) seq.word text.1_parts.a
+Function text1(a:attribute) seq.word text.1#parts.a
 
 Function maxwidth int 100
 
 Function width(s:seq.word) int
-for acc = 0, strcount = 0, last = 1_"?", w ∈ s
+for acc = 0, strcount = 0, last = 1#"?", w ∈ s
 while acc < 10000 - 10
 do
  if w = escapeformat then
@@ -66,15 +66,15 @@ do
 acc
 
 function wordwidth(last:word, w:word) int
-if w ∈ ("<* *> /keyword: ./nosp" + escapeformat) ∨ last ∈ "<*" then
+if w ∈ ("<* *> /keyword: ./tag" + escapeformat) ∨ last ∈ "<*" then
 0
-else if w ∈ "(,) /ldq /sp" then
+else if w ∈ "(,) /sp" then
 1
 else n.decodeword.w + 1
 
 function matchR(txt:seq.word) int
 let close = 1^txt
-let open = if close ∈ "*>" then 1_"<*" else if close ∈ ")" then 1_"(" else 1_"?",
+let open = if close ∈ "*>" then 1#"<*" else if close ∈ ")" then 1#"(" else 1#"?",
 if open ∈ "?" then
 0
 else
@@ -115,22 +115,22 @@ if matchR.a = n.a then subseq(a, 2, n.a - 1) else a
 else a
 
 Function removeparen(a:attribute) attribute
-let txt = text.1_parts.a
+let txt = text.1#parts.a
 let txt2 = removeparen.txt,
 if n.txt2 = n.txt then
 a
-else attribute.prettyR(prec.1_parts.a, width.txt2 - width."()", txt2)
+else attribute.prettyR(prec.1#parts.a, width.txt2 - width."()", txt2)
 
 Function showZ(out:seq.word) seq.word
 for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
 acc
 
 Function removeclose(a:attribute) attribute
-let txt = text.1_parts.a
+let txt = text.1#parts.a
 let txt2 = removeclose.txt,
 if n.txt2 = n.txt then
 a
-else attribute.prettyR(prec.1_parts.a, width1.a + n.txt2 - n.txt, txt2)
+else attribute.prettyR(prec.1#parts.a, width1.a + n.txt2 - n.txt, txt2)
 
 Function removeclose(a:seq.word) seq.word
 if 1^a ∉ "*>)" then
@@ -189,8 +189,8 @@ else
       let tmp = subseq(b, n.b - 1, n.b)
       let before =
        tmp ∈ ["-/sp", "+/sp", "= /sp", "^(escapeformat) *>"]
-       ∨ isempty.tmp
-       ∨ 1^tmp ∈ "else"
+        ∨ isempty.tmp
+        ∨ 1^tmp ∈ "else"
       let after = subseq(acc, n.acc - i + 2, n.acc - i + 3) ∈ ["/keyword if", "/keyword for"],
        if before ∧ (after ∨ state = forif) then
         if state ∈ [0, paren] then
@@ -200,9 +200,9 @@ else
          let d = checkbr(subseq(a, n.acc - i + 2, left), result),
           if
            subseq(c, n.c - 3, n.c) = "}^(escapeformat) *> /br"
-           ∧ subseq(d, 1, 2) = "<* block"
-           ∧ isempty.b
-           ∧ subseq(c, 1, 6) = "<* block <* comment^(escapeformat) {"
+            ∧ subseq(d, 1, 2) = "<* block"
+            ∧ isempty.b
+            ∧ subseq(c, 1, 6) = "<* block <* comment^(escapeformat) {"
           then
           next(n.acc - i, len - 1, c + d << 2, skip)
           else next(n.acc - i, len - 1, d, changed)
@@ -229,13 +229,15 @@ Function escapeformat(in:seq.word) seq.word
 if isempty.in then
 in
 else
+ let space = encodeword.[char.32]
  for
-  result = [escapeformat, 1_in]
-  , linelength = wordwidth(space, 1_in)
+  result = [escapeformat, 1#in]
+  , linelength = wordwidth(space, 1#in)
   , last = space
   , w ∈ in << 1
  do
   if linelength > maxwidth ∨ w ∈ "/br /p /row" then
   next(result + escapeformat + "/br" + escapeformat + w, wordwidth(last, w), w)
   else next(result + w, linelength + wordwidth(last, w), w),
- result + escapeformat 
+ result + escapeformat
+ 

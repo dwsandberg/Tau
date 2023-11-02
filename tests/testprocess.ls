@@ -28,7 +28,7 @@ function testprocess3 returntype returntype(4, 40, "a test")
 
 function isprefix(prefix:seq.word, s:seq.word) boolean subseq(s, 1, n.prefix) = prefix
 
-function testout(i:int) seq.word [i_"one two three"]
+function testout(i:int) seq.word [i#"one two three"]
 
 function square(a:real) real a * a
 
@@ -79,7 +79,7 @@ let y = [
  , isprefix("out of bounds", message.process.testout.0)
  , isprefix("out of bounds", message.process.testout.-10)
  , isprefix("out of bounds", message.process.testout.4)
- , isprefix("invalid digit", message.process.toint.1_"0A")
+ , isprefix("invalid digit", message.process.toint.1#"0A")
  , message.process.testout.1 = "normal exit"
  , aborted.process.testout.5
  , not.aborted.process.testout.2
@@ -98,13 +98,13 @@ let y = [
  , isprefix("unexpected character in real literal", message.process.45t6.3)
  , a.result.process.testprocess3 = 4
   ∧ b.result.process.testprocess3 = 40
-  ∧ c.result.process.testprocess3 = "a test"
+   ∧ c.result.process.testprocess3 = "a test"
  , t513
  , t514
 ],
 check(y, "testprocess")
 
-_________
+-------------------------------
 
 Primes
 
@@ -136,7 +136,7 @@ else
  for acc = true, f ∈ arithseq(a, 2, 3) while acc ∧ f ≤ b do i mod f ≠ 0,
  acc
 
-_________________
+-------------------------------
 
 Function randomtest(samplesize:int) seq.word
 let r =

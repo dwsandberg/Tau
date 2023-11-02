@@ -43,7 +43,7 @@ else
 add nodes so that arcs never cross layers.
 
 function adddummynodes(y2:layeredgraph.T) layeredgraph.T
-d2(y2, g.y2, 2, asset.1_layers.y2, [1_layers.y2])
+d2(y2, g.y2, 2, asset.1#layers.y2, [1#layers.y2])
 
 function d2(
  org:layeredgraph.T
@@ -52,15 +52,15 @@ function d2(
  , ok:set.T
  , layerout:seq.seq.T
 ) layeredgraph.T
-let ok1 = ok ∪ asset.i_layers.org
+let ok1 = ok ∪ asset.i#layers.org
 for
  gnew = g
- , e ∈ for acc = empty:seq.arc.T, e ∈ (i - 1)_layerout do acc + splitarcs(g, ok1, e), acc
+ , e ∈ for acc = empty:seq.arc.T, e ∈ (i - 1)#layerout do acc + splitarcs(g, ok1, e), acc
 do splitarc(gnew, e)
 let newnodes = nodes.gnew \ nodes.g
-let newout = layerout + [i_layers.org + toseq.newnodes],
+let newout = layerout + [i#layers.org + toseq.newnodes],
 if i < n.layers.org then
-let x = ok1 ∪ newnodes ∪ asset.(i + 1)_layers.org, d2(org, gnew, i + 1, x, newout)
+let x = ok1 ∪ newnodes ∪ asset.(i + 1)#layers.org, d2(org, gnew, i + 1, x, newout)
 else layeredgraph(gnew, newout)
 
 function splitarcs(g:graph.T, ok:set.T, n:T) seq.arc.T

@@ -1,5 +1,5 @@
 
-<* section Installing Tau   *>
+/tag <h1> Installing Tau   /tag </h1>
 
 Make sure clang is installed.   For Mac OS Clang is available if the command line tools are installed.
 
@@ -14,7 +14,7 @@ Open terminal and change direcotry to <Tau>.
 Run "bash bin/taubuild.sh release.bld".  This is likely to generate a warning message about the llvm spec. 
 
 
-<* section HelloWorld *>
+/tag <h2> HelloWorld /tag </h2>
 
 A HelloWorld example is inculded in <Tau>/tests.  The code itself is in 
  The text file <Tau>/tau/HelloWorld.ls that contains:
@@ -51,7 +51,7 @@ Finally a web browser  is opened on  the file <Tau>/built/hello.html.
 
 HelloWorld.lib can also be run from the prompt: <* block tau HelloWord hello  *> This will display "Hello World!" in the web browser. 
 
-<* section Some useful tools *>
+/tag <h2> Some useful tools /tag </h2>
 
 
 alias usegraph="tau tools usegraph"
@@ -59,14 +59,14 @@ alias usegraph="tau tools usegraph"
 alias transform="tau tools transform"
 
 A function can be profiled to see where the time is being spent in a program.  An example of doing this is given 
-/< a href ="./profileExampleSrc.html" >here. /< /a>  Which produces the output
-/< a href ="./profileExample.html" >here. /< /a> 
+/tag <a /sp href ="./profileExampleSrc.html" >here. /tag </a>  Which produces the output
+/tag <a /sp href ="./profileExample.html" >here. /tag  </a> 
 
 
 The /keyword htmlcode cmd create html from source files pretty prints the file and adds syntax highlighting and a module index.  It is useful for examining source code.  For example 
-</ block htmlcode +built core.libsrc *> 
+ block htmlcode +built core.libsrc  
 
-<* section Introduction to intermediate code produced by compiler *>
+/tag <h2> Introduction to intermediate code produced by compiler /tag </h2>
 
 This section provides a brief explanation of the control structure used in the intermediate code. The follow function for calculating factorials is used as an example.
 
@@ -114,7 +114,7 @@ EndBlock The parameter names become %1 and %2
   
 
 The first step in calling a function is to assign its arguments to new locals. If one considers the
-symbol <* block loop:3 (int, int) int*> to be a function declaration <* block function loop (%3:int, %4:int)*>, then the first
+symbol <* block loop:3 (int, int) int *> to be a function declaration <* block function loop (%3:int, %4:int)*>, then the first
 step is same as the first step in calling a function. Also the /strong Continue /strong 2 can be consider a function call 
 
     
@@ -145,7 +145,7 @@ step is same as the first step in calling a function. Also the /strong Continue 
 
 
 
-<* section HelloWorld with dynamic libraries *>
+/tag <h2>  HelloWorld with dynamic libraries /tag </h2>
 The Mac OS X implementation also allows  dynamic libraries to be created instead of programs.
 The command is    <* block ltau stdlib HelloWorld x   *> 
 
@@ -169,7 +169,7 @@ Your text editor may run HelloWorld as a script without setting the execute bit.
 To set the execute bit, use <* block chmod +x HelloWorld/HelloWorld.ls *>
 
 
-<* section Installing Web Assembly Cross Compiler *>
+/tag <h2> section Installing Web Assembly Cross Compiler /tag </h2>
 
 Since wasm files cannot be served from filesystem a web server is required. 
 OSX has an Apache web server pre-installed.  The details of how to configure the
@@ -215,8 +215,9 @@ wtau     wtests wtests  *>
 This should open a web browser  with page with a button. 
 Push the button to run the test.  All the test should pass.
 
-  /< hr>  
-<* section Documentation below is not complete. *>
+  /tag <hr>  
+  
+/tag <h2> Documentation below is not complete./tag </h2>
 
 section vhost
 

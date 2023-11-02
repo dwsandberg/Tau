@@ -27,7 +27,7 @@ Builtin empty:seq.T seq.T {empty seq}
 Builtin idxNB(a:seq.T, i:int) T
 
 Function =(a:seq.T, b:seq.T) boolean
-for isequal = n.a = n.b, i = 1, e ∈ a while isequal do next(e = i_b, i + 1),
+for isequal = n.a = n.b, i = 1, e ∈ a while isequal do next(e = i#b, i + 1),
 isequal
 
 Function ∈(a:T, s:seq.T) boolean for found = false, e ∈ s while not.found do a = e, found
@@ -38,12 +38,13 @@ found
 
 type pseq is sequence, a:seq.T, b:seq.T, start:int
 
-Function _(s:pseq.T, ii:int) T
+function sequenceIndex(s:pseq.T, ii:int) T
 let i = ii + start.s
 let len = n.a.s,
 if i > len then
-let x = to:pseq.T(b.s), if n.toseq.x = 0 then idxNB(b.s, i - len) else x_(i - len)
-else let x = to:pseq.T(a.s), if n.toseq.x = 0 then idxNB(a.s, i) else x_i
+ let x = to:pseq.T(b.s),
+ if n.toseq.x = 0 then idxNB(b.s, i - len) else sequenceIndex(x, i - len)
+else let x = to:pseq.T(a.s), if n.toseq.x = 0 then idxNB(a.s, i) else sequenceIndex(x, i)
 
 Function ispseq(s:seq.T) boolean n.toseq.to:pseq.T(s) ≠ 0
 
@@ -85,9 +86,9 @@ subseq(s, start, n.s)
 else if start = 1 ∧ n.s = finish then
 s
 else if start = finish + 1 then
-[start_s, finish_s]
+[start#s, finish#s]
 else if start + 1 ≥ finish then
-if start = finish then [start_s] else [start_s, finish_s]
+if start = finish then [start#s] else [start#s, finish#s]
 else
  let p = to:pseq.T(s),
   if n.toseq.p = 0 then
@@ -113,7 +114,7 @@ subseq(s, 1, n.s - i)
 
 Builtin n(s:seq.T) int {length of string}
 
-Function _(i:int, s:seq.T) T
+Function #(i:int, s:seq.T) T
 {Number elements in sequence from 1 to n.s and return the element numbered i}
 assert i > 0 ∧ i ≤ n.s ∨ getseqtype.s > 1 report outofbounds:T,
 idxNB(s, i)
@@ -122,4 +123,4 @@ builtin outofbounds:T seq.word
 
 Function ^(i:int, s:seq.T) T
 {Number elements in sequence from n.s to 1 and return the element numbered i}
-(n.s - (i - 1))_s 
+(n.s - (i - 1))#s 

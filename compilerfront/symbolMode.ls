@@ -21,8 +21,10 @@ use set.symbol
 use seq.word
 
 Function symbolparse(input:seq.word, types:set.mytype, modname:modref) attribute
-let r = parse(input, mytable, attribute(empty:seq.mytype, ""), commonType(types, isAbstract.modname, input))
-assert status.r ∉ "Failed" ∧ (1_input ∈ "function Function" ∨ i.top.stk.r = n.input + 1)
+let r = parse(input, attribute(empty:seq.mytype, ""), commonType(types, isAbstract.modname, input))
+assert
+ status.r ∉ "Failed"
+  ∧ (1#input ∈ "function Function" ∨ i.top.stk.r = n.input + 1)
 report errormessage("Syntax error", input, i.top.stk.r),
 result.r
 
@@ -33,7 +35,7 @@ function resolvetype(text:seq.word, common:commonType, place:int) mytype
 let a = resolvetype(types.common, text)
 assert not.isempty.a
 report errormessage("cannot resolve type^(text)", input.common, place),
-1_a
+1#a
 
 function errormessage(mess:seq.word, input:seq.word, place:int) seq.word
 subseq(input, 1, place) + "<* literal^(mess) *>" + input << place
@@ -69,8 +71,6 @@ attribute([typename] + types.PL, text.PL)
 
 function null attribute attribute(empty:seq.mytype, "")
 
-function /Discard attribute null
-
 function +(a:attribute, b:attribute) attribute
 attribute(types.a + types.b, text.a + text.b)
 
@@ -82,152 +82,152 @@ function PEGgen(
  error:boolean
  , seqElementType:word
  , attributeType:attribute
- , R:reduction
+ , resultType:recoverInfo
  , place:int
  , common:commonType
+ , rinfo:recoverInfo
 ) seq.boolean
+{commonName = common wordmap = 1 1#" 1", 1#" $"}
 [
- "match2code any" = 1_"/1"
- , "S type id is FPL Comment" = createtype(common, 1_R, 2_R, place)
- , "/ any Header" = 2_R
- , "Header id (FPL) Type Comment" = createfunc(common, place, text.1_R, null, 2_R, 3_R)
- , "/ id Type Comment" = createfunc(common, place, text.1_R, null, null, 2_R)
- , "/ id:Type (FPL) Type Comment"
-  = createfunc(common, place, text.1_R, 2_R, 3_R, 4_R)
- , "/ id:Type Type Comment" = createfunc(common, place, text.1_R, 2_R, null, 3_R)
- , "FPL FP FPL'" = 1_R + 2_R
- , "* FPL', FP" = 0_R + 1_R
- , "FP any:Type" = addpara(common, text.1_R, 2_R, place)
- , "/ Type" = addpara(common, ":", 1_R, place)
- , "Type id.Type" = toAttribute(1_R, text.1_R + "." + text.2_R)
- , "/ id" = 1_R
- , "id !, !] ! {! (!) !:!. any" = 1_R
- , "* Comment {N}" = /Discard
- , "* N {N}" = /Discard
- , "/ str1" = /Discard
- , "* str1 ! {!} any" = /Discard
+ "SymbolMode type Id is FPL Comment" = createtype(common, $.1, $.2, place.rinfo)
+ , "/ any Header" = $.2
+ , "Header Id (FPL) Type Comment" = createfunc(common, place.rinfo, text.$.1, null, $.2, $.3)
+ , "/ Id Type Comment" = createfunc(common, place.rinfo, text.$.1, null, null, $.2)
+ , "/ Id:Type (FPL) Type Comment" = createfunc(common, place.rinfo, text.$.1, $.2, $.3, $.4)
+ , "/ Id:Type Type Comment" = createfunc(common, place.rinfo, text.$.1, $.2, null, $.3)
+ , "FPL FP FPL'" = $.1 + $.2
+ , "* FPL', FP" = $.0 + $.1
+ , "FP any:Type" = addpara(common, text.$.1, $.2, place.rinfo)
+ , "/ Type" = addpara(common, ":", $.1, place.rinfo)
+ , "Type Id.Type" = toAttribute($.1, text.$.1 + "." + text.$.2)
+ , "/ Id" = $.1
+ , "Id !, !] ! {! (!) !:!. any" = $.1
+ , "* Comment {N}" = $.0
+ , "* N {N}" = $.0
+ , "/ ! {!} any" = $.0
 ]
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:Comment FP FPL FPL' Header N S Type id str1
+/br Non-terminals:Comment FP FPL FPL' Header Id N SymbolMode Type
 /br Terminals:(),.. :] any is type {}
-/br S ← type id is FPL Comment / any Header
-/br Header ← id (FPL) Type Comment / id Type Comment
-/br / id:Type (FPL) Type Comment
-/br / id:Type Type Comment
+/br SymbolMode ← type Id is FPL Comment / any Header
+/br Header ← Id (FPL) Type Comment / Id Type Comment / Id:Type (FPL) Type Comment / Id:Type Type
+Comment
 /br FPL ← FP FPL'
 /br * FPL' ←, FP
 /br FP ← any:Type / Type
-/br Type ← id.Type / id
-/br id ← !, !] ! {! (!) !:!. any
+/br Type ← Id.Type / Id
+/br Id ← !, !] ! {! (!) !:!. any
 /br * Comment ← {N}
-/br * N ← {N} / str1
-/br * str1 ← ! {!} any
+/br * N ← {N} / ! {!} any
 
 function action(
  partno:int
- , R:reduction
- , place:int
- , input:seq.word
+ , R:seq.attribute
  , common:commonType
- , parsestk:stack.frame
+ , rinfo:recoverInfo
 ) attribute
 if partno = 2 then
-createtype(common, 1_R, 2_R, place)
+createtype(common, 3^R, 2^R, place.rinfo)
 else if partno = 3 then
-2_R
+1^R
 else if partno = 4 then
-createfunc(common, place, text.1_R, null, 2_R, 3_R)
+createfunc(common, place.rinfo, text.4^R, null, 3^R, 2^R)
 else if partno = 5 then
-createfunc(common, place, text.1_R, null, null, 2_R)
+createfunc(common, place.rinfo, text.3^R, null, null, 2^R)
 else if partno = 6 then
-createfunc(common, place, text.1_R, 2_R, 3_R, 4_R)
+createfunc(common, place.rinfo, text.5^R, 4^R, 3^R, 2^R)
 else if partno = 7 then
-createfunc(common, place, text.1_R, 2_R, null, 3_R)
+createfunc(common, place.rinfo, text.4^R, 3^R, null, 2^R)
 else if partno = 8 then
-1_R + 2_R
+2^R + 1^R
 else if partno = 9 then
-0_R + 1_R
+2^R + 1^R
 else if partno = 10 then
-addpara(common, text.1_R, 2_R, place)
+addpara(common, text.2^R, 1^R, place.rinfo)
 else if partno = 11 then
-addpara(common, ":", 1_R, place)
+addpara(common, ":", 1^R, place.rinfo)
 else if partno = 12 then
-toAttribute(1_R, text.1_R + "." + text.2_R)
+toAttribute(2^R, text.2^R + "." + text.1^R)
 else if partno = 13 then
-1_R
+1^R
 else if partno = 14 then
-1_R
-else 0_R
+1^R
+else if partno = 15 then
+2^R
+else if partno = 16 then
+2^R
+else if partno = 17 then
+2^R
+else 1#R
 
 function mytable seq.tableEntry
 [
- {1} tableEntry(MatchNT.Match.2, 1_"?", Reduce.1, Reduce, "")
- , {2} tableEntry(Match, 1_"type", S.3, MatchAny.7, "")
- , {3} tableEntry(MatchNT.!Match.43, 1_"?", Match.4, MatchAny.7, "")
- , {4} tableEntry(Match, 1_"is", S.5, MatchAny.7, "")
- , {5} tableEntry(MatchNT.S.31, 1_"?", S.6, MatchAny.7, "")
- , {6} tableEntry(MatchNT.Match.51, 1_"?", Reduce.2, MatchAny.7, "")
- , {7} tableEntry(MatchAny, 1_"?", S.8, Fail, "")
- , {8} tableEntry(MatchNT.S.9, 1_"?", Reduce.3, Fail, "")
- , {9} tableEntry(MatchNT.!Match.43, 1_"?", MatchNext.10, S.15, "")
- , {10} tableEntry(MatchNext, 1_"(", S.11, S.16, "")
- , {11} tableEntry(MatchNT.S.31, 1_"?", MatchNext.12, S.28, "")
- , {12} tableEntry(MatchNext, 1_")", S.13, S.29, "")
- , {13} tableEntry(MatchNT.S.39, 1_"?", S.14, S.15, "")
- , {14} tableEntry(MatchNT.Match.51, 1_"?", Reduce.4, S.15, "")
- , {15} tableEntry(MatchNT.!Match.43, 1_"?", S.16, S.18, "")
- , {16} tableEntry(MatchNT.S.39, 1_"?", S.17, S.18, "")
- , {17} tableEntry(MatchNT.Match.51, 1_"?", Reduce.5, S.18, "")
- , {18} tableEntry(MatchNT.!Match.43, 1_"?", Match.19, S.26, "")
- , {19} tableEntry(Match, 1_":", S.20, S.26, "")
- , {20} tableEntry(MatchNT.S.39, 1_"?", Match.21, S.26, "")
- , {21} tableEntry(Match, 1_"(", S.22, S.26, "")
- , {22} tableEntry(MatchNT.S.31, 1_"?", Match.23, S.26, "")
- , {23} tableEntry(Match, 1_")", S.24, S.26, "")
- , {24} tableEntry(MatchNT.S.39, 1_"?", S.25, S.26, "")
- , {25} tableEntry(MatchNT.Match.51, 1_"?", Reduce.6, S.26, "")
- , {26} tableEntry(MatchNT.!Match.43, 1_"?", Match.27, Fail, "")
- , {27} tableEntry(Match, 1_":", S.28, Fail, "")
- , {28} tableEntry(MatchNT.S.39, 1_"?", S.29, Fail, "")
- , {29} tableEntry(MatchNT.S.39, 1_"?", S.30, Fail, "")
- , {30} tableEntry(MatchNT.Match.51, 1_"?", Reduce.7, Fail, "")
- , {31} tableEntry(MatchNT.MatchAny.35, 1_"?", S.32, Fail, "")
- , {32} tableEntry(MatchNT.Match.33, 1_"?", Reduce.8, Fail, "")
- , {33} tableEntry(Match, 1_",", S.34, Success*, "")
- , {34} tableEntry(MatchNT.MatchAny.35, 1_"?", Reduce(9, Match.33), Success*, "")
- , {35} tableEntry(MatchAny, 1_"?", Match.36, S.38, "")
- , {36} tableEntry(Match, 1_":", S.37, S.38, "")
- , {37} tableEntry(MatchNT.S.39, 1_"?", Reduce.10, S.38, "")
- , {38} tableEntry(MatchNT.S.39, 1_"?", Reduce.11, Fail, "")
- , {39} tableEntry(MatchNT.!Match.43, 1_"?", MatchNext.40, S.42, "")
- , {40} tableEntry(MatchNext, 1_".", S.41, Reduce.13, "")
- , {41} tableEntry(MatchNT.S.39, 1_"?", Reduce.12, S.42, "")
- , {42} tableEntry(MatchNT.!Match.43, 1_"?", Reduce.13, Fail, "")
- , {43} tableEntry(!Match, 1_",", Fail, !Match.44, "")
- , {44} tableEntry(!Match, 1_"]", Fail, !Match.45, "")
- , {45} tableEntry(!Match, 1_"{", Fail, !Match.46, "")
- , {46} tableEntry(!Match, 1_"(", Fail, !Match.47, "")
- , {47} tableEntry(!Match, 1_")", Fail, !Match.48, "")
- , {48} tableEntry(!Match, 1_":", Fail, !Match.49, "")
- , {49} tableEntry(!Match, 1_". ", Fail, MatchAny.50, "")
- , {50} tableEntry(MatchAny, 1_"?", Reduce.14, Fail, "")
- , {51} tableEntry(Match, 1_"{", S.52, SuccessDiscard*, "")
- , {52} tableEntry(MatchNT.Match.54, 1_"?", Match.53, SuccessDiscard*, "")
- , {53} tableEntry(Match, 1_"}", Discard*.Match.51, SuccessDiscard*, "")
- , {54} tableEntry(Match, 1_"{", S.55, S.57, "")
- , {55} tableEntry(MatchNT.Match.54, 1_"?", Match.56, S.57, "")
- , {56} tableEntry(Match, 1_"}", Discard*.Match.54, S.57, "")
- , {57} tableEntry(MatchNT.!Match.58, 1_"?", Discard*.Match.54, SuccessDiscard*, "")
- , {58} tableEntry(!Match, 1_"{", SuccessDiscard*, !Match.59, "")
- , {59} tableEntry(!Match, 1_"}", SuccessDiscard*, MatchAny.60, "")
- , {60} tableEntry(MatchAny, 1_"?", Discard*.!Match.58, SuccessDiscard*, "")
+ {1} tableEntry(NT.T'.2, 1#"?", Match, Failure, "")
+ , {2} tableEntry(T', 1#"type", NT.3, MatchAny.7, "type any is any")
+ , {3} tableEntry(NT.!T.43, 1#"Id", T.4, MatchAny.7, "any is any")
+ , {4} tableEntry(T, 1#"is", NT.5, MatchAny.7, "is any")
+ , {5} tableEntry(NT.31, 1#"FPL", NT.6, MatchAny.7, "any")
+ , {6} tableEntry(NT.T.51, 1#"Comment", Reduce.2, MatchAny.7, "")
+ , {7} tableEntry(MatchAny, 1#"?", NT.8, Fail, "any any:any any")
+ , {8} tableEntry(NT.9, 1#"Header", Reduce.3, Fail, "any:any any")
+ , {9} tableEntry(NT.!T.43, 1#"Id", T'.10, Fail, "any (any) any")
+ , {10} tableEntry(T', 1#"(", NT.11, NT.16, "(any) any")
+ , {11} tableEntry(NT.31, 1#"FPL", T.12, NT.15, "any) any")
+ , {12} tableEntry(T, 1#")", NT.13, NT.15, ") any")
+ , {13} tableEntry(NT.39, 1#"Type", NT.14, NT.15, "any")
+ , {14} tableEntry(NT.T.51, 1#"Comment", Reduce.4, NT.15, "")
+ , {15} tableEntry(NT.!T.43, 1#"Id", NT.16, Fail, "any any")
+ , {16} tableEntry(NT.39, 1#"Type", NT.17, NT.18, "any")
+ , {17} tableEntry(NT.T.51, 1#"Comment", Reduce.5, NT.18, "")
+ , {18} tableEntry(NT.!T.43, 1#"Id", T'.19, Fail, "any:any (any) any")
+ , {19} tableEntry(T', 1#":", NT.20, T.27, ":any (any) any")
+ , {20} tableEntry(NT.39, 1#"Type", T'.21, Fail, "any (any) any")
+ , {21} tableEntry(T', 1#"(", NT.22, NT.29, "(any) any")
+ , {22} tableEntry(NT.31, 1#"FPL", T.23, NT.26, "any) any")
+ , {23} tableEntry(T, 1#")", NT.24, NT.26, ") any")
+ , {24} tableEntry(NT.39, 1#"Type", NT.25, NT.26, "any")
+ , {25} tableEntry(NT.T.51, 1#"Comment", Reduce.6, NT.26, "")
+ , {26} tableEntry(NT.!T.43, 1#"Id", T.27, Fail, "any:any any")
+ , {27} tableEntry(T, 1#":", NT.28, Fail, ":any any")
+ , {28} tableEntry(NT.39, 1#"Type", NT.29, Fail, "any any")
+ , {29} tableEntry(NT.39, 1#"Type", NT.30, Fail, "any")
+ , {30} tableEntry(NT.T.51, 1#"Comment", Reduce.7, Fail, "")
+ , {31} tableEntry(NT.MatchAny.35, 1#"FP", NT.32, Fail, "any")
+ , {32} tableEntry(NT.T.33, 1#"FPL'", Reduce.8, Fail, "")
+ , {33} tableEntry(T, 1#",", NT.34, Success*, ", any")
+ , {34} tableEntry(NT.MatchAny.35, 1#"FP", Reduce*(9, T.33), Success*, "any")
+ , {35} tableEntry(MatchAny, 1#"?", T.36, NT.38, "any:any")
+ , {36} tableEntry(T, 1#":", NT.37, NT.38, ":any")
+ , {37} tableEntry(NT.39, 1#"Type", Reduce.10, NT.38, "any")
+ , {38} tableEntry(NT.39, 1#"Type", Reduce.11, Fail, "any")
+ , {39} tableEntry(NT.!T.43, 1#"Id", T.40, Fail, "any.any")
+ , {40} tableEntry(T, 1#".", NT.41, NT.42, ".any")
+ , {41} tableEntry(NT.39, 1#"Type", Reduce.12, NT.42, "any")
+ , {42} tableEntry(NT.!T.43, 1#"Id", Reduce.13, Fail, "any")
+ , {43} tableEntry(!T, 1#",", Fail, !T.44, ", any")
+ , {44} tableEntry(!T, 1#"]", Fail, !T.45, "] any")
+ , {45} tableEntry(!T, 1#"{", Fail, !T.46, "{any")
+ , {46} tableEntry(!T, 1#"(", Fail, !T.47, "(any")
+ , {47} tableEntry(!T, 1#")", Fail, !T.48, ") any")
+ , {48} tableEntry(!T, 1#":", Fail, !T.49, ":any")
+ , {49} tableEntry(!T, 1#". ", Fail, MatchAny.50, ". any")
+ , {50} tableEntry(MatchAny, 1#"?", Reduce.14, Fail, "any")
+ , {51} tableEntry(T, 1#"{", NT.52, Success*, "{}")
+ , {52} tableEntry(NT.T.54, 1#"N", T.53, Success*, "}")
+ , {53} tableEntry(T, 1#"}", Reduce*(15, T.51), Success*, "}")
+ , {54} tableEntry(T, 1#"{", NT.55, !T.57, "{}")
+ , {55} tableEntry(NT.T.54, 1#"N", T.56, !T.57, "}")
+ , {56} tableEntry(T, 1#"}", Reduce*(16, T.54), !T.57, "}")
+ , {57} tableEntry(!T, 1#"{", Success*, !T.58, "{any")
+ , {58} tableEntry(!T, 1#"}", Success*, MatchAny.59, "} any")
+ , {59} tableEntry(MatchAny, 1#"?", Reduce*(17, T.54), Success*, "any")
 ]
 
 function =(seq.word, attribute) boolean true
 
-function =(seq.word, word) boolean true
+function $(int) attribute 1#empty:seq.attribute
 
 use standard
 
@@ -241,9 +241,13 @@ use otherseq.attribute
 
 use PEGrules
 
-function _(i:int, R:reduction) attribute (i + 1)_toseq.R
-
-type reduction is toseq:seq.attribute
+function recoveryEnding(rinfo:recoverInfo) seq.word
+for acc = "", frame ∈ reverse.toseq.pop.stk.rinfo
+do
+ if action.Sstate.frame ∈ [T, NT] then
+ acc + recover.(index.Sstate.frame)#mytable
+ else acc,
+acc
 
 type frame is
 Sstate:state
@@ -253,127 +257,123 @@ Sstate:state
 , faili:int
 , failresult:seq.attribute
 
-type runresultType is stk:stack.frame
+type recoverInfo is stk:stack.frame, input:seq.word, place:int
 
-Function status(a:runresultType) word
-if Sstate.top.stk.a ≠ Reduce.1 then
-1_"Failed"
-else if i.top.stk.a = {length of input} faili.top.stk.a then
-1_"Match"
-else 1_"MatchPrefix"
+Function status(a:recoverInfo) word
+if Sstate.top.stk.a ≠ Match then
+1#"Failed"
+else if place.a = {length of input} faili.top.stk.a then
+1#"Match"
+else 1#"MatchPrefix"
 
-Function result(a:runresultType) attribute 1^result.top.stk.a
+Function result(a:recoverInfo) attribute 1^result.top.stk.a
 
-function parse(
- myinput0:seq.word
- , table:seq.tableEntry
- , initAttr:attribute
- , common:commonType
-) runresultType
+function parse(myinput0:seq.word, initAttr:attribute, common:commonType) recoverInfo
 let myinput = packed(myinput0 + endMark)
-let packedTable = packed.table
+let packedTable = packed.mytable
 for
- maxi = 0
- , maxStk = empty:stack.frame
+ rinfo = recoverInfo(empty:stack.frame, myinput, 0)
  , stk = empty:stack.frame
  , state = startstate
  , i = 1
- , inputi = 1_myinput
+ , inputi = 1#myinput
  , result = [initAttr]
  , faili = 1
  , failresult = [initAttr]
-while not(state = Reduce.1 ∨ state = Reduce.0)
+while toint.state > toint.Match
 do
  let actionState = action.state,
   if actionState = Fail then
    {goto Fstate.top.stk, i = faili.top, pop.stk, discard result}
-   let top = top.stk
-   let newstk = pop.stk,
-   next(
-    maxi
-    , maxStk
-    , newstk
-    , if is!.Sstate.top then Sstate.top else Fstate.top
-    , faili.top
-    , idxNB(myinput, faili.top)
-    , failresult.top
-    , faili.top
-    , failresult.top
-   )
+   let top = top.stk,
+    if toint.action.Fstate.top ≥ toint.S' then
+     let newi = i.top,
+     next(
+      rinfo
+      , pop.stk
+      , nextState.Fstate.top
+      , newi
+      , idxNB(myinput, newi)
+      , result.top
+      , faili.top
+      , failresult.top
+     )
+    else next(
+     rinfo
+     , pop.stk
+     , Fstate.top
+     , faili.top
+     , idxNB(myinput, faili.top)
+     , failresult.top
+     , faili.top
+     , failresult.top
+    )
   else if actionState = Success* then
    {goto Sstate.top.stk, pop.stk, keep result}
    let top = top.stk,
-   next(maxi, maxStk, pop.stk, Sstate.top, i, inputi, result.top + result, faili.top, failresult.top)
-  else if actionState = SuccessDiscard* then
-   {goto Sstate.top.stk, pop.stk, keep result}
-   let top = top.stk,
-   next(maxi, maxStk, pop.stk, Sstate.top, i, inputi, result.top, faili.top, failresult.top)
+   next(rinfo, pop.stk, Sstate.top, i, inputi, result.top + result, faili.top, failresult.top)
   else if actionState = Discard* then
-   let top = top.stk,
-    if faili = i then
-    next(maxi, maxStk, pop.stk, Sstate.top, i, inputi, result.top, faili.top, failresult.top)
-    else
-     let newmaxStk = if i ≥ maxi then stk else maxStk,
-     next(max(maxi, i), newmaxStk, stk, nextState.state, i, inputi, result.top, i, result.top)
+   let top = top.stk
+   let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i) else rinfo,
+   next(newrinfo, stk, nextState.state, i, inputi, result.top, i, result.top)
   else if actionState = All then
    let top = top.stk
    let att = [toAttribute(1^result, subseq(myinput, i.top, i - 1))],
-   next(maxi, maxStk, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+   next(rinfo, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+  else if actionState = Lambda then
+   let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i) else rinfo
+   let att = [action(reduceNo.state, result, common, newrinfo)],
+   next(newrinfo, stk, nextState2.state, i, inputi, result + att, faili, failresult)
   else if actionState = Reduce then
-   {Reduce}
-   if nextState.state ≠ S.0 then
-    let att = [action(reduceNo.state, reduction.result, i, myinput, common, stk)]
-    let top = top.stk
-    let newmaxStk = if i ≥ maxi then stk else maxStk,
-     if faili = i then
-     next(maxi, maxStk, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
-     else next(max(i, maxi), newmaxStk, stk, nextState.state, i, inputi, att, i, att)
-   else
-    let top = top.stk,
-     if is!.Sstate.top then
-      {goto Fstate.top.stk, i = faili.top, pop.stk, discard result}
-      let newstk = pop.stk
-      let newi = faili.top
-      let ini = idxNB(myinput, newi),
-      next(maxi, maxStk, newstk, Fstate.top, newi, ini, failresult.top, faili.top, failresult.top)
-     else
-      let att = [action(reduceNo.state, reduction.result, i, myinput, common, stk)],
-       if i ≥ maxi then
-       next(i, stk, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
-       else next(maxi, maxStk, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
-  else if actionState = Match then
+   let top = top.stk
+   let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i) else rinfo
+   let att = [action(reduceNo.state, result, common, newrinfo)],
+   next(newrinfo, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+  else if actionState = Reduce* then
+   let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i) else rinfo
+   let att = [action(reduceNo.state, result, common, newrinfo)]
+   let top = top.stk,
+   next(newrinfo, stk, nextState.state, i, inputi, att, i, att)
+  else if actionState = !Reduce then
+   let top = top.stk
+   let ini = idxNB(myinput, faili.top),
+   next(rinfo, pop.stk, Fstate.top, faili.top, ini, failresult.top, faili.top, failresult.top)
+  else if actionState = !Fail then
+   let top = top.stk
+   let ini = idxNB(myinput, i.top),
+   next(rinfo, pop.stk, Sstate.top, i.top, ini, result.top, faili.top, failresult.top)
+  else if actionState = T then
    let te = idxNB(packedTable, index.state),
     if inputi ≠ match.te then
-     {fail}
-     next(maxi, maxStk, stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
-    else next(maxi, maxStk, stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
-  else if actionState = !Match then
+    {fail} next(rinfo, stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+    else next(rinfo, stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
+  else if actionState = !T then
    let te = idxNB(packedTable, index.state),
     if inputi = match.te then
-     {fail}
-     next(maxi, maxStk, stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
-    else next(maxi, maxStk, stk, Fstate.te, i, inputi, result, faili, failresult)
+    {fail} next(rinfo, stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+    else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else if actionState = MatchAny then
    let te = idxNB(packedTable, index.state),
     if inputi = endMark then
-    {fail} next(maxi, maxStk, stk, Fstate.te, i, inputi, result, faili, failresult)
+    {fail} next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
     else
-     let reslt =
-      if action.Sstate.te = Discard* then
-      result
-      else result + toAttribute(1^result, [inputi])
+     let reslt = result + toAttribute(1^result, [inputi])
      let ini = idxNB(myinput, i + 1),
-     next(maxi, maxStk, stk, Sstate.te, i + 1, ini, reslt, faili, failresult)
-  else if actionState = MatchNext then
+     next(rinfo, stk, Sstate.te, i + 1, ini, reslt, faili, failresult)
+  else if actionState = T' then
    let te = idxNB(packedTable, index.state),
     if inputi = match.te then
-    next(maxi, maxStk, stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
-    else next(maxi, maxStk, stk, Fstate.te, i, inputi, result, faili, failresult)
+    next(rinfo, stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
+    else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    {match non Terminal}
    let te = idxNB(packedTable, index.state)
-   assert action.action.te = MatchNT report "PROBLEM PEG^(state)"
+   assert action.action.te ∈ [NT, NT*] report "PROBLEM PEG^(state)"
    let newstk = push(stk, frame(Sstate.te, Fstate.te, i, result, faili, failresult))
    let tmp = [toAttribute(1^result, empty:seq.word)],
-   next(maxi, maxStk, newstk, nextState.action.te, i, inputi, tmp, i, tmp),
-runresultType.push(maxStk, frame(state, state, maxi, result, n.myinput, result)) 
+   next(rinfo, newstk, nextState.action.te, i, inputi, tmp, i, tmp),
+recoverInfo(
+ push(stk.rinfo, frame(state, state, place.rinfo, result, n.myinput, result))
+ , input.rinfo
+ , place.rinfo
+) 

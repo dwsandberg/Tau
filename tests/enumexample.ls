@@ -1,3 +1,7 @@
+/tag <a /sp id=enum />
+
+/tag <h1> enumexample /tag </h1>
+
 Module enumexample
 
 use bits
@@ -5,13 +9,15 @@ use bits
 use standard
 
 The function name genEnum is treated as magic by the transform command. It auto generates the code
-to implement enumeration types. This example implements two enumberation types.In the first enumeration
-type Each word in the value list is given a value starting with 0. The ? mark is a place holder for
+to implement enumeration types. This example implements two enumeration types. In the first enumeration
+type Each word in the value list is given a value starting with 0. 
+
+In the first example The question mark is a place holder for
 numbers that with not be include in the type.
 
-The second example uses an existing data type byte.
+The second example uses an existing data type byte. 
 
-function genEnum seq.seq.word
+function genEnum seq.seq.word 
 [
  "newType = numbers values = ? two0 two1 ? two2 ? ? ? two3"
  , "existingType = byte decodeName = twodecode values = Two0 1 Two1 2 Two2 4 Two3 0x08"

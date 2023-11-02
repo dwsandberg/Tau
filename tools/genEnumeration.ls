@@ -11,7 +11,7 @@ use sparseseq.word
 function isempty(s:seq.word, b:seq.word) seq.word if isempty.s then b else s
 
 Function generateEnum(yy:seq.word) seq.seq.word
-let zz = break(1_",", subseq(yy, findindex(yy, 1_"[") + 1, n.yy - 1))
+let zz = break(1#",", subseq(yy, findindex(yy, 1#"[") + 1, n.yy - 1))
 for auto = empty:seq.seq.word, z ∈ zz
 do
  let p = subseq(z, 2, n.z - 1)
@@ -22,7 +22,7 @@ do
  report "genEnum: Either existingType = or newType = must specify a type name in^(p)"
  assert not.isempty.values report "genEnum: values = must not be empty^(p)",
   auto
-  + enumerate(
+   + enumerate(
    newType + existingType
    , values
    , not.isempty.existingType
@@ -38,7 +38,7 @@ function enumerate(
 ) seq.seq.word
 let codes =
  if existingtype then
-  for acc = sparseseq.1_"?", state = 1, code = 1_codes0, w ∈ codes0 << 1
+  for acc = sparseseq.1#"?", state = 1, code = 1#codes0, w ∈ codes0 << 1
   do
    if state = 1 then
    next(replaceS(acc, toint.w + 1, [code]), 0, code)
@@ -60,25 +60,24 @@ let codes =
  + 
  for acc = empty:seq.seq.word, list = "let discard = [", i ∈ arithseq(n.codes, 1, 1)
  do
-  if i_codes = 1_"?" then
+  if i#codes = 1#"?" then
   next(acc, list)
   else next(
    let cvt =
     if existingtype then
     if type = "int" then "" else [merge."to^(type)"] + "."
     else type + ".",
-   acc + "Function^(i_codes)^(type)^(cvt)^(i - 1)"
-   , list + i_codes + ","
+   acc + "Function^(i#codes)^(type)^(cvt)^(i - 1)"
+   , list + i#codes + ","
   ),
   acc
-  + (
+   + (
    "Function^(decodename) (code:^(type)) seq.word^(list >> 1)] let i =
-    ^(if type = "int" then "" else "toint.")"
-   + "code, if between (i+1, 1,"
-   + toword.n.codes
-   + ") then let r = [(i+1)_^(dq.codes)],"
-   + "if r ≠^(dq."?") then r else^(dq(type + "."))+toword.i else^(dq(type + "."))"
-   + "+toword.i"
+   ^(if type = "int" then "" else "toint.") code, if between (i+1, 1,"
+    + toword.n.codes
+    + ") then let r = [(i+1)#^(dq.codes)],"
+    + "if r ≠^(dq."?") then r else^(dq(type + "."))+toword.i else^(dq(type + "."))"
+    + "+toword.i"
   )
 
 function genEnum seq.seq.word
@@ -112,7 +111,7 @@ Function decode(code:e1) seq.word
 let discard = [h3, h4, h5]
 let i = toint.code,
 if between(i + 1, 1, 3) then
-let r = [(i + 1)_"h3 h4 h5"], if r ≠ "?" then r else "e1." + toword.i
+let r = [(i + 1)#"h3 h4 h5"], if r ≠ "?" then r else "e1." + toword.i
 else "e1." + toword.i
 
 type e2 is toint:int
@@ -133,7 +132,7 @@ Function decode(code:e2) seq.word
 let discard = [r5, r6]
 let i = toint.code,
 if between(i + 1, 1, 2) then
-let r = [(i + 1)_"r5 r6"], if r ≠ "?" then r else "e2." + toword.i
+let r = [(i + 1)#"r5 r6"], if r ≠ "?" then r else "e2." + toword.i
 else "e2." + toword.i
 
 Function r3 int 3
@@ -144,7 +143,8 @@ Function d1(code:int) seq.word
 let discard = [r3, r7]
 let i = code,
 if between(i + 1, 1, 10) then
-let r = [(i + 1)_"? ? ? r3 ? ? ? ? ? r7"], if r ≠ "?" then r else "int." + toword.i
+ let r = [(i + 1)#"? ? ? r3 ? ? ? ? ? r7"],
+ if r ≠ "?" then r else "int." + toword.i
 else "int." + toword.i
 
 Function op1 byte tobyte.45
@@ -157,8 +157,8 @@ let i = toint.code,
 if between(i + 1, 1, 98) then
  let r = [
   (i + 1)
-  _"? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op1 ? ? ?
-   ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op2"
+  #"? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op1 ? ? ?
+  ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? op2"
  ],
  if r ≠ "?" then r else "byte." + toword.i
 else "byte." + toword.i
@@ -179,6 +179,9 @@ Function twodecode(code:byte) seq.word
 let discard = [two0, two1, two2, two3, two4, two5]
 let i = toint.code,
 if between(i + 1, 1, 33) then
- let r = [(i + 1)_"two0 ? two1 ? two2 ? ? ? two3 ? ? ? ? ? ? ? two4 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? two5"],
+ let r = [
+  (i + 1)
+  #"two0 ? two1 ? two2 ? ? ? two3 ? ? ? ? ? ? ? two4 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? two5"
+ ],
  if r ≠ "?" then r else "byte." + toword.i
 else "byte." + toword.i 

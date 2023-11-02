@@ -118,7 +118,7 @@ do
    , acctypes
    , typearcs
   )
-  else if 1_input ∈ "Module module" then
+  else if 1#input ∈ "Module module" then
    let x = findpasstypes(passtypes, lib, input)
    assert not.isempty.x report "did not find^(input)"
    let lastpass = resolve(
@@ -134,21 +134,21 @@ do
     , empty:seq.symbol
     , empty:set.symbol
     , empty:set.symbol
-    , uses.1_x
-    , modname.1_x
-    , formtypedict(passtypes, 1_x)
+    , uses.1#x
+    , modname.1#x
+    , formtypedict(passtypes, 1#x)
     , typearcs
    )
-  else if 1_input ∈ "Function function Builtin builtin Export unbound" then
+  else if 1#input ∈ "Function function Builtin builtin Export unbound" then
    let input0 =
     if subseq(input, 1, 3) = "Export type:" then
-     let x1 = findindex(input, 1_"{")
+     let x1 = findindex(input, 1#"{")
      let xtype = if x1 > n.input then input << 3 else subseq(input, 4, x1 - 1),
      "Export type:^(xtype) (^(xtype))^(xtype)"
     else input
    let b = symbolparse(input0, acctypes, accmodname)
    let modname =
-    if 1_input ∈ "Builtin builtin" then
+    if 1#input ∈ "Builtin builtin" then
     if isSimple.accmodname then internalmod else accmodname
     else accmodname
    let sym =
@@ -159,11 +159,11 @@ do
       else if name = "false" then
       Litfalse
       else symbol(modname, text.b, types.b >> 1, 1^types.b)
-    else symbol4(modname, 1_text.b, 1_types.b, subseq(types.b, 2, n.types.b - 1), 1^types.b)
+    else symbol4(modname, 1#text.b, 1#types.b, subseq(types.b, 2, n.types.b - 1), 1^types.b)
    assert checkwellformed.sym
    report "Must use type T in function name or parameters in parameterized module and T cannot be used in non
-    -parameterized module^(input)",
-    if 1_input = 1_"unbound" then
+   -parameterized module^(input)",
+    if 1#input = 1#"unbound" then
     next(
      typeflds
      , paragraphno + 1
@@ -177,11 +177,13 @@ do
      , acctypes
      , typearcs
     )
-    else if 1_input = 1_"Export" then
+    else if 1#input = 1#"Export" then
     next(
      typeflds
      , paragraphno + 1
-     , if 1_"OPTION" ∈ input then text + symdef(sym, empty:seq.symbol, paragraphno) else text
+     , if 1#"OPTION" ∈ input then
+      text + symdef(sym, empty:seq.symbol, paragraphno)
+      else text
      , modlist
      , defines
      , exports
@@ -200,21 +202,21 @@ do
       , text + symdef(sym, empty:seq.symbol, paragraphno)
       , modlist
       , defines + sym
-      , if 1_input ∈ "Function Builtin" then exports + sym else exports
+      , if 1#input ∈ "Function Builtin" then exports + sym else exports
       , unresolvedexports
       , uses
       , accmodname
       , acctypes
       , typearcs
      )
-  else if 1_input ∈ "type" then
+  else if 1#input ∈ "type" then
    let b = symbolparse(input, acctypes + typeseqdec, accmodname)
    let typs = types.b
-   let typesym = {deepcopy is used to represent type} deepcopySym.1_typs
-   let isseq = 2_typs = typeseqdec
-   let flds = flds(isseq, text.b, accmodname, 2_input, typs)
+   let typesym = {deepcopy is used to represent type} deepcopySym.1#typs
+   let isseq = 2#typs = typeseqdec
+   let flds = flds(isseq, text.b, accmodname, 2#input, typs)
    let newdefines = for acc = defines + typesym, sd ∈ flds do acc + sym.sd, acc
-   let tt = if isseq then [1_typs, typeint, typeint] + typs << 2 else typs,
+   let tt = if isseq then [1#typs, typeint, typeint] + typs << 2 else typs,
    next(
     typeflds + tt
     , paragraphno + 1
@@ -265,7 +267,7 @@ Function flds(
  , name:word
  , typs:seq.mytype
 ) seq.symdef
-let recordtype = if isSimple.modname then 1_typs else addabstract(1_typs, typeT),
+let recordtype = if isSimple.modname then 1#typs else addabstract(1#typs, typeT),
 if not.isseq ∧ n.typs = 2 then
  let typ = recordtype,
   if iscore4.typ then
@@ -277,7 +279,7 @@ if not.isseq ∧ n.typs = 2 then
     , symdef(symbol(modname, binfotext, typ, fldtype), [Local.1], 0)
    ]
 else
- let indexfunc = symbol(modname, "_", recordtype, typeint, typeT)
+ let indexfunc = symbol(modname, "sequenceIndex", recordtype, typeint, typeT)
  for
   flds = empty:seq.symdef
   , idx = 1
@@ -291,10 +293,10 @@ else
    if size = 1 then
    unknownsize
    else unknownsize + symbol(builtinmod.fldtype, "typesize", typeint) + PlusOp,
-   if idx_binfotext ∈ ":" then
+   if idx#binfotext ∈ ":" then
    next(flds, idx + 1, knownsize + size, usize, constructflds)
    else next(
-    flds + fldsym(modname, idx_binfotext, recordtype, fldtype, knownsize, unknownsize)
+    flds + fldsym(modname, idx#binfotext, recordtype, fldtype, knownsize, unknownsize)
     , idx + 1
     , knownsize + size
     , usize
@@ -306,24 +308,24 @@ else
    )
  let constructor = symbol(modname, [name], if isseq then [typeint] + typs << 2 else typs << 1, recordtype),
   flds
-  + symdef(
+   + symdef(
    constructor
    , constructflds + symbol(builtinmod.recordtype, "buildrecord", recordtype, typeptr)
    , 0
   )
-  + 
+   + 
    if isseq then
     let seqtype = seqof.para.modname,
      [
       symdef(symbol(modname, "toseq", recordtype, seqtype), [Local.1], 0)
       , symdef(
-       symbol4(modname, 1_"to", recordtype, [seqtype], recordtype)
+       symbol4(modname, 1#"to", recordtype, [seqtype], recordtype)
        , ifthenelse([Local.1, GetSeqType, Fref.indexfunc, EqOp], [Local.1], [Sequence(typeint, 0)], typeptr)
        , 0
       )
      ]
-     + 
-      if name = 1_"seq" then
+      + 
+      if name = 1#"seq" then
       [
        symdef(symbol(builtinmod.typeint, "length", recordtype, typeint), [Local.1, GetSeqLength], 0)
        , symdef(symbol(builtinmod.typeint, "getseqtype", recordtype, typeint), [Local.1, GetSeqType], 0)
@@ -349,8 +351,8 @@ symdef(
 function knownsize(fldtype:mytype) int
 if
  fldtype ∈ [typeint, typeword, typereal, typeboolean, typeseqdec]
- ∨ isseq.fldtype
- ∨ isencoding.fldtype
+  ∨ isseq.fldtype
+  ∨ isencoding.fldtype
 then
 1
 else 0
@@ -365,19 +367,19 @@ let w = symdef(t2, empty:seq.symbol, 0),
 if module.newsym = module.t2 then
 s
 else
- for i = 1, e ∈ s while sym.e ≠ sym.w ∨ 1_(paragraphno.e)_allsrc ∉ "Export" do i + 1,
+ for i = 1, e ∈ s while sym.e ≠ sym.w ∨ 1#(paragraphno.e)#allsrc ∉ "Export" do i + 1,
   if i > n.s then
   s
   else
    subseq(s, 1, i - 1)
-   + symdef(newsym, empty:seq.symbol, paragraphno.i_s)
-   + subseq(s, i + 1, n.s)
+    + symdef(newsym, empty:seq.symbol, paragraphno.i#s)
+    + subseq(s, i + 1, n.s)
 
 function resolve(all:set.passsymbols, p:passsymbols, allsrc:seq.seq.word) passsymbols
 if isempty.unresolvedexports.p then
 p
 else
- let r = formsymboldict(all, p, empty:set.symdef, 1_"symbol")
+ let r = formsymboldict(all, p, empty:set.symdef, 1#"symbol")
  let dict = symboldict(syms.r, req.r)
  for
   exports = exports.p
@@ -387,13 +389,13 @@ else
  do
   let b = lookupbysig(dict, t2),
    if checkreturntype(b, t2) then
-   next(exports + 1_b, unresolved, findindex(t2, newtext, 1_b, allsrc))
+   next(exports + 1#b, unresolved, findindex(t2, newtext, 1#b, allsrc))
    else next(exports, unresolved + t2, newtext),
  passsymbols(modname.p, uses.p, defines.p, exports, unresolved, typedict.p, newtext)
 
 function checkreturntype(b:set.symbol, t2:symbol) boolean
 if n.b = 1 then
- let t = resulttype.1_b = resulttype.t2
+ let t = resulttype.1#b = resulttype.t2
  assert t report "Export result type does not match^(t2)",
  t
 else false
@@ -431,11 +433,11 @@ do
    assert mode ∉ "body" report "Cannot find module" + name.u
    {needed for when modset passsymbols are not yet created}
    next(syms, requires, 0)
-  else if not.isAbstract.modname.1_a then
-  next(syms ∪ exports.1_a, requires, 0)
+  else if not.isAbstract.modname.1#a then
+  next(syms ∪ exports.1#a, requires, 0)
   else
    let r =
-    for acc = syms, req = requires, e ∈ toseq.exports.1_a
+    for acc = syms, req = requires, e ∈ toseq.exports.1#a
     do
      let sym2 = replaceTsymbol(para.u, e),
       if isempty.requireUnbound then
@@ -446,7 +448,7 @@ do
         next(acc + sym2, req)
         else
          let list =
-          for acc2 = empty:seq.symbol, sym4 ∈ code.1_require do acc2 + replaceTsymbol(para.u, sym4),
+          for acc2 = empty:seq.symbol, sym4 ∈ code.1#require do acc2 + replaceTsymbol(para.u, sym4),
           acc2,
          next(acc + setrequires.sym2, req + symdef(sym2, list, 0)),
     partdict(acc, req),
@@ -469,7 +471,7 @@ do
    let z =
     for Tis = type?, idx = 1, t ∈ types.e
     do
-     let S = solveT(t, idx_types.sym),
+     let S = solveT(t, idx#types.sym),
      if S = type? then next(Tis, idx + 1) else next(S, idx + 1),
     Tis,
     if sym >2 replaceTsymbol(z, e) = EQ then

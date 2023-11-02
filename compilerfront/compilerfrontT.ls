@@ -22,7 +22,7 @@ use localmap2
 
 use set.localmap2
 
-use makeentry
+use cmd2html
 
 use objectio.midpoint
 
@@ -82,7 +82,7 @@ Function compilerFront:T(
 for libinfo = empty:midpoint, data = empty:seq.byte, i ∈ input
 do
  if ext.fn.i ∈ "libinfo" then
-  let new = 1_inbytes:midpoint(data.i),
+  let new = 1#inbytes:midpoint(data.i),
   next(
    midpoint("", prg.libinfo ∪ prg.new, emptytypedict, libmods.libinfo + libmods.new, empty:seq.seq.word)
    , data
@@ -95,16 +95,16 @@ do
 let allsrc = breakparagraph.data
 let libname =
  if isempty.libname0 then
-  let lib0 = extractValue(1_allsrc, "Library")
+  let lib0 = extractValue(1#allsrc, "Library")
   assert not.isempty.lib0 report "no library specified",
-  1_lib0
- else 1_libname0
+  1#lib0
+ else 1#libname0
 let exports = extractExports(allsrc, exports0)
 let m =
- if 1_"bitcode" ∉ option then
+ if 1#"bitcode" ∉ option then
  compilerfront3(option, allsrc, libname, exports, libinfo)
  else
-  let EPname = merge.[libname, 1_"$EP"],
+  let EPname = merge.[libname, 1#"$EP"],
   compilerfront3(
    option
    , allsrc + ["Module^(EPname)"] + modEntry(allsrc, entryUses)
@@ -112,17 +112,17 @@ let m =
    , exports + EPname
    , libinfo
   ),
-if 1_option.m ∈ "library text pass1 pass1a prebind" then
+if 1#option.m ∈ "library text pass1 pass1a prebind" then
 m
 else
- let librarymap = [libname, 1_"*"]
- let prg = {if" xxx"_1 ∈ option then GG.hasstate.prg.m else} prg.m
+ let librarymap = [libname, 1#"*"]
+ let prg = {if" xxx"#1 ∈ option then GG.hasstate.prg.m else} prg.m
  let prg5 = pass2:T(librarymap, prg, typedict.m, option, libname)
  {assert false report trackresults}
  let m2 =
-  if 1_"profile" ∈ option then
-   let profinit = symbol(moduleref.[libname, 1_"initialize"], "initProfile", typeptr)
-   let profdata = symbol(moduleref.[libname, 1_"initialize"], "profileData", typeptr)
+  if 1#"profile" ∈ option then
+   let profinit = symbol(moduleref.[libname, 1#"initialize"], "initProfile", typeptr)
+   let profdata = symbol(moduleref.[libname, 1#"initialize"], "profileData", typeptr)
    let prg6 = addprofile(prg5, libname),
     if isempty.prg6 then
     m
@@ -135,7 +135,7 @@ else
      , src.m
     )
   else midpoint5(option, prg5, templates.m, typedict.m, libmods.m, src.m),
-  if 1_"bitcode" ∈ option then
+  if 1#"bitcode" ∈ option then
    let m3 = prepareback(m2, libinfo),
    midpoint5(option.m3, prg.m3, templates.m3, typedict.m3, libmods.m3, src.m3 + allsrc)
   else m2
@@ -160,25 +160,25 @@ Function pass2:T(
 ) set.symdef
 {OPTION XPROFILE}
 {for idxNBsyms = empty:seq.symdef, tp ∈ packedtypes+typeint+typereal+typeboolean+
- typeptr+typebyte do idxNBsyms+symdef4 (symbol (internalmod," idxNB", seqof.tp, typeint
- , tp), empty:seq.symbol, 0," COMPILETIME")}
+typeptr+typebyte do idxNBsyms+symdef4 (symbol (internalmod," idxNB", seqof.tp, typeint
+, tp), empty:seq.symbol, 0," COMPILETIME")}
 for knownsymbols = empty:set.symdef, pele0 ∈ toseq.prg
 do
  if isempty.code.pele0 then
  knownsymbols + pele0
  else
   let code = code.pele0
-  for acc = [1_code], last = 1_code, c ∈ code << 1
+  for acc = [1#code], last = 1#code, c ∈ code << 1
   do next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
   let sd = symdef4(sym.pele0, acc, paragraphno.pele0, getOptions.pele0),
    if isrecordconstant.sym.sd then
    let discard = registerConstant.sd, knownsymbols
    else knownsymbols + sd,
-if 1_"addpass" ∈ option then
+if 1#"addpass" ∈ option then
 additionalpass:T(librarymap, toseq.knownsymbols, knownsymbols, t, libname)
 else
  subpass2:T(librarymap, empty:seq.symdef, empty:set.symdef, knownsymbols, 0, t, libname)
- ∪ constantsymbols.libname
+  ∪ constantsymbols.libname
 
 function subpass2:T(
  librarymap:seq.word
@@ -275,11 +275,11 @@ do
   else if isspecial.sym then
    if islocal.sym then
     let t = lookup(map, value.sym),
-    next(flags, result + if isempty.t then [sym] else value.1_t, nextvar, map)
+    next(flags, result + if isempty.t then [sym] else value.1#t, nextvar, map)
    else if isdefine.sym then
     let thelocal = value.sym,
-     if len > 0 ∧ (isconst.len_result ∨ islocal.len_result) then
-     next(flags, subseq(result, 1, n.result - 1), nextvar, localmap2(thelocal, [len_result]) ∪ map)
+     if len > 0 ∧ (isconst.len#result ∨ islocal.len#result) then
+     next(flags, subseq(result, 1, n.result - 1), nextvar, localmap2(thelocal, [len#result]) ∪ map)
      else if renumber then
      next(flags, result + Define.nextvar, nextvar + 1, localmap2(thelocal, [Local.nextvar]) ∪ map)
      else next(flags, result + sym, nextvar, map)
@@ -317,7 +317,7 @@ do
     next(flags, result >> 1 + Littrue, nextvar, map)
     else next(flags, result + sym, nextvar, map)
   else if n.result > 2 ∧ isconst.1^result ∧ ismember.sym then
-   let arg = (n.result - 1)_result
+   let arg = (n.result - 1)#result
    let nonew = islocal.arg ∨ isconst.arg
    let z = seqelements.1^result
    let var = if nonew then arg else Local.nextvar
@@ -325,7 +325,7 @@ do
     if isempty.z then
     [Litfalse]
     else if n.z = 1 then
-    [var, 1_z, EqOp]
+    [var, 1#z, EqOp]
     else
      let t = n.z + 2
      for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1
@@ -340,9 +340,9 @@ do
    {assert name.sym /nin" idxNB" report" jkl^(sym)"}
    let nopara = nopara.sym
    let b = getSymdef(p, sym)
-   let options = if isempty.b then "" else getOptions.1_b
+   let options = if isempty.b then "" else getOptions.1#b
    let compiletime =
-    if not(1_"COMPILETIME" ∈ options ∨ name.sym ∈ "_idxNB" ∧ nopara = 2) then
+    if not(1#"COMPILETIME" ∈ options ∨ name.sym ∈ "#idxNB" ∧ nopara = 2) then
     empty:seq.symbol
     else
      let args = subseq(result, len - nopara + 1, len)
@@ -351,7 +351,7 @@ do
       {let discard100 = track.sym} interpretCompileTime:T(librarymap, args, sym, typedict)
       else empty:seq.symbol,
     if not.isempty.compiletime then
-     let newconst = if n.compiletime > 1 then Constant2(libname, compiletime) else 1_compiletime,
+     let newconst = if n.compiletime > 1 then Constant2(libname, compiletime) else 1#compiletime,
      next(flags, result >> nopara + newconst, nextvar, map)
     else if wordname.sym ∈ "idxNB" ∧ isInternal.sym then
     next(flags ∨ HasidxNB, result + sym, nextvar, map)
@@ -360,11 +360,11 @@ do
       if not.isempty.newresult then
       next(flags, newresult, nextvar, map)
       else
-       let code = if isempty.b then empty:seq.symbol else code.1_b,
-        if 1_"VERYSIMPLE" ∈ options then
+       let code = if isempty.b then empty:seq.symbol else code.1#b,
+        if 1#"VERYSIMPLE" ∈ options then
         next(flags, result + code << nopara.sym, nextvar, map)
-        else if 1_"INLINE" ∉ options then
-         let newflags = if 1_"STATE" ∈ options ∨ isGlobal.sym then State ∨ flags else flags,
+        else if 1#"INLINE" ∉ options then
+         let newflags = if 1#"STATE" ∈ options ∨ isGlobal.sym then State ∨ flags else flags,
          next(newflags, result + sym, nextvar, map)
         else if isempty.code then
         next(flags, result + sym, nextvar, map)

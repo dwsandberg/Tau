@@ -101,7 +101,7 @@ else
 
 Function complement(g:graph.T) graph.T graph(backarcs.g, arcs.g, nodes.g)
 
-_________________
+-------------------------------
 
 ordering of nodes in graph
 
@@ -137,7 +137,7 @@ Function breathfirst(g:graph.T) seq.T
 {will not return nodes involved in a cycle}
 breathfirst(g, empty:set.T, empty:seq.T)
 
-____________________
+-------------------------------
 
 Function outdegree(g:graph.T, n:T) int n.successors(g, n)
 

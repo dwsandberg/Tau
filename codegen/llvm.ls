@@ -42,7 +42,7 @@ type llvmtype is typ:int
 
 function asseq(t:llvmtype) seq.int toseq.decode.to:encoding.llvmtypeele(typ.t + 1)
 
-Function returntype(func:llvmtype) llvmtype llvmtype.3_asseq.func
+Function returntype(func:llvmtype) llvmtype llvmtype.3#asseq.func
 
 Function llvmtype(s:seq.int) llvmtype llvmtype(addorder.llvmtypeele.s - 1)
 
@@ -54,14 +54,14 @@ function =(a:llvmtypeele, b:llvmtypeele) boolean toseq.a = toseq.b
 
 Function %(t:llvmtype) seq.word
 let a = asseq.t
-let tp = typeop.1_a
+let tp = typeop.1#a
 let b = for acc = empty:seq.llvmtype, @e ∈ a do acc + llvmtype.@e, acc,
 if tp = INTEGER then
-[merge("i" + toword.2_a)]
+[merge("i" + toword.2#a)]
 else if tp = ARRAY then
-"array (" + toword.2_a + "," + %.3_b + ")"
+"array (" + toword.2#a + "," + %.3#b + ")"
 else if tp = POINTER then
-"ptr.^(2_b)"
+"ptr.^(2#b)"
 else if tp = FUNCTION then
 "function (^(for acc = "", @e ∈ subseq(b, 3, n.a) do acc + %.@e + ",", acc >> 1))"
 else if tp = TVOID then
@@ -102,7 +102,7 @@ Function =(a:slotrecord, b:slotrecord) boolean
 symtabname.a = symtabname.b ∧ typ.a = typ.b
 
 function symtabname(a:slotrecord) seq.int
-if typ.a ∈ [-1,-2] then subseq(toseq.a, 2, 1 + 1_toseq.a) else toseq.a
+if typ.a ∈ [-1,-2] then subseq(toseq.a, 2, 1 + 1#toseq.a) else toseq.a
 
 Function modulerecord(name:seq.word, rec:seq.int) slot
 let c =
@@ -116,14 +116,14 @@ slot(addorder.c - 1)
 Function %(slot:slot) seq.word
 if between(toint.slot, 0, n.encodingdata:slotrecord) then
  let llvmConst = decode.to:encoding.slotrecord(toint.slot + 1),
-  if 1_toseq.llvmConst = toint.CINTEGER then
-  %.2_toseq.llvmConst
+  if 1#toseq.llvmConst = toint.CINTEGER then
+  %.2#toseq.llvmConst
   else "{^(toint.slot)}"
 else "{^(toint.slot)}"
 
 Function dumpslots seq.word
 for acc = "", i ∈ arithseq(n.encodingdata:slotrecord, 1, 0)
-do acc + "^(i):^(slot.i) /br",
+do acc + (%.i + ":" + %.slot.i + "/br"),
 acc
 
 Function C64(i:int) slot slot(addorder.slotrecord(typ.i64, [toint.CINTEGER, i]) - 1)
@@ -142,7 +142,7 @@ Function AGGREGATE(data:seq.slot) slot
 let t = array(n.data, i64),
 slot(
  addorder.slotrecord(typ.t, [toint.CAGGREGATE] + for acc = empty:seq.int, @e ∈ data do acc + toint.@e, acc)
- - 1
+  - 1
 )
 
 Function ptrtoint(argtype:llvmtype, p:slot) slot
@@ -169,20 +169,20 @@ constantrecord(i64, [toint.CCAST, toint.ptrtoint, typ.ptr.i64, toint.s])
 else
  assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64]
  report "asi64 problem^(typ.l)^(stacktrace)",
- slot.4_toseq.l
+ slot.4#toseq.l
 
-Function constvalue(i:slot) int 2_toseq.decode.to:encoding.slotrecord(toint.i + 1)
+Function constvalue(i:slot) int 2#toseq.decode.to:encoding.slotrecord(toint.i + 1)
 
 Function constantrecords seq.slotrecord encodingdata:slotrecord
 
 Function record(a:slotrecord) seq.int
 if typ.a = -1 then
-{name comes before record} subseq(toseq.a, 2 + 1_toseq.a, n.toseq.a)
+{name comes before record} subseq(toseq.a, 2 + 1#toseq.a, n.toseq.a)
 else toseq.a
 
 Function symtablename(a:slotrecord) seq.char
 if typ.a ∈ [-1,-2] then
-tocharseq.subseq(toseq.a, 2, 1 + 1_toseq.a)
+tocharseq.subseq(toseq.a, 2, 1 + 1#toseq.a)
 else empty:seq.char
 
 Function ismoduleblock(a:slotrecord) boolean typ.a < 0
@@ -193,9 +193,9 @@ Function consttype(s:slot) llvmtype
 let l = decode.to:encoding.slotrecord(toint.s + 1),
 llvmtype.
  if typ.l = -1 then
- {must skip name to find record} (3 + 1_toseq.l)_toseq.l
+ {must skip name to find record} (3 + 1#toseq.l)#toseq.l
  else if typ.l = -3 then
- 2_toseq.l
+ 2#toseq.l
  else typ.l
 
 type slot is toint:int
@@ -207,30 +207,30 @@ let a = decode.MODULE + decode.SETTYPE + decode.MODULE + decode.TVOID
 let b = VOID
 let c =
  align8 = align8
- ∨ add = add
- ∨ trunc = trunc
- ∨ MODULE = MODULE
- ∨ CNULL = CNULL
- ∨ Feq = Feq,
+  ∨ add = add
+  ∨ trunc = trunc
+  ∨ MODULE = MODULE
+  ∨ CNULL = CNULL
+  ∨ Feq = Feq,
 0
 
 function genEnum seq.seq.word
 [
  "newType = align values = unspecified ? ? ? align8 align16 align32 align64"
  , "newType = instop values = ? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA
-  LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+ LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
  , "newType = typeop values = ? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ?
-  ? ? FUNCTION"
+ ? ? FUNCTION"
  , "newType = blockop values = INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ?
-  VALUESYMTABLE ? ? TYPES"
+ VALUESYMTABLE ? ? TYPES"
  , "newType = moduleop values = ? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"
  , "newType = constop values = ? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2
-  CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
+ CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
  , "newType = castop values = trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint
-  inttoptr bitcast"
+ inttoptr bitcast"
  , "newType = binaryop values = add sub mul udiv sdiv urem srem shl lshr ashr and or xor"
  , "newType = cmp2op values = ? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
-  ? eq ne ugt uge ult ule sgt sge slt sle"
+ ? eq ne ugt uge ult ule sgt sge slt sle"
 ]
 
 <<<< Below is auto generated code >>>>
@@ -259,7 +259,7 @@ Function decode(code:align) seq.word
 let discard = [unspecified, align8, align16, align32, align64]
 let i = toint.code,
 if between(i + 1, 1, 8) then
- let r = [(i + 1)_"unspecified ? ? ? align8 align16 align32 align64"],
+ let r = [(i + 1)#"unspecified ? ? ? align8 align16 align32 align64"],
  if r ≠ "?" then r else "align." + toword.i
 else "align." + toword.i
 
@@ -307,8 +307,8 @@ let i = toint.code,
 if between(i + 1, 1, 45) then
  let r = [
   (i + 1)
-  _"? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ?
-   ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+  #"? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR SWITCH ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ?
+  ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
  ],
  if r ≠ "?" then r else "instop." + toword.i
 else "instop." + toword.i
@@ -345,7 +345,7 @@ let i = toint.code,
 if between(i + 1, 1, 22) then
  let r = [
   (i + 1)
-  _"? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
+  #"? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
  ],
  if r ≠ "?" then r else "typeop." + toword.i
 else "typeop." + toword.i
@@ -382,7 +382,7 @@ let i = toint.code,
 if between(i + 1, 1, 18) then
  let r = [
   (i + 1)
-  _"INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
+  #"INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
  ],
  if r ≠ "?" then r else "blockop." + toword.i
 else "blockop." + toword.i
@@ -411,7 +411,7 @@ Function decode(code:moduleop) seq.word
 let discard = [Version, TRIPLE, LAYOUT, GLOBALVAR, FUNCTIONDEC]
 let i = toint.code,
 if between(i + 1, 1, 9) then
- let r = [(i + 1)_"? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"],
+ let r = [(i + 1)#"? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"],
  if r ≠ "?" then r else "moduleop." + toword.i
 else "moduleop." + toword.i
 
@@ -471,8 +471,8 @@ let i = toint.code,
 if between(i + 1, 1, 23) then
  let r = [
   (i + 1)
-  _"? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ?
-   ? ? ? ? ? CGEP ? CDATA"
+  #"? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ?
+  ? ? ? ? ? CGEP ? CDATA"
  ],
  if r ≠ "?" then r else "constop." + toword.i
 else "constop." + toword.i
@@ -515,7 +515,10 @@ Function decode(code:castop) seq.word
 let discard = [trunc, zext, sext, fptoui, fptosi, uitofp, sitofp, fptrunc, fpext, ptrtoint, inttoptr, bitcast]
 let i = toint.code,
 if between(i + 1, 1, 12) then
- let r = [(i + 1)_"trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"],
+ let r = [
+  (i + 1)
+  #"trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
+ ],
  if r ≠ "?" then r else "castop." + toword.i
 else "castop." + toword.i
 
@@ -559,7 +562,7 @@ Function decode(code:binaryop) seq.word
 let discard = [add, sub, mul, udiv, sdiv, urem, srem, shl, lshr, ashr, and, or, xor]
 let i = toint.code,
 if between(i + 1, 1, 13) then
- let r = [(i + 1)_"add sub mul udiv sdiv urem srem shl lshr ashr and or xor"],
+ let r = [(i + 1)#"add sub mul udiv sdiv urem srem shl lshr ashr and or xor"],
  if r ≠ "?" then r else "binaryop." + toword.i
 else "binaryop." + toword.i
 
@@ -611,8 +614,8 @@ let i = toint.code,
 if between(i + 1, 1, 42) then
  let r = [
   (i + 1)
-  _"? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule
-   sgt sge slt sle"
+  #"? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule
+  sgt sge slt sle"
  ],
  if r ≠ "?" then r else "cmp2op." + toword.i
 else "cmp2op." + toword.i 

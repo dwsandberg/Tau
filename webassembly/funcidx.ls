@@ -60,7 +60,7 @@ type wtype is val:seq.byte
 
 Function asbytes(a:wtype) seq.byte val.a
 
-Function asset(a:wtype) set.int asset.[toint.1_val.a]
+Function asset(a:wtype) set.int asset.[toint.1#val.a]
 
 Function wtype(b:byte) wtype wtype.[b]
 
@@ -84,11 +84,11 @@ else if w = f64 then
 else if w = i32 then
 "i32"
 else if n.val.w = 1 then
-%.1_val.w
+%.1#val.w
 else
- let nopara = toint.2_val.w
+ let nopara = toint.2#val.w
  for acc = "func (", e ∈ subseq(val.w, 3, nopara + 2) do acc + %.wtype.e,
- acc + ")" + if (nopara + 3)_val.w = tobyte.1 then %.wtype.1^val.w else "void"
+ acc + ")" + if (nopara + 3)#val.w = tobyte.1 then %.wtype.1^val.w else "void"
 
 Function printtypeidx(i:int) seq.word
 %.decode.to:encoding.wtype(i + 1) + "(idx:^(i))"
@@ -96,22 +96,22 @@ Function printtypeidx(i:int) seq.word
 Function typeindex(paras:seq.wtype, rt:wtype) int
 addorder.wtype(
  [tobyte.0x60]
- + LEBu.n.paras
- + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e, acc + LEBu.1 + val.rt
+  + LEBu.n.paras
+  + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e, acc + LEBu.1 + val.rt
 )
  - 1
 
 Function towtypelist(i:int) seq.wtype
 let val = val.decode.to:encoding.wtype(i + 1)
-assert 1_val = tobyte.0x60 report "type problem"
+assert 1#val = tobyte.0x60 report "type problem"
 for acc = empty:seq.wtype, b ∈ subseq(val, 3, n.val - 2) + 1^val do acc + wtype.b,
 acc
 
 Function typeindex(paras:seq.wtype) int
 addorder.wtype(
  [tobyte.0x60]
- + LEBu.n.paras
- + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e, acc + LEBu.0
+  + LEBu.n.paras
+  + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e, acc + LEBu.0
 )
  - 1
 
@@ -139,26 +139,26 @@ let te = encodingdata:wtype
 let types = for acc = LEBu.n.te, @e ∈ te do acc + val.@e, acc
 let beforecode =
  magic
- + tobyte.1
- + vector.types
- + tobyte.2
- + vector.vector.imports
- + tobyte.3
- + vector.vector.funcs
- + {tables} tobyte.4
- + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(n.eledata + 2)]
- + {memory} tobyte.5
- + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
- + tobyte.7
- + vector.vector.exports
- + {start} tobyte.8
- + vector.LEBu.startidx
- + {elements} tobyte.9
- + vector.vector.[
+  + tobyte.1
+  + vector.types
+  + tobyte.2
+  + vector.vector.imports
+  + tobyte.3
+  + vector.vector.funcs
+  + {tables} tobyte.4
+  + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(n.eledata + 2)]
+  + {memory} tobyte.5
+  + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
+  + tobyte.7
+  + vector.vector.exports
+  + {start} tobyte.8
+  + vector.LEBu.startidx
+  + {elements} tobyte.9
+  + vector.vector.[
   [tobyte.0, i32const]
-  + LEBs.2
-  + END
-  + vector(for frefs = empty:seq.seq.byte, f ∈ eledata do frefs + LEBu.f, frefs)
+   + LEBs.2
+   + END
+   + vector(for frefs = empty:seq.seq.byte, f ∈ eledata do frefs + LEBu.f, frefs)
  ]
 let codevector = vector.code
 let forlater = [
@@ -166,18 +166,18 @@ let forlater = [
  do txt + %.p2 + "typeidx =" + printtypeidx.typeidx.p2 + "/br",
  txt
  , (
-  for txt = "", cnt = 2, f ∈ eledata do next(txt + "^(cnt):^(f)", cnt + 1),
+  for txt = "", cnt = 2, f ∈ eledata do next(txt + (%.cnt + ":" + %.f), cnt + 1),
   "tableelements^(txt) /p"
  )
  , (
   for txt = "", offset = n.beforecode + n.LEBu.n.codevector + 1, p2 ∈ funcswithcode
   do next(
    txt
-   + %.tobits.offset
-   + %.sym.p2
-   + "funcidx =^(funcidx.p2) typidx =^(printtypeidx.typeidx.p2) /p"
-   + %.p2
-   + "/p"
+    + %.tobits.offset
+    + %.sym.p2
+    + "funcidx =^(funcidx.p2) typidx =^(printtypeidx.typeidx.p2) /p"
+    + %.p2
+    + "/p"
    , offset + n.LEBu.n.code.p2 + n.code.p2
   ),
   txt
@@ -185,14 +185,14 @@ let forlater = [
 ]
 let total =
  beforecode
- + {code} tobyte.10
- + vector.codevector
- + {data} tobyte.11
- + vector.vector.[
+  + {code} tobyte.10
+  + vector.codevector
+  + {data} tobyte.11
+  + vector.vector.[
   [tobyte.0, i32const]
-  + LEBs.0
-  + END
-  + vector(
+   + LEBs.0
+   + END
+   + vector(
    for acc = empty:seq.byte, val ∈ data
    do
     for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)
@@ -206,7 +206,7 @@ if info then
  file(fn, total)
  , file(
   filename("+^(dirpath.fn)" + merge([name.fn] + "info") + ".html")
-  , 1_forlater + 2_forlater + 3_forlater
+  , 1#forlater + 2#forlater + 3#forlater
  )
 ]
 else [file(fn, total)]
@@ -216,7 +216,7 @@ let b =
  if isempty.localtypes then
  LEBu.0
  else
-  for result = empty:seq.byte, count = 1, segcount = 1, last = 1_localtypes, t ∈ localtypes << 1
+  for result = empty:seq.byte, count = 1, segcount = 1, last = 1#localtypes, t ∈ localtypes << 1
   do
    if last = t then
    next(result, count + 1, segcount, t)
@@ -282,7 +282,7 @@ wfunc(
 Function inmodule(sym:symbol, modname:seq.word) boolean name.module.sym ∈ modname
 
 function typeidx32(alltypes:typedict, sym:symbol) int
-if wordname.sym = 1_"initwords3" then
+if wordname.sym = 1#"initwords3" then
 typeindex.empty:seq.wtype
 else typeindex(
  for acc = empty:seq.wtype, @e ∈ paratypes.sym do acc + wtype32(alltypes, @e), acc
@@ -290,7 +290,7 @@ else typeindex(
 )
 
 Function typeidx64(alltypes:typedict, sym:symbol) int
-if wordname.sym = 1_"initwords3" then
+if wordname.sym = 1#"initwords3" then
 typeindex.empty:seq.wtype
 else typeindex(
  for acc = empty:seq.wtype, @e ∈ paratypes.sym do acc + wtype64(alltypes, @e), acc
@@ -331,7 +331,7 @@ let t = 25 * 24
 assert t mod 8 = 0 report "globalspace must be multiple of 8",
 t
 
-____________________
+-------------------------------
 
 type word5 is chars:seq.char
 
@@ -348,7 +348,7 @@ do
  acc2 + Constant2(libname, acc + Sequence(seqof.typeint, n.acc)),
 Constant2(libname, acc2 + Sequence(seqof.seqof.typeint, n.acc2))
 
-________________
+-------------------------------
 
 type frefindex is toint:int
 
@@ -366,7 +366,7 @@ Function tableindex(sym:symbol) int addorder.frefindex.funcidx.sym + 1
 
 Function funcidx2symbol(idx:int) symbol sym.decode.to:encoding.efuncidx(idx)
 
-________________
+-------------------------------
 
 Function startencodings int
 n.encodingdata:efuncidx
@@ -379,7 +379,8 @@ type datax is globalname:word, elements:seq.int
 
 Export type:datax
 
-Function hash(a:datax) int if globalname.a ∉ "." then hash.globalname.a else hash.elements.a
+Function hash(a:datax) int
+if globalname.a ∉ "." then hash.globalname.a else hash.elements.a
 
 Function =(a:datax, b:datax) boolean
 if globalname.a ∉ "." ∨ globalname.b ∉ "." then
@@ -406,7 +407,7 @@ let start = if isSequence.1^code1 then [0, nopara.1^code1] else empty:seq.int
 for elements = start, sym ∈ code1 >> 1
 do
  elements
- + 
+  + 
   if inmodule(sym, "$real") ∨ inmodule(sym, "$int") ∨ inmodule(sym, "$boolean") then
   value.sym
   else if sym = Littrue then
@@ -420,4 +421,4 @@ do
   else if isword.sym then
   value.wordconst.wordname.sym
   else assert isrecordconstant.sym report "problem getoffset^(sym)", getoffset(sym, libname),
-allocateconstspace(1_".", elements) 
+allocateconstspace(1#".", elements) 

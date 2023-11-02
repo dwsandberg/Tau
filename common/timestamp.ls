@@ -41,7 +41,7 @@ let amonth = if month > 2 then month else month + 12,
 
 Function dayofyear(t:timestamp) int
 toint.t / (24 * 60 * 60)
- - tojulian(1_fromJuliantointseq(toint.t / (24 * 60 * 60)), 1, 1)
+ - tojulian(1#fromJuliantointseq(toint.t / (24 * 60 * 60)), 1, 1)
  + 1
 
 Function fromJuliantointseq(dt:int) seq.int
@@ -86,17 +86,17 @@ fromJuliantointseq(t / (24 * 60 * 60)) + [hours, minutes, seconds]
 Function print(ts:timestamp) seq.word
 let d = decompose.ts,
 [merge.[
- toword.1_d
- , 1_"-"
- , toword.2_d
- , 1_"-"
- , toword.3_d
- , 1_"."
- , toword.4_d
- , 1_":"
- , toword.5_d
- , 1_":"
- , toword.6_d
+ toword.1#d
+ , 1#"-"
+ , toword.2#d
+ , 1#"-"
+ , toword.3#d
+ , 1#"."
+ , toword.4#d
+ , 1#":"
+ , toword.5#d
+ , 1#":"
+ , toword.6#d
 ]]
 
 Builtin currenttime timestamp {OPTION STATE}

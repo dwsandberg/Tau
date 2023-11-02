@@ -18,6 +18,8 @@ use real
 
 use standard
 
+use file
+
 Function set2zero(p:ptr, size:int) ptr
 {used in wasm2.ls}
 if size = 0 then p else set2zero(set(p, 0), size - 1)
@@ -42,7 +44,7 @@ Export HTTPresult(header:seq.byte, result:seq.byte) HTTPresult
 
 Export result(HTTPresult) seq.byte
 
-Function aborted(h:HTTPresult) boolean subseq(header.h, 1, 1) ≠ toseqbyte.toUTF8."2"
+Function aborted(h:HTTPresult) boolean subseq(header.h, 1, 1) ≠ [tobyte.toint.char1."2"]
 
 Function token(s:seq.word) jsbytes
 jsUTF8.toseqbyte(for acc = emptyUTF8, w ∈ s do acc + decodeword.w, acc)

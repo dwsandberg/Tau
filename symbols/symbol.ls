@@ -243,8 +243,8 @@ Function Br2(t:int, f:int) symbol
 let raw = bits.t << 20 ∨ bits.f,
 symbolZ(
  moduleref."internallib $br"
- , 1_"BR2"
- , [typeref.[toword.toint.raw, 1_".", 1_"internallib"]]
+ , 1#"BR2"
+ , [typeref.[toword.toint.raw, 1#".", 1#"internallib"]]
  , empty:seq.mytype
  , type?
  , specialbit
@@ -255,8 +255,8 @@ Function TBr(t:int, f:int) symbol
 let raw = bits.t << 20 ∨ bits.f,
 symbolZ(
  moduleref."internallib $tbr"
- , 1_"TBR"
- , [typeref.[toword.toint.raw, 1_".", 1_"internallib"]]
+ , 1#"TBR"
+ , [typeref.[toword.toint.raw, 1#".", 1#"internallib"]]
  , empty:seq.mytype
  , type?
  , specialbit
@@ -269,7 +269,7 @@ Function brf(s:symbol) int toint(raw.s ∧ 0xFFFFF)
 
 Function type? mytype typeref."? internal internallib"
 
-Function name(sym:symbol) word 1_worddata.sym
+Function name(sym:symbol) word 1#worddata.sym
 
 Function iswords(s:symbol) boolean name.module.s ∈ "$words"
 
@@ -293,13 +293,13 @@ else if isspecial.s ∧ name.module.s ∉ "$record $loopblock" then
 else n.types.s - if issimplename.s then 1 else 2
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype) seq.word
-let fullname = if isempty.nametype then [name] else [name] + ":" + %.1_nametype,
+let fullname = if isempty.nametype then [name] else [name] + ":" + %.1#nametype,
 if n.paratypes = 0 then
 fullname
 else for acc = fullname + "(", t ∈ paratypes do acc + %.t + ",", acc >> 1 + ")"
 
 Function istype(s:symbol) boolean
-not.issimplename.s ∧ wordname.s = 1_"type" ∧ nopara.s = 1
+not.issimplename.s ∧ wordname.s = 1#"type" ∧ nopara.s = 1
 
 Function Record(types:seq.mytype) symbol
 symbol(moduleref."internallib $record", "RECORD", types, typeptr, specialbit)
@@ -315,7 +315,8 @@ symbolZ(
  , tobits.i
 )
 
-Function Exit symbol symbol(moduleref."internallib $exitblock", "EXITBLOCK", type?, specialbit)
+Function Exit symbol
+symbol(moduleref."internallib $exitblock", "EXITBLOCK", type?, specialbit)
 
 Function Start(t:mytype) symbol
 symbol(moduleref("internallib $loopblock", t), "Start", t, specialbit)
@@ -338,15 +339,15 @@ else subseq(types.s, 2, n.types.s - 1)
 Function resulttype(s:symbol) mytype if isFref.s then typeint else 1^types.s
 
 Function fullname(s:symbol) seq.word
-if issimplename.s then [name.s] else [name.s] + ":" + %.1_types.s
+if issimplename.s then [name.s] else [name.s] + ":" + %.1#types.s
 
 Function %(s:symbol) seq.word
 if islocal.s then
-"^(merge([1_"%"] + wordname.s))"
+%.merge([1#"%"] + wordname.s)
 else if name.module.s ∈ "$int $real" then
 [name.s]
 else if iswords.s then
-if 1_dq ∈ worddata.s then "'^(worddata.s) '" else dq.worddata.s
+if 1#dq ∈ worddata.s then "'^(worddata.s) '" else dq.worddata.s
 else if isword.s then
 "WORD" + wordname.s
 else if isrecordconstant.s then
@@ -357,8 +358,8 @@ else if isloopblock.s then
 "Loop^(fsig2(wordname.s, nametype.s, paratypes.s) << 1)^(para.module.s) /br"
 else if not.isspecial.s then
  (if name.module.s ∈ "internal" then "" else %.module.s + ":")
- + fsig2(wordname.s, nametype.s, paratypes.s)
- + %.resulttype.s
+  + fsig2(wordname.s, nametype.s, paratypes.s)
+  + %.resulttype.s
 else if isdefine.s then
 "Define^(name.s)"
 else if isstart.s then
@@ -372,7 +373,7 @@ else if isbr.s then
 else if iscontinue.s then
 "Continue" + wordname.s + "/br"
 else if isRecord.s then
-fsig2(1_"Record", nametype.s, paratypes.s)
+fsig2(1#"Record", nametype.s, paratypes.s)
 else if isSequence.s then
 "seq (^(worddata.s))^(resulttype.s)"
 else %.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + %.resulttype.s
@@ -438,7 +439,7 @@ Function symbol(
  , rt:mytype
  , flags:bits
 ) symbol
-symbolZ(module, 1_name, empty:seq.mytype, paras, rt, flags, 0x0)
+symbolZ(module, 1#name, empty:seq.mytype, paras, rt, flags, 0x0)
 
 Function symbol4(
  module:modref
@@ -464,40 +465,41 @@ Function Litfalse symbol symbol(internalmod, "false", typeboolean, constbit)
 Function continue(i:int) symbol
 symbol(moduleref."internallib $continue", [toword.i], type?, specialbit)
 
-Function Word(s:word) symbol symbol(moduleref."internallib $word", [s], typeword, constbit)
+Function Word(s:word) symbol
+symbol(moduleref."internallib $word", [s], typeword, constbit)
 
 Function isstartorloop(sym:symbol) boolean name.module.sym ∈ "$loopblock"
 
 Function isstart(sym:symbol) boolean
-name.module.sym = 1_"$loopblock" ∧ wordname.sym ≠ 1_"LOOPBLOCK"
+name.module.sym = 1#"$loopblock" ∧ wordname.sym ≠ 1#"LOOPBLOCK"
 
 Function isloopblock(s:symbol) boolean
-name.module.s = 1_"$loopblock" ∧ wordname.s = 1_"LOOPBLOCK"
+name.module.s = 1#"$loopblock" ∧ wordname.s = 1#"LOOPBLOCK"
 
 Function Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol
 symbol4(
  moduleref("internallib $loopblock", resulttype)
- , 1_"LOOPBLOCK"
- , typeref.[toword.firstvar, 1_".", 1_"internallib"]
+ , 1#"LOOPBLOCK"
+ , typeref.[toword.firstvar, 1#".", 1#"internallib"]
  , types
  , resulttype
 )
 
-Function firstvar(a:symbol) int toint.abstracttypename.1_types.a
+Function firstvar(a:symbol) int toint.abstracttypename.1#types.a
 
 Function EqOp symbol symbol(internalmod, "=", typeint, typeint, typeboolean)
 
 Function GtOp symbol symbol(internalmod, ">", typeint, typeint, typeboolean)
 
-Function isblock(s:symbol) boolean name.module.s = 1_"$block"
+Function isblock(s:symbol) boolean name.module.s = 1#"$block"
 
 Function iscontinue(s:symbol) boolean name.module.s ∈ "$continue"
 
-Function isSequence(s:symbol) boolean name.module.s = 1_"$sequence"
+Function isSequence(s:symbol) boolean name.module.s = 1#"$sequence"
 
-Function isRecord(s:symbol) boolean name.module.s = 1_"$record"
+Function isRecord(s:symbol) boolean name.module.s = 1#"$record"
 
-Function iswordseq(s:symbol) boolean name.module.s = 1_"$words"
+Function iswordseq(s:symbol) boolean name.module.s = 1#"$words"
 
 Function isword(s:symbol) boolean name.module.s ∈ "$word"
 
@@ -505,9 +507,9 @@ Function isIntLit(s:symbol) boolean name.module.s ∈ "$int"
 
 Function isRealLit(s:symbol) boolean name.module.s ∈ "$real"
 
-Function isrecordconstant(s:symbol) boolean name.module.s = 1_"$constant"
+Function isrecordconstant(s:symbol) boolean name.module.s = 1#"$constant"
 
-Function wordname(s:symbol) word 1_worddata.s
+Function wordname(s:symbol) word 1#worddata.s
 
 Function typebits mytype typeref."bits bits *"
 
@@ -517,7 +519,7 @@ Function typeword mytype typeref."word words *"
 
 Function typechar mytype typeref."char standard *"
 
-Function isseq(t:mytype) boolean 1_typerep.t = 1_typerep.typeref."seq seq *"
+Function isseq(t:mytype) boolean 1#typerep.t = 1#typerep.typeref."seq seq *"
 
 Function packedtypes seq.mytype
 [
@@ -529,12 +531,13 @@ Function packedtypes seq.mytype
 ]
 
 Function deepcopyseqword symbol
-symbol4(moduleref("* seq", typeword), 1_"type", seqof.typeword, [seqof.typeword], seqof.typeword)
+symbol4(moduleref("* seq", typeword), 1#"type", seqof.typeword, [seqof.typeword], seqof.typeword)
 
-Function makerealSymbol symbol symbol(moduleref."* real", "makereal", seqof.typeword, typereal)
+Function makerealSymbol symbol
+symbol(moduleref."* real", "makereal", seqof.typeword, typereal)
 
 Function indexsymbol(T:mytype) symbol
-symbol(moduleref("* seq", T), "_", typeint, seqof.T, T)
+symbol(moduleref("* seq", T), "#", typeint, seqof.T, T)
 
 Function outofboundssymbol symbol
 symbol(moduleref."* tausupport", "outofbounds", seqof.typeword)
@@ -562,7 +565,7 @@ symbolZ(
 )
 
 Function Fref(s:symbol) symbol
-assert not.isconst.s ∧ 1_worddata.s ∉ "FREF" ∧ not.isGlobal.s
+assert not.isconst.s ∧ 1#worddata.s ∉ "FREF" ∧ not.isGlobal.s
 report "FREF problem^(s)^(stacktrace)"
 let z = constbit ∨ frefbit ∨ flags.s,
 symbol(worddata.s, module.s, types.s, raw.s, z)
@@ -578,7 +581,7 @@ Function GetSeqLength symbol symbol(internalmod, "getseqlength", typeptr, typein
 Function GetSeqType symbol symbol(internalmod, "getseqtype", typeptr, typeint)
 
 Function nametype(sym:symbol) seq.mytype
-if issimplename.sym then empty:seq.mytype else [1_types.sym]
+if issimplename.sym then empty:seq.mytype else [1#types.sym]
 
 Function PreFref symbol
 {symbol (internalmod," PreFref", typeptr)}
@@ -595,25 +598,25 @@ symbolZ(
  , tobits.parano
 )
 
-Function inModFor(sym:symbol) boolean name.module.sym = 1_"$FOR"
+Function inModFor(sym:symbol) boolean name.module.sym = 1#"$FOR"
 
 Function builtinmod(para:mytype) modref moduleref("internallib builtin", para)
 
-Function isBuiltin(sym:symbol) boolean name.module.sym = 1_"builtin"
+Function isBuiltin(sym:symbol) boolean name.module.sym = 1#"builtin"
 
-Function isInternal(sym:symbol) boolean name.module.sym = 1_"internal"
+Function isInternal(sym:symbol) boolean name.module.sym = 1#"internal"
 
-Function isGlobal(sym:symbol) boolean name.module.sym = 1_"$global"
+Function isGlobal(sym:symbol) boolean name.module.sym = 1#"$global"
 
 Function isencoding(t:mytype) boolean
-1_typerep.t = 1_typerep.typeref."encoding encoding *"
+1#typerep.t = 1#typerep.typeref."encoding encoding *"
 
 Function deepcopySym(rt:mytype) symbol
 if rt = typereal then
 symbol(moduleref."* tausupport", "deepcopy", typereal, typereal)
 else if rt = typeint then
 symbol(moduleref."* tausupport", "deepcopy", typeint, typeint)
-else symbol4(replaceT(parameter.rt, abstractModref.rt), 1_"type", rt, [rt], rt)
+else symbol4(replaceT(parameter.rt, abstractModref.rt), 1#"type", rt, [rt], rt)
 
 Function iscore4(typ:mytype) boolean
 typ = typeint ∨ typ = typereal ∨ typ = typeptr ∨ typ = typeboolean
@@ -677,7 +680,7 @@ Function hasState(sd:symdef) boolean (bits.sd ∧ STATE) ≠ 0x0
 function A1(opts:seq.word) bits
 for acc = 0x0, w ∈ opts
 do
- let i = findindex("ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE ENTRYPOINT", w),
+ let i = findindex("ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE COMMAND", w),
  acc ∨ 0x1 << (47 + i),
 acc
 
@@ -691,7 +694,7 @@ Function getOptions(sd:symdef) seq.word
 for
  result = ""
  , acc = bits.sd >> 48
- , w ∈ "ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE ENTRYPOINT"
+ , w ∈ "ThisLibrary PROFILE STATE COMPILETIME NOINLINE INLINE VERYSIMPLE COMMAND"
 do if (acc ∧ 0x1) = 0x1 then next(result + w, acc >> 1) else next(result, acc >> 1),
 result
 
@@ -701,4 +704,4 @@ Export code(symdef) seq.symbol
 
 Function getCode(a:set.symdef, sym:symbol) seq.symbol
 let b = getSymdef(a, sym),
-if isempty.b then empty:seq.symbol else code.1_b 
+if isempty.b then empty:seq.symbol else code.1#b 

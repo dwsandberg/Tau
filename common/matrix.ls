@@ -70,75 +70,75 @@ Function *(a:matrix, b:matrix) matrix
 matrix(
  point(
   x.row1.a * x.row1.b
-  + y.row1.a * x.row2.b
-  + z.row1.a * x.row3.b
-  + w.row1.a * x.row4.b
+   + y.row1.a * x.row2.b
+   + z.row1.a * x.row3.b
+   + w.row1.a * x.row4.b
   , x.row1.a * y.row1.b
    + y.row1.a * y.row2.b
-   + z.row1.a * y.row3.b
-   + w.row1.a * y.row4.b
+    + z.row1.a * y.row3.b
+    + w.row1.a * y.row4.b
   , x.row1.a * z.row1.b
    + y.row1.a * z.row2.b
-   + z.row1.a * z.row3.b
-   + w.row1.a * z.row4.b
+    + z.row1.a * z.row3.b
+    + w.row1.a * z.row4.b
   , x.row1.a * w.row1.b
    + y.row1.a * w.row2.b
-   + z.row1.a * w.row3.b
-   + w.row1.a * w.row4.b
+    + z.row1.a * w.row3.b
+    + w.row1.a * w.row4.b
  )
  , point(
   x.row2.a * x.row1.b
-  + y.row2.a * x.row2.b
-  + z.row2.a * x.row3.b
-  + w.row2.a * x.row4.b
+   + y.row2.a * x.row2.b
+   + z.row2.a * x.row3.b
+   + w.row2.a * x.row4.b
   , x.row2.a * y.row1.b
    + y.row2.a * y.row2.b
-   + z.row2.a * y.row3.b
-   + w.row2.a * y.row4.b
+    + z.row2.a * y.row3.b
+    + w.row2.a * y.row4.b
   , x.row2.a * z.row1.b
    + y.row2.a * z.row2.b
-   + z.row2.a * z.row3.b
-   + w.row2.a * z.row4.b
+    + z.row2.a * z.row3.b
+    + w.row2.a * z.row4.b
   , x.row2.a * w.row1.b
    + y.row2.a * w.row2.b
-   + z.row2.a * w.row3.b
-   + w.row2.a * w.row4.b
+    + z.row2.a * w.row3.b
+    + w.row2.a * w.row4.b
  )
  , point(
   x.row3.a * x.row1.b
-  + y.row3.a * x.row2.b
-  + z.row3.a * x.row3.b
-  + w.row3.a * x.row4.b
+   + y.row3.a * x.row2.b
+   + z.row3.a * x.row3.b
+   + w.row3.a * x.row4.b
   , x.row3.a * y.row1.b
    + y.row3.a * y.row2.b
-   + z.row3.a * y.row3.b
-   + w.row3.a * y.row4.b
+    + z.row3.a * y.row3.b
+    + w.row3.a * y.row4.b
   , x.row3.a * z.row1.b
    + y.row3.a * z.row2.b
-   + z.row3.a * z.row3.b
-   + w.row3.a * z.row4.b
+    + z.row3.a * z.row3.b
+    + w.row3.a * z.row4.b
   , x.row3.a * w.row1.b
    + y.row3.a * w.row2.b
-   + z.row3.a * w.row3.b
-   + w.row3.a * w.row4.b
+    + z.row3.a * w.row3.b
+    + w.row3.a * w.row4.b
  )
  , point(
   x.row4.a * x.row1.b
-  + y.row4.a * x.row2.b
-  + z.row4.a * x.row3.b
-  + w.row4.a * x.row4.b
+   + y.row4.a * x.row2.b
+   + z.row4.a * x.row3.b
+   + w.row4.a * x.row4.b
   , x.row4.a * y.row1.b
    + y.row4.a * y.row2.b
-   + z.row4.a * y.row3.b
-   + w.row4.a * y.row4.b
+    + z.row4.a * y.row3.b
+    + w.row4.a * y.row4.b
   , x.row4.a * z.row1.b
    + y.row4.a * z.row2.b
-   + z.row4.a * z.row3.b
-   + w.row4.a * z.row4.b
+    + z.row4.a * z.row3.b
+    + w.row4.a * z.row4.b
   , x.row4.a * w.row1.b
    + y.row4.a * w.row2.b
-   + z.row4.a * w.row3.b
-   + w.row4.a * w.row4.b
+    + z.row4.a * w.row3.b
+    + w.row4.a * w.row4.b
  )
 )
 

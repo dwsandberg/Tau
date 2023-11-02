@@ -115,10 +115,10 @@ do
      next(used + toseq.asset.code.sd, crecord + sd, indefines)
     else if isInternal.firstsym then
      if {firstsym is external call} internalidx.sym.cc = 1 ∧ isThisLibrary.cc then
-      let discard5 = call(alltypes, firstsym, 1_"CALL", name.firstsym),
+      let discard5 = call(alltypes, firstsym, 1#"CALL", name.firstsym),
       next(used, crecord, indefines)
      else if not.isbase then
-      let discard5 = call(alltypes, firstsym, 1_"CALL", mangledname(prgX, firstsym, libname)),
+      let discard5 = call(alltypes, firstsym, 1#"CALL", mangledname(prgX, firstsym, libname)),
       next(used, crecord, indefines)
      else next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
     else if isGlobal.firstsym then
@@ -128,7 +128,7 @@ do
     next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
     else
      {not define in this library}
-     let discard5 = call(alltypes, firstsym, 1_"CALL", mangledname(prgX, firstsym, libname)),
+     let discard5 = call(alltypes, firstsym, 1#"CALL", mangledname(prgX, firstsym, libname)),
      next(used, crecord, indefines)
 for discard101 = 0, sd ∈ indefines do declare(alltypes, prgX, sym.sd, libname)
 for acc = empty:seq.slot, sym ∈ initprofile
@@ -143,7 +143,7 @@ indefines
 function declare(alltypes:typedict, prgX:set.symdef, ele2:symbol, libname:word) int
 let name = mangledname(prgX, ele2, libname)
 let discard = funcdec(alltypes, ele2, name)
-let discard5 = call(alltypes, ele2, 1_"CALL", name),
+let discard5 = call(alltypes, ele2, 1#"CALL", name),
 0
 
 Function uses(
@@ -164,18 +164,18 @@ do
     Fref.basesym
     , 0
     , emptyinternalbc
-    , 1_"ACTARG"
+    , 1#"ACTARG"
     , ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym, libname)], functyp))
    )
   else if iswordseq.ele then
-  addtemplate(ele, 0, emptyinternalbc, 1_"ACTARG", slot.addwordseq.worddata.ele)
+  addtemplate(ele, 0, emptyinternalbc, 1#"ACTARG", slot.addwordseq.worddata.ele)
   else if isword.ele then
-  addtemplate(ele, 0, emptyinternalbc, 1_"ACTARG", slot.wordref.wordname.ele)
+  addtemplate(ele, 0, emptyinternalbc, 1#"ACTARG", slot.wordref.wordname.ele)
   else acc
  else if isspecial.ele then
  buildspecial(ele, alltypes)
  else if isInternal.ele ∧ internalidx.ele = 1 then
- call(alltypes, ele, 1_"CALL", name.ele)
+ call(alltypes, ele, 1#"CALL", name.ele)
  else acc,
 processconst(isrecordconstant, alltypes)
 
@@ -196,9 +196,9 @@ do
   next(args + toint.C64.0, true)
   else
    let tp = findtemplate.ele,
-   if isempty.tp then next(args, false) else next(args + arg.1_tp, true),
+   if isempty.tp then next(args, false) else next(args + arg.1#tp, true),
   if defined then
-   let discard = addtemplate(sym.xx, 0, emptyinternalbc, 1_"ACTARG", slot.addobject.args),
+   let discard = addtemplate(sym.xx, 0, emptyinternalbc, 1#"ACTARG", slot.addobject.args),
    notprocessed
   else notprocessed + xx,
 if n.encodingdata:match5 = initvalue then
@@ -207,8 +207,8 @@ else processconst(notprocessed, alltypes)
 
 Function internalidx(s:symbol) int
 {list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint
- getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace
- processisaborted addencoding getinstance"}
+getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace
+processisaborted addencoding getinstance"}
 let l = [
  "stacktrace"
  , "not boolean"
@@ -255,21 +255,21 @@ let b = getSymdef(extname, s)
 assert not.isempty.b
 report
  "Mangled Name problem^(s)"
- + library
- + 
+  + library
+  + 
   for txt = "", sd ∈ toseq.extname do txt + "/br" + %.sym.sd + library.module.sym.sd,
   txt + stacktrace
-let extNo = if isInternal.s then internalidx.s else externalNo.1_b,
-if extNo = 1 ∧ isThisLibrary.1_b then
+let extNo = if isInternal.s then internalidx.s else externalNo.1#b,
+if extNo = 1 ∧ isThisLibrary.1#b then
 name.s
 else merge.[
  if isInternal.s then
  library.module.s
- else if isThisLibrary.1_b then
+ else if isThisLibrary.1#b then
  library
  else library.module.s
- , 1_"$"
- , 1_"$"
+ , 1#"$"
+ , 1#"$"
  , toword.extNo
 ]
 
@@ -291,6 +291,6 @@ let t = privatefields.a,
  , wordref.name.module.a
  , addtype.para.module.a
  , addtypeseq.types.a
- , addint.1_t
- , addint.2_t
+ , addint.1#t
+ , addint.2#t
 ] 

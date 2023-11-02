@@ -40,10 +40,10 @@ else
  let part = if k = 16 then start else [toword.k] + "bits of" + start,
  part + for acc = "", @e ∈ reverse.fullwords.x do acc + %.@e, acc
 
-function firstword(x:bitstream) bits if isempty.fullwords.x then endpart.x else 1_fullwords.x
+function firstword(x:bitstream) bits if isempty.fullwords.x then endpart.x else 1#fullwords.x
 
 function ithword(x:bitstream, i:int) bits
-if i > n.fullwords.x then endpart.x else i_fullwords.x
+if i > n.fullwords.x then endpart.x else i#fullwords.x
 
 Function bitstream(length:int, val:bits) bitstream
 bitstream(length, bits(2^length - 1) ∧ val, empty:seq.bits)
@@ -51,7 +51,7 @@ bitstream(length, bits(2^length - 1) ∧ val, empty:seq.bits)
 Function index(s:bitstream, i:int, sizebits:int) bits
 endpart.subseq(s, (i - 1) * sizebits + 1, i * sizebits)
 
-Function _(s:bitstream, i:int) byte tobyte.toint.index(s, i, 8)
+function #(i:int, s:bitstream) byte tobyte.toint.index(s, i, 8)
 
 Function subseq(s:bitstream, start:int, finish:int) bitstream
 let len = finish - start + 1
@@ -77,10 +77,10 @@ else
  let endpart =
   if finishshift ≥ startshift then
    {all bits in endpart come from finishword} ithword(s, finishword) >> (64 - startshift)
-   ∧ finishpartmask
+    ∧ finishpartmask
   else
    ithword(s, finishword) << (64 - startshift) ∧ finishpartmask
-   ∨ ithword(s, finishword - 1) >> (64 - startshift)
+    ∨ ithword(s, finishword - 1) >> (64 - startshift)
  let firstpart = subseq(fullwords.s + endpart.s, startword, if finishshift = 63 then finishword else finishword - 1),
  bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
@@ -134,11 +134,12 @@ function shiftleft(
 if i > n.allwords then
 result
 else
- let next = i_allwords,
+ let next = i#allwords,
  shiftleft(
   i + 1
   , next >> (64 - shiftleft)
   , allwords
   , shiftleft
   , result + (leftover ∨ next << shiftleft)
- ) 
+ )
+ 

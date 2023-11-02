@@ -18,11 +18,7 @@ use seq.file
 
 use process.seq.file
 
-use format
-
 use llvmcode
-
-use makeentry
 
 use objectio.midpoint
 
@@ -36,12 +32,8 @@ use otherseq.seq.word
 
 use seq.seq.word
 
-Function entrypoint(input:seq.file, entryUses:seq.word) seq.word
-{ENTRYPOINT}
-%("/p", modEntry(breakparagraph.input, entryUses))
-
 Function libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word) seq.file
-{ENTRYPOINT}
+{COMMAND /strong libsrc Is this being used?}
 let outname = filename.o
 let Library = [name.outname]
 for acc1 = empty:seq.byte, acc2 = empty:seq.byte, f ∈ input
@@ -71,15 +63,15 @@ do
  next(
   all + "/p" + lib
   , p
-  , if isempty.lib ∨ name.outname = 3_lib then
+  , if isempty.lib ∨ name.outname = 3#lib then
    libs
-   else libs + file(filename("+^(dirpath.outname)" + 3_lib + ".libsrc"), lib)
+   else libs + file(filename("+^(dirpath.outname)" + 3#lib + ".libsrc"), lib)
  )
  else next(
   all
   , lib
    + "/p"
-   + 
+    + 
     if subseq(p, 1, 1) ∈ ["Function", "function", "Export", "type"] then
     prettyNoChange.p
     else escapeformat.p
@@ -100,11 +92,19 @@ Function makebitcode(
  , showllvm:seq.word
  , entryUses:seq.word
 ) seq.file
-{OPTION ENTRYPOINT}
+{OPTION COMMAND /strong makebitcode compiler
+/br Options:
+/br /strong entryUses addition use clause added to module when building entry point. 
+/br /strong profile generates information for profiling
+/br /strong showllvm
+/br /info
+/br /uses
+/br /exports
+/br /libname}
 let options =
  (if info then "info =" else "")
- + (if profile then "profile =" else "")
- + if not.isempty.showllvm then "showllvm =^(showllvm)" else ""
+  + (if profile then "profile =" else "")
+  + if not.isempty.showllvm then "showllvm =^(showllvm)" else ""
 let outname = filename."+built^(libname).bc"
 let tmp = "Library =^(libname) uses =^(uses)"
 let p = process.subcompilelib([file("??.ls", tmp)] + input, outname, options, libname, exports, entryUses),

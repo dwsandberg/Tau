@@ -46,7 +46,7 @@ function addlocals(
  , i:int
 ) set.typemap
 if i > 0 then
-addlocals(typemap(localno, i_para) ∪ localtypes, para, localno - 1, i - 1)
+addlocals(typemap(localno, i#para) ∪ localtypes, para, localno - 1, i - 1)
 else localtypes
 
 function checkkind(s2:symdef, typedict:typedict) seq.word
@@ -59,7 +59,7 @@ else
   else
    let localdict =
     for acc = empty:set.typemap, @e ∈ arithseq(nopara.sym.s2, 1, 1)
-    do typemap(@e, coretype(@e_paratypes.sym.s2, typedict)) ∪ acc,
+    do typemap(@e, coretype(@e#paratypes.sym.s2, typedict)) ∪ acc,
     acc
    let returntype = coretype(resulttype.sym.s2, typedict)
    for stk = empty:stack.mytype, localtypes = localdict, skip = false, s ∈ codeonly
@@ -104,17 +104,17 @@ else
     else if islocal.s then
      let localtype = lookup(localtypes, value.s)
      assert not.isempty.localtype report "local not defined^(s)",
-     next(push(stk, value.1_localtype), localtypes, false)
+     next(push(stk, value.1#localtype), localtypes, false)
     else if name.s ∈ "packed blockit" ∧ nopara.s = 1 then
     next(stk, localtypes, false)
     else
      let parakinds = for acc = empty:seq.mytype, @e ∈ paratypes.s do acc + coretype(@e, typedict), acc
      assert check5(top(stk, nopara.s), parakinds)
      report "
-      /br symbol type missmatch for^(s)
-      /br stktop^(top(stk, nopara.s))
-      /br parabasetypes
-      ^(parakinds)",
+     /br symbol type missmatch for^(s)
+     /br stktop^(top(stk, nopara.s))
+     /br parabasetypes
+     ^(parakinds)",
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
    assert n.toseq.stk = 1 report "Expect one element on stack:^(toseq.stk)"
    assert check5([top.stk], [coretype(returntype, typedict)])
@@ -125,7 +125,7 @@ function check5(a:seq.mytype, b:seq.mytype) boolean
 for acc = n.a = n.b, idx = 1, t ∈ a
 while acc
 do
- let t2 = idx_b,
+ let t2 = idx#b,
  next(t2 = t ∨ t = typebyte ∧ t2 = typeint ∨ t2 = typebyte ∧ t = typeint, idx + 1),
 acc
 
@@ -137,13 +137,13 @@ for acc10 = "/p /p checkresults /p", h ∈ toseq.undefined
 do
  if
   isAbstract.module.h
-  ∨ 
+   ∨ 
    name.module.h
-   ∈ "$int $define $local $sequence $FOR $words $loopblock $continue $br $global $word $real"
-  ∨ isunbound.h
-  ∨ isRecord.h
-  ∨ isFref.h ∧ basesym.h ∈ defines
-  ∨ isBuiltin.h ∧ wordname.h ∈ "createthreadZ" ∧ paratypes.h = [typeptr]
+    ∈ "$int $define $local $sequence $FOR $words $loopblock $continue $br $global $word $real"
+   ∨ isunbound.h
+   ∨ isRecord.h
+   ∨ isFref.h ∧ basesym.h ∈ defines
+   ∨ isBuiltin.h ∧ wordname.h ∈ "createthreadZ" ∧ paratypes.h = [typeptr]
  then
  acc10
  else acc10 + %.h + "/br",

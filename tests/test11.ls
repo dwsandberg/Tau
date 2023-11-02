@@ -88,7 +88,7 @@ function t019 boolean 1 = findindex([3], 3)
 
 function t020 boolean 5 = findindex([2, 4, 3, 8, 1, 3] + constantseq(4, 1), 1)
 
-function t021 boolean 28 = 7_constantseq(13, 5) + n.constantseq(23, 3)
+function t021 boolean 28 = 7#constantseq(13, 5) + n.constantseq(23, 3)
 
 / function t022 boolean [3, 6] = all (3, [2, 4, 3, 8, 1, 3])
 
@@ -118,7 +118,7 @@ false = for acc = true, e ∈ [0 - 1, 256, 255, 0] do acc ∧ isbyte.e, acc
 
 function t032 boolean for acc = true, e ∈ [23, 4, 5, 255, 7, 2, 255] do acc ∨ isbyte.e, acc
 
-function t033 boolean 6 = (toint.if true then 1_"3" else 1_"5") + 3
+function t033 boolean 6 = (toint.if true then 1#"3" else 1#"5") + 3
 
 function t034 boolean 3464 = 3456 + (if true then 3 else 1) + 5
 
@@ -135,21 +135,22 @@ Function t038 boolean
 
 function t039 boolean let a = 6 * 6, a + a = 72
 
-function t040 boolean "a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, 1_"k")
+function t040 boolean "a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, 1#"k")
 
-function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, 1_"k")
+function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, 1#"k")
 
 function t042 boolean 97 = for acc = 100, e ∈ [1, 2] do acc - e, acc
 
 function t043 boolean
-"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 >"
- + "63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O"
- + "80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
+"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65
+A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85
+U 86 V 87 W 88 X 89 Y 90 Z"
  = 
  for acc = "code glyph", e ∈ arithseq(43, 1, 48) do acc + [toword.e, encodeword.[char.e]],
  acc
 
-function t044 boolean "^(dq) ()+,-.. :: = []^_{}" = standalonechars
+function t044 boolean
+dq + "#()+,-.. :: = []" + "^" + "{}" = standalonechars
 
 use bits
 
@@ -158,13 +159,13 @@ use seq.byte
 function standalonechars seq.word
 for acc0 = [tobyte.70], i ∈ arithseq(127 - 32, 1, 33)
 do acc0 + tobyte.i + tobyte.70 + tobyte.i + tobyte.32 + tobyte.70
-for acc1 = "F", w ∈ 1_breakparagraph.acc0
+for acc1 = "F", w ∈ 1#breakparagraph.acc0
 do if w ∈ "F" ∨ n.decodeword.w > 2 ∨ w = 1^acc1 then acc1 else acc1 + w,
 acc1 << 1
 
 function t045 boolean
 {testing UNICODE to word conversion and no-break space in integer 8746}
-decodeword.1_"1 2∪" = [char.49, char.160, char.50, char.87 46]
+decodeword.1#"1 2∪" = [char.49, char.160, char.50, char.87 46]
 
 function testset set.int asset.[2, 5, 6, 9, 12, 15, 35, 36]
 
@@ -176,7 +177,10 @@ toseq.findelement2(testset, 36) = [35, 36]
 
 type Tpair is a:int, b:seq.word
 
+function debug234(s:seq.int) boolean 1#s = 1#asset.s
+
 Function test11 seq.word
+let descard = debug234.[1, 2, 3]
 let list = [
  t001
  , t002
@@ -246,7 +250,10 @@ function t051 boolean
 for acc = "", w ∈ "f g" do next(acc + w),
 acc = "f g"
 
-function t052 boolean {constant empty sequence} for acc = "d", w ∈ "" do acc + w, acc = "d"
+function t052 boolean
+{constant empty sequence}
+for acc = "d", w ∈ "" do acc + w,
+acc = "d"
 
 function t053 boolean
 {using multiple accumulators from inner loop in outer loop}

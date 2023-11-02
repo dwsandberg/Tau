@@ -57,8 +57,8 @@ do let m2 = tomodref.t, if m2 = modname then acc else acc + deepcopySym.t,
 acc
 
 Function fixLengthSym(sym:symbol) symbol
-if isBuiltin.sym ∧ name.sym = 1_"length" then
-symbol(moduleref("* seq", parameter.1_paratypes.sym), "length", paratypes.sym, typeint)
+if isBuiltin.sym ∧ name.sym = 1#"length" then
+symbol(moduleref("* seq", parameter.1#paratypes.sym), "length", paratypes.sym, typeint)
 else sym
 
 Function fixLengthSym(syms:seq.symbol) seq.symbol
@@ -66,7 +66,7 @@ for acc = empty:seq.symbol, sym ∈ syms do acc + fixLengthSym.sym,
 acc
 
 function lookupModule(m:midpoint, modname:word) modExports
-for acc = 1_libmods.m, md ∈ libmods.m do if name.modname.md = modname then md else acc,
+for acc = 1#libmods.m, md ∈ libmods.m do if name.modname.md = modname then md else acc,
 acc
 
 function exports(m:midpoint, modr:modref) seq.symbol
@@ -98,7 +98,7 @@ else
  {find symbols referenced in expanding templates}
  let uses6 = uses5 ∪ requires(uses5, templates.m, dict, false)
  let thismodule =
-  if isAbstract.module.1_exports then
+  if isAbstract.module.1#exports then
   moduleref("*" + modname, typeT)
   else moduleref("*" + modname)
  let include0 =
@@ -109,9 +109,9 @@ else
  do
   if
    isconstantorspecial.symx
-   ∨ name.module.symx ∈ "$for"
-   ∨ module.symx = thismodule
-   ∨ isunbound.symx
+    ∨ name.module.symx ∈ "$for"
+    ∨ module.symx = thismodule
+    ∨ isunbound.symx
   then
   next(uses, unhandled, included + symx)
   else
@@ -121,7 +121,7 @@ else
     else
      let inmod = inModule(exported - sym/modref(sym, thismodule), sym),
       if n.inmod = 1 then
-      next(uses + 1_inmod, unhandled, included ∪ asset.exports(m, 1_inmod))
+      next(uses + 1#inmod, unhandled, included ∪ asset.exports(m, 1#inmod))
       else next(uses, unhandled + inmod, included),
  asset.chooseUses(uses, unhandled, modname, olduses, exported) - thismodule
 
@@ -144,15 +144,15 @@ do
  if isempty.u ∨ not.isempty(u ∩ newuses) then
  {ignore empty sets and sets with one of the modules already in uses} next(acc, newuses)
  else if n.u = 1 then
- {add the single modref to uses} next(acc, newuses + 1_u)
+ {add the single modref to uses} next(acc, newuses + 1#u)
  else next(acc + u, newuses)
 let tmp =
  if not.isempty.acc then
-  for acc2 = empty:seq.modref, x ∈ toseq.1_acc do if %.x ∈ olduses then acc2 + x else acc2,
+  for acc2 = empty:seq.modref, x ∈ toseq.1#acc do if %.x ∈ olduses then acc2 + x else acc2,
   acc2
  else empty:seq.modref,
 if n.tmp = 1 then
-chooseUses(toseq.newuses + 1_tmp, acc, modname, olduses, exported)
+chooseUses(toseq.newuses + 1#tmp, acc, modname, olduses, exported)
 else if n.newuses > n.asset.uses then
 chooseUses(toseq.newuses, acc, modname, olduses, exported)
 else toseq.newuses
@@ -200,17 +200,17 @@ acc
 function removeseq(t:mytype) mytype if isseq.t then removeseq.parameter.t else t
 
 Function includecomment(modtext:seq.word) int
-let i = findindex(modtext, 1_"/p"),
+let i = findindex(modtext, 1#"/p"),
 if i > n.modtext then
 i
 else if
  subseq(modtext, i + 1, i + 1) = "*"
- ∨ subseq(modtext, i + 1, i + 2) ∈ ["/keyword uses"]
+  ∨ subseq(modtext, i + 1, i + 2) ∈ ["/keyword uses"]
 then
 i + includecomment(modtext << i)
 else if
  subseq(modtext, i + 1, i + 2)
- ∈ [
+  ∈ [
   "/keyword Function"
   , "/keyword type"
   , "/keyword function"
@@ -219,7 +219,7 @@ else if
   , "/keyword Builtin"
   , "/keyword builtin"
  ]
- ∨ subseq(modtext, i + 1, i + 1) = "Export"
+  ∨ subseq(modtext, i + 1, i + 1) = "Export"
 then
 i
 else i + includecomment(modtext << i)
@@ -229,5 +229,5 @@ for acc = empty:seq.symbol, sym ∈ a
 do
  let b = replaceTsymbol(with, sym)
  let k = findelement2(dict, b),
- acc + if isempty.k then b else 1_k,
+ acc + if isempty.k then b else 1#k,
 acc 

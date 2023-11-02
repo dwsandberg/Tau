@@ -61,22 +61,22 @@ let EOL = "/br"
 let a = encode.seedtrack(1, 987)
 let all =
  check:seq.byte(1, 22)
- + check:seq.byte(1, 8)
- + EOL
- + check:seq.typereal(8, 17)
- + check:seq.typereal(8, 8)
- + EOL
- + check:seq.seq.word(8, 17)
- + check:seq.seq.word(8, 8)
- + EOL
- + check:seq.word(8, 17)
- + check:seq.word(8, 8)
- + EOL
- + check:seq.typerec2(16, 17)
- + check:seq.typerec2(16, 8)
- + EOL
- + sparsecheck,
-if 1_"FAIL" ∉ all then "PASS testseq" else "FAIL testseq^(all)"
+  + check:seq.byte(1, 8)
+  + EOL
+  + check:seq.typereal(8, 17)
+  + check:seq.typereal(8, 8)
+  + EOL
+  + check:seq.seq.word(8, 17)
+  + check:seq.seq.word(8, 8)
+  + EOL
+  + check:seq.word(8, 17)
+  + check:seq.word(8, 8)
+  + EOL
+  + check:seq.typerec2(16, 17)
+  + check:seq.typerec2(16, 8)
+  + EOL
+  + sparsecheck,
+if 1#"FAIL" ∉ all then "PASS testseq" else "FAIL testseq^(all)"
 
 Function sparsecheck seq.word
 let b =
@@ -86,7 +86,7 @@ let b =
 "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int
-let i = 1_r mod 30 + 1
+let i = 1#r mod 30 + 1
 let c = replaceS(s, i, r)
 assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, n.s)) report "FAIL 1"
 assert subseq(s, i + n.r, n.r) = subseq(c, i + n.r, n.r) report "FAIL 2"
@@ -96,4 +96,4 @@ c
 function random(s:seq.int, i:int, result:seq.seq.int) seq.seq.int
 if i > n.s then
 result
-else let len = i_s mod 5 + 2, random(s, i + len, result + subseq(s, i, i + len - 1)) 
+else let len = i#s mod 5 + 2, random(s, i + len, result + subseq(s, i, i + len - 1)) 

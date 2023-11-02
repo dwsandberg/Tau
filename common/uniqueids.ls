@@ -6,8 +6,6 @@ use seq.idrange
 
 use standard
 
-Function ldq(a:seq.word) seq.word "/ldq^(a)^(dq)"
-
 type idrange is next:int
 
 function =(a:idrange, b:idrange) boolean next.a = next.b

@@ -1,5 +1,7 @@
 Module words
 
+{???? drop words from module name}
+
 use UTF8
 
 use otherseq.alphaword
@@ -46,7 +48,7 @@ Function >1(a:word, b:word) ordering asencoding.a >1 asencoding.b
 
 Function merge(a:seq.word) word
 {OPTION COMPILETIME
- /br make multiple words into a single word. }
+/br make multiple words into a single word. }
 for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e,
 encodeword.acc
 

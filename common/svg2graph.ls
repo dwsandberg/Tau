@@ -65,20 +65,23 @@ if n.grp = 1 then
 grp
 else
  let inc = 0.6
- let dd = d.1_grp
+ let dd = d.1#grp
  let base = makereal.subseq(dd, n.dd - 3, n.dd) - toreal(n.grp - 1) / 2.0 * inc
  for acc = empty:seq.arcpath.T, new = base, q ∈ grp
  do next(acc + arcpath(arc.q, d.q >> 3 + print(3, new), 0), new + inc),
  acc
 
 Function drawscript:T seq.word
-"/< script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).
- getBBox () ; arcs.forEach (function (idval, index) {if (index > 0) {let element =
- document.getElementById (idval) ; let d =^(ldq."M")+(bb.x+bb.width)+^(ldq.",")+(bb.y+bb.height)+element.getAttribute (
- ^(ldq."d")).substring (5) ; element.setAttribute (^(ldq."d"), d) ;}}) ;} /< /script> /< style>.arcs {fill:none ; stroke:black ; stroke-width:.
- 07 ;}.nodes {font-size:.03em; stroke-width:.1 ;} svg g:hover text {opacity:1;}
- svg g:hover rect {opacity:1;} /< /style>"
+"/tag <script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).
+getBBox () ; arcs.forEach (function (idval, index) {if (index > 0) {let element =
+document.getElementById (idval) ; let d = /tag^(dq."M")+(bb.x+bb.width)+/tag
+^(dq.",")+(bb.y+bb.height)+element.getAttribute (/tag^(dq."d")).substring (5) ; element.setAttribute (/tag
+^(dq."d"), d) ;}}) ;} /tag </script><style>.arcs {fill:none ; stroke:black ; stroke-width:.
+07 ;}.nodes {font-size:.03em; stroke-width:.1 ;} svg g:hover text {opacity:1;}
+svg g:hover rect {opacity:1;} /tag </style>"
  + encodeword.[char.10]
+
+use UTF8
 
 unbound node2text(T) seq.word
 
@@ -100,16 +103,16 @@ let layout = layout(xxx, haslabels)
 let arcpaths0 =
  for ap = empty:set.arcpath.T, a ∈ paths.layout
  do
-  let from = if n.a = 2 then x.1_lookup(nodeinfo.layout, nodeinfo(1_a, 0, 0)) else 0
+  let from = if n.a = 2 then x.1#lookup(nodeinfo.layout, nodeinfo(1#a, 0, 0)) else 0
   for d = "", from0 = 0, from1 = from, p ∈ a << 1
   do
-   let xy = 1_lookup(nodeinfo.layout, nodeinfo(p, 0, 0)),
+   let xy = 1#lookup(nodeinfo.layout, nodeinfo(p, 0, 0)),
    next(
     d + "L" + print(3, toreal.y.xy * scalex) + print(3, toreal.x.xy * scaley)
     , from1
     , x.xy
    ),
-  asset.[arcpath(arc(1_a, 1^a), d, from0)] ∪ ap,
+  asset.[arcpath(arc(1#a, 1^a), d, from0)] ∪ ap,
  ap
 let arcpaths =
  if not.haslabels then
@@ -134,37 +137,37 @@ do
  {assumes nodes in g uses same sortorder as nodinfo}
  let nodex = toreal.y.n * scalex
  let nodey = toreal.x.n * scaley,
-  if i ≤ n.nodes.xxx ∧ i_nodes.xxx = n.n then
+  if i ≤ n.nodes.xxx ∧ i#nodes.xxx = n.n then
    let succ = toseq.successors(xxx, n.n)
    let hovertext = nodeTitle.n.n
    let svg =
-    "/< text id =^(ldq.[toword.id]) class =^(ldq."nodes") x =^(ldq.print(3, nodex)) y =
-     ^(ldq.print(3, nodey)) >^(node2text.n.n) /< /text>"
-    + encodeword.[char.10]
-    + 
+    "/tag <text /sp id = /tag^(dq.[toword.id]) class = /tag^(dq."nodes") x = /tag
+    ^(dq.print(3, nodex)) y = /tag^(dq.print(3, nodey)) >^(node2text.n.n) /tag </text>"
+     + encodeword.[char.10]
+     + 
      for arctxt = "", j = id + 1, s ∈ succ
      do
-      let xy = 1_lookup(nodeinfo.layout, nodeinfo(s, 0, 0))
+      let xy = 1#lookup(nodeinfo.layout, nodeinfo(s, 0, 0))
       let paths = lookup(arcpaths, arcpath(arc(n.n, s), "", 0))
       let path =
        if isempty.paths then
        "L^(print(3, toreal.y.xy * scalex))^(print(3, toreal.x.xy * scaley))"
-       else d.1_paths,
+       else d.1#paths,
       next(
        arctxt
-       + "/< path id =^(ldq.[toword.j]) class =^(ldq."arcs") d =^(ldq."M 0 0^(path)")"
-       + "> /< /path>"
-       + encodeword.[char.10]
-       + 
+        + "/tag <path /sp id = /tag^(dq.[toword.j]) class = /tag^(dq."arcs") d = /tag
+       ^(dq."M 0 0^(path)") />"
+        + encodeword.[char.10]
+        + 
         if haslabels then
          let lab = lookup(labels, arc(n.n, s, "")),
           if isempty.lab then
           ""
           else
-           "/< text class =^(ldq."nodes") > /< textPath href =^(ldq.[merge("#" + toword.j)]) startOffset =
-            ^(ldq."100%") text-anchor =^(ldq."end") > /< tspan dy =^(ldq."-0.1") >
-            ^(label.1_lab) /< /tspan> /< /textPath> /< /text>"
-           + encodeword.[char.10]
+           "/tag <text /sp class = /tag^(dq."nodes") > /tag <textPath /sp href = /tag
+           ^(dq.[merge("#" + toword.j)]) startOffset = /tag^(dq."100%") text-anchor = /tag
+           ^(dq."end") > /tag <tspan /sp = /tag^(dq."-0.1") >^(label.1#lab) /tag </tspan></textPath></text>"
+            + encodeword.[char.10]
         else ""
        , j + 1
       ),
@@ -187,10 +190,20 @@ do
    )
   else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e, svg2,
-"^(drawscript:T) /< svg id =^(ldq."svg10") ldqns =^(ldq."http://www.w3.org/2000/svg") width =
- ^(ldq."100%") viewBox =
- ^(ldq("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.3))) onload =
- ^(ldq."[^(draw >> 1)].forEach (shiftstart)") >^(txt + hovertxt)+/< /svg>"
+drawscript:T
+ + "/tag <svg /sp id = /tag"
+ + dq."svg10"
+ + "ldqns = /tag"
+ + dq."http://www.w3.org/2000/svg"
+ + "width = /tag"
+ + dq."100%"
+ + "viewBox = /tag"
+ + dq."5.0 /sp-1^(print(2, maxx + 5.0))^(print(2, maxy + 1.3))"
+ + "onload = /tag"
+ + dq."[^(draw >> 1)].forEach (shiftstart)"
+ + ">"
+ + (txt + hovertxt)
+ + "+tag </svg>"
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
 
@@ -202,10 +215,11 @@ EQ
 else GT
 
 function assvg(h:hovertext.T) seq.word
-"/< g> /< rect opacity =^(ldq."0.0") x =^(ldq.print(2, nodex.h)) y =
- ^(ldq.print(2, nodey.h - 0.5)) height =^(ldq."0.5") width =^(ldq."1") > /< /rect> /< rect pointer-events =
- ^(ldq."none") fill =^(ldq."white") opacity =^(ldq."0.0") x =^(ldq.print(2, nodex.h)) y =
- ^(ldq.print(2, nodey.h - 0.5)) height =^(ldq."1") width =^(ldq."100") > /< /rect> /< text pointer-events =
- ^(ldq."none") class =^(ldq."nodes") x =^(ldq.print(2, nodex.h)) y =
- ^(ldq.print(2, nodey.h)) opacity =^(ldq."0.0") >^(text.h) /< /text> /< /g>"
+"/tag <g><rect /sp opacity = /tag^(dq."0.0") x = /tag^(dq.print(2, nodex.h)) y = /tag
+^(dq.print(2, nodey.h - 0.5)) height = /tag^(dq."0.5") width = /tag^(dq."1") > /tag </rect><rect /sp pointer-events = /tag
+^(dq."none") fill = /tag^(dq."white") opacity = /tag^(dq."0.0") x = /tag
+^(dq.print(2, nodex.h)) y = /tag^(dq.print(2, nodey.h - 0.5)) height = /tag^(dq."1") width = /tag
+^(dq."100") > /tag </rect><text /sp pointer-events = /tag^(dq."none") class = /tag
+^(dq."nodes") x = /tag^(dq.print(2, nodex.h)) y = /tag^(dq.print(2, nodey.h)) opacity = /tag
+^(dq."0.0") >^(text.h) /tag </text></g>"
  + encodeword.[char.10] 

@@ -18,8 +18,6 @@ use file
 
 use seq.file
 
-use format
-
 use process.int
 
 use seq.int
@@ -75,10 +73,10 @@ let t = sort.addrsymX
 for txt = "/p", r ∈ callstack.30 << 2
 do
  let i = binarysearch(t, addrsym(r, Lit.1)),
- txt + %.r + (if between(-i - 1, 1, n.t) then %.sym.(-i - 1)_t else "") + "/br",
+ txt + %.r + (if between(-i - 1, 1, n.t) then %.sym.(-i - 1)#t else "") + "/br",
 txt
 
-________________
+-------------------------------
 
 Function tocstr(w:word) seq.byte
 {returns 16 bytes of header followed by UTF8 bytes endding with 0 byte.}
@@ -86,12 +84,17 @@ packed(toseqbyte(emptyUTF8 + decodeword.w) + tobyte.0)
 
 builtin getbytefile2(seq.byte) process.seq.byte {OPTION STATE}
 
-Function getfiles(args:seq.word) seq.file
-for acc = empty:seq.file, fn ∈ getfilenames(args << 1)
+use seq.seq.file
+
+Function getfiles(b:seq.seq.filename) seq.seq.file
+for acc = empty:seq.seq.file, fileNames ∈ b
 do
- let a = getbytefile2.tocstr.fullname.fn
- assert not.aborted.a report "Error openning file:" + fullname.fn,
- acc + file(fn, result.a + body2.a),
+ for acc1 = empty:seq.file, fn ∈ fileNames
+ do
+  let a = getbytefile2.tocstr.fullname.fn
+  assert not.aborted.a report "Error openning file:" + fullname.fn,
+  acc1 + file(fn, result.a + body2.a),
+ acc + acc1,
 acc
 
 builtin createfile3(data:seq.seq.byte, filename:seq.byte) int
@@ -101,7 +104,7 @@ let a = getbytefile2.fn
 assert not.aborted.a report "Error openning file:",
 result.a + body2.a
 
-___________
+-------------------------------
 
 function prepare(s:seq.seq.byte) seq.seq.byte
 for acc = empty:seq.seq.byte, e ∈ s
@@ -113,11 +116,11 @@ for acc = "files created:", f ∈ result
 do let discard2 = createfile3(prepare.rawdata.f, tocstr.fullname.fn.f), acc + fullname.fn.f,
 HTMLformat.acc
 
-_______________
+-------------------------------
 
 Function callfunc(ctsym:symbol, typedict:typedict, stk:seq.int) seq.int
 let v = lookup(deepcopySym.resulttype.ctsym, deepcopySym.seqof.typeword, ctsym)
-let funcaddress = 3_v,
+let funcaddress = 3#v,
 if funcaddress = 0 then
 empty:seq.int
 else
@@ -127,7 +130,7 @@ else
 
 Function buildargcode(sym:symbol, typedict:typedict) int
 {needed because the call interface implementation for reals is different than other types is some
- implementations}
+implementations}
 for acc = 1, typ ∈ paratypes.sym + resulttype.sym
 do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0,
 acc

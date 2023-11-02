@@ -28,26 +28,26 @@ for acc2 = empty:seq.symbol, sym ∈ code.sd
 do
  if
   isconstantorspecial.sym
-  ∨ isInternal.sym
-  ∨ isFref.sym
-  ∨ isGlobal.sym
-  ∨ 
+   ∨ isInternal.sym
+   ∨ isFref.sym
+   ∨ isGlobal.sym
+   ∨ 
    isBuiltin.sym
-   ∧ (name.sym ∉ "createthreadZ" ∨ n.acc2 ≤ 1 ∨ not.isFref.(n.acc2 - 1)_acc2)
+    ∧ (name.sym ∉ "createthreadZ" ∨ n.acc2 ≤ 1 ∨ not.isFref.(n.acc2 - 1)#acc2)
  then
  acc2 + sym
  else if isBuiltin.sym then
-  let functocall = (n.acc2 - 1)_acc2
+  let functocall = (n.acc2 - 1)#acc2
   let offset = valueofencoding.encode.parc2(sym.sd, basesym.functocall) * 6 + (2 - 6),
    acc2 >> 3
-   + [
+    + [
     profiledata
     , Lit.0
     , Getfld.seqof.typeptr
     , Lit(offset + 2)
     , symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
     , symbol(internalmod, "bitcast", typeptr, typeint)
-    , (n.acc2 - 1)_acc2
+    , (n.acc2 - 1)#acc2
     , 1^acc2
     , sym
    ]
@@ -93,11 +93,11 @@ let after = [
 ],
 if recursive then
  adjust(offset, nextvar, 1)
- + before
- + adjust(offset, nextvar,-1)
- + [Start.typeint, Local.nextvar, Lit.0, EqOp, Br2(2, 1), Lit.0, Exit]
- + after
- + [Exit, EndBlock, Define.nextvar]
+  + before
+  + adjust(offset, nextvar,-1)
+  + [Start.typeint, Local.nextvar, Lit.0, EqOp, Br2(2, 1), Lit.0, Exit]
+  + after
+  + [Exit, EndBlock, Define.nextvar]
 else before + after + Define.nextvar
 
 function adjust(offset:int, nextvar:int, litvalue:int) seq.symbol
@@ -129,21 +129,21 @@ let data =
  for acc = empty:seq.symbol, p ∈ v
  do acc + Fref.caller.p + Fref.callee.p + [Lit.0, Lit.0, Lit.0, Lit.0],
   acc
-  + Sequence(typeint, n.acc)
-  + Define.1
-  + Local.1
-  + Lit.1
-  + setSym.typeint
-  + Lit.n.v
-  + setSym.typeint
-  + Define.2
-  + [profiledata]
-  + Local.1
-  + setSym.typeptr,
+   + Sequence(typeint, n.acc)
+   + Define.1
+   + Local.1
+   + Lit.1
+   + setSym.typeint
+   + Lit.n.v
+   + setSym.typeint
+   + Define.2
+   + [profiledata]
+   + Local.1
+   + setSym.typeptr,
 asset.[
- symdef(symbol(moduleref.[libname, 1_"initialize"], "initProfile", typeptr), data, 0)
+ symdef(symbol(moduleref.[libname, 1#"initialize"], "initProfile", typeptr), data, 0)
  , symdef(
-  symbol(moduleref.[libname, 1_"initialize"], "profileData", typeptr)
+  symbol(moduleref.[libname, 1#"initialize"], "profileData", typeptr)
   , [profiledata, Lit.0, Getfld.typeptr]
   , 0
  )

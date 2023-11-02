@@ -89,7 +89,7 @@ do
   if isrecordconstant.symz then
    let b = getSymdef(source, symz)
    assert not.isempty.b report "FAIL F"
-   for acc = 0, sy ∈ code.1_b do if isrecordconstant.sy then let discard = symbolref.sy, 0 else 0,
+   for acc = 0, sy ∈ code.1#b do if isrecordconstant.sy then let discard = symbolref.sy, 0 else 0,
    next(typedictZ, resultZ ∪ b, inlineZ)
   else if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then
   next(typedictZ, resultZ, inlineZ)
@@ -98,7 +98,7 @@ do
    let b = getSymdef(source, symz)
    let sd =
     if not.isempty.b then
-    1_b
+    1#b
     else if istype.symz then
     symdef(symz, deepcopybody(resulttype.symz, newdict2), 0)
     else
@@ -114,15 +114,16 @@ do
       else
        assert n.k2 = 1
        report "unbound problem^(symz)
-        ^(
-         if n.k2 > 1 then
-         for txt = "", symt ∈ toseq.k2 do txt + "/br" + library.module.symt + %.symt, txt
-         else "")"
-       let sym2 = 1_k2
+       ^(
+        if n.k2 > 1 then
+        for txt = "", symt ∈ toseq.k2 do txt + "/br" + library.module.symt + %.symt, txt
+        else ""
+       )"
+       let sym2 = 1#k2
        let b2 = getSymdef(source, sym2),
         if not.isempty.b2 then
          for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1) do paras + Local.i,
-         symdef(sym2, paras + sym2, paragraphno.1_b2)
+         symdef(sym2, paras + sym2, paragraphno.1#b2)
         else instantiateTemplate(sym2, templates)
    {------------}
    let modpara = para.module.sym.sd
@@ -177,15 +178,15 @@ do
        let cacheValue = getSymdef(cache, sym4)
        let newValue =
         if not.isempty.cacheValue then
-        code.1_cacheValue
+        code.1#cacheValue
         else if isInternal.sym5 then
         let discard = symbolref.sym5, [sym5]
         else if name.sym5 ∈ "idxNB" then
-         let orgtype = 1_paratypes.sym5,
+         let orgtype = 1#paratypes.sym5,
           if
-           name.symz ∈ "_"
-           ∧ name.module.symz ∈ "seq"
-           ∧ abstracttypename.1_paratypes.symz ∈ "pseq"
+           name.symz ∈ "#sequenceIndex"
+            ∧ name.module.symz ∈ "seq"
+            ∧ abstracttypename.1#paratypes.symz ∈ "pseq"
           then
           {???? why must this case be included?} let discard = symbolref.sym5, [sym5]
           else [symbol(internalmod, "idxNB", orgtype, typeint, basetype(parameter.orgtype, newdict3))]
@@ -249,7 +250,7 @@ else if name.sym ∈ "indirect fromindirect" then
 empty:seq.symbol
 else if name.sym ∈ "getinstance3" then
  let typ = para.module.sym
- let gl = symbol4(moduleref."internallib $global", 1_"global", typ, empty:seq.mytype, typeptr)
+ let gl = symbol4(moduleref."internallib $global", 1#"global", typ, empty:seq.mytype, typeptr)
  let mysym = symbol(moduleref."* encodingsupport", "geteinfo", typeptr, seqof.typeword, typeptr)
  let discard = symbolref.mysym,
  [gl, Words.fullprint.typ, mysym]
@@ -263,13 +264,13 @@ else if name.sym ∈ "primitiveadd" then
  let discard4 = symbolref.addefuncx
  let discard3 = symbolref.add2
  {if isseq.basetype /or basetype = typeptr then [symbol (internalmod," bitcast", typeptr,
-  typeint), PreFref, addefuncx, add2] else assert basetype = typeint report" case not handled"
-  [PreFref, addefuncx, add2]}
+ typeint), PreFref, addefuncx, add2] else assert basetype = typeint report" case not handled"
+ [PreFref, addefuncx, add2]}
  [Record.[basetype], PreFref, addefuncx, add2]
 else if name.sym ∈ "deepcopy" then
 let dc = deepcopySym.para.module.sym let discard2 = symbolref.dc, [dc]
 else if name.sym ∈ "bitcast toptr bitcast2" then
- let a = basetype(1_paratypes.sym, newdict3)
+ let a = basetype(1#paratypes.sym, newdict3)
  let b = basetype(resulttype.sym, newdict3),
   if (if isseq.a then typeptr else a) = if isseq.b then typeptr else b then
   empty:seq.symbol
@@ -278,22 +279,22 @@ else if name.sym ∈ "typestructure" then
  let roottype = para.module.sym
  let tmp =
   for acc = empty:seq.seq.mytype, row ∈ asseqseqmytype.subdict(newdict3, roottype)
-  do if 1_row = roottype then [row] + acc else acc + row,
+  do if 1#row = roottype then [row] + acc else acc + row,
   acc
  {root type is now first row in tmp}
  for acc = empty:seq.symbol, row ∈ tmp
  do
   acc
-  + 
+   + 
    for accrow = empty:seq.symbol, t ∈ row
    do
     let fp = fullprint.t,
      accrow
-     + 
+      + 
       for acctype = empty:seq.symbol, idx = 1, w ∈ fp
       do next(
        acctype
-       + if idx < 3 then [Word.w] else [Word.w, Record.[typeword, typeword, typeword]]
+        + if idx < 3 then [Word.w] else [Word.w, Record.[typeword, typeword, typeword]]
        , if idx = 3 then 1 else idx + 1
       ),
       acctype + Sequence(typeword, n.fp / 3),
@@ -327,7 +328,7 @@ else [
     assert not.isempty.a report "cannot find type getfld^(typ)",
      if n.a > 1 then
      symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
-     else Getfld.1_a
+     else Getfld.1#a
  else if name.sym ∈ "empty" then
  Sequence(basetype(para.module.sym, newdict3), 0)
  else assert name.sym ∈ "createthreadZ" report "post bind error:^(sym)", sym
@@ -340,20 +341,21 @@ else
  let gx = findabstract(templates, sym2)
  assert n.gx = 1
  report "Cannot find template for X^(n.gx)^(sym2)
-  ^(
-   if isempty.gx then
-   ""
-   else for txt = "", k ∈ gx do txt + "/br" + %.sym.sd.k + %.modpara.k, txt)"
- for newcode = empty:seq.symbol, sym4 ∈ code.sd.1_gx
- do newcode + replaceTsymbol(modpara.1_gx, sym4),
- symdef4(sym2, newcode, 0, getOptionsBits.sd.1_gx)
+ ^(
+  if isempty.gx then
+  ""
+  else for txt = "", k ∈ gx do txt + "/br" + %.sym.sd.k + %.modpara.k, txt
+ )"
+ for newcode = empty:seq.symbol, sym4 ∈ code.sd.1#gx
+ do newcode + replaceTsymbol(modpara.1#gx, sym4),
+ symdef4(sym2, newcode, 0, getOptionsBits.sd.1#gx)
 
 function deepcopybody(type:mytype, typedict:typedict) seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then
 [Local.1]
 else if isseq.type then
  {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.
-  packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6}
+ packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6}
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype,
   if elementtype = typeboolean then
@@ -367,26 +369,26 @@ else if isseq.type then
    let masterindex = 6
    let theseqtype = basetype,
     [Sequence(elementtype, 0)]
-    + [Local.theseq, GetSeqLength, Define.totallength]
-    + Lit.0
-    + Loopblock([theseqtype, typeint], 2, theseqtype)
-    + [Local.lastidx, Local.totallength, EqOp, Br2(1, 2), Local.2, Exit]
-    + [Local.lastidx, Lit.1, PlusOp, Define.masterindex]
-    + [
+     + [Local.theseq, GetSeqLength, Define.totallength]
+     + Lit.0
+     + Loopblock([theseqtype, typeint], 2, theseqtype)
+     + [Local.lastidx, Local.totallength, EqOp, Br2(1, 2), Local.2, Exit]
+     + [Local.lastidx, Lit.1, PlusOp, Define.masterindex]
+     + [
      Local.theseq
      , Local.masterindex
      , symbol(internalmod, "idxNB", theseqtype, typeint, parameter.theseqtype)
      , Define.theelement
     ]
-    + [Local.2, Local.theelement, deepcopySym.parameter.type, cat]
-    + [Local.masterindex, continue.2]
-    + [EndBlock]
-    + blockitsymbol.basetype
+     + [Local.2, Local.theelement, deepcopySym.parameter.type, cat]
+     + [Local.masterindex, continue.2]
+     + [EndBlock]
+     + blockitsymbol.basetype
 else
  let subflds = flatflds(typedict, type),
   if n.subflds = 1 then
    {only one element in record so type is not represent by actual record} [Local.1]
-   + deepcopySym.1_subflds
+    + deepcopySym.1#subflds
   else
    for fldno = 1, fldkinds = empty:seq.mytype, result = empty:seq.symbol, fldtype ∈ subflds
    do
@@ -398,18 +400,18 @@ else
     ),
    result + [Record.fldkinds]
 
-__________________________
+-------------------------------
 
 type symbolref is toint:int
 
 function symbolref(sym:symbol) symbolref symbolref.addorder.sym
 
-_________________
+-------------------------------
 
 Function prescan2(s:seq.symdef, typedict:typedict) seq.symdef
 {removes name from locals and makes value of local unique.
- /br changes length and getseqtype to GetSeqLength and GetSeqType
- /br removes next}
+/br changes length and getseqtype to GetSeqLength and GetSeqType
+/br removes next}
 for acc = empty:seq.symdef, p ∈ s
 do
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.sym.p, 1, 1)
@@ -431,7 +433,7 @@ do
    , lastloop
   )
   else if islocal.sym then
-  let l = lookup(map, value.sym), next(nextvar, map, result + value.1_l, newdict, lastloop)
+  let l = lookup(map, value.sym), next(nextvar, map, result + value.1#l, newdict, lastloop)
   else if isloopblock.sym then
    let offset = nextvar - firstvar.sym
    for newmap = map, v ∈ arithseq(nopara.sym, 1, firstvar.sym)
@@ -451,8 +453,8 @@ do
    let continueSize = nopara.top.lastloop
    let newresult =
     if continueSize = nopara.f + 1 then
-     let l = lookup(map, toint.1_%.parameter.para.module.f + nopara.f + 4),
-     result >> 1 + value.1_l
+     let l = lookup(map, toint.1#%.parameter.para.module.f + nopara.f + 4),
+     result >> 1 + value.1#l
     else result >> 1,
    next(nextvar, map, newresult + continue.continueSize, newdict, lastloop)
   else if sym = EndBlock then

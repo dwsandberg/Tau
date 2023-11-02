@@ -23,12 +23,12 @@ Function breaklines(a:seq.byte) seq.UTF8 breaklines(a, 2, 1, empty:seq.UTF8)
 function breaklines(a:seq.byte, i:int, last:int, result:seq.UTF8) seq.UTF8
 if i > n.a then
 result
-else if toint.i_a = 10 then
+else if toint.i#a = 10 then
 breaklines(
  a
  , i + 1
  , i + 1
- , result + UTF8.subseq(a, last, i - if toint.(i - 1)_a = 13 then 2 else 1)
+ , result + UTF8.subseq(a, last, i - if toint.(i - 1)#a = 13 then 2 else 1)
 )
 else breaklines(a, i + 1, last, result)
 
@@ -81,7 +81,7 @@ let classify = [
  , Kspace * M
  , 33
  , Kstandalone * M + 5
- , 35
+ , Kstandalone * M + 15
  , 36
  , 37
  , 38
@@ -141,7 +141,7 @@ let classify = [
  , 92
  , Kstandalone * M + 13
  , Kstandalone * M + 14
- , Kstandalone * M + 15
+ , 95
  , 96
  , 97
  , 98
@@ -186,7 +186,7 @@ do
  let nextclass =
   if not.between(toint.b, 1, n.classify) then
   toint.b
-  else let t = toint.b {t_classify} idxNB(classify, t)
+  else let t = toint.b {t#classify} idxNB(classify, t)
  let KEY = tobits.thisclass >> 8 ∨ tobits.nextclass >> 10,
   if KEY = KEY(Klf, Kspace) then
   next(result, words, bytes, thisclass, this)
@@ -207,20 +207,20 @@ do
    let k = if j < 4 ∧ b = tobyte.32 then j + 1 else j,
    next(
     result
-    , words + idxNB(".. :: ^(dq) ()+,-= []^_{}", k)
+    , words + idxNB(".. :: ^(dq) ()+,-= []^#{}", k)
     , empty:seq.byte
     , nextclass
     , b
    )
   else if
    KEY = KEY(Kstandalone, Kother)
-   ∨ KEY = KEY(Kstandalone, Klf)
-   ∨ KEY = KEY(Kstandalone, Kstandalone)
+    ∨ KEY = KEY(Kstandalone, Klf)
+    ∨ KEY = KEY(Kstandalone, Kstandalone)
   then
    let k = thisclass - Kstandalone * M,
    next(
     result
-    , words + idxNB(".. :: ^(dq) ()+,-= []^_{}", k)
+    , words + idxNB(".. :: ^(dq) ()+,-= []^#{}", k)
     , empty:seq.byte
     , nextclass
     , b
@@ -233,4 +233,4 @@ function KEY(a:int, b:int) bits tobits(a * 4 + b)
 Function towords(a:UTF8) seq.word
 {assumes no paragraph breaks in a}
 let b = breakparagraph.toseqbyte.a,
-if isempty.b then empty:seq.word else 1_b 
+if isempty.b then empty:seq.word else 1#b 

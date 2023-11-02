@@ -23,33 +23,29 @@ function %(p:prettyR) seq.word "{^(prec.p)}^(text.p)"
 Export escapeformat(in:seq.word) seq.word {From prettyAttribute}
 
 Function pretty(p:seq.word) seq.word
-let r = parse(p, mytable, toAttribute."", true)
-let out = text.1_parts.result.r,
+let r = parse(p, toAttribute."", true)
+let out = text.1#parts.result.r,
 if status.r ∈ "Match" then out else "Fail^(p)"
 
 Function prettyNoChange(p:seq.word) seq.word
-let r = parse(p, mytable, toAttribute."", false)
-let out = text.1_parts.result.r,
+let r = parse(p, toAttribute."", false)
+let out = text.1#parts.result.r,
 if status.r ∈ "Match" then out else "Fail^(p)"
 
 function binary2(a:attribute, b:attribute, op:seq.word) attribute
-if isempty.text.1_parts.b then a else attribute(parts.a + parts.b)
+if isempty.text.1#parts.b then a else attribute(parts.a + parts.b)
 
 function binary(a:attribute, b:attribute, op:seq.word) attribute
-let tmp = if isempty.text.1_parts.a then empty:seq.prettyR else parts.a,
+let tmp = if isempty.text.1#parts.a then empty:seq.prettyR else parts.a,
 attribute(tmp + prettyR(-1, width.op, op) + parts.b)
 
-function checkfirstdigit(chars:seq.char) boolean
-let i = if n.chars > 1 ∧ 1_chars = char1."-" then 2 else 1,
-between(toint.i_chars, 48, 57)
-
 function unaryMinus(change:boolean, bin:attribute) attribute
-let b = if change ∧ prec.1_parts.bin ≤ 2 then removeparen.bin else bin,
+let b = if change ∧ prec.1#parts.bin ≤ 2 then removeparen.bin else bin,
 attribute.prettyR(2, 1 + width1.b, "-^(text1.b)")
 
 function unaryExp(change:boolean, kind:int, a:attribute, b:attribute) attribute
 if kind = 2 then
- if checkfirstdigit.decodeword.1_text1.a then
+ if hexOrDecimal?.1#text1.a ∉ "other" then
  attribute.prettyR(0, width1.a + width1.b, text1.a + "." + text1.b)
  else if change then
  funccall(change, a, b, toAttribute."")
@@ -59,28 +55,28 @@ else
  attribute.
   if subseq(text1.b, 1, 2) = "<* block" then
    let c = mergelist(2, ce),
-   prettyR(prec.1_parts.b, 10000, "<* block^(text1.c) /br^(text1.b << 2)")
-  else 1_parts.mergelist(prec.1_parts.b, ce + parts.b)
+   prettyR(prec.1#parts.b, 10000, "<* block^(text1.c) /br^(text1.b << 2)")
+  else 1#parts.mergelist(prec.1#parts.b, ce + parts.b)
 
 function mergebinary(change:boolean, prec:int, a0:attribute, b:attribute) attribute
-let a1 = 1_parts.a0
+let a1 = 1#parts.a0
 let a2 =
  if change ∧ prec.a1 ≤ prec ∧ 1^text.a1 ∈ ") *>" then
   let txt = if prec = 11 then removeclose.text.a1 else removeparen.text.a1,
   [prettyR(prec.a1, width.txt, txt)]
  else parts.a0,
-if n.parts.b = 1 ∧ isempty.text.1_parts.b then
+if n.parts.b = 1 ∧ isempty.text.1#parts.b then
 attribute.a2
 else
  let aa =
-  if prec = 1 ∧ prec.1_a2 = 1 then
-  [prettyR(0, width.1_a2 + 2, "(^(text.1_a2))")]
+  if prec = 1 ∧ prec.1#a2 = 1 then
+  [prettyR(0, width.1#a2 + 2, "(^(text.1#a2))")]
   else a2
  for op = true, binary = "", acc = aa, e ∈ parts.b
  do
   if op then
    let t = text.e,
-   next(false, if t ∈ [",", ".", "_", "^"] then t else "/sp^(t) /sp", acc)
+   next(false, if t ∈ [",", ".", "^", "#"] then t else "/sp^(t) /sp", acc)
   else
    let bb =
     if change ∧ prec.e < prec ∧ 1^text.e ∈ ") *>" then
@@ -99,11 +95,11 @@ function combine(change:boolean, a:seq.prettyR, b:seq.prettyR, E:attribute) attr
 if isempty.b ∧ isempty.a then
 E
 else if not.change then
-let parts = a + b + parts.E, mergelist(if prec.1_parts = 10 then 10 else 11, parts)
+let parts = a + b + parts.E, mergelist(if prec.1#parts = 10 then 10 else 11, parts)
 else
  let tmp = removeparen.text1.E
- let e = if tmp = text1.E then 1_parts.E else prettyR(0, width.tmp, tmp),
-  if not(n.b = 1 ∧ isempty.text.1_b) then
+ let e = if tmp = text1.E then 1#parts.E else prettyR(0, width.tmp, tmp),
+  if not(n.b = 1 ∧ isempty.text.1#b) then
    let parts = a + if isempty.text.1^b then b >> 1 else b,
    mergelist(if prec.1^parts = 10 then 10 else 11, parts >> 1 + addcomma.1^parts + e)
   else mergelist(11, a + e)
@@ -127,7 +123,7 @@ function mergelist(prec:int, in:seq.prettyR) attribute
 if n.in = 1 then
 attribute.in
 else
- let tmp = text.1_in
+ let tmp = text.1#in
  let tmp2 = removeblock.tmp,
   if n.tmp > n.tmp2 then
   mergelist(prec, [prettyR(prec, width.tmp2, tmp2)] + in << 1)
@@ -140,7 +136,7 @@ else
     if width.t < maxwidth then
     attribute.t
     else
-     for text = text.1_in, blockIsLast = blockIsLast.text.1_in, e ∈ in << 1
+     for text = text.1#in, blockIsLast = blockIsLast.text.1#in, e ∈ in << 1
      do
       if isempty.text.e then
       next(text, blockIsLast)
@@ -149,29 +145,35 @@ else
       else next(text + "/br" + text.e, blockIsLast.text.e),
      attribute.prettyR(prec, 10000, addblock.text)
 
-function IfExp(change:boolean, prefix:seq.word, R:reduction) seq.prettyR
-assert n.parts.2_R = 1 report "PROBLEM"
+function IfExp(change:boolean, prefix:seq.word, R1:attribute, R2:attribute) seq.prettyR
+assert n.parts.R2 = 1 report "PROBLEM"
 let adjust = width.prefix + 5
-let cond = if change then removeclose.1_R else 1_R
-let thenpart = parts.if change then removeclose.2_R else 2_R
-let Then = if 1_text.1_thenpart ∈ "-" then "/keyword then /sp" else "/keyword then",
+let cond = if change then removeclose.R1 else R1
+let thenpart = parts.if change then removeclose.R2 else R2
+let Then = if 1#text.1#thenpart ∈ "-" then "/keyword then /sp" else "/keyword then",
 [prettyR(0, width1.cond + adjust, prefix + text1.cond + Then)] + thenpart
 
-function fullIfExp(change:boolean, R:reduction) attribute
-let keywordelse = if 1_text1.4_R ∈ "-" then "/keyword else /sp" else "/keyword else"
+function fullIfExp(
+ change:boolean
+ , R1:attribute
+ , R2:attribute
+ , R3:attribute
+ , R4:attribute
+) attribute
+let keywordelse = if 1#text1.R4 ∈ "-" then "/keyword else /sp" else "/keyword else"
 let prefix = if change then "(/keyword if" else "/keyword if"
 let tmp =
  if change then
- let mid = removeclose.4_R, prettyR(9, 6 + width1.mid, keywordelse + text1.mid + ")")
- else prettyR(9, 5 + width1.4_R, keywordelse + text1.4_R),
-mergelist(9, IfExp(change, prefix, R) + parts.3_R + tmp)
+ let mid = removeclose.R4, prettyR(9, 6 + width1.mid, keywordelse + text1.mid + ")")
+ else prettyR(9, 5 + width1.R4, keywordelse + text1.R4),
+mergelist(9, IfExp(change, prefix, R1, R2) + parts.R3 + tmp)
 
 function LetExp(change:boolean, a:attribute, b:attribute, c:attribute) seq.prettyR
 [prettyR(
  10
  , width1.a + width1.b + width1.c + 6
  , "/keyword let^(text1.a) =
-  ^(if change then let x = removeclose.text1.b, x + text1.c else text1.b + text1.c)"
+ ^(if change then let x = removeclose.text1.b, x + text1.c else text1.b + text1.c)"
 )]
 
 function AssertExp(change:boolean, a:attribute, b:attribute) seq.prettyR
@@ -179,7 +181,7 @@ function AssertExp(change:boolean, a:attribute, b:attribute) seq.prettyR
 let assertpart = "/keyword assert^(if change then removeclose.text1.a else text1.a)"
 let reportpart = "/keyword report^(if change then removeclose.text1.b else text1.b)",
 if width1.a + width1.b + 16 < maxwidth then
-[prettyR(0, width1.a + width1.b + 16, "^(assertpart)^(reportpart)")]
+[prettyR(0, width1.a + width1.b + 16, assertpart + reportpart)]
 else [prettyR(0, width1.a + 8, assertpart), prettyR(0, width1.b + 8, reportpart)]
 
 Function AccumExp(
@@ -203,7 +205,7 @@ let accums =
  accumList
  else
   let bb = attribute(parts.accumList << 1),
-  mergebinary(change, 11, attribute.1_parts.accumList, bb)
+  mergebinary(change, 11, attribute.1#parts.accumList, bb)
 let whilepart =
  if isempty.text1.While then
  prettyR(0, 0, "")
@@ -221,15 +223,15 @@ attribute.
  )]
  else
   attr("/keyword for", accums)
-  + whilepart
-  + prettyR(10, 3 + width1.dopart, "/keyword do^(text1.dopart)")
+   + whilepart
+   + prettyR(10, 3 + width1.dopart, "/keyword do^(text1.dopart)")
 
 function brackets(change:boolean, prec:int, ain:attribute) attribute
 let a = if change then removeparen.ain else ain,
-attribute.prettyR(prec.1_parts.a, width1.a + 2, "(^(text1.a))")
+attribute.prettyR(prec.1#parts.a, width1.a + 2, "(^(text1.a))")
 
 function CommentExp(a:attribute) seq.prettyR
-let p = 1_parts.a
+let p = 1#parts.a
 let tmp =
  if width.p ≤ maxwidth then
  text.p
@@ -245,8 +247,7 @@ let tmp =
   acc,
 addBlock([prettyR(0, width.p + 2, tmp)], "comment")
 
-function quote(a:attribute, b:attribute) attribute
-let all = parts.a + parts.b
+function quote(all:seq.prettyR) attribute
 for width2 = 0, text1 = "", text2 = "", hasbreak = 0, e ∈ all
 do
  if subseq(text.e, 1, 2) = "^" + "(" then
@@ -279,8 +280,8 @@ attribute.addBlock(
 )
 
 function fixname(s:seq.word, a:attribute) seq.prettyR
-let name = text.1_parts.a
-let name1 = if 1_name ∈ "+=_-^" then s + "/sp" + name else s + name
+let name = text.1#parts.a
+let name1 = if 1#name ∈ "+=-^#" then s + "/sp" + name else s + name
 let widthname = width.name1
 let widthlast = width.1^parts.a
 let textlast = if 1^s ∈ ":" then {Export type:} "" else text.1^parts.a
@@ -290,8 +291,8 @@ if widthname + width + widthlast < maxwidth then
 [prettyR(0, widthname + width + widthlast, "/keyword^(name1)^(text)^(textlast)")]
 else
  [prettyR(0, width.name1, "/keyword^(name1)")]
- + prettyR(0, 10000, addblock(text2 >> 1))
- + 1^parts.a
+  + prettyR(0, 10000, addblock(text2 >> 1))
+  + 1^parts.a
 
 function start(s:seq.word, a:attribute, b:attribute) attribute
 let tmp = if s = "type" then parts.toAttribute."/keyword type^(text1.a) is" else fixname(s, a),
@@ -305,28 +306,26 @@ function start(
  , c:attribute
 ) attribute
 let txt = removeclose.removeblock.removeparen.text1.c
-let newc = if txt = text1.c then 1_parts.c else prettyR(0, width.txt, txt),
+let newc = if txt = text1.c then 1#parts.c else prettyR(0, width.txt, txt),
 toAttribute.removeblock.text1.combine(change, fixname(s, a), parts.b, attribute.newc)
 
 function addBlock(s:seq.prettyR, kind:seq.word) seq.prettyR
 let fixes =
  if kind = "literal" then
- ["<* literal /ldq^(escapeformat)", "^(escapeformat)^(dq) *>"]
+ ["<* literal /tag^(dq)^(escapeformat)", "^(escapeformat)^(dq) *>"]
  else ["<* comment^(escapeformat) {", "}^(escapeformat) *>"],
 if n.s = 1 then
-[prettyR(0, width.1_s, 1_fixes + text.1_s + 2_fixes)]
-else [prettyR(0, 0, 1_fixes)] + s + prettyR(0, 0, 2_fixes)
+[prettyR(0, width.1#s, 1#fixes + text.1#s + 2#fixes)]
+else [prettyR(0, 0, 1#fixes)] + s + prettyR(0, 0, 2#fixes)
 
-function slash word 1_"/"
-
-function /All word 1_"All"
+function slash word 1#"/"
 
 function %(b:boolean) seq.word if b then "true" else "false"
 
 function promoteFirstLineOfBLock(s:seq.word) seq.word
 {does it work for" a"+" b
- /br c"}
-for kk = 0, inescape = false, nesting = 0, continue = true, hasbreak = false, last = 1_"?", w ∈ s
+/br c"}
+for kk = 0, inescape = false, nesting = 0, continue = true, hasbreak = false, last = 1#"?", w ∈ s
 while continue
 do
  if last = escapeformat then
@@ -340,12 +339,12 @@ do
  else if last ∈ "/br" then
  next(kk + 1, inescape, nesting, nesting > 0, true, w)
  else next(kk + 1, inescape, nesting, true, hasbreak, w),
-if (kk - 1)_s ∈ "/br" then
+if (kk - 1)#s ∈ "/br" then
 subseq(s, 1, kk - 2) + "<* block" + s << (kk - 1)
 else "<* block^(s)"
 
 function funccall(change:boolean, name:attribute, b:attribute, c:attribute) attribute
-let a = 1_parts.b
+let a = 1#parts.b
 let aa =
  if change ∧ 1^text.a ∈ ") *>" then
  let txt = removeclose.text.a, prettyR(prec.a, width.a + n.txt - n.text.a, txt)
@@ -353,12 +352,12 @@ let aa =
 attribute.
  if n.parts.c = 1 ∧ isempty.text1.c then
   if n.parts.name = 0 then
-  prettyR(0, width.aa + 4, "[/nosp^(text.aa)]")
+  prettyR(0, width.aa + 4, "[^(text.aa)]")
   else if change ∧ n.text1.name = 1 ∧ prec.aa ≤ 2 then
   let new = "^(text1.name).^(text.aa)", prettyR(2, width.new, new)
   else if change ∧ prec.aa = 9 then
   prettyR(9, width1.name + 1 + width.aa, "(^(text1.name).^(text.aa))")
-  else prettyR(0, width1.name + 2 + width.aa, "^(text1.name) /nosp (^(text.aa))")
+  else prettyR(0, width1.name + 2 + width.aa, "^(text1.name) /tag (^(text.aa))")
  else
   let aa1 = removeblocks.aa
   for
@@ -382,171 +381,167 @@ attribute.
      promoteFirstLineOfBLock(text.bb << 2)
      else text.bb
     let newblockacc = blockacc + if flag then ",^(textbb)" else "/br,^(textbb)",
-    next(true, acc + "," + textbb, newblockacc, blockIsLast.textbb, width + width."," + width.bb),
+    next(
+     true
+     , acc + "," + textbb
+     , newblockacc
+     , blockIsLast.textbb
+     , width + width."," + width.bb
+    ),
    if n.parts.name = 0 then
     let totalwidth = width + 4,
      if width < maxwidth then
-     prettyR(0, totalwidth, "[/nosp^(acc)]")
-     else prettyR(0, 10000, "[/nosp^(addblock.blockacc)]")
+     prettyR(0, totalwidth, "[^(acc)]")
+     else prettyR(0, 10000, "[^(addblock.blockacc)]")
    else
     let totalwidth = width + width1.name + 2,
      if width < maxwidth then
-     prettyR(0, totalwidth, "^(text1.name) /nosp (^(acc))")
-     else prettyR(0, totalwidth, "^(text1.name) /nosp (^(addblock.blockacc))")
+     prettyR(0, totalwidth, "^(text1.name) /tag (^(acc))")
+     else prettyR(0, totalwidth, "^(text1.name) /tag (^(addblock.blockacc))")
 
 function endMark word encodeword.[char.254]
 
 function PEGgen(
  seqElementType:word
  , attributeType:attribute
- , runresultType:runresult
- , R:reduction
+ , resultType:runresult
+ , R:seq.attribute
  , common:boolean
+ , commonType:boolean
 ) seq.boolean
+{commonName = common wordmap = carrot 1#"^", slash slash, dq 1#dq, 1#" $"}
 [
- "match2code carrot" = 1_"^"
- , "/ slash" = slash
- , "/ dq" = 1_dq
- , "/ any" = 1_"/1"
- , "S function Header Declare' E" = start(common, "function", 1_R, 2_R, 3_R)
- , "/ Function Header Declare' E" = start(common, "Function", 1_R, 2_R, 3_R)
- , "/ type Id is FPL Comment" = start("type", 1_R, attribute(parts.2_R + parts.3_R))
- , "/ Export type:Type Comment" = start("Export type:", 1_R, 2_R)
- , "/ Export Header Comment" = start("Export", 1_R, 2_R)
- , "/ Builtin Header Comment" = start("Builtin", 1_R, 2_R)
- , "/ builtin Header Comment" = start("builtin", 1_R, 2_R)
- , "/ unbound Header Comment" = start("unbound", 1_R, 2_R)
+ "Pretty function Header Declare' E" = start(common, "function", $.1, $.2, $.3)
+ , "/ Function Header Declare' E" = start(common, "Function", $.1, $.2, $.3)
+ , "/ type Id is FPL Comment" = start("type", $.1, attribute(parts.$.2 + parts.$.3))
+ , "/ Export type:Type Comment" = start("Export type:", $.1, $.2)
+ , "/ Export Header Comment" = start("Export", $.1, $.2)
+ , "/ Builtin Header Comment" = start("Builtin", $.1, $.2)
+ , "/ builtin Header Comment" = start("builtin", $.1, $.2)
+ , "/ unbound Header Comment" = start("unbound", $.1, $.2)
  , "Header Name (FPL) Type"
-  = attribute(prettyR(text1.1_R + "/nosp (") + parts.2_R + prettyR.")^(text1.3_R)")
- , "/ Name Type" = attribute(parts.1_R + parts.2_R)
- , "* Comment {N}" = attribute(parts.0_R + CommentExp.1_R)
- , "String dq String' str2 dq" = quote(1_R, 2_R)
- , "* String' str2 carrot (E)"
+  = attribute(prettyR(text1.$.1 + "/tag (") + parts.$.2 + prettyR.")^(text1.$.3)")
+ , "/ Name Type" = attribute(parts.$.1 + parts.$.2)
+ , "* Comment {N}" = attribute(parts.$.0 + CommentExp.$.1)
+ , "String dq String' dq" = quote.parts.$.1
+ , "* String' carrot (E)"
   = attribute(
-   parts.0_R
-   + parts.1_R
-   + prettyR(
+   parts.$.0
+    + prettyR(
     0
-    , width1.2_R + 4
-    , "^" + "(^(escapeformat)^(removeparen.text1.2_R)^(escapeformat))"
+    , width1.$.1 + 4
+    , "^" + "(^(escapeformat)^(removeparen.text1.$.1)^(escapeformat))"
    )
   )
- , "/ str2 carrot"
-  = attribute(parts.0_R + prettyR(0, width1.1_R + 2, text1.1_R + "^"))
- , "/ str2" = attribute(parts.0_R + parts.1_R)
- , "* str2 ! dq ! carrot any" = /All
- , "E Or" = 1_R
- , "* EL', E" = binary(0_R, 1_R, ",")
- , "Or And Or'" = mergebinary(common, 8, 1_R, 2_R)
- , "* Or' ∨ And" = binary(0_R, 1_R, "∨")
- , "/ /or And" = binary(0_R, 1_R, "∨")
- , "/ ⊻ And" = binary(0_R, 1_R, "⊻")
- , "And Compare And'" = mergebinary(common, 7, 1_R, 2_R)
- , "* And' ∧ Compare" = binary(0_R, 1_R, "∧")
- , "/ /and Compare" = binary(0_R, 1_R, "∧")
- , "Compare Sum Compare'" = mergebinary(common, 6, 1_R, 2_R)
- , "* Compare' = Sum" = binary(0_R, 1_R, "=")
- , "/ ≠ Sum" = binary(0_R, 1_R, "≠")
- , "/ > Sum" = binary(0_R, 1_R, ">")
- , "/ < Sum" = binary(0_R, 1_R, "<")
- , "/ >1 Sum" = binary(0_R, 1_R, ">1")
- , "/ >2 Sum" = binary(0_R, 1_R, ">2")
- , "/ ≥ Sum" = binary(0_R, 1_R, "≥")
- , "/ /ge Sum" = binary(0_R, 1_R, "≥")
- , "/ ≤ Sum" = binary(0_R, 1_R, "≤")
- , "/ /le Sum" = binary(0_R, 1_R, "≤")
- , "/ /ne Sum" = binary(0_R, 1_R, "≠")
- , "Sum Product Sum'" = mergebinary(common, 4, 1_R, 2_R)
- , "* Sum'-Product" = binary(0_R, 1_R, "-")
- , "/+Product" = binary(0_R, 1_R, "+")
- , "/ ∈ Product" = binary(0_R, 1_R, "∈")
- , "/ /in Product" = binary(0_R, 1_R, "∈")
- , "/ ∉ Product" = binary(0_R, 1_R, "∉")
- , "/ /nin Product" = binary(0_R, 1_R, "∉")
- , "Product Unary Product'" = mergebinary(common, 3, 1_R, 2_R)
- , "* Product' * Unary" = binary(0_R, 1_R, "*")
- , "/ >> Unary" = binary(0_R, 1_R, ">>")
- , "/ << Unary" = binary(0_R, 1_R, "<<")
- , "/ slash Unary" = binary(0_R, 1_R, [slash])
- , "/ mod Unary" = binary(0_R, 1_R, "mod")
- , "/ ∩ Unary" = binary(0_R, 1_R, "∩")
- , "/ ∪ Unary" = binary(0_R, 1_R, "∪")
- , "/ /cap Unary" = binary(0_R, 1_R, "∩")
- , "/ /cup Unary" = binary(0_R, 1_R, "∪")
- , "/ \ Unary" = binary(0_R, 1_R, "\")
- , "Unary-Unary" = unaryMinus(common, 1_R)
- , "/ Id.Unary" = unaryExp(common, 2, 1_R, 2_R)
- , "/ {N} Unary" = unaryExp(common, 3, 1_R, 2_R)
- , "/ Power" = 1_R
- , "Power Atom Power'" = mergebinary(common, 1, 1_R, 2_R)
- , "* Power'_Unary" = binary(0_R, 1_R, "_")
- , "/^Unary" = binary(0_R, 1_R, "^")
+ , "/ carrot" = attribute(parts.$.0 + prettyR."^")
+ , "/ str2" = attribute(parts.$.0 + parts.$.1)
+ , "+str2 ! dq ! carrot any" = /All
+ , "E Or" = $.1
+ , "* EL', E" = binary($.0, $.1, ",")
+ , "Or And Or'" = mergebinary(common, 8, $.1, $.2)
+ , "* Or' ∨ And" = binary($.0, $.1, "∨")
+ , "/ /or And" = binary($.0, $.1, "∨")
+ , "/ ⊻ And" = binary($.0, $.1, "⊻")
+ , "And Compare And'" = mergebinary(common, 7, $.1, $.2)
+ , "* And' ∧ Compare" = binary($.0, $.1, "∧")
+ , "/ /and Compare" = binary($.0, $.1, "∧")
+ , "Compare Sum Compare'" = mergebinary(common, 6, $.1, $.2)
+ , "* Compare' = Sum" = binary($.0, $.1, "=")
+ , "/ ≠ Sum" = binary($.0, $.1, "≠")
+ , "/ > Sum" = binary($.0, $.1, ">")
+ , "/ < Sum" = binary($.0, $.1, "<")
+ , "/ >1 Sum" = binary($.0, $.1, ">1")
+ , "/ >2 Sum" = binary($.0, $.1, ">2")
+ , "/ ≥ Sum" = binary($.0, $.1, "≥")
+ , "/ /ge Sum" = binary($.0, $.1, "≥")
+ , "/ ≤ Sum" = binary($.0, $.1, "≤")
+ , "/ /le Sum" = binary($.0, $.1, "≤")
+ , "/ /ne Sum" = binary($.0, $.1, "≠")
+ , "Sum Product Sum'" = mergebinary(common, 4, $.1, $.2)
+ , "* Sum'-Product" = binary($.0, $.1, "-")
+ , "/+Product" = binary($.0, $.1, "+")
+ , "/ ∈ Product" = binary($.0, $.1, "∈")
+ , "/ /in Product" = binary($.0, $.1, "∈")
+ , "/ ∉ Product" = binary($.0, $.1, "∉")
+ , "/ /nin Product" = binary($.0, $.1, "∉")
+ , "Product Unary Product'" = mergebinary(common, 3, $.1, $.2)
+ , "* Product' * Unary" = binary($.0, $.1, "*")
+ , "/ >> Unary" = binary($.0, $.1, ">>")
+ , "/ << Unary" = binary($.0, $.1, "<<")
+ , "/ slash Unary" = binary($.0, $.1, [slash])
+ , "/ mod Unary" = binary($.0, $.1, "mod")
+ , "/ ∩ Unary" = binary($.0, $.1, "∩")
+ , "/ ∪ Unary" = binary($.0, $.1, "∪")
+ , "/ /cap Unary" = binary($.0, $.1, "∩")
+ , "/ /cup Unary" = binary($.0, $.1, "∪")
+ , "/ \ Unary" = binary($.0, $.1, "\")
+ , "Unary-Unary" = unaryMinus(common, $.1)
+ , "/ Id.Unary" = unaryExp(common, 2, $.1, $.2)
+ , "/ {N} Unary" = unaryExp(common, 3, $.1, $.2)
+ , "/ Power" = $.1
+ , "Power Atom Power'" = mergebinary(common, 1, $.1, $.2)
+ , "* Power'#Unary" = binary($.0, $.1, "#")
+ , "/^Unary" = binary($.0, $.1, "^")
  , "Atom (E)"
   = 
-   let a = if common then removeparen.1_R else 1_R,
-   attribute.prettyR(prec.1_parts.a, width1.a + 2, "(^(text1.a))")
- , "/ [E EL']" = funccall(common, attribute.empty:seq.prettyR, 1_R, 2_R)
- , "/ String" = 1_R
- , "/ Declare Declare' E"
-  = combine(common, empty:seq.prettyR, parts.1_R + parts.2_R, 3_R)
- , "/ if E then E IF else E" = fullIfExp(common, R)
- , "/ Name (E EL')" = funccall(common, 1_R, 2_R, 3_R)
- , "/ Name" = 1_R
+   let a = if common then removeparen.$.1 else $.1,
+   attribute.prettyR(prec.1#parts.a, width1.a + 2, "(^(text1.a))")
+ , "/ [E EL']" = funccall(common, attribute.empty:seq.prettyR, $.1, $.2)
+ , "/ String" = $.1
+ , "/ Declare Declare' E" = combine(common, empty:seq.prettyR, parts.$.1 + parts.$.2, $.3)
+ , "/ if E then E IF else E" = fullIfExp(common, $.1, $.2, $.3, $.4)
+ , "/ Name (E EL')" = funccall(common, $.1, $.2, $.3)
+ , "/ Name" = $.1
  , "Name Id:Type"
-  = attribute.prettyR(0, width1.1_R + 2 + width1.2_R, text1.1_R + ":" + text1.2_R)
- , "/ Id" = 1_R
- , "Id !, !] !) !:!.! dq any" = 1_R
+  = attribute.prettyR(0, width1.$.1 + 2 + width1.$.2, text1.$.1 + ":" + text1.$.2)
+ , "/ Id" = $.1
+ , "Id !, !] !) !:!.! dq any" = $.1
  , "comma?," = (toAttribute.if common then "" else ",")
  , "/" = toAttribute.""
  , "* IF else if E then E"
-  = attribute(parts.0_R + IfExp(common, "/keyword else /keyword if", R))
+  = attribute(parts.$.0 + IfExp(common, "/keyword else /keyword if", $.1, $.2))
  , "Type Id.Type"
-  = attribute.prettyR(0, width1.1_R + width1.2_R, text1.1_R + "." + text1.2_R)
- , "/ Id" = 1_R
- , "Declare let any = E comma?" = attribute.LetExp(common, 1_R, 2_R, 3_R)
- , "/ assert E report E comma?" = attribute.AssertExp(common, 1_R, 2_R)
- , "/ {N} comma?" = attribute.CommentExp.1_R
- , "/ for ForDeclare do E comma?" = forExp(1_R, toAttribute."", 2_R, common)
- , "/ for ForDeclare while E do E comma?" = forExp(1_R, 2_R, 3_R, common)
- , "ForDeclare AccumList, any ∈ E" = binary(1_R, AccumExp(common, 2_R, 3_R, "∈"), ",")
- , "/ AccumList, any /in E" = binary(1_R, AccumExp(common, 2_R, 3_R, "∈"), ",")
- , "/ AccumList" = 1_R
- , "AccumList Accum AccumList'"
-  = if isempty.text.1_parts.2_R then 1_R else attribute(parts.1_R + parts.2_R)
- , "* AccumList', Accum" = binary(0_R, 1_R, ",")
- , "Accum ! while any = E" = AccumExp(common, 1_R, 2_R, "=")
- , "* Declare' Declare" = attribute(parts.0_R + parts.1_R)
- , "FPL FP FPL'" = attribute(parts.1_R + parts.2_R)
- , "* FPL', FP" = attribute(parts.0_R + prettyR.",^(text1.1_R)")
+  = attribute.prettyR(0, width1.$.1 + width1.$.2, text1.$.1 + "." + text1.$.2)
+ , "/ Id" = $.1
+ , "Declare let any = E comma?" = attribute.LetExp(common, $.1, $.2, $.3)
+ , "/ assert E report E comma?" = attribute.AssertExp(common, $.1, $.2)
+ , "/ {N} comma?" = attribute.CommentExp.$.1
+ , "/ for ForDeclare do E comma?" = forExp($.1, toAttribute."", $.2, common)
+ , "/ for ForDeclare while E do E comma?" = forExp($.1, $.2, $.3, common)
+ , "ForDeclare AccumList, any ∈ E" = binary($.1, AccumExp(common, $.2, $.3, "∈"), ",")
+ , "/ AccumList, any /in E" = binary($.1, AccumExp(common, $.2, $.3, "∈"), ",")
+ , "/ AccumList" = $.1
+ , "AccumList ! while any = E AccumList'"
+  = 
+   let accum = AccumExp(common, $.1, $.2, "="),
+   if isempty.text.1#parts.$.3 then accum else attribute(parts.accum + parts.$.3)
+ , "* AccumList', any = E" = binary($.0, AccumExp(common, $.1, $.2, "="), ",")
+ , "* Declare' Declare" = attribute(parts.$.0 + parts.$.1)
+ , "FPL FP FPL'" = attribute(parts.$.1 + parts.$.2)
+ , "* FPL', FP" = attribute(parts.$.0 + prettyR.",^(text1.$.1)")
  , "FP any:Type"
-  = attribute.prettyR(0, width1.1_R + 1 + width1.2_R + 1, text1.1_R + ":" + text1.2_R)
- , "/ Type" = 1_R
- , "* N {N}"
-  = attribute.prettyR(0, width1.0_R + width1.1_R + 2, text1.0_R + "{^(text1.1_R)}")
- , "/ str1" = attribute.prettyR(0, width1.0_R + width1.1_R, text1.0_R + text1.1_R)
- , "* str1 ! {!} any" = /All
+  = attribute.prettyR(0, width1.$.1 + 1 + width1.$.2 + 1, text1.$.1 + ":" + text1.$.2)
+ , "/ Type" = $.1
+ , "* N {N}" = /All
+ , "/ !} any" = /All
 ]
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:Accum AccumList AccumList' And And' Atom Comment Compare Compare' Declare Declare'
-E EL' FP FPL FPL' ForDeclare Header IF Id N Name Or Or' Power Power' Product Product' S String String'
-Sum Sum' Type Unary comma? str1 str2
-/br Terminals:() *+,-./and /cap /cup /ge /in /le /ne /nin /or:< << = > >1 >2 >> Builtin Export Function
-[\]^_any assert builtin carrot do dq else for function if is let mod report slash then type unbound
-while {} ∈ ∉ ∧ ∨ ∩ ∪ ≠ ≤ ≥ ⊻
-/br S ← function Header Declare' E / Function Header Declare' E
-/br / type Id is FPL Comment
-/br / Export type:Type Comment
-/br / Export Header Comment
-/br / Builtin Header Comment
-/br / builtin Header Comment
-/br / unbound Header Comment
+/br Non-terminals:AccumList AccumList' And And' Atom Comment Compare Compare' Declare Declare' E
+EL' FP FPL FPL' ForDeclare Header IF Id N Name Or Or' Power Power' Pretty Product Product' String String'
+Sum Sum' Type Unary comma? str2
+/br Terminals:#() *+,-./and /cap /cup /ge /in /le /ne /nin /or:< << = > >1 >2 >> Builtin Export
+Function [\]^any assert builtin carrot do dq else for function if is let mod report slash then type
+unbound while {} ∈ ∉ ∧ ∨ ∩ ∪ ≠ ≤ ≥ ⊻
+/br Pretty ← function Header Declare' E / Function Header Declare' E / type Id is FPL Comment / Export
+type:Type Comment / Export Header Comment / Builtin Header Comment / builtin Header Comment / unbound
+Header Comment
 /br Header ← Name (FPL) Type / Name Type
 /br * Comment ← {N}
-/br String ← dq String' str2 dq
-/br * String' ← str2 carrot (E) / str2 carrot / str2
-/br * str2 ← ! dq ! carrot any
+/br String ← dq String' dq
+/br * String' ← carrot (E) / carrot / str2
+/br+str2 ← ! dq ! carrot any
 /br E ← Or
 /br * EL' ←, E
 /br Or ← And Or'
@@ -554,525 +549,488 @@ while {} ∈ ∉ ∧ ∨ ∩ ∪ ≠ ≤ ≥ ⊻
 /br And ← Compare And'
 /br * And' ← ∧ Compare / /and Compare
 /br Compare ← Sum Compare'
-/br * Compare' ← = Sum / ≠ Sum / > Sum / < Sum
-/br / >1 Sum
-/br / >2 Sum
-/br / ≥ Sum
-/br / /ge Sum
-/br / ≤ Sum
-/br / /le Sum
-/br / /ne Sum
+/br * Compare' ← = Sum / ≠ Sum / > Sum / < Sum / >1 Sum / >2 Sum / ≥ Sum / /ge Sum / ≤ Sum / /le Sum
+/ /ne Sum
 /br Sum ← Product Sum'
-/br * Sum' ←-Product /+Product / ∈ Product / /in Product
-/br / ∉ Product
-/br / /nin Product
+/br * Sum' ←-Product /+Product / ∈ Product / /in Product / ∉ Product / /nin Product
 /br Product ← Unary Product'
-/br * Product' ← * Unary / >> Unary / << Unary / slash Unary
-/br / mod Unary
-/br / ∩ Unary
-/br / ∪ Unary
-/br / /cap Unary
-/br / /cup Unary
-/br / \ Unary
-/br Unary ←-Unary / Id.Unary / {N} Unary
-/br / Power
+/br * Product' ← * Unary / >> Unary / << Unary / slash Unary / mod Unary / ∩ Unary / ∪ Unary / /cap Unary
+/ /cup Unary / \ Unary
+/br Unary ←-Unary / Id.Unary / {N} Unary / Power
 /br Power ← Atom Power'
-/br * Power' ←_Unary /^Unary
-/br Atom ← (E) / [E EL'] / String
-/br / Declare Declare' E
-/br / if E then E IF else E
-/br / Name (E EL')
-/br / Name
+/br * Power' ←#Unary /^Unary
+/br Atom ← (E) / [E EL'] / String / Declare Declare' E / if E then E IF else E / Name (E EL') / Name
 /br Name ← Id:Type / Id
 /br Id ← !, !] !) !:!.! dq any
 /br comma? ←, /
 /br * IF ← else if E then E
 /br Type ← Id.Type / Id
-/br Declare ← let any = E comma? / assert E report E comma?
-/br / {N} comma?
-/br / for ForDeclare do E comma?
-/br / for ForDeclare while E do E comma?
-/br ForDeclare ← AccumList, any ∈ E / AccumList, any /in E
-/br / AccumList
-/br AccumList ← Accum AccumList'
-/br * AccumList' ←, Accum
-/br Accum ← ! while any = E
+/br Declare ← let any = E comma? / assert E report E comma? / {N} comma? / for ForDeclare do E comma?
+/ for ForDeclare while E do E comma?
+/br ForDeclare ← AccumList, any ∈ E / AccumList, any /in E / AccumList
+/br AccumList ← ! while any = E AccumList'
+/br * AccumList' ←, any = E
 /br * Declare' ← Declare
 /br FPL ← FP FPL'
 /br * FPL' ←, FP
 /br FP ← any:Type / Type
-/br * N ← {N} / str1
-/br * str1 ← ! {!} any
+/br * N ← {N} / !} any
 
-function action(
- partno:int
- , R:reduction
- , place:int
- , input:seq.word
- , common:boolean
- , parsestk:stack.frame
-) attribute
+function action(partno:int, R:seq.attribute, common:boolean) attribute
 if partno = 2 then
-start(common, "function", 1_R, 2_R, 3_R)
+start(common, "function", 3^R, 2^R, 1^R)
 else if partno = 3 then
-start(common, "Function", 1_R, 2_R, 3_R)
+start(common, "Function", 3^R, 2^R, 1^R)
 else if partno = 4 then
-start("type", 1_R, attribute(parts.2_R + parts.3_R))
+start("type", 3^R, attribute(parts.2^R + parts.1^R))
 else if partno = 5 then
-start("Export type:", 1_R, 2_R)
+start("Export type:", 2^R, 1^R)
 else if partno = 6 then
-start("Export", 1_R, 2_R)
+start("Export", 2^R, 1^R)
 else if partno = 7 then
-start("Builtin", 1_R, 2_R)
+start("Builtin", 2^R, 1^R)
 else if partno = 8 then
-start("builtin", 1_R, 2_R)
+start("builtin", 2^R, 1^R)
 else if partno = 9 then
-start("unbound", 1_R, 2_R)
+start("unbound", 2^R, 1^R)
 else if partno = 10 then
-attribute(prettyR(text1.1_R + "/nosp (") + parts.2_R + prettyR.")^(text1.3_R)")
+attribute(prettyR(text1.3^R + "/tag (") + parts.2^R + prettyR.")^(text1.1^R)")
 else if partno = 11 then
-attribute(parts.1_R + parts.2_R)
+attribute(parts.2^R + parts.1^R)
 else if partno = 12 then
-attribute(parts.0_R + CommentExp.1_R)
+attribute(parts.2^R + CommentExp.1^R)
 else if partno = 13 then
-quote(1_R, 2_R)
+quote.parts.1^R
 else if partno = 14 then
 attribute(
- parts.0_R
- + parts.1_R
- + prettyR(
+ parts.2^R
+  + prettyR(
   0
-  , width1.2_R + 4
-  , "^" + "(^(escapeformat)^(removeparen.text1.2_R)^(escapeformat))"
+  , width1.1^R + 4
+  , "^" + "(^(escapeformat)^(removeparen.text1.1^R)^(escapeformat))"
  )
 )
 else if partno = 15 then
-attribute(parts.0_R + prettyR(0, width1.1_R + 2, text1.1_R + "^"))
+attribute(parts.1^R + prettyR."^")
 else if partno = 16 then
-attribute(parts.0_R + parts.1_R)
+attribute(parts.2^R + parts.1^R)
 else if partno = 18 then
-1_R
+1^R
 else if partno = 19 then
-binary(0_R, 1_R, ",")
+binary(2^R, 1^R, ",")
 else if partno = 20 then
-mergebinary(common, 8, 1_R, 2_R)
+mergebinary(common, 8, 2^R, 1^R)
 else if partno = 21 then
-binary(0_R, 1_R, "∨")
+binary(2^R, 1^R, "∨")
 else if partno = 22 then
-binary(0_R, 1_R, "∨")
+binary(2^R, 1^R, "∨")
 else if partno = 23 then
-binary(0_R, 1_R, "⊻")
+binary(2^R, 1^R, "⊻")
 else if partno = 24 then
-mergebinary(common, 7, 1_R, 2_R)
+mergebinary(common, 7, 2^R, 1^R)
 else if partno = 25 then
-binary(0_R, 1_R, "∧")
+binary(2^R, 1^R, "∧")
 else if partno = 26 then
-binary(0_R, 1_R, "∧")
+binary(2^R, 1^R, "∧")
 else if partno = 27 then
-mergebinary(common, 6, 1_R, 2_R)
+mergebinary(common, 6, 2^R, 1^R)
 else if partno = 28 then
-binary(0_R, 1_R, "=")
+binary(2^R, 1^R, "=")
 else if partno = 29 then
-binary(0_R, 1_R, "≠")
+binary(2^R, 1^R, "≠")
 else if partno = 30 then
-binary(0_R, 1_R, ">")
+binary(2^R, 1^R, ">")
 else if partno = 31 then
-binary(0_R, 1_R, "<")
+binary(2^R, 1^R, "<")
 else if partno = 32 then
-binary(0_R, 1_R, ">1")
+binary(2^R, 1^R, ">1")
 else if partno = 33 then
-binary(0_R, 1_R, ">2")
+binary(2^R, 1^R, ">2")
 else if partno = 34 then
-binary(0_R, 1_R, "≥")
+binary(2^R, 1^R, "≥")
 else if partno = 35 then
-binary(0_R, 1_R, "≥")
+binary(2^R, 1^R, "≥")
 else if partno = 36 then
-binary(0_R, 1_R, "≤")
+binary(2^R, 1^R, "≤")
 else if partno = 37 then
-binary(0_R, 1_R, "≤")
+binary(2^R, 1^R, "≤")
 else if partno = 38 then
-binary(0_R, 1_R, "≠")
+binary(2^R, 1^R, "≠")
 else if partno = 39 then
-mergebinary(common, 4, 1_R, 2_R)
+mergebinary(common, 4, 2^R, 1^R)
 else if partno = 40 then
-binary(0_R, 1_R, "-")
+binary(2^R, 1^R, "-")
 else if partno = 41 then
-binary(0_R, 1_R, "+")
+binary(2^R, 1^R, "+")
 else if partno = 42 then
-binary(0_R, 1_R, "∈")
+binary(2^R, 1^R, "∈")
 else if partno = 43 then
-binary(0_R, 1_R, "∈")
+binary(2^R, 1^R, "∈")
 else if partno = 44 then
-binary(0_R, 1_R, "∉")
+binary(2^R, 1^R, "∉")
 else if partno = 45 then
-binary(0_R, 1_R, "∉")
+binary(2^R, 1^R, "∉")
 else if partno = 46 then
-mergebinary(common, 3, 1_R, 2_R)
+mergebinary(common, 3, 2^R, 1^R)
 else if partno = 47 then
-binary(0_R, 1_R, "*")
+binary(2^R, 1^R, "*")
 else if partno = 48 then
-binary(0_R, 1_R, ">>")
+binary(2^R, 1^R, ">>")
 else if partno = 49 then
-binary(0_R, 1_R, "<<")
+binary(2^R, 1^R, "<<")
 else if partno = 50 then
-binary(0_R, 1_R, [slash])
+binary(2^R, 1^R, [slash])
 else if partno = 51 then
-binary(0_R, 1_R, "mod")
+binary(2^R, 1^R, "mod")
 else if partno = 52 then
-binary(0_R, 1_R, "∩")
+binary(2^R, 1^R, "∩")
 else if partno = 53 then
-binary(0_R, 1_R, "∪")
+binary(2^R, 1^R, "∪")
 else if partno = 54 then
-binary(0_R, 1_R, "∩")
+binary(2^R, 1^R, "∩")
 else if partno = 55 then
-binary(0_R, 1_R, "∪")
+binary(2^R, 1^R, "∪")
 else if partno = 56 then
-binary(0_R, 1_R, "\")
+binary(2^R, 1^R, "\")
 else if partno = 57 then
-unaryMinus(common, 1_R)
+unaryMinus(common, 1^R)
 else if partno = 58 then
-unaryExp(common, 2, 1_R, 2_R)
+unaryExp(common, 2, 2^R, 1^R)
 else if partno = 59 then
-unaryExp(common, 3, 1_R, 2_R)
+unaryExp(common, 3, 2^R, 1^R)
 else if partno = 60 then
-1_R
+1^R
 else if partno = 61 then
-mergebinary(common, 1, 1_R, 2_R)
+mergebinary(common, 1, 2^R, 1^R)
 else if partno = 62 then
-binary(0_R, 1_R, "_")
+binary(2^R, 1^R, "#")
 else if partno = 63 then
-binary(0_R, 1_R, "^")
+binary(2^R, 1^R, "^")
 else if partno = 64 then
- let a = if common then removeparen.1_R else 1_R,
- attribute.prettyR(prec.1_parts.a, width1.a + 2, "(^(text1.a))")
+ let a = if common then removeparen.1^R else 1^R,
+ attribute.prettyR(prec.1#parts.a, width1.a + 2, "(^(text1.a))")
 else if partno = 65 then
-funccall(common, attribute.empty:seq.prettyR, 1_R, 2_R)
+funccall(common, attribute.empty:seq.prettyR, 2^R, 1^R)
 else if partno = 66 then
-1_R
+1^R
 else if partno = 67 then
-combine(common, empty:seq.prettyR, parts.1_R + parts.2_R, 3_R)
+combine(common, empty:seq.prettyR, parts.3^R + parts.2^R, 1^R)
 else if partno = 68 then
-fullIfExp(common, R)
+fullIfExp(common, 4^R, 3^R, 2^R, 1^R)
 else if partno = 69 then
-funccall(common, 1_R, 2_R, 3_R)
+funccall(common, 3^R, 2^R, 1^R)
 else if partno = 70 then
-1_R
+1^R
 else if partno = 71 then
-attribute.prettyR(0, width1.1_R + 2 + width1.2_R, text1.1_R + ":" + text1.2_R)
+attribute.prettyR(0, width1.2^R + 2 + width1.1^R, text1.2^R + ":" + text1.1^R)
 else if partno = 72 then
-1_R
+1^R
 else if partno = 73 then
-1_R
+1^R
 else if partno = 74 then
 toAttribute.if common then "" else ","
 else if partno = 75 then
 toAttribute.""
 else if partno = 76 then
-attribute(parts.0_R + IfExp(common, "/keyword else /keyword if", R))
+attribute(parts.3^R + IfExp(common, "/keyword else /keyword if", 2^R, 1^R))
 else if partno = 77 then
-attribute.prettyR(0, width1.1_R + width1.2_R, text1.1_R + "." + text1.2_R)
+attribute.prettyR(0, width1.2^R + width1.1^R, text1.2^R + "." + text1.1^R)
 else if partno = 78 then
-1_R
+1^R
 else if partno = 79 then
-attribute.LetExp(common, 1_R, 2_R, 3_R)
+attribute.LetExp(common, 3^R, 2^R, 1^R)
 else if partno = 80 then
-attribute.AssertExp(common, 1_R, 2_R)
+attribute.AssertExp(common, 3^R, 2^R)
 else if partno = 81 then
-attribute.CommentExp.1_R
+attribute.CommentExp.2^R
 else if partno = 82 then
-forExp(1_R, toAttribute."", 2_R, common)
+forExp(3^R, toAttribute."", 2^R, common)
 else if partno = 83 then
-forExp(1_R, 2_R, 3_R, common)
+forExp(4^R, 3^R, 2^R, common)
 else if partno = 84 then
-binary(1_R, AccumExp(common, 2_R, 3_R, "∈"), ",")
+binary(3^R, AccumExp(common, 2^R, 1^R, "∈"), ",")
 else if partno = 85 then
-binary(1_R, AccumExp(common, 2_R, 3_R, "∈"), ",")
+binary(3^R, AccumExp(common, 2^R, 1^R, "∈"), ",")
 else if partno = 86 then
-1_R
+1^R
 else if partno = 87 then
-if isempty.text.1_parts.2_R then 1_R else attribute(parts.1_R + parts.2_R)
+ let accum = AccumExp(common, 3^R, 2^R, "="),
+ if isempty.text.1#parts.1^R then accum else attribute(parts.accum + parts.1^R)
 else if partno = 88 then
-binary(0_R, 1_R, ",")
+binary(3^R, AccumExp(common, 2^R, 1^R, "="), ",")
 else if partno = 89 then
-AccumExp(common, 1_R, 2_R, "=")
+attribute(parts.2^R + parts.1^R)
 else if partno = 90 then
-attribute(parts.0_R + parts.1_R)
+attribute(parts.2^R + parts.1^R)
 else if partno = 91 then
-attribute(parts.1_R + parts.2_R)
+attribute(parts.2^R + prettyR.",^(text1.1^R)")
 else if partno = 92 then
-attribute(parts.0_R + prettyR.",^(text1.1_R)")
+attribute.prettyR(0, width1.2^R + 1 + width1.1^R + 1, text1.2^R + ":" + text1.1^R)
 else if partno = 93 then
-attribute.prettyR(0, width1.1_R + 1 + width1.2_R + 1, text1.1_R + ":" + text1.2_R)
-else if partno = 94 then
-1_R
-else if partno = 95 then
-attribute.prettyR(0, width1.0_R + width1.1_R + 2, text1.0_R + "{^(text1.1_R)}")
-else if partno = 96 then
-attribute.prettyR(0, width1.0_R + width1.1_R, text1.0_R + text1.1_R)
-else 0_R
+1^R
+else 1#R
 
 function mytable seq.tableEntry
 [
- {1} tableEntry(MatchNT.Match.2, 1_"?", Reduce.1, Reduce, "")
- , {2} tableEntry(Match, 1_"function", S.3, Match.6, "")
- , {3} tableEntry(MatchNT.S.32, 1_"?", S.4, S.21, "")
- , {4} tableEntry(MatchNT.S.240, 1_"?", S.5, Match.6, "")
- , {5} tableEntry(MatchNT.S.57, 1_"?", Reduce.2, Match.6, "")
- , {6} tableEntry(Match, 1_"Function", S.7, Match.10, "")
- , {7} tableEntry(MatchNT.S.32, 1_"?", S.8, Match.10, "")
- , {8} tableEntry(MatchNT.S.240, 1_"?", S.9, Match.10, "")
- , {9} tableEntry(MatchNT.S.57, 1_"?", Reduce.3, Match.10, "")
- , {10} tableEntry(Match, 1_"type", S.11, Match.15, "")
- , {11} tableEntry(MatchNT.!Match.178, 1_"?", Match.12, Match.15, "")
- , {12} tableEntry(Match, 1_"is", S.13, Match.15, "")
- , {13} tableEntry(MatchNT.S.241, 1_"?", S.14, Match.15, "")
- , {14} tableEntry(MatchNT.Match.39, 1_"?", Reduce.4, Match.15, "")
- , {15} tableEntry(Match, 1_"Export", Match.16, Match.20, "")
- , {16} tableEntry(Match, 1_"type", Match.17, Match.20, "")
- , {17} tableEntry(Match, 1_":", S.18, Match.20, "")
- , {18} tableEntry(MatchNT.S.191, 1_"?", S.19, Match.20, "")
- , {19} tableEntry(MatchNT.Match.39, 1_"?", Reduce.5, Match.20, "")
- , {20} tableEntry(Match, 1_"Export", S.21, Match.23, "")
- , {21} tableEntry(MatchNT.S.32, 1_"?", S.22, Match.23, "")
- , {22} tableEntry(MatchNT.Match.39, 1_"?", Reduce.6, Match.23, "")
- , {23} tableEntry(Match, 1_"Builtin", S.24, Match.26, "")
- , {24} tableEntry(MatchNT.S.32, 1_"?", S.25, Match.26, "")
- , {25} tableEntry(MatchNT.Match.39, 1_"?", Reduce.7, Match.26, "")
- , {26} tableEntry(Match, 1_"builtin", S.27, Match.29, "")
- , {27} tableEntry(MatchNT.S.32, 1_"?", S.28, Match.29, "")
- , {28} tableEntry(MatchNT.Match.39, 1_"?", Reduce.8, Match.29, "")
- , {29} tableEntry(Match, 1_"unbound", S.30, Fail, "")
- , {30} tableEntry(MatchNT.S.32, 1_"?", S.31, Fail, "")
- , {31} tableEntry(MatchNT.Match.39, 1_"?", Reduce.9, Fail, "")
- , {32} tableEntry(MatchNT.S.174, 1_"?", MatchNext.33, S.37, "")
- , {33} tableEntry(MatchNext, 1_"(", S.34, S.38, "")
- , {34} tableEntry(MatchNT.S.241, 1_"?", Match.35, S.37, "")
- , {35} tableEntry(Match, 1_")", S.36, S.37, "")
- , {36} tableEntry(MatchNT.S.191, 1_"?", Reduce.10, S.37, "")
- , {37} tableEntry(MatchNT.S.174, 1_"?", S.38, Fail, "")
- , {38} tableEntry(MatchNT.S.191, 1_"?", Reduce.11, Fail, "")
- , {39} tableEntry(Match, 1_"{", S.40, Success*, "")
- , {40} tableEntry(MatchNT.Match.249, 1_"?", Match.41, Success*, "")
- , {41} tableEntry(Match, 1_"}", Reduce(12, Match.39), Success*, "")
- , {42} tableEntry(Match, 1_dq, S.43, Fail, "")
- , {43} tableEntry(MatchNT.S.46, 1_"?", S.44, Fail, "")
- , {44} tableEntry(MatchNT.!Match.54, 1_"?", Match.45, Fail, "")
- , {45} tableEntry(Match, 1_dq, Reduce.13, Fail, "")
- , {46} tableEntry(MatchNT.!Match.54, 1_"?", MatchNext.47, S.51, "")
- , {47} tableEntry(MatchNext, 1_"^", MatchNext.48, Match.52, "")
- , {48} tableEntry(MatchNext, 1_"(", S.49, Reduce(15, S.46), "")
- , {49} tableEntry(MatchNT.S.57, 1_"?", Match.50, S.51, "")
- , {50} tableEntry(Match, 1_")", Reduce(14, S.46), S.51, "")
- , {51} tableEntry(MatchNT.!Match.54, 1_"?", Match.52, S.53, "")
- , {52} tableEntry(Match, 1_"^", Reduce(15, S.46), S.53, "")
- , {53} tableEntry(MatchNT.!Match.54, 1_"?", Reduce(16, S.46), Success*, "")
- , {54} tableEntry(!Match, 1_dq, All, !Match.55, "")
- , {55} tableEntry(!Match, 1_"^", All, MatchAny.56, "")
- , {56} tableEntry(MatchAny, 1_"?", Discard*.!Match.54, All, "")
- , {57} tableEntry(MatchNT.S.60, 1_"?", Reduce.18, Fail, "")
- , {58} tableEntry(Match, 1_",", S.59, Success*, "")
- , {59} tableEntry(MatchNT.S.57, 1_"?", Reduce(19, Match.58), Success*, "")
- , {60} tableEntry(MatchNT.S.68, 1_"?", S.61, Fail, "")
- , {61} tableEntry(MatchNT.Match.62, 1_"?", Reduce.20, Fail, "")
- , {62} tableEntry(Match, 1_"∨", S.63, Match.64, "")
- , {63} tableEntry(MatchNT.S.68, 1_"?", Reduce(21, Match.62), Match.64, "")
- , {64} tableEntry(Match, 1_"/or", S.65, Match.66, "")
- , {65} tableEntry(MatchNT.S.68, 1_"?", Reduce(22, Match.62), Match.66, "")
- , {66} tableEntry(Match, 1_"⊻", S.67, Success*, "")
- , {67} tableEntry(MatchNT.S.68, 1_"?", Reduce(23, Match.62), Success*, "")
- , {68} tableEntry(MatchNT.S.74, 1_"?", S.69, Fail, "")
- , {69} tableEntry(MatchNT.Match.70, 1_"?", Reduce.24, Fail, "")
- , {70} tableEntry(Match, 1_"∧", S.71, Match.72, "")
- , {71} tableEntry(MatchNT.S.74, 1_"?", Reduce(25, Match.70), Match.72, "")
- , {72} tableEntry(Match, 1_"/and", S.73, Success*, "")
- , {73} tableEntry(MatchNT.S.74, 1_"?", Reduce(26, Match.70), Success*, "")
- , {74} tableEntry(MatchNT.S.98, 1_"?", S.75, Fail, "")
- , {75} tableEntry(MatchNT.Match.76, 1_"?", Reduce.27, Fail, "")
- , {76} tableEntry(Match, 1_"=", S.77, Match.78, "")
- , {77} tableEntry(MatchNT.S.98, 1_"?", Reduce(28, Match.76), Match.78, "")
- , {78} tableEntry(Match, 1_"≠", S.79, Match.80, "")
- , {79} tableEntry(MatchNT.S.98, 1_"?", Reduce(29, Match.76), Match.80, "")
- , {80} tableEntry(Match, 1_">", S.81, Match.82, "")
- , {81} tableEntry(MatchNT.S.98, 1_"?", Reduce(30, Match.76), Match.82, "")
- , {82} tableEntry(Match, 1_"<", S.83, Match.84, "")
- , {83} tableEntry(MatchNT.S.98, 1_"?", Reduce(31, Match.76), Match.84, "")
- , {84} tableEntry(Match, 1_">1", S.85, Match.86, "")
- , {85} tableEntry(MatchNT.S.98, 1_"?", Reduce(32, Match.76), Match.86, "")
- , {86} tableEntry(Match, 1_">2", S.87, Match.88, "")
- , {87} tableEntry(MatchNT.S.98, 1_"?", Reduce(33, Match.76), Match.88, "")
- , {88} tableEntry(Match, 1_"≥", S.89, Match.90, "")
- , {89} tableEntry(MatchNT.S.98, 1_"?", Reduce(34, Match.76), Match.90, "")
- , {90} tableEntry(Match, 1_"/ge", S.91, Match.92, "")
- , {91} tableEntry(MatchNT.S.98, 1_"?", Reduce(35, Match.76), Match.92, "")
- , {92} tableEntry(Match, 1_"≤", S.93, Match.94, "")
- , {93} tableEntry(MatchNT.S.98, 1_"?", Reduce(36, Match.76), Match.94, "")
- , {94} tableEntry(Match, 1_"/le", S.95, Match.96, "")
- , {95} tableEntry(MatchNT.S.98, 1_"?", Reduce(37, Match.76), Match.96, "")
- , {96} tableEntry(Match, 1_"/ne", S.97, Success*, "")
- , {97} tableEntry(MatchNT.S.98, 1_"?", Reduce(38, Match.76), Success*, "")
- , {98} tableEntry(MatchNT.S.112, 1_"?", S.99, Fail, "")
- , {99} tableEntry(MatchNT.Match.100, 1_"?", Reduce.39, Fail, "")
- , {100} tableEntry(Match, 1_"-", S.101, Match.102, "")
- , {101} tableEntry(MatchNT.S.112, 1_"?", Reduce(40, Match.100), Match.102, "")
- , {102} tableEntry(Match, 1_"+", S.103, Match.104, "")
- , {103} tableEntry(MatchNT.S.112, 1_"?", Reduce(41, Match.100), Match.104, "")
- , {104} tableEntry(Match, 1_"∈", S.105, Match.106, "")
- , {105} tableEntry(MatchNT.S.112, 1_"?", Reduce(42, Match.100), Match.106, "")
- , {106} tableEntry(Match, 1_"/in", S.107, Match.108, "")
- , {107} tableEntry(MatchNT.S.112, 1_"?", Reduce(43, Match.100), Match.108, "")
- , {108} tableEntry(Match, 1_"∉", S.109, Match.110, "")
- , {109} tableEntry(MatchNT.S.112, 1_"?", Reduce(44, Match.100), Match.110, "")
- , {110} tableEntry(Match, 1_"/nin", S.111, Success*, "")
- , {111} tableEntry(MatchNT.S.112, 1_"?", Reduce(45, Match.100), Success*, "")
- , {112} tableEntry(MatchNT.Match.134, 1_"?", S.113, Fail, "")
- , {113} tableEntry(MatchNT.Match.114, 1_"?", Reduce.46, Fail, "")
- , {114} tableEntry(Match, 1_"*", S.115, Match.116, "")
- , {115} tableEntry(MatchNT.Match.134, 1_"?", Reduce(47, Match.114), Match.116, "")
- , {116} tableEntry(Match, 1_">>", S.117, Match.118, "")
- , {117} tableEntry(MatchNT.Match.134, 1_"?", Reduce(48, Match.114), Match.118, "")
- , {118} tableEntry(Match, 1_"<<", S.119, Match.120, "")
- , {119} tableEntry(MatchNT.Match.134, 1_"?", Reduce(49, Match.114), Match.120, "")
- , {120} tableEntry(Match, slash, S.121, Match.122, "")
- , {121} tableEntry(MatchNT.Match.134, 1_"?", Reduce(50, Match.114), Match.122, "")
- , {122} tableEntry(Match, 1_"mod", S.123, Match.124, "")
- , {123} tableEntry(MatchNT.Match.134, 1_"?", Reduce(51, Match.114), Match.124, "")
- , {124} tableEntry(Match, 1_"∩", S.125, Match.126, "")
- , {125} tableEntry(MatchNT.Match.134, 1_"?", Reduce(52, Match.114), Match.126, "")
- , {126} tableEntry(Match, 1_"∪", S.127, Match.128, "")
- , {127} tableEntry(MatchNT.Match.134, 1_"?", Reduce(53, Match.114), Match.128, "")
- , {128} tableEntry(Match, 1_"/cap", S.129, Match.130, "")
- , {129} tableEntry(MatchNT.Match.134, 1_"?", Reduce(54, Match.114), Match.130, "")
- , {130} tableEntry(Match, 1_"/cup", S.131, Match.132, "")
- , {131} tableEntry(MatchNT.Match.134, 1_"?", Reduce(55, Match.114), Match.132, "")
- , {132} tableEntry(Match, 1_"\", S.133, Success*, "")
- , {133} tableEntry(MatchNT.Match.134, 1_"?", Reduce(56, Match.114), Success*, "")
- , {134} tableEntry(Match, 1_"-", S.135, S.136, "")
- , {135} tableEntry(MatchNT.Match.134, 1_"?", Reduce.57, S.136, "")
- , {136} tableEntry(MatchNT.!Match.178, 1_"?", Match.137, Match.139, "")
- , {137} tableEntry(Match, 1_".", S.138, Match.139, "")
- , {138} tableEntry(MatchNT.Match.134, 1_"?", Reduce.58, Match.139, "")
- , {139} tableEntry(Match, 1_"{", S.140, S.143, "")
- , {140} tableEntry(MatchNT.Match.249, 1_"?", Match.141, S.143, "")
- , {141} tableEntry(Match, 1_"}", S.142, S.143, "")
- , {142} tableEntry(MatchNT.Match.134, 1_"?", Reduce.59, S.143, "")
- , {143} tableEntry(MatchNT.S.144, 1_"?", Reduce.60, Fail, "")
- , {144} tableEntry(MatchNT.Match.150, 1_"?", S.145, Fail, "")
- , {145} tableEntry(MatchNT.Match.146, 1_"?", Reduce.61, Fail, "")
- , {146} tableEntry(Match, 1_"_", S.147, Match.148, "")
- , {147} tableEntry(MatchNT.Match.134, 1_"?", Reduce(62, Match.146), Match.148, "")
- , {148} tableEntry(Match, 1_"^", S.149, Success*, "")
- , {149} tableEntry(MatchNT.Match.134, 1_"?", Reduce(63, Match.146), Success*, "")
- , {150} tableEntry(Match, 1_"(", S.151, Match.153, "")
- , {151} tableEntry(MatchNT.S.57, 1_"?", Match.152, Reduce.70, "")
- , {152} tableEntry(Match, 1_")", Reduce.64, Match.153, "")
- , {153} tableEntry(Match, 1_"[", S.154, S.157, "")
- , {154} tableEntry(MatchNT.S.57, 1_"?", S.155, S.157, "")
- , {155} tableEntry(MatchNT.Match.58, 1_"?", Match.156, S.157, "")
- , {156} tableEntry(Match, 1_"]", Reduce.65, S.157, "")
- , {157} tableEntry(MatchNT.Match.42, 1_"?", Reduce.66, S.158, "")
- , {158} tableEntry(MatchNT.Match.195, 1_"?", S.159, Match.161, "")
- , {159} tableEntry(MatchNT.S.240, 1_"?", S.160, Match.161, "")
- , {160} tableEntry(MatchNT.S.57, 1_"?", Reduce.67, Match.161, "")
- , {161} tableEntry(Match, 1_"if", S.162, S.168, "")
- , {162} tableEntry(MatchNT.S.57, 1_"?", Match.163, S.168, "")
- , {163} tableEntry(Match, 1_"then", S.164, S.168, "")
- , {164} tableEntry(MatchNT.S.57, 1_"?", S.165, S.168, "")
- , {165} tableEntry(MatchNT.Match.186, 1_"?", Match.166, S.168, "")
- , {166} tableEntry(Match, 1_"else", S.167, S.168, "")
- , {167} tableEntry(MatchNT.S.57, 1_"?", Reduce.68, S.168, "")
- , {168} tableEntry(MatchNT.S.174, 1_"?", Match.169, S.173, "")
- , {169} tableEntry(Match, 1_"(", S.170, S.173, "")
- , {170} tableEntry(MatchNT.S.57, 1_"?", S.171, S.173, "")
- , {171} tableEntry(MatchNT.Match.58, 1_"?", Match.172, S.173, "")
- , {172} tableEntry(Match, 1_")", Reduce.69, S.173, "")
- , {173} tableEntry(MatchNT.S.174, 1_"?", Reduce.70, Fail, "")
- , {174} tableEntry(MatchNT.!Match.178, 1_"?", MatchNext.175, S.177, "")
- , {175} tableEntry(MatchNext, 1_":", S.176, Reduce.72, "")
- , {176} tableEntry(MatchNT.S.191, 1_"?", Reduce.71, S.177, "")
- , {177} tableEntry(MatchNT.!Match.178, 1_"?", Reduce.72, Fail, "")
- , {178} tableEntry(!Match, 1_",", Fail, !Match.179, "")
- , {179} tableEntry(!Match, 1_"]", Fail, !Match.180, "")
- , {180} tableEntry(!Match, 1_")", Fail, !Match.181, "")
- , {181} tableEntry(!Match, 1_":", Fail, !Match.182, "")
- , {182} tableEntry(!Match, 1_".", Fail, !Match.183, "")
- , {183} tableEntry(!Match, 1_dq, Fail, MatchAny.184, "")
- , {184} tableEntry(MatchAny, 1_"?", Reduce.73, Fail, "")
- , {185} tableEntry(Match, 1_",", Reduce.74, Reduce.75, "")
- , {186} tableEntry(Match, 1_"else", Match.187, Success*, "")
- , {187} tableEntry(Match, 1_"if", S.188, Success*, "")
- , {188} tableEntry(MatchNT.S.57, 1_"?", Match.189, Success*, "")
- , {189} tableEntry(Match, 1_"then", S.190, Success*, "")
- , {190} tableEntry(MatchNT.S.57, 1_"?", Reduce(76, Match.186), Success*, "")
- , {191} tableEntry(MatchNT.!Match.178, 1_"?", MatchNext.192, S.194, "")
- , {192} tableEntry(MatchNext, 1_".", S.193, Reduce.78, "")
- , {193} tableEntry(MatchNT.S.191, 1_"?", Reduce.77, S.194, "")
- , {194} tableEntry(MatchNT.!Match.178, 1_"?", Reduce.78, Fail, "")
- , {195} tableEntry(Match, 1_"let", MatchAny.196, Match.200, "")
- , {196} tableEntry(MatchAny, 1_"?", MatchNext.197, S.215, "")
- , {197} tableEntry(MatchNext, 1_"=", S.198, Match.216, "")
- , {198} tableEntry(MatchNT.S.57, 1_"?", S.199, Match.200, "")
- , {199} tableEntry(MatchNT.Match.185, 1_"?", Reduce.79, Match.200, "")
- , {200} tableEntry(Match, 1_"assert", S.201, Match.205, "")
- , {201} tableEntry(MatchNT.S.57, 1_"?", Match.202, Match.205, "")
- , {202} tableEntry(Match, 1_"report", S.203, Match.205, "")
- , {203} tableEntry(MatchNT.S.57, 1_"?", S.204, Match.205, "")
- , {204} tableEntry(MatchNT.Match.185, 1_"?", Reduce.80, Match.205, "")
- , {205} tableEntry(Match, 1_"{", S.206, Match.209, "")
- , {206} tableEntry(MatchNT.Match.249, 1_"?", Match.207, Match.209, "")
- , {207} tableEntry(Match, 1_"}", S.208, Match.209, "")
- , {208} tableEntry(MatchNT.Match.185, 1_"?", Reduce.81, Match.209, "")
- , {209} tableEntry(Match, 1_"for", S.210, Match.214, "")
- , {210} tableEntry(MatchNT.S.221, 1_"?", Match.211, Match.214, "")
- , {211} tableEntry(Match, 1_"do", S.212, Match.214, "")
- , {212} tableEntry(MatchNT.S.57, 1_"?", S.213, Match.214, "")
- , {213} tableEntry(MatchNT.Match.185, 1_"?", Reduce.82, Match.214, "")
- , {214} tableEntry(Match, 1_"for", S.215, Fail, "")
- , {215} tableEntry(MatchNT.S.221, 1_"?", Match.216, Fail, "")
- , {216} tableEntry(Match, 1_"while", S.217, Fail, "")
- , {217} tableEntry(MatchNT.S.57, 1_"?", Match.218, Fail, "")
- , {218} tableEntry(Match, 1_"do", S.219, Fail, "")
- , {219} tableEntry(MatchNT.S.57, 1_"?", S.220, Fail, "")
- , {220} tableEntry(MatchNT.Match.185, 1_"?", Reduce.83, Fail, "")
- , {221} tableEntry(MatchNT.S.232, 1_"?", MatchNext.222, S.226, "")
- , {222} tableEntry(MatchNext, 1_",", MatchAny.223, Match.227, "")
- , {223} tableEntry(MatchAny, 1_"?", MatchNext.224, MatchAny.228, "")
- , {224} tableEntry(MatchNext, 1_"∈", S.225, Match.229, "")
- , {225} tableEntry(MatchNT.S.57, 1_"?", Reduce.84, S.226, "")
- , {226} tableEntry(MatchNT.S.232, 1_"?", Match.227, S.231, "")
- , {227} tableEntry(Match, 1_",", MatchAny.228, S.231, "")
- , {228} tableEntry(MatchAny, 1_"?", Match.229, S.231, "")
- , {229} tableEntry(Match, 1_"/in", S.230, S.231, "")
- , {230} tableEntry(MatchNT.S.57, 1_"?", Reduce.85, S.231, "")
- , {231} tableEntry(MatchNT.S.232, 1_"?", Reduce.86, Fail, "")
- , {232} tableEntry(MatchNT.!Match.236, 1_"?", S.233, Fail, "")
- , {233} tableEntry(MatchNT.Match.234, 1_"?", Reduce.87, Fail, "")
- , {234} tableEntry(Match, 1_",", S.235, Success*, "")
- , {235} tableEntry(MatchNT.!Match.236, 1_"?", Reduce(88, Match.234), Success*, "")
- , {236} tableEntry(!Match, 1_"while", Fail, MatchAny.237, "")
- , {237} tableEntry(MatchAny, 1_"?", Match.238, Fail, "")
- , {238} tableEntry(Match, 1_"=", S.239, Fail, "")
- , {239} tableEntry(MatchNT.S.57, 1_"?", Reduce.89, Fail, "")
- , {240} tableEntry(MatchNT.Match.195, 1_"?", Reduce(90, S.240), Success*, "")
- , {241} tableEntry(MatchNT.MatchAny.245, 1_"?", S.242, Fail, "")
- , {242} tableEntry(MatchNT.Match.243, 1_"?", Reduce.91, Fail, "")
- , {243} tableEntry(Match, 1_",", S.244, Success*, "")
- , {244} tableEntry(MatchNT.MatchAny.245, 1_"?", Reduce(92, Match.243), Success*, "")
- , {245} tableEntry(MatchAny, 1_"?", Match.246, S.248, "")
- , {246} tableEntry(Match, 1_":", S.247, S.248, "")
- , {247} tableEntry(MatchNT.S.191, 1_"?", Reduce.93, S.248, "")
- , {248} tableEntry(MatchNT.S.191, 1_"?", Reduce.94, Fail, "")
- , {249} tableEntry(Match, 1_"{", S.250, S.252, "")
- , {250} tableEntry(MatchNT.Match.249, 1_"?", Match.251, S.252, "")
- , {251} tableEntry(Match, 1_"}", Reduce(95, Match.249), S.252, "")
- , {252} tableEntry(MatchNT.!Match.253, 1_"?", Reduce(96, Match.249), Success*, "")
- , {253} tableEntry(!Match, 1_"{", All, !Match.254, "")
- , {254} tableEntry(!Match, 1_"}", All, MatchAny.255, "")
- , {255} tableEntry(MatchAny, 1_"?", Discard*.!Match.253, All, "")
+ {1} tableEntry(NT.T'.2, 1#"?", Match, Failure, "")
+ , {2} tableEntry(T', 1#"function", NT.3, T'.6, "")
+ , {3} tableEntry(NT.32, 1#"Header", NT.4, T'.6, "")
+ , {4} tableEntry(NT.238, 1#"Declare'", NT.5, T'.6, "")
+ , {5} tableEntry(NT.54, 1#"E", Reduce.2, T'.6, "")
+ , {6} tableEntry(T', 1#"Function", NT.7, T'.10, "")
+ , {7} tableEntry(NT.32, 1#"Header", NT.8, T'.10, "")
+ , {8} tableEntry(NT.238, 1#"Declare'", NT.9, T'.10, "")
+ , {9} tableEntry(NT.54, 1#"E", Reduce.3, T'.10, "")
+ , {10} tableEntry(T', 1#"type", NT.11, T'.15, "")
+ , {11} tableEntry(NT.!T.175, 1#"Id", T.12, T'.15, "")
+ , {12} tableEntry(T, 1#"is", NT.13, T'.15, "")
+ , {13} tableEntry(NT.239, 1#"FPL", NT.14, T'.15, "")
+ , {14} tableEntry(NT.T.39, 1#"Comment", Reduce.4, T'.15, "")
+ , {15} tableEntry(T', 1#"Export", T'.16, T'.23, "")
+ , {16} tableEntry(T', 1#"type", T.17, NT.21, "")
+ , {17} tableEntry(T, 1#":", NT.18, T'.20, "")
+ , {18} tableEntry(NT.188, 1#"Type", NT.19, T'.20, "")
+ , {19} tableEntry(NT.T.39, 1#"Comment", Reduce.5, T'.20, "")
+ , {20} tableEntry(T', 1#"Export", NT.21, T'.23, "")
+ , {21} tableEntry(NT.32, 1#"Header", NT.22, T'.23, "")
+ , {22} tableEntry(NT.T.39, 1#"Comment", Reduce.6, T'.23, "")
+ , {23} tableEntry(T', 1#"Builtin", NT.24, T'.26, "")
+ , {24} tableEntry(NT.32, 1#"Header", NT.25, T'.26, "")
+ , {25} tableEntry(NT.T.39, 1#"Comment", Reduce.7, T'.26, "")
+ , {26} tableEntry(T', 1#"builtin", NT.27, T.29, "")
+ , {27} tableEntry(NT.32, 1#"Header", NT.28, T.29, "")
+ , {28} tableEntry(NT.T.39, 1#"Comment", Reduce.8, T.29, "")
+ , {29} tableEntry(T, 1#"unbound", NT.30, Fail, "")
+ , {30} tableEntry(NT.32, 1#"Header", NT.31, Fail, "")
+ , {31} tableEntry(NT.T.39, 1#"Comment", Reduce.9, Fail, "")
+ , {32} tableEntry(NT.171, 1#"Name", T'.33, Fail, "")
+ , {33} tableEntry(T', 1#"(", NT.34, NT.38, "")
+ , {34} tableEntry(NT.239, 1#"FPL", T.35, NT.37, "")
+ , {35} tableEntry(T, 1#")", NT.36, NT.37, "")
+ , {36} tableEntry(NT.188, 1#"Type", Reduce.10, NT.37, "")
+ , {37} tableEntry(NT.171, 1#"Name", NT.38, Fail, "")
+ , {38} tableEntry(NT.188, 1#"Type", Reduce.11, Fail, "")
+ , {39} tableEntry(T, 1#"{", NT.40, Success*, "")
+ , {40} tableEntry(NT.T.247, 1#"N", T.41, Success*, "")
+ , {41} tableEntry(T, 1#"}", Reduce*(12, T.39), Success*, "")
+ , {42} tableEntry(T, 1#dq, NT.43, Fail, "")
+ , {43} tableEntry(NT.T'.45, 1#"String'", T.44, Fail, "")
+ , {44} tableEntry(T, 1#dq, Reduce.13, Fail, "")
+ , {45} tableEntry(T', 1#"^", T.46, NT.50, "")
+ , {46} tableEntry(T, 1#"(", NT.47, T'.49, "")
+ , {47} tableEntry(NT.54, 1#"E", T.48, T'.49, "")
+ , {48} tableEntry(T, 1#")", Reduce*(14, T'.45), T'.49, "")
+ , {49} tableEntry(T', 1#"^", Reduce*(15, T'.45), NT.50, "")
+ , {50} tableEntry(NT.!T.51, 1#"str2", Reduce*(16, T'.45), Success*, "")
+ , {51} tableEntry(!T, 1#dq, Fail, !T.52, "")
+ , {52} tableEntry(!T, 1#"^", Fail, MatchAny.53, "")
+ , {53} tableEntry(MatchAny, 1#"?", Discard*.!T.252, Fail, "")
+ , {54} tableEntry(NT.57, 1#"Or", Reduce.18, Fail, "")
+ , {55} tableEntry(T, 1#",", NT.56, Success*, "")
+ , {56} tableEntry(NT.54, 1#"E", Reduce*(19, T.55), Success*, "")
+ , {57} tableEntry(NT.65, 1#"And", NT.58, Fail, "")
+ , {58} tableEntry(NT.T'.59, 1#"Or'", Reduce.20, Fail, "")
+ , {59} tableEntry(T', 1#"∨", NT.60, T'.61, "")
+ , {60} tableEntry(NT.65, 1#"And", Reduce*(21, T'.59), T'.61, "")
+ , {61} tableEntry(T', 1#"/or", NT.62, T.63, "")
+ , {62} tableEntry(NT.65, 1#"And", Reduce*(22, T'.59), T.63, "")
+ , {63} tableEntry(T, 1#"⊻", NT.64, Success*, "")
+ , {64} tableEntry(NT.65, 1#"And", Reduce*(23, T'.59), Success*, "")
+ , {65} tableEntry(NT.71, 1#"Compare", NT.66, Fail, "")
+ , {66} tableEntry(NT.T'.67, 1#"And'", Reduce.24, Fail, "")
+ , {67} tableEntry(T', 1#"∧", NT.68, T.69, "")
+ , {68} tableEntry(NT.71, 1#"Compare", Reduce*(25, T'.67), T.69, "")
+ , {69} tableEntry(T, 1#"/and", NT.70, Success*, "")
+ , {70} tableEntry(NT.71, 1#"Compare", Reduce*(26, T'.67), Success*, "")
+ , {71} tableEntry(NT.95, 1#"Sum", NT.72, Fail, "")
+ , {72} tableEntry(NT.T'.73, 1#"Compare'", Reduce.27, Fail, "")
+ , {73} tableEntry(T', 1#"=", NT.74, T'.75, "")
+ , {74} tableEntry(NT.95, 1#"Sum", Reduce*(28, T'.73), T'.75, "")
+ , {75} tableEntry(T', 1#"≠", NT.76, T'.77, "")
+ , {76} tableEntry(NT.95, 1#"Sum", Reduce*(29, T'.73), T'.77, "")
+ , {77} tableEntry(T', 1#">", NT.78, T'.79, "")
+ , {78} tableEntry(NT.95, 1#"Sum", Reduce*(30, T'.73), T'.79, "")
+ , {79} tableEntry(T', 1#"<", NT.80, T'.81, "")
+ , {80} tableEntry(NT.95, 1#"Sum", Reduce*(31, T'.73), T'.81, "")
+ , {81} tableEntry(T', 1#">1", NT.82, T'.83, "")
+ , {82} tableEntry(NT.95, 1#"Sum", Reduce*(32, T'.73), T'.83, "")
+ , {83} tableEntry(T', 1#">2", NT.84, T'.85, "")
+ , {84} tableEntry(NT.95, 1#"Sum", Reduce*(33, T'.73), T'.85, "")
+ , {85} tableEntry(T', 1#"≥", NT.86, T'.87, "")
+ , {86} tableEntry(NT.95, 1#"Sum", Reduce*(34, T'.73), T'.87, "")
+ , {87} tableEntry(T', 1#"/ge", NT.88, T'.89, "")
+ , {88} tableEntry(NT.95, 1#"Sum", Reduce*(35, T'.73), T'.89, "")
+ , {89} tableEntry(T', 1#"≤", NT.90, T'.91, "")
+ , {90} tableEntry(NT.95, 1#"Sum", Reduce*(36, T'.73), T'.91, "")
+ , {91} tableEntry(T', 1#"/le", NT.92, T.93, "")
+ , {92} tableEntry(NT.95, 1#"Sum", Reduce*(37, T'.73), T.93, "")
+ , {93} tableEntry(T, 1#"/ne", NT.94, Success*, "")
+ , {94} tableEntry(NT.95, 1#"Sum", Reduce*(38, T'.73), Success*, "")
+ , {95} tableEntry(NT.109, 1#"Product", NT.96, Fail, "")
+ , {96} tableEntry(NT.T'.97, 1#"Sum'", Reduce.39, Fail, "")
+ , {97} tableEntry(T', 1#"-", NT.98, T'.99, "")
+ , {98} tableEntry(NT.109, 1#"Product", Reduce*(40, T'.97), T'.99, "")
+ , {99} tableEntry(T', 1#"+", NT.100, T'.101, "")
+ , {100} tableEntry(NT.109, 1#"Product", Reduce*(41, T'.97), T'.101, "")
+ , {101} tableEntry(T', 1#"∈", NT.102, T'.103, "")
+ , {102} tableEntry(NT.109, 1#"Product", Reduce*(42, T'.97), T'.103, "")
+ , {103} tableEntry(T', 1#"/in", NT.104, T'.105, "")
+ , {104} tableEntry(NT.109, 1#"Product", Reduce*(43, T'.97), T'.105, "")
+ , {105} tableEntry(T', 1#"∉", NT.106, T.107, "")
+ , {106} tableEntry(NT.109, 1#"Product", Reduce*(44, T'.97), T.107, "")
+ , {107} tableEntry(T, 1#"/nin", NT.108, Success*, "")
+ , {108} tableEntry(NT.109, 1#"Product", Reduce*(45, T'.97), Success*, "")
+ , {109} tableEntry(NT.T'.131, 1#"Unary", NT.110, Fail, "")
+ , {110} tableEntry(NT.T'.111, 1#"Product'", Reduce.46, Fail, "")
+ , {111} tableEntry(T', 1#"*", NT.112, T'.113, "")
+ , {112} tableEntry(NT.T'.131, 1#"Unary", Reduce*(47, T'.111), T'.113, "")
+ , {113} tableEntry(T', 1#">>", NT.114, T'.115, "")
+ , {114} tableEntry(NT.T'.131, 1#"Unary", Reduce*(48, T'.111), T'.115, "")
+ , {115} tableEntry(T', 1#"<<", NT.116, T'.117, "")
+ , {116} tableEntry(NT.T'.131, 1#"Unary", Reduce*(49, T'.111), T'.117, "")
+ , {117} tableEntry(T', slash, NT.118, T'.119, "")
+ , {118} tableEntry(NT.T'.131, 1#"Unary", Reduce*(50, T'.111), T'.119, "")
+ , {119} tableEntry(T', 1#"mod", NT.120, T'.121, "")
+ , {120} tableEntry(NT.T'.131, 1#"Unary", Reduce*(51, T'.111), T'.121, "")
+ , {121} tableEntry(T', 1#"∩", NT.122, T'.123, "")
+ , {122} tableEntry(NT.T'.131, 1#"Unary", Reduce*(52, T'.111), T'.123, "")
+ , {123} tableEntry(T', 1#"∪", NT.124, T'.125, "")
+ , {124} tableEntry(NT.T'.131, 1#"Unary", Reduce*(53, T'.111), T'.125, "")
+ , {125} tableEntry(T', 1#"/cap", NT.126, T'.127, "")
+ , {126} tableEntry(NT.T'.131, 1#"Unary", Reduce*(54, T'.111), T'.127, "")
+ , {127} tableEntry(T', 1#"/cup", NT.128, T.129, "")
+ , {128} tableEntry(NT.T'.131, 1#"Unary", Reduce*(55, T'.111), T.129, "")
+ , {129} tableEntry(T, 1#"\", NT.130, Success*, "")
+ , {130} tableEntry(NT.T'.131, 1#"Unary", Reduce*(56, T'.111), Success*, "")
+ , {131} tableEntry(T', 1#"-", NT.132, NT.133, "")
+ , {132} tableEntry(NT.T'.131, 1#"Unary", Reduce.57, NT.133, "")
+ , {133} tableEntry(NT.!T.175, 1#"Id", T.134, T'.136, "")
+ , {134} tableEntry(T, 1#".", NT.135, T'.136, "")
+ , {135} tableEntry(NT.T'.131, 1#"Unary", Reduce.58, T'.136, "")
+ , {136} tableEntry(T', 1#"{", NT.137, NT.140, "")
+ , {137} tableEntry(NT.T.247, 1#"N", T.138, NT.140, "")
+ , {138} tableEntry(T, 1#"}", NT.139, NT.140, "")
+ , {139} tableEntry(NT.T'.131, 1#"Unary", Reduce.59, NT.140, "")
+ , {140} tableEntry(NT.141, 1#"Power", Reduce.60, Fail, "")
+ , {141} tableEntry(NT.T'.147, 1#"Atom", NT.142, Fail, "")
+ , {142} tableEntry(NT.T'.143, 1#"Power'", Reduce.61, Fail, "")
+ , {143} tableEntry(T', 1#"#", NT.144, T.145, "")
+ , {144} tableEntry(NT.T'.131, 1#"Unary", Reduce*(62, T'.143), T.145, "")
+ , {145} tableEntry(T, 1#"^", NT.146, Success*, "")
+ , {146} tableEntry(NT.T'.131, 1#"Unary", Reduce*(63, T'.143), Success*, "")
+ , {147} tableEntry(T', 1#"(", NT.148, T'.150, "")
+ , {148} tableEntry(NT.54, 1#"E", T.149, T'.150, "")
+ , {149} tableEntry(T, 1#")", Reduce.64, T'.150, "")
+ , {150} tableEntry(T', 1#"[", NT.151, NT.154, "")
+ , {151} tableEntry(NT.54, 1#"E", NT.152, NT.154, "")
+ , {152} tableEntry(NT.T.55, 1#"EL'", T.153, NT.154, "")
+ , {153} tableEntry(T, 1#"]", Reduce.65, NT.154, "")
+ , {154} tableEntry(NT.T.42, 1#"String", Reduce.66, NT.155, "")
+ , {155} tableEntry(NT.T'.192, 1#"Declare", NT.156, T'.158, "")
+ , {156} tableEntry(NT.238, 1#"Declare'", NT.157, T'.158, "")
+ , {157} tableEntry(NT.54, 1#"E", Reduce.67, T'.158, "")
+ , {158} tableEntry(T', 1#"if", NT.159, NT.165, "")
+ , {159} tableEntry(NT.54, 1#"E", T.160, NT.165, "")
+ , {160} tableEntry(T, 1#"then", NT.161, NT.165, "")
+ , {161} tableEntry(NT.54, 1#"E", NT.162, NT.165, "")
+ , {162} tableEntry(NT.T.183, 1#"IF", T.163, NT.165, "")
+ , {163} tableEntry(T, 1#"else", NT.164, NT.165, "")
+ , {164} tableEntry(NT.54, 1#"E", Reduce.68, NT.165, "")
+ , {165} tableEntry(NT.171, 1#"Name", T.166, Fail, "")
+ , {166} tableEntry(T, 1#"(", NT.167, NT.170, "")
+ , {167} tableEntry(NT.54, 1#"E", NT.168, NT.170, "")
+ , {168} tableEntry(NT.T.55, 1#"EL'", T.169, NT.170, "")
+ , {169} tableEntry(T, 1#")", Reduce.69, NT.170, "")
+ , {170} tableEntry(NT.171, 1#"Name", Reduce.70, Fail, "")
+ , {171} tableEntry(NT.!T.175, 1#"Id", T.172, Fail, "")
+ , {172} tableEntry(T, 1#":", NT.173, NT.174, "")
+ , {173} tableEntry(NT.188, 1#"Type", Reduce.71, NT.174, "")
+ , {174} tableEntry(NT.!T.175, 1#"Id", Reduce.72, Fail, "")
+ , {175} tableEntry(!T, 1#",", Fail, !T.176, "")
+ , {176} tableEntry(!T, 1#"]", Fail, !T.177, "")
+ , {177} tableEntry(!T, 1#")", Fail, !T.178, "")
+ , {178} tableEntry(!T, 1#":", Fail, !T.179, "")
+ , {179} tableEntry(!T, 1#".", Fail, !T.180, "")
+ , {180} tableEntry(!T, 1#dq, Fail, MatchAny.181, "")
+ , {181} tableEntry(MatchAny, 1#"?", Reduce.73, Fail, "")
+ , {182} tableEntry(T, 1#",", Reduce.74, Reduce.75, "")
+ , {183} tableEntry(T, 1#"else", T.184, Success*, "")
+ , {184} tableEntry(T, 1#"if", NT.185, Success*, "")
+ , {185} tableEntry(NT.54, 1#"E", T.186, Success*, "")
+ , {186} tableEntry(T, 1#"then", NT.187, Success*, "")
+ , {187} tableEntry(NT.54, 1#"E", Reduce*(76, T.183), Success*, "")
+ , {188} tableEntry(NT.!T.175, 1#"Id", T.189, Fail, "")
+ , {189} tableEntry(T, 1#".", NT.190, NT.191, "")
+ , {190} tableEntry(NT.188, 1#"Type", Reduce.77, NT.191, "")
+ , {191} tableEntry(NT.!T.175, 1#"Id", Reduce.78, Fail, "")
+ , {192} tableEntry(T', 1#"let", MatchAny.193, T'.197, "")
+ , {193} tableEntry(MatchAny, 1#"?", T.194, T'.197, "")
+ , {194} tableEntry(T, 1#"=", NT.195, T'.197, "")
+ , {195} tableEntry(NT.54, 1#"E", NT.196, T'.197, "")
+ , {196} tableEntry(NT.T.182, 1#"comma?", Reduce.79, T'.197, "")
+ , {197} tableEntry(T', 1#"assert", NT.198, T'.202, "")
+ , {198} tableEntry(NT.54, 1#"E", T.199, T'.202, "")
+ , {199} tableEntry(T, 1#"report", NT.200, T'.202, "")
+ , {200} tableEntry(NT.54, 1#"E", NT.201, T'.202, "")
+ , {201} tableEntry(NT.T.182, 1#"comma?", Reduce.80, T'.202, "")
+ , {202} tableEntry(T', 1#"{", NT.203, T'.206, "")
+ , {203} tableEntry(NT.T.247, 1#"N", T.204, T'.206, "")
+ , {204} tableEntry(T, 1#"}", NT.205, T'.206, "")
+ , {205} tableEntry(NT.T.182, 1#"comma?", Reduce.81, T'.206, "")
+ , {206} tableEntry(T', 1#"for", NT.207, Fail, "")
+ , {207} tableEntry(NT.218, 1#"ForDeclare", T'.208, Fail, "")
+ , {208} tableEntry(T', 1#"do", NT.209, T.213, "")
+ , {209} tableEntry(NT.54, 1#"E", NT.210, T.211, "")
+ , {210} tableEntry(NT.T.182, 1#"comma?", Reduce.82, T.211, "")
+ , {211} tableEntry(T, 1#"for", NT.212, Fail, "")
+ , {212} tableEntry(NT.218, 1#"ForDeclare", T.213, Fail, "")
+ , {213} tableEntry(T, 1#"while", NT.214, Fail, "")
+ , {214} tableEntry(NT.54, 1#"E", T.215, Fail, "")
+ , {215} tableEntry(T, 1#"do", NT.216, Fail, "")
+ , {216} tableEntry(NT.54, 1#"E", NT.217, Fail, "")
+ , {217} tableEntry(NT.T.182, 1#"comma?", Reduce.83, Fail, "")
+ , {218} tableEntry(NT.!T.229, 1#"AccumList", T'.219, Fail, "")
+ , {219} tableEntry(T', 1#",", MatchAny.220, T.224, "")
+ , {220} tableEntry(MatchAny, 1#"?", T'.221, NT.223, "")
+ , {221} tableEntry(T', 1#"∈", NT.222, T.226, "")
+ , {222} tableEntry(NT.54, 1#"E", Reduce.84, NT.223, "")
+ , {223} tableEntry(NT.!T.229, 1#"AccumList", T.224, Fail, "")
+ , {224} tableEntry(T, 1#",", MatchAny.225, NT.228, "")
+ , {225} tableEntry(MatchAny, 1#"?", T.226, NT.228, "")
+ , {226} tableEntry(T, 1#"/in", NT.227, NT.228, "")
+ , {227} tableEntry(NT.54, 1#"E", Reduce.85, NT.228, "")
+ , {228} tableEntry(NT.!T.229, 1#"AccumList", Reduce.86, Fail, "")
+ , {229} tableEntry(!T, 1#"while", Fail, MatchAny.230, "")
+ , {230} tableEntry(MatchAny, 1#"?", T.231, Fail, "")
+ , {231} tableEntry(T, 1#"=", NT.232, Fail, "")
+ , {232} tableEntry(NT.54, 1#"E", NT.233, Fail, "")
+ , {233} tableEntry(NT.T.234, 1#"AccumList'", Reduce.87, Fail, "")
+ , {234} tableEntry(T, 1#",", MatchAny.235, Success*, "")
+ , {235} tableEntry(MatchAny, 1#"?", T.236, Success*, "")
+ , {236} tableEntry(T, 1#"=", NT.237, Success*, "")
+ , {237} tableEntry(NT.54, 1#"E", Reduce*(88, T.234), Success*, "")
+ , {238} tableEntry(NT.T'.192, 1#"Declare", Reduce*(89, NT.238), Success*, "")
+ , {239} tableEntry(NT.MatchAny.243, 1#"FP", NT.240, Fail, "")
+ , {240} tableEntry(NT.T.241, 1#"FPL'", Reduce.90, Fail, "")
+ , {241} tableEntry(T, 1#",", NT.242, Success*, "")
+ , {242} tableEntry(NT.MatchAny.243, 1#"FP", Reduce*(91, T.241), Success*, "")
+ , {243} tableEntry(MatchAny, 1#"?", T.244, NT.246, "")
+ , {244} tableEntry(T, 1#":", NT.245, NT.246, "")
+ , {245} tableEntry(NT.188, 1#"Type", Reduce.92, NT.246, "")
+ , {246} tableEntry(NT.188, 1#"Type", Reduce.93, Fail, "")
+ , {247} tableEntry(T, 1#"{", NT.248, !T.250, "")
+ , {248} tableEntry(NT.T.247, 1#"N", T.249, !T.250, "")
+ , {249} tableEntry(T, 1#"}", Discard*.T.247, !T.250, "")
+ , {250} tableEntry(!T, 1#"}", All, MatchAny.251, "")
+ , {251} tableEntry(MatchAny, 1#"?", Discard*.T.247, All, "")
+ , {252} tableEntry(!T, 1#dq, All, !T.253, "")
+ , {253} tableEntry(!T, 1#"^", All, MatchAny.254, "")
+ , {254} tableEntry(MatchAny, 1#"?", Discard*.!T.252, All, "")
 ]
 
 function =(seq.word, attribute) boolean true
 
-function =(seq.word, word) boolean true
+function $(int) attribute 1#empty:seq.attribute
 
 use standard
 
@@ -1086,9 +1044,7 @@ use otherseq.attribute
 
 use PEGrules
 
-function _(i:int, R:reduction) attribute (i + 1)_toseq.R
-
-type reduction is toseq:seq.attribute
+function place(r:runresult) int i.top.stk.r
 
 type frame is
 Sstate:state
@@ -1101,84 +1057,78 @@ Sstate:state
 type runresult is stk:stack.frame
 
 Function status(a:runresult) word
-if Sstate.top.stk.a ≠ Reduce.1 then
-1_"Failed"
-else if i.top.stk.a = {length of input} faili.top.stk.a then
-1_"Match"
-else 1_"MatchPrefix"
+if Sstate.top.stk.a ≠ Match then
+1#"Failed"
+else if place.a = {length of input} faili.top.stk.a then
+1#"Match"
+else 1#"MatchPrefix"
 
 Function result(a:runresult) attribute 1^result.top.stk.a
 
-function parse(
- myinput0:seq.word
- , table:seq.tableEntry
- , initAttr:attribute
- , common:boolean
-) runresult
+function parse(myinput0:seq.word, initAttr:attribute, common:boolean) runresult
 let myinput = packed(myinput0 + endMark)
-let packedTable = packed.table
+let packedTable = packed.mytable
 for
  stk = empty:stack.frame
  , state = startstate
  , i = 1
- , inputi = 1_myinput
+ , inputi = 1#myinput
  , result = [initAttr]
  , faili = 1
  , failresult = [initAttr]
-while not(state = Reduce.1 ∨ state = Reduce.0)
+while toint.state > toint.Match
 do
  let actionState = action.state,
   if actionState = Fail then
    {goto Fstate.top.stk, i = faili.top, pop.stk, discard result}
-   let top = top.stk
-   let newstk = pop.stk,
-   next(
-    newstk
-    , if is!.Sstate.top then Sstate.top else Fstate.top
-    , faili.top
-    , idxNB(myinput, faili.top)
-    , failresult.top
-    , faili.top
-    , failresult.top
-   )
+   let top = top.stk,
+    if toint.action.Fstate.top ≥ toint.S' then
+     let newi = i.top,
+     next(pop.stk, nextState.Fstate.top, newi, idxNB(myinput, newi), result.top, faili.top, failresult.top)
+    else next(
+     pop.stk
+     , Fstate.top
+     , faili.top
+     , idxNB(myinput, faili.top)
+     , failresult.top
+     , faili.top
+     , failresult.top
+    )
   else if actionState = Success* then
    {goto Sstate.top.stk, pop.stk, keep result}
    let top = top.stk,
    next(pop.stk, Sstate.top, i, inputi, result.top + result, faili.top, failresult.top)
-  else if actionState = SuccessDiscard* then
-   {goto Sstate.top.stk, pop.stk, keep result}
-   let top = top.stk, next(pop.stk, Sstate.top, i, inputi, result.top, faili.top, failresult.top)
   else if actionState = Discard* then
   let top = top.stk, next(stk, nextState.state, i, inputi, result.top, i, result.top)
   else if actionState = All then
    let top = top.stk
    let att = [toAttribute(1^result, subseq(myinput, i.top, i - 1))],
    next(pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+  else if actionState = Lambda then
+   let att = [action(reduceNo.state, result, common)],
+   next(stk, nextState2.state, i, inputi, result + att, faili, failresult)
   else if actionState = Reduce then
-   {Reduce}
-   if nextState.state ≠ S.0 then
-    let att = [action(reduceNo.state, reduction.result, i, myinput, common, stk)]
-    let top = top.stk,
-     if faili = i then
-     next(pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
-     else next(stk, nextState.state, i, inputi, att, i, att)
-   else
-    let top = top.stk,
-     if is!.Sstate.top then
-      {goto Fstate.top.stk, i = faili.top, pop.stk, discard result}
-      let newstk = pop.stk
-      let newi = faili.top
-      let ini = idxNB(myinput, newi),
-      next(newstk, Fstate.top, newi, ini, failresult.top, faili.top, failresult.top)
-     else
-      let att = [action(reduceNo.state, reduction.result, i, myinput, common, stk)],
-      next(pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
-  else if actionState = Match then
+   let top = top.stk
+   let att = [action(reduceNo.state, result, common)],
+   next(pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+  else if actionState = Reduce* then
+   let att = [action(reduceNo.state, result, common)]
+   let top = top.stk,
+   next(stk, nextState.state, i, inputi, att, i, att)
+  else if actionState = !Reduce then
+   let top = top.stk
+   let ini = idxNB(myinput, faili.top),
+   next(pop.stk, Fstate.top, faili.top, ini, failresult.top, faili.top, failresult.top)
+  else if actionState = !Fail then
+   let top = top.stk
+   let ini = idxNB(myinput, i.top),
+   next(pop.stk, Sstate.top, i.top, ini, result.top, faili.top, failresult.top)
+  else if actionState = T then
    let te = idxNB(packedTable, index.state),
     if inputi ≠ match.te then
     {fail} next(stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
     else next(stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
-  else if actionState = !Match then
+  else if actionState = !T then
    let te = idxNB(packedTable, index.state),
     if inputi = match.te then
     {fail} next(stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
@@ -1188,13 +1138,10 @@ do
     if inputi = endMark then
     {fail} next(stk, Fstate.te, i, inputi, result, faili, failresult)
     else
-     let reslt =
-      if action.Sstate.te = Discard* then
-      result
-      else result + toAttribute(1^result, [inputi])
+     let reslt = result + toAttribute(1^result, [inputi])
      let ini = idxNB(myinput, i + 1),
      next(stk, Sstate.te, i + 1, ini, reslt, faili, failresult)
-  else if actionState = MatchNext then
+  else if actionState = T' then
    let te = idxNB(packedTable, index.state),
     if inputi = match.te then
     next(stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
@@ -1202,7 +1149,7 @@ do
   else
    {match non Terminal}
    let te = idxNB(packedTable, index.state)
-   assert action.action.te = MatchNT report "PROBLEM PEG^(state)"
+   assert action.action.te ∈ [NT, NT*] report "PROBLEM PEG^(state)"
    let newstk = push(stk, frame(Sstate.te, Fstate.te, i, result, faili, failresult))
    let tmp = [toAttribute(1^result, empty:seq.word)],
    next(newstk, nextState.action.te, i, inputi, tmp, i, tmp),

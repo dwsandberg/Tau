@@ -37,7 +37,7 @@ function %(a:symloc) seq.word %.loc.a + %.sym.a
 Function tograph(s:seq.symbol) seq.word
 for acc = empty:seq.arc.symloc, stk = empty:stack.symloc, i ∈ arithseq(n.s, 1, 1)
 do
- let sym = i_s
+ let sym = i#s
  let sons =
   if sym = EndBlock then
    for stk2 = stk, sons = empty:seq.symloc, k ∈ toseq.stk
