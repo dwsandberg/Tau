@@ -14,7 +14,7 @@ let PRIME2 = 14029467366897019727
 let PRIME4 = 9650029242287828579,
 bits(
  toint.rotateleft(acc ⊻ bits(toint.rotateleft(bits(toint.acc + x * PRIME2), 31) * PRIME1), 27)
-  * PRIME1
+ * PRIME1
   + PRIME4
 )
 
@@ -47,4 +47,6 @@ let h32c = (hash ⊻ hash >> 15) * 668265263
 let h32d = (h32c ⊻ h32c >> 13) * 374761393,
 abs.toint((h32d ⊻ h32d >> 16) ∧ 0xFFFF FFFF)
 
-Function hashstart32(seed:int) bits let PRIME5 = 374761393, bits(seed + PRIME5) 
+Function hashstart32(seed:int) bits
+let PRIME5 = 374761393,
+bits(seed + PRIME5) 

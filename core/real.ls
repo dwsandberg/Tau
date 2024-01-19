@@ -59,19 +59,25 @@ Builtin representation(a:real) int
 Builtin casttoreal(i:int) real
 
 Function ^(a:real, n:int) real
-if n = 0 then
-1.0
-else if n = 1 then
-a
-else if n < 0 then
-1.0 / a^-n
-else let d = n / 2, a^d * a^(n - d)
+if n = 0 then 1.0
+else if n = 1 then a
+else if n < 0 then 1.0 / a^-n
+else
+ let d = n / 2,
+ a^d * a^(n - d)
 
 Function *(a:int, b:real) real toreal.a * b
 
 Function makereal(w:seq.word) real
 {OPTION COMPILETIME}
-reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e, acc,-1, 1, 0, 1)
+reallit(
+ for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e,
+ acc
+ ,-1
+ , 1
+ , 0
+ , 1
+)
 
 Function print(decimals:int, rin1:real) seq.word
 let neg = rin1 >1 toreal.0 = LT
@@ -80,46 +86,42 @@ let a = 10^decimals
 let r = rin + 1.0 / toreal(a * 2)
 let r2 =
  if decimals > 0 then
- [
-  toword.intpart.r
-  , 1#"."
-  , encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
- ]
+  [
+   toword.intpart.r
+   , 1#"."
+   , encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+  ]
  else [toword.intpart.r],
 if neg then "-^(r2)" else r2
 
 Function toUTF8(rin:real, decimals:int) UTF8
-if rin >1 toreal.0 = LT then
-encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
+if rin >1 toreal.0 = LT then encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
 else
  let a = 10^decimals
  let r = rin + 1.0 / toreal(a * 2),
-  if decimals > 0 then
-   toUTF8.intpart.r
-    + encodeUTF8.periodchar
-    + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
-  else toUTF8.intpart.r
+ if decimals > 0 then
+  toUTF8.intpart.r
+   + encodeUTF8.periodchar
+   + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+ else toUTF8.intpart.r
 
 Function reallit(s:UTF8) real reallit(decodeUTF8.s,-1, 1, 0, 1)
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int) real
 if i > n.s then
  let r = if decimals < 1 then toreal.val else toreal.val / toreal.decimals,
- if neg < 1 then -1.0 * r else r
+ if neg < 1 then-1.0 * r else r
 else if between(toint.i#s, 48, 57) then
-reallit(
- s
- , if decimals = -1 then -1 else decimals * 10
- , i + 1
- , 10 * val + toint.i#s - 48
- , neg
-)
-else if i#s = char.32 ∨ i#s = commachar then
-reallit(s, decimals, i + 1, val, neg)
-else if i < 3 ∧ i#s = hyphenchar then
-reallit(s, decimals, i + 1, val,-1)
-else if i < 3 ∧ i#s = char1."+" then
-reallit(s, decimals, i + 1, val, 1)
+ reallit(
+  s
+  , if decimals =-1 then-1 else decimals * 10
+  , i + 1
+  , 10 * val + toint.i#s - 48
+  , neg
+ )
+else if i#s = char.32 ∨ i#s = commachar then reallit(s, decimals, i + 1, val, neg)
+else if i < 3 ∧ i#s = hyphenchar then reallit(s, decimals, i + 1, val,-1)
+else if i < 3 ∧ i#s = char1."+" then reallit(s, decimals, i + 1, val, 1)
 else
  assert i#s = periodchar report "unexpected character in real literal" + encodeword.s,
  reallit(s, 1, i + 1, val, neg)

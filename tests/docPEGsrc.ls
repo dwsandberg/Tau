@@ -164,7 +164,7 @@ We need to supply a couple of functions before giving the PEGgen procedure.
 function endMark word  {Specifies the seqElement that marks the end of the input. For UTF8 input we use an illegal byte in UTF8 format. } encodeword.[char.254]
 
 function  toAttribute(attribute:seq.word, seqElement:seq.word)seq.word 
-{This is used to form the attribute for the "any" in a rule by calling toAttribute(<current attribute> ,[<the element  "any" matches>]. \br This function is also call when starting a * or + Non-terminal. In this case the seqElement is the
+{This is used to form the attribute for the "any" in a rule by calling toAttribute(<current attribute> ,[<the element  "any" matches>]./br This function is also call when starting a * or + Non-terminal. In this case the seqElement is the
 empty sequence  } 
 seqElement
  
@@ -192,7 +192,7 @@ The body of the PEGprocedure is formed taking the string in the stkCode procedur
 change $.1 to ^($.1) and do the same for the other $ expressions. 
 
 function PEGgen(seqElementType:word, attributeType:seq.word) seq.boolean
-{wordmap =dq dq , //br /br, 1#" $" }
+{wordmap: dq dq , //br /br, 1#" $" }
  ["G1 function any int E " = "  ^($.2)"
 ," E Sum " = " ^($.1)"
 ," Sum Atom Sum' " = " ^($.1) ^($.2)"
@@ -212,7 +212,7 @@ a comma seperated list. if the word of the rule matches  first word of the eleme
 
 
 Next we will add a check to see that all references are define. The following should produce
-and error <* block function Example1 int let a = 1+2, b+(3+4) *>
+an error <* block function Example1 int let a = 1+2, b+(3+4) *>
 since /em b is not defined.
 
 We start fresh with a new module.
@@ -255,7 +255,7 @@ raise the error <* block Not defined b *>
 
  
 function PEGgen(seqElementType:word, attributeType:attribute) seq.boolean
-{wordmap = 1#" $"}
+{wordmap: 1#" $"}
 [
  "G1 function any int E" = $.2
  , "E Sum" = $.1
@@ -415,7 +415,7 @@ else  "Error at^(place.rinfo) message:^(message). To finish parse,'^(subseq(inpu
 
 function PEGgen(seqElementType:word, attributeType:attribute, resultType:recoverInfo, rinfo:recoverInfo,
 commonType:boolean,checkSemantics:boolean) seq.boolean
-{commonName= checkSemantics error=   wordmap = 1#" $"}
+{commonName: checkSemantics error:   wordmap : 1#" $"}
 [ 
  "G1 function any int E" = $.2
  , "E   if E then E  else E" = 

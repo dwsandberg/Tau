@@ -78,7 +78,7 @@ if a = 1 then result else optest27(a - 1, a * result)
 Function optest26(b:seq.int) int
 {remove is member}
 let t = 3#b,
-if t = 3333 ∨ t ∈ [5, 7, 8, 9] ∨ t = 10 then 25 else 2
+if t = 3333 ∨ t ∈ [5, 7, 8, 9] ∨ t = 10 then 25 else 3333
 
 Function optest28(a:int, b:int) boolean a > 0 ∧ b < 10
 
@@ -122,17 +122,17 @@ Function optest39 int 2#optest16.[char.45, char.46]
 
 Function optest40 seq.word for a = "", w ∈ "this for loop should be a noop" do a + w, a
 
-Function optest41 seq.int
+Function optest41 boolean
 {detection of noop with constant sequence}
 for a = empty:seq.int, w ∈ [2, 3, 4] do a + w,
-a
+1#a=2 /and  2#a=3 /and 3#a=4
 
 Function optest42(i:int) int
 {Move br2 together for detection of jump instruction}
 if i = 1 then 10 else if i = 3 then 30 else if i = 7 then 70 else 0
 
 Function optest43(i:int, b:int) int
-{branch into middle of possible jump list. Must break into to Jumps}
+{branch into middle of possible jump list. Must break into two Jumps}
 if i = 4 ∧ b = 10 then
  if i = -3 then
  30
@@ -229,7 +229,7 @@ let i = 2
 assert i > 0 ∧ i ≤ n.s ∨ getseqtype.s > 1 report "out of bounds",
 idxNB(s, i)
 
-Function optest50(i:int, b:int) int
+/Function optest50(i:int, b:int) int
 {Check to see that duplicate labels are not included in Jump because LLVM requires not duplicates in
 Switch instruction. }
 if i = 5555 then

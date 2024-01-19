@@ -28,18 +28,18 @@ Function #(i:int, t:tree.T) tree.T i#sons.t
 Function nosons(t:tree.T) int n.sons.t
 
 Function postorder(a:tree.T) seq.tree.T
-for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e,
+for acc = empty:seq.tree.T, @e ∈ sons.a
+do acc + postorder.@e,
 acc + a
 
 unbound %(T) seq.word
 
 Function %(t:tree.T) seq.word
-if nosons.t = 0 then
-%.label.t
+if nosons.t = 0 then %.label.t
 else
  %.label.t
-  + 
-  if nosons.t = 1 then
-  ".^(1#t)"
-  else "(^(for acc = "", e ∈ sons.t do acc + %.e + ",", acc >> 1 + ")")"
+  + if nosons.t = 1 then ".^(1#t)"
+ else
+  "(^(for acc = "", e ∈ sons.t do acc + %.e + ",",
+  acc >> 1 + ")")"
  

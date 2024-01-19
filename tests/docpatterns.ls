@@ -1,3 +1,9 @@
+/tag <a /sp id=patterns />
+
+
+
+/tag <h1> Example of   Renaming Function /tag </h1>
+
 Module patterns
 
 use standard
@@ -10,7 +16,7 @@ The pattern3 transformation will change the value of orginal to
 look like the value of changed in the procedure below.
 
 function example3(i:int, x:int) int
-let orignal = [i + 1, x + 1, 3 + 1, 3 * 1 + 1, i + x + 1]
+let original = [i + 1, x + 1, 3 + 1, 3 * 1 + 1, i + x + 1]
 let changed = [inc.i, inc.x, inc.3, inc(3 * 1), inc(i + x)],
 0
 
@@ -54,7 +60,7 @@ Pattern5 and pattern6 transformation will change the value of orginal to
 look like the value of changed in the procedure below.  
 
 function example4 int
-let orignal = 2#[1, 2, 3] + 1#[3, 4, 5]
+let original = 2#[1, 2, 3] + 1#[3, 4, 5]
 let changed = [1, 2, 3]#2 + first.[3, 4, 5],
 0
 

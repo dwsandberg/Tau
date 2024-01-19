@@ -94,6 +94,8 @@ assert subseq(c, i, i + n.r - 1) = r report "FAIL 3",
 c
 
 function random(s:seq.int, i:int, result:seq.seq.int) seq.seq.int
-if i > n.s then
-result
-else let len = i#s mod 5 + 2, random(s, i + len, result + subseq(s, i, i + len - 1)) 
+if i > n.s then result
+else
+ let len = i#s mod 5 + 2,
+ random(s, i + len, result + subseq(s, i, i + len - 1))
+ 

@@ -61,11 +61,9 @@ function sp seq.word [encodeword.[char.32]]
 
 use otherseq.seq.word
 
-/function % (a:seq.word) seq.word a
-
 Function myselect(id:jsbytes) real addsegment.1#towords.id
 
-Function showsvg int setElementValue("selected", getElementValue:jsbytes("svg10"))
+Function showsvg real setElementValue("selected", getElementValue:jsbytes("svg10"))
 
 Function Bquadratic int 0
 
@@ -107,7 +105,7 @@ use bitcast.seq.addrsym
 
 Export type:addrsym
 
-Function test345 int
+Function test345 real 
 setElementValue("xx", profileresults."time") + callevent("svg10", "load")
 
 {let a = dump.decode2.vector2} let a = bitcast:seq.addrsym (inrec.vector2) {let a = inbytes:addrsym

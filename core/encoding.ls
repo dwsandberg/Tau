@@ -14,11 +14,15 @@ use ptr
 
 use standard
 
-builtin set2(ptr, encodingstate.T) ptr
-
 Export type:encoding.T
 
 Export valueofencoding(a:encoding.T) int
+
+Export type:encodingstate.T
+
+Export length(encodingstate.T) int
+
+builtin set2(ptr, encodingstate.T) ptr
 
 type encoding is valueofencoding:int
 
@@ -30,15 +34,12 @@ all:seq.encodingpair.T
 , encodetable:seq.seq.encodingpair.T
 , lastadd:encoding.T
 
-Export type:encodingstate.T
-
-Export length(encodingstate.T) int
-
 Function startInParent:T boolean
 let inst = getinstance3:T,
-if length.fromindirect.state.inst > 0 then
-false
-else let discard = finishStart:T(encodingnumber.inst), true
+if length.fromindirect.state.inst > 0 then false
+else
+ let discard = finishStart:T(encodingnumber.inst),
+ true
 
 builtin finishStart:T(eno:int) einfo.T
 
@@ -57,8 +58,7 @@ unbound =(T, T) boolean
 
 Function lastadded(h:encodingstate.T) encoding.T code.1^all.h
 
-function notsamehash:T(a:int, b:int, mask:bits) boolean
-(bits.a ∧ mask) ≠ (bits.b ∧ mask)
+function notsamehash:T(a:int, b:int, mask:bits) boolean (bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
 builtin deepcopy(T) T
 
@@ -71,7 +71,7 @@ let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let dataindex = toint(tobits.hashv ∧ mask) + 1
 let existingcode = lookuprep2(datav, dataindex#encodetable.h),
 if not.isempty.existingcode then
- {already presen}
+ {already present}
  let c = code.1#existingcode,
  if lastadd.h = c then h else encodingstate(all.h, length.h, encodetable.h, c)
 else
@@ -80,23 +80,21 @@ else
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
  for listencode = [p], e ∈ dataindex#encodetable.h
  do
-  if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask) then
-  listencode
-  else listencode + e
+  if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask) then listencode
+  else listencode + e,
  let newencode = replace(encodetable.h, dataindex, listencode),
-  if 3 * length.h > 2 * tablesize then
-  encodingstate(all.h + p, length.h + 1, newencode + newencode + newencode + newencode, code.p)
-  else encodingstate(all.h + p, length.h + 1, newencode, code.p)
+ if 3 * length.h > 2 * tablesize then encodingstate(all.h + p, length.h + 1, newencode + newencode + newencode + newencode, code.p)
+ else encodingstate(all.h + p, length.h + 1, newencode, code.p)
 
 Function addencodings(l:seq.T) int
 let inst = getinstance3:T
-for acc = to:encoding.T(0), @e ∈ l do primitiveadd(inst, @e),
+for acc = to:encoding.T(0), @e ∈ l
+do primitiveadd(inst, @e),
 0
 
 Function decode(t:encoding.T) T
 let h = encodingstate.getinstance3:T
-assert between(valueofencoding.t, 1, n.all.h)
-report "no such encoding" + toword.valueofencoding.t + stacktrace,
+assert between(valueofencoding.t, 1, n.all.h) report "no such encoding" + toword.valueofencoding.t + stacktrace,
 data.(valueofencoding.t)#all.h
 
 type einfo is state:indirect.encodingstate.T, encodingnumber:int, allocatein:ptr
@@ -119,7 +117,9 @@ type e3 is sequence, data:seq.encodingpair.T
 
 function sequenceIndex(a:e3.T, i:int) T data.i#data.a
 
-Function encodingdata:T seq.T let t = all.encodingstate.getinstance3:T, toseq.e3(n.t, t)
+Function encodingdata:T seq.T
+let t = all.encodingstate.getinstance3:T,
+toseq.e3(n.t, t)
 
 Function encode(t:T) encoding.T
 let instance = getinstance3:T
@@ -138,7 +138,8 @@ let dataindex = toint(tobits.hash.t ∧ mask) + 1,
 lookuprep2(t, dataindex#encodetable.inst)
 
 function lookuprep2(t:T, s:seq.encodingpair.T) seq.encodingpair.T
-for acc = empty:seq.encodingpair.T, e ∈ s do if t = data.e then acc + e else acc,
+for acc = empty:seq.encodingpair.T, e ∈ s
+do if t = data.e then acc + e else acc,
 acc
 
 Function findencode(t:T) seq.T
@@ -152,14 +153,13 @@ function analyze(t:encodingstate.T) seq.word
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int) seq.word
 if i > n.s then
-for acc = "", @e ∈ [n.s, one, two, big] do acc + toword.@e, acc
+ for acc = "", @e ∈ [n.s, one, two, big]
+ do acc + toword.@e,
+ acc
 else
  let t = n.i#s,
-  if t = 0 then
-  counts(s, i + 1, one, two, big)
-  else if t = 1 then
-  counts(s, i + 1, one + 1, two, big)
-  else if t = 2 then
-  counts(s, i + 1, one, two + 1, big)
-  else counts(s, i + 1, one, two, big + 1)
+ if t = 0 then counts(s, i + 1, one, two, big)
+ else if t = 1 then counts(s, i + 1, one + 1, two, big)
+ else if t = 2 then counts(s, i + 1, one, two + 1, big)
+ else counts(s, i + 1, one, two, big + 1)
  

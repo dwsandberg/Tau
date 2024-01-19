@@ -41,12 +41,13 @@ let tablesize = n.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 for acc = empty:seq.T, idx = 1
 while idx ≤ tablesize
-do next(
- for acc2 = acc, e ∈ idx#table.h
- do if (bits.hash.e ∧ mask) = bits(idx - 1) then acc2 + data.e else acc2,
- acc2
- , idx + 1
-),
+do
+ next(
+  for acc2 = acc, e ∈ idx#table.h
+  do if (bits.hash.e ∧ mask) = bits(idx - 1) then acc2 + data.e else acc2,
+  acc2
+  , idx + 1
+ ),
 acc
 
 function notsamehash2(ele:T, a:int, b:int, mask:bits) boolean
@@ -59,10 +60,8 @@ let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = empty:seq.hashelement.T, found = false, e ∈ dataindex#table.h
 do
- if data.e = ele then
- next(acc + e, true)
- else if notsamehash2(ele, hash, hash.e, mask) then
- next(acc, found)
+ if data.e = ele then next(acc + e, true)
+ else if notsamehash2(ele, hash, hash.e, mask) then next(acc, found)
  else next(acc + e, found)
 let t = replace(table.h, dataindex, if found then acc else [hashelement(ele, hash)] + acc),
 hashset(
@@ -79,10 +78,8 @@ let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = [ele], found = false, e ∈ dataindex#table.h
 do
- if data.e = data.ele then
- next(acc, true)
- else if notsamehash2(data.ele, hash, hash.e, mask) then
- next(acc, found)
+ if data.e = data.ele then next(acc, true)
+ else if notsamehash2(data.ele, hash, hash.e, mask) then next(acc, found)
  else next(acc + e, found)
 let t = replace(table.h, dataindex, acc),
 hashset(

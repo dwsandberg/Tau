@@ -38,6 +38,10 @@ Function %(b:bits) seq.word
 
 Function %(b:byte) seq.word [encodeword.[hexdigit(tobits.b >> 4), hexdigit.tobits.b]]
 
+Function mask(n:int) bits
+{returns mask of n 1s in right bits. }
+tobits.-1 >> (64 - n)
+
 Function floorlog2(a:int) int
 let d64 = tobits.a
 let b32 = d64 >> 32
@@ -65,15 +69,13 @@ Function =(a:byte, b:byte) boolean toint.a = toint.b
 Function tobits(a:byte) bits tobits.toint.a
 
 Builtin toint(b:byte) int
-{???? use builtin rather than rep.b so for acc = empty:seq.int, e /in s do toint.e where s
-is a byte sequence does not become an noop since s may contain packed sequences of bytes}
+{use builtin rather than rep.b so for acc = empty:seq.int, e /in s do toint.e where s is a byte sequence does not become an noop since s may contain packed sequences of bytes}
 
 Function tobyte(a:int) byte byte.a
 
 Function toseqbits(a:seq.byte) seq.bits
 for acc = empty:seq.bits, current = bits.0, shift = 0, b ∈ a
 do
- if shift = 64 then
- next(acc + current, bits.toint.b ∧ 0xFF, 8)
+ if shift = 64 then next(acc + current, bits.toint.b ∧ 0xFF, 8)
  else next(acc, current ∨ (bits.toint.b ∧ 0xFF) << shift, shift + 8),
 acc + current 

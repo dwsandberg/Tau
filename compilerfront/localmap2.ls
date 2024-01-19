@@ -32,9 +32,9 @@ Export isempty(seq.localmap2) boolean {From seq.localmap2}
 
 Export isempty(set.localmap2) boolean {From set.localmap2}
 
-Export +(set.localmap2, localmap2) set.localmap2 {From set.localmap2}
-
 Export #(int, set.localmap2) localmap2 {From set.localmap2}
+
+Export +(set.localmap2, localmap2) set.localmap2 {From set.localmap2}
 
 Export empty:set.localmap2 set.localmap2 {From set.localmap2}
 

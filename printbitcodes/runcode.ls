@@ -27,8 +27,7 @@ use otherseq.word
 Export type:track
 
 function print(types:seq.seq.int, a:slotrecord) seq.word
-if typ.a ≥ 0 then
-printtype([[0]] + types, typ.a, false) + printrecord(CONSTANTS, record.a)
+if typ.a ≥ 0 then printtype([[0]] + types, typ.a, false) + printrecord(CONSTANTS, record.a)
 else [encodeword.symtablename.a] + printrecord(MODULE, record.a)
 
 Function conststype llvmtype array(-2, i64)
@@ -37,23 +36,19 @@ Function CGEP(typ:llvmtype, p:slot, a:slot, b:slot, org:seq.int) slot
 {need to figure out types}
 let t1 = consttype.p
 let new = [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.consttype.a, toint.a, typ.consttype.b, toint.b]
-assert new = org
-report "DIFF^(printrecord(CONSTANTS, org)) /br new^(printrecord(CONSTANTS, new))"
+assert new = org report "DIFF^(printrecord(CONSTANTS, org)) /br new^(printrecord(CONSTANTS, new))"
 let typa =
- if typ.t1 ∈ [1, 2] then
- i64
- else llvmtype.(1^(typ.t1 + 1)#typerecords + 1)#typerecords,
+ if typ.t1 ∈ [1, 2] then i64
+ else llvmtype.(1^((typ.t1 + 1)#typerecords) + 1)#typerecords,
 C(ptr.typa, new)
 
 Function modulerecord(name:seq.word, rec:seq.int, org:seq.int) slot
-assert rec = org
-report "DIFF^(printrecord(MODULE, org)) /br new^(printrecord(MODULE, rec))",
+assert rec = org report "DIFF^(printrecord(MODULE, org)) /br new^(printrecord(MODULE, rec))",
 modulerecord(name, rec)
 
 Function ptrtoint(i:slot, typ:llvmtype, org:seq.int) slot
 let new = [toint.CCAST, 9, typ.typ, toint.i]
-assert new = org
-report "DIFF^(printrecord(CONSTANTS, org)) /br new^(printrecord(CONSTANTS, new))",
+assert new = org report "DIFF^(printrecord(CONSTANTS, org)) /br new^(printrecord(CONSTANTS, new))",
 C(i64, new)
 
 Function ptrtoint(i:slot, typ:llvmtype) slot
@@ -80,7 +75,8 @@ Function call(reg:slot, typ:llvmtype, callee:slot) instruction
 instruction([toint.CALL, 0, 32768, typ.typ, toint.callee], "L L T A", reg)
 
 Function call(reg:slot, typ:llvmtype, callee:slot, args:seq.slot) instruction
-for acc = [toint.CALL, 0, 32768, typ.typ, toint.callee], @e ∈ args do acc + toint.@e,
+for acc = [toint.CALL, 0, 32768, typ.typ, toint.callee], @e ∈ args
+do acc + toint.@e,
 instruction(acc, "L L T A^(constantseq(n.args, 1#"A"))", reg)
 
 Function binaryop(reg:slot, op:binaryop, a:slot, b:slot) instruction
@@ -125,45 +121,41 @@ let new =
  for new = empty:seq.seq.int, rec ∈ recs.t
  do
   let inst = instop.1#rec,
-   new
-    + 
-    if inst = BR then
-     if n.rec = 2 then
-     [1#rec, getblock(labels, 2#rec)]
-     else [1#rec, getblock(labels, 2#rec), getblock(labels, 3#rec), 1]
-    else if inst = PHI then
-     for acc = subseq(rec, 1, 2), isblock = false, e ∈ subseq(rec, 3, n.rec - 1)
-     do
-      let this =
-       if isblock then
-       getblock(labels, e)
-       else
-        let slot = 1^rec
-        let t2 = if e > 0 then slot - e - 1 + 1 else slot - (offset + (-e + 1)#labels) - 1,
-        if t2 ≥ 0 then t2 * 2 else -t2 * 2 + 1,
-      next(acc + this, not.isblock),
-     acc
-    else rec,
+  new
+   + if inst = BR then
+   if n.rec = 2 then [1#rec, getblock(labels, 2#rec)]
+   else [1#rec, getblock(labels, 2#rec), getblock(labels, 3#rec), 1]
+  else if inst = PHI then
+   for acc = subseq(rec, 1, 2), isblock = false, e ∈ subseq(rec, 3, n.rec - 1)
+   do
+    let this =
+     if isblock then getblock(labels, e)
+     else
+      let slot = 1^rec
+      let t2 = if e > 0 then slot - e - 1 + 1 else slot - (offset + (-e + 1)#labels) - 1,
+      if t2 ≥ 0 then t2 * 2 else-t2 * 2 + 1,
+    next(acc + this, not.isblock),
+   acc
+  else rec,
  new
 let chk = check(orgrecs.t, new, 1, "")
 assert chk = "" report "ERROR^(chk) labels:^(%n.labels.t)",
 [[1, blockno.t - 1]] + new
 
 Function check(old:seq.seq.int, new:seq.seq.int, i:int, result:seq.word) seq.word
-if i > n.old then
-result
-else if i#old = i#new then
-check(old, new, i + 1, result)
-else check(
- old
- , new
- , i + 1
- , result
-  + "/br old"
+if i > n.old then result
+else if i#old = i#new then check(old, new, i + 1, result)
+else
+ check(
+  old
+  , new
+  , i + 1
+  , result
+   + "/br old"
    + printrecord(FUNCTIONBLK, i#old)
    + "/br new"
    + printrecord(FUNCTIONBLK, i#new)
-)
+ )
 
 function getblock(labels:seq.int, i:int) int (i + 1)#labels
 
@@ -199,17 +191,12 @@ else
  let slotinc = if tp ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
  let blockinc = if tp ∈ [BR, RET] then 1 else 0
  let newlabels =
-  if slotinc = 1 ∧ toint.label.next ≠ 0 then
-   {assert false report" add"+toword.label.next+toword.(slot.t-offset.t)}
-   replaceS(labels.t,-toint.label.next + 1, [slot.t - offset.t])
-  else if blockinc = 1 ∧ toint.label.next ≠ 0 then
-  replaceS(labels.t,-toint.label.next + 1, [blockno.t + 1])
-  else if blockinc = 1 then
-  replaceS(labels.t, n.labels.t + 1, [blockno.t])
-  else labels.t
+  if slotinc = 1 ∧ toint.label.next ≠ 0 then replaceS(labels.t,-toint.label.next + 1, [slot.t - offset.t])
+  else if blockinc = 1 ∧ toint.label.next ≠ 0 then replaceS(labels.t,-toint.label.next + 1, [blockno.t + 1])
+  else if blockinc = 1 then replaceS(labels.t, n.labels.t + 1, [blockno.t])
+  else labels.t,
  let newrec =
-  if tp = PHI then
-  data.next + (slot.t + 1)
+  if tp = PHI then data.next + (slot.t + 1)
   else doargs(labels.t, offset.t, slot.t + 1, data.next, argtypes.next),
  track(offset.t, slot.t + slotinc, recs.t + newrec, orgrecs.t, newlabels, blockinc + blockno.t)
 
@@ -217,23 +204,19 @@ Function +(t:track, s:seq.int) track
 track(offset.t, slot.t, recs.t, orgrecs.t + s, labels.t, blockno.t)
 
 function doargs(
- labels:seq.int
- , offset:int
- , slot:int
- , data:seq.int
- , argtypes:seq.word
+labels:seq.int
+, offset:int
+, slot:int
+, data:seq.int
+, argtypes:seq.word
 ) seq.int
 for i = 2, result = [1#data], arg ∈ argtypes
 while i ≤ n.data
 do
  let val =
-  if arg ∈ "L T" then
-  i#data
-  else if i#data > 0 then
-  slot - i#data - 1 + 1
+  if arg ∈ "L T" then i#data
+  else if i#data > 0 then slot - i#data - 1 + 1
   else
-   assert true
-   report "P" + toword.(-i#data + 1)#labels + toword.slot + toword.offset,
    slot - (offset + (-i#data + 1)#labels) - 1,
  next(i + 1, result + val),
 result 

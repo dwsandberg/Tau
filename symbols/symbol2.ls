@@ -18,7 +18,15 @@ use set.symdef
 
 use typedict
 
-Export replaceTsymbol(mytype, symbol) symbol {From symbol}
+Export seqelements(s:symbol) seq.symbol
+
+Export type:addrsym
+
+Export addr(addrsym) int
+
+Export sym(addrsym) symbol
+
+Export addrsym(int, symbol) addrsym
 
 Export type:midpoint
 
@@ -34,16 +42,6 @@ Export templates(midpoint) set.symdef
 
 Export typedict(midpoint) typedict
 
-Function midpoint5(
- a:seq.word
- , b:set.symdef
- , c:set.symdef
- , d:typedict
- , e:seq.modExports
- , f:seq.seq.word
-) midpoint
-midpoint(a, b, c, d, e, f)
-
 Export type:modExports
 
 Export exports(modExports) seq.symbol
@@ -55,6 +53,8 @@ Export types(modExports) seq.seq.mytype
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
 
 Export type:modref {From mytype}
+
+Export %(modref) seq.word {From mytype}
 
 Export isAbstract(modref) boolean {From mytype}
 
@@ -146,6 +146,8 @@ Export inModFor(sym:symbol) boolean {From symbol}
 
 Export isBuiltin(symbol) boolean {From symbol}
 
+Export isExit(symbol) boolean {From symbol}
+
 Export isFref(symbol) boolean {From symbol}
 
 Export isGlobal(symbol) boolean {From symbol}
@@ -171,8 +173,6 @@ Export isconstantorspecial(symbol) boolean {From symbol}
 Export iscontinue(symbol) boolean {From symbol}
 
 Export isdefine(symbol) boolean {From symbol}
-
-Export isExit(symbol) boolean {From symbol}
 
 Export islocal(symbol) boolean {From symbol}
 
@@ -230,25 +230,17 @@ Export symbol(modref, seq.word, seq.mytype, mytype) symbol {From symbol}
 
 Export type:symdef {From symbol}
 
-Export %(modref) seq.word {From mytype}
-
-Export isThisLibrary(sd:symdef) boolean
-
-Export externalNo(sd:symdef) int
-
-Export isNOINLINE(sd:symdef) boolean
-
-Export symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:bits) symdef
-
-Export getOptionsBits(sd:symdef) bits
-
-Export >2(symbol, symbol) ordering
-
-Export getOptions(symdef) seq.word
-
-Export symdef4(symbol, seq.symbol, int, seq.word) symdef
-
 Export code(symdef) seq.symbol {From symbol}
+
+Export externalNo(sd:symdef) int {From symbol}
+
+Export getOptions(symdef) seq.word {From symbol}
+
+Export getOptionsBits(sd:symdef) bits {From symbol}
+
+Export isNOINLINE(sd:symdef) boolean {From symbol}
+
+Export isThisLibrary(sd:symdef) boolean {From symbol}
 
 Export paragraphno(symdef) int {From symbol}
 
@@ -263,6 +255,8 @@ Export =(symbol, symbol) boolean {From symbol}
 Export >1(a:symdef, b:symdef) ordering {From symbol}
 
 Export >1(symbol, symbol) ordering {From symbol}
+
+Export >2(symbol, symbol) ordering {From symbol}
 
 Export Br2(int, int) symbol {From symbol}
 
@@ -296,7 +290,14 @@ Export getCode(set.symdef, symbol) seq.symbol {From symbol}
 
 Export getSymdef(set.symdef, symbol) set.symdef {From symbol}
 
+Export replaceTsymbol(mytype, symbol) symbol {From symbol}
+
 Export symbol4(modref, word, mytype, seq.mytype, mytype) symbol {From symbol}
+
+Export symdef4(sym:symbol, code:seq.symbol, paragraphno:int, options:bits) symdef
+{From symbol}
+
+Export symdef4(symbol, seq.symbol, int, seq.word) symdef {From symbol}
 
 Export type? mytype {From symbol}
 
@@ -306,11 +307,11 @@ Export typebyte mytype {From symbol}
 
 Export typeword mytype {From symbol}
 
-Export Constant2(libname:word, args:seq.symbol) symbol {From symbolconstant}
-
 Export fullconstantcode(s:symbol) seq.symbol {From symbolconstant}
 
 Export type:symbolconstant {From symbolconstant}
+
+Export Constant2(libname:word, args:seq.symbol) symbol {From symbolconstant}
 
 Export type:typedict {From typedict}
 
@@ -320,13 +321,15 @@ Export basetype(mytype, typedict) mytype {From typedict}
 
 Export emptytypedict typedict {From typedict}
 
-Export type:addrsym
-
-Export addr(addrsym) int
-
-Export sym(addrsym) symbol
-
-Export addrsym(int, symbol) addrsym
+Function midpoint5(
+a:seq.word
+, b:set.symdef
+, c:set.symdef
+, d:typedict
+, e:seq.modExports
+, f:seq.seq.word
+) midpoint
+midpoint(a, b, c, d, e, f)
 
 type addrsym is addr:int, sym:symbol
 
@@ -343,11 +346,11 @@ midpoint(
 )
 
 Function midpoint(
- option:seq.word
- , prg:set.symdef
- , typedict:typedict
- , libmods:seq.modExports
- , src:seq.seq.word
+option:seq.word
+, prg:set.symdef
+, typedict:typedict
+, libmods:seq.modExports
+, src:seq.seq.word
 ) midpoint
 midpoint(option, prg, empty:set.symdef, typedict, libmods, src)
 
@@ -359,25 +362,34 @@ option:seq.word
 , libmods:seq.modExports
 , src:seq.seq.word
 
-Function libname(info:midpoint) word 1#extractValue(1#src.info, "Library")
+Function libname(info:midpoint) word
+let a = extractValue(option.info, "Library"),
+1#(if isempty.a then "noName" else a)
 
-Function removeJump(prg:set.symdef) set.symdef
-for acc = empty:set.symdef, sd ∈ toseq.prg
+Function cvt2Jmp2(a:seq.symbol) seq.symbol
+for
+ vals = empty:seq.symbol
+ , blks = empty:seq.int
+ , acc = empty:seq.symbol
+ , modify = false
+ , local = Lit.0
+ , brf = 0
+ , last = Lit.0
+ , sym ∈ a
 do
- let new = removeJump.code.sd,
-  if n.new = n.code.sd then
-  acc + sd
-  else acc + symdef4(sym.sd, new, paragraphno.sd, getOptionsBits.sd),
-acc
-
-Function removeJump(a:seq.symbol) seq.symbol
-for acc = empty:seq.symbol, modify = false, local = Lit.0, last = Lit.0, sym ∈ a
-do
- if isbr.sym then
-  if last = JumpOp then
-  next(acc >> 1 + EqOp + sym, true, (n.acc - 2)#acc, sym)
-  else if modify ∧ isIntLit.last then
-  next(acc >> 1 + local + last + EqOp + sym, true, local, sym)
-  else next(acc + sym, false, local, sym)
- else next(acc + sym, modify, local, sym),
+ if modify then
+  {assert (isbr.last /and isIntLit.sym) /or isIntLit.last /and isbr.sym report" last^(last) sym^(sym)"+%.vals}
+  if isIntLit.last ∧ isbr.sym then next(vals + last, blks + brt.sym, acc, true, local, brf.sym, sym)
+  else if isbr.last ∧ isIntLit.sym then next(vals, blks, acc, true, local, brf, sym)
+  else
+   let J = Jmp(2 * n.vals + 3)
+   for newacc = acc + local + J, idx = 1, e ∈ vals
+   do
+    let tmp = newacc + e + Lit.idx#blks,
+    next(if idx = n.vals then tmp + Lit.brf + J else tmp, idx + 1)
+   {assert vals /ne [Lit.3, Lit.2, Lit.1] report" last^(last) sym^(sym)"+%.newacc}
+   let tmp = if isIntLit.last then newacc + last + sym else newacc + sym,
+   next(empty:seq.symbol, empty:seq.int, tmp, false, local, 0, sym)
+ else if isbr.sym ∧ last = JumpOp then next(vals + 2^acc, blks + brt.sym, acc >> 3, true, 3^acc, brf.sym, sym)
+ else next(vals, blks, acc + sym, false, local, 0, sym),
 acc 

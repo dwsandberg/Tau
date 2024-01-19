@@ -1,8 +1,8 @@
 Module indirect.T
 
-type indirect is seq.T
-
 Export type:indirect.T
+
+type indirect is seq.T
 
 Builtin indirect(T) indirect.T
 

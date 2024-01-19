@@ -1,7 +1,6 @@
 Module seq8.T
 
-for testing not standard sequence optimization. new ([1, 128]) should be reduce to constant and if
-non standard sequence is not detected will give new 2#([1, 128]) instead of 128. 
+for testing not standard sequence optimization. new ([1, 128]) should be reduce to constant and if non standard sequence is not detected will give new 2#([1, 128]) instead of 128. 
 
 use seq.T
 

@@ -19,8 +19,8 @@ The second example uses an existing data type byte.
 
 function genEnum seq.seq.word 
 [
- "newType = numbers values = ? two0 two1 ? two2 ? ? ? two3"
- , "existingType = byte decodeName = twodecode values = Two0 1 Two1 2 Two2 4 Two3 0x08"
+ "newType: numbers values: ? two0 two1 ? two2 ? ? ? two3"
+ , "existingType: byte decodeName: twodecode values: Two0 1 Two1 2 Two2 4 Two3 0x08"
 ]
 
 <<<< Below is auto generated code >>>>

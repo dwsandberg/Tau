@@ -23,7 +23,8 @@ Builtin aborted(process.T) boolean
 Function message(p:process.T) seq.word
 if aborted.p then
  if isempty.msg.p then
- let h = toseqbyte.header.p, towords.UTF8.subseq(h, 1, findindex(h, tobyte.10))
+  let h = toseqbyte.header.p,
+  towords.UTF8.subseq(h, 1, findindex(h, tobyte.10))
  else msg.p
 else "normal exit"
 

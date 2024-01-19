@@ -118,7 +118,7 @@ The use clause determines which functions from other modules are available.
 
 The module /em standard defines often used function and types. 
  A full list of functions is /sp
-/tag  <a /sp href ='./stdlibdoc.html#standard'>  here /tag </a>. 
+/tag  <a /sp href ='./coredoc.html#standard'>  here /tag </a>. 
 Many of the functions are defined in other modules and only exported from the standard module. A few note worth types and functions are list below.
 
 This document itself can be feed directly to a Tau compiler.  Modules  with names ending in a question mark like in the next paragraph  are introduced solely for the purpose of allowing this document to compile. The following paragraphs define a  module  that exports some functions and types from the module standard. 
@@ -733,9 +733,9 @@ For the type listset.myentry, then unbound = is bound to =(a:myentry, b:myentry)
 The arguments of a function are evaluate from left to right before the function is called.
 
 Not all arguments need to be evaluated. Consider  i > 0 ∧ 300 / i < 10 where ∧ is defined as:
-
-/function ∧(a:boolean, b:boolean)boolean   if a  then b  else false
-
+<* block 
+function ∧(a:boolean, b:boolean)boolean   if a  then b  else false
+*>
  
 
 The compiler will do inline expansion and the above expression becomes <* block if i > 0 then 300 / i < 10 else false *>  If i=0 then the expression   300 / i < 10 is never evaluated.

@@ -69,7 +69,7 @@ Function knownWfunc(alltypes:typedict, libname:word) seq.wfunc
   , const64(6 * 8) + i64mul + const64(8 * (6 - 2)) + i64sub + i64add
  )
  , {wfunc (alltypes, symbol (internalmod," bitcast", typereal, typeptr), empty:seq.byte),}
-  wfunc(alltypes, symbol(internalmod, "bitcast", typeint, typeptr), empty:seq.byte)
+ wfunc(alltypes, symbol(internalmod, "bitcast", typeint, typeptr), empty:seq.byte)
  , wfunc(alltypes, symbol(internalmod, "toint", typebyte, typeint), empty:seq.byte)
  , wfunc(alltypes, symbol(internalmod, "bitcast", typeptr, typeptr), empty:seq.byte)
  , wfunc(alltypes, symbol(internalmod, "bitcast", seqof.typeint, typeptr), empty:seq.byte)
@@ -213,7 +213,11 @@ Function knownWfunc(alltypes:typedict, libname:word) seq.wfunc
   , symbol(internalmod, "idxseq", seqof.typereal, typeint, typereal)
   , const64.8 + [i64mul, i64add, i32wrapi64, f64load, tobyte.3] + LEBu.8
  )
- , wfunc(alltypes, symbol(internalmod, "stacktrace", seqof.typeword), const64.getoffset("", libname))
+ , wfunc(
+  alltypes
+  , symbol(internalmod, "stacktrace", seqof.typeword)
+  , const64.getoffset("", libname)
+ )
  , wfunc(
   alltypes
   , symbol(internalmod, "randomint", typeint, seqof.typeint)

@@ -53,12 +53,14 @@ acc
 Function testencoding seq.word
 {must export this module so encoding type can be figured out}
 let p = process.process1,
-if aborted.p then
-"Failed encoding^(message.p)"
+if aborted.p then "Failed encoding^(message.p)"
 else
  let s1 = list.result.p
- let z = for acc = 0, @e ∈ ["firstadd", "secondadd"] do acc + add.@e, acc
- let s2 = list.result.process.process1
+ let z =
+  for acc = 0, @e ∈ ["firstadd", "secondadd"]
+  do acc + add.@e,
+  acc
+ let s2 = list.result.process.process1,
  let s3 = list.encodingdata:testrecord,
  check(
   [
@@ -73,7 +75,8 @@ else
  )
 
 Function process1 seq.testrecord
-for acc = 0, @e ∈ ["A1", "B2", "C3", "D4", "E5"] do acc + add.@e,
+for acc = 0, @e ∈ ["A1", "B2", "C3", "D4", "E5"]
+do acc + add.@e,
 encodingdata:testrecord
 
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char

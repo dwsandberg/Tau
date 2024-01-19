@@ -3,19 +3,11 @@ set -e
 
 libtype="bc" 
 
+myhost="https://myhost.local/"
+
 export tauopen=open 
 
 #export tauDylib="tauexe "
- 
-function checksrc {
- for fn in $@ 
- do
-     mkdir -p "$build/src/$(dirname $fn)"
-    ln  -f $fn "$build/src/$fn" 
- done 
-}
-
-
 
 function linklibrary { 	 
  if [ -z "$norun" ];then
@@ -23,7 +15,7 @@ function linklibrary {
        echo '#define  BT long long int' > $build/$1.c 
 		echo "BT entrypoint$1(BT,BT); BT mainentry(BT a,BT b){return entrypoint$1(a,b);}" >> $build/$1.c 
 		dependlibs="dependlibs_$1"    
-		cmd="clang -lm -pthread stdlib/*.c $build/$1.c ${!dependlibs} $build/$1.bc -o $build/$1.lib  "
+		cmd="clang -lm -pthread tau2bc/*.c $build/$1.c ${!dependlibs} $build/$1.bc -o $build/$1.lib  "
 		echo $cmd
 		$cmd
 	 else 
@@ -35,85 +27,77 @@ fi
 }
 
 function startfresh {
+ tmpvar=taubc 
  dependlibs=
- cp bin/stdlib.bc $build
- linklibrary stdlib
-mv $build/stdlib.lib $build/orgstdlib.lib
-cc bin/putfile.c -o bin/putfile.cgi
-echo " " > $build/start.ls
+ cp bin/${tmpvar}.bc $build
+ linklibrary ${tmpvar}
+ mv $build/${tmpvar}.lib $build/taubc0.lib
+ cc bin/putfile.c -o bin/putfile.cgi
+ #now get the default llvm layout for machine
+ cc -S -emit-llvm bin/putfile.c 
+ awk '/^target/{print "\nFunction",$2, "seq.word",$4}' putfile.ll \
+ | cat bin/tauconfig.ls -  >tau2bc/tauconfig.ls
+ rm putfile.ll
+ echo " " > $build/start.ls
+ echo "finish start"
 } 
 
 if ! [ -e $build ] ; then 
-mkdir $build
- startfresh 
- checksrc bin/stdlib.bc
- checksrc bin/taubuild.sh
- checksrc stdlib/tau.c
- checksrc stdlib/tauthreads.c
- checksrc stdlib/tau.h
- checksrc bin/putfile.c
+mkdir -m 776 $build # mode is specified so local web server in same group as user can access it
+startfresh
 fi
 
-h11=$(echo $@ | shasum )
-
-scriptname=$build/build
-
+ 
 for x in $@ 
 do
- scriptname=${scriptname}_$(basename $x .bld) 
+ if [ -z $partname ] ; then
+     partname=$(basename $x .bld)
+ else 
+ partname=${partname}_$(basename $x .bld)
+ fi 
 done
 
-scriptname=${scriptname}_${h11::10}.sh
-
-
+scriptname=$build/build_$partname 
+oldscript=${scriptname}old.sh
 sharoot=$build/sharoot.txt
+tarname=~/taubackups/${partname}/$(date +%Y%m%d%H%M)
+ 
+rm -f  $sharoot; touch  $sharoot # make sure file exists but is empty
 
-oldscript=${scriptname}old
-
-rm -f  $sharoot; touch  $sharoot ; touch $oldscript
 if [[ -f $oldscript ]] ;then
-makehash=true
-source $oldscript
-rm -f  $sharoot; touch  $sharoot ;  
-for x in $changelist $unchangelist 
-do
- if [[  -f $x ]] ;then
- shasum $x >> $sharoot
- fi
-done
-makehash=
-fi
-
-if [[   $1 == "-n" ]]; then
-tmpnorun=true
-shift 1
-fi
-
-
-checksrc $1
+ #hash any files that may be needed for  this built
+ makehash=true #change the behavior of script to just return changelist and unchangedlist.
+ source $oldscript
+ makehash= #change behavior 
+ for x in $changelist $unchangelist 
+  do
+   if [[  -f $x ]] ;then
+   shasum $x >> $sharoot
+   fi
+  done
+else
+ touch $oldscript #must have oldscript file for parameter to makeScript
+fi 
 
 rm -f error.html
 
-
-
-$build/orgstdlib.lib makeScript2  $@ builddir=+$build hashes= $sharoot $oldscript   o=$scriptname 
-
-
+#now built script to do actual changes.
+$build/taubc0.lib makeScript   $@ builddir:+$build hashes: $sharoot $oldscript   o:$scriptname.sh 
 
 if [ -e error.html ] ; then
 $tauopen error.html
 exit 1
 fi
 
-norun=$tmpnorun
+#run the script that was just created. 
+ 
+source $scriptname.sh
 
+#upon success completion of script save copy of script.
+#this allows detection of any files whose contents have changed since last update  
+#by compare shasum hashes of the saved copy of the script with the current hashs
 
-
-source $scriptname
-
-if  [ -z "$norun" ];then
-mv  $scriptname $oldscript  
-cd $build
-tar -zcf  ~/backup2/$(date +%Y%m%d%H%M).tar.gz --exclude='./$build/*' src
+mv  ${scriptname}.sh $oldscript 
+mkdir -p $(dirname   $tarname)
+tar -zcf $tarname.tar.gz --exclude="$build/*" $unchangelist  $changelist 
 echo "finish tar"
-fi 

@@ -21,16 +21,18 @@ function >2(a:bug17, b:bug17) ordering part1.a >1 part1.b
 use testDifferentTypesB
 
 Function testDiffTypes seq.word
-if
- AA."H" + "/p" + BB."HH"
-  = "set order: a B, a A, b H, b J, lookup:b H findelement2:b H b J
- /p set order: a B, a A, b J, b HH, lookup:b HH findelement2:b J b HH"
-then
-"Pass testDifferentTypes"
+if AA."H" + "/p" + BB."HH"
+= "set order: a B, a A, b H, b J, lookup:b H findelement2:b H b J
+/p set order: a B, a A, b J, b HH, lookup:b HH findelement2:b J b HH" then "Pass testDifferentTypes"
 else "Fail testDifferentTypes"
 
 function AA(w:seq.word) seq.word
 let last = bug17(1#"b", 1#w)
-let data = asset.[bug17(1#"a", 1#"A"), bug17(1#"a", 1#"B"), bug17(1#"b", 1#"J"), last],
-"set order: ^(%(",", toseq.data)) lookup:^(toseq.lookup(data, last)) findelement2:
-^(toseq.findelement2(data, last))" 
+let data =
+ asset.[
+  bug17(1#"a", 1#"A")
+  , bug17(1#"a", 1#"B")
+  , bug17(1#"b", 1#"J")
+  , last
+ ],
+"set order: ^(%(",", toseq.data)) lookup:^(toseq.lookup(data, last)) findelement2:^(toseq.findelement2(data, last))" 

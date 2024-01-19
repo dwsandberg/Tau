@@ -27,7 +27,8 @@ type arc is tail:T, head:T
 type graph is arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 
 Function newgraph(a:seq.arc.T) graph.T
-for acc = graph(empty:set.arc.T, empty:set.arc.T, empty:set.T), @e ∈ a do acc + @e,
+for acc = graph(empty:set.arc.T, empty:set.arc.T, empty:set.T), @e ∈ a
+do acc + @e,
 acc
 
 Function =(c:arc.T, d:arc.T) boolean tail.c = tail.d ∧ head.c = head.d
@@ -46,7 +47,8 @@ do if head.@e ∉ nodes then acc else if tail.@e ∉ nodes then acc else acc + @
 acc
 
 Function successors(g:graph.T, n:T) set.T
-for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n)) do acc + head.@e,
+for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n))
+do acc + head.@e,
 acc
 
 Function arcstosuccessors(g:graph.T, n:T) set.arc.T findelement2(arcs.g, arc(n, n))
@@ -55,7 +57,8 @@ Function arcstopredecessors(g:graph.T, n:T) set.arc.T
 asset.toarcs(toseq.predecessors(g, n), n)
 
 Function predecessors(g:graph.T, n:T) set.T
-for acc = empty:set.T, @e ∈ toseq.findelement2(backarcs.g, arc(n, n)) do acc + head.@e,
+for acc = empty:set.T, @e ∈ toseq.findelement2(backarcs.g, arc(n, n))
+do acc + head.@e,
 acc
 
 Function deletearc(g:graph.T, a:arc.T) graph.T
@@ -84,18 +87,22 @@ deletearcs(g, oldarcs \ newarcs) + toseq(newarcs \ oldarcs)
 Function +(g:graph.T, a:arc.T) graph.T
 graph(arcs.g + a, backarcs.g + arc(head.a, tail.a), nodes.g + tail.a + head.a)
 
-Function +(g:graph.T, a:seq.arc.T) graph.T for acc = g, @e ∈ a do acc + @e, acc
+Function +(g:graph.T, a:seq.arc.T) graph.T
+for acc = g, @e ∈ a do acc + @e,
+acc
 
 Function +(g:graph.T, node:T) graph.T graph(arcs.g, backarcs.g, nodes.g + node)
 
-Function reachable(g:graph.T, a:seq.T) set.T let d = asset.a, reachable(g, d, d, 1)
+Function reachable(g:graph.T, a:seq.T) set.T
+let d = asset.a,
+reachable(g, d, d, 1)
 
 function reachable(g:graph.T, old:set.T, new:set.T, count:int) set.T
 assert count < 1000 report "fal" + toword.n.old + toword.n.new,
-if isempty.new then
-old
+if isempty.new then old
 else
- for acc = empty:set.T, @e ∈ toseq.new do acc ∪ successors(g, @e)
+ for acc = empty:set.T, @e ∈ toseq.new
+ do acc ∪ successors(g, @e)
  let b = old ∪ new,
  reachable(g, b, acc \ b, count + 1)
 
@@ -152,6 +159,9 @@ for g = gin, n ∈ toseq.nodes.gin
 do
  {add arcs to graph so path does not need to go through n}
  for arcs = empty:seq.arc.T, p ∈ toseq.predecessors(g, n)
- do for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n) do acc2 + arc(p, s), arcs + acc2,
+ do
+  for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n)
+  do acc2 + arc(p, s),
+  arcs + acc2,
  g + arcs,
 g 

@@ -1,311 +1,263 @@
-
-# this is a comment.  Blank lines divide this file into paragraphs. If paragraph begins with a comment then the paragraph is ignored.  The first word of a paragraph is a command. 
-
-# Paragraphs that begin with "define" declares commands.  The next word is the name of the command.  The second word is the library the command is defined in. If a third word is present that is the name of the command in the library. Otherwise the command name in the library is the first word. Multiple commands can be defined in the same library.  The command cannot be used before it is defined
-
-# Commands are followed by a  list of file paths followed by a list of options.   An option starts with the name followed by = and runs to the next option or end of paragraph.
-For example consider "mycmd file.lib built/file.ls  opt1=this is a test op2=" which has a file list of "file.lib built/file.ls ", opt1 with a value "this is a test op2" and opt2 whose value is empty.  If an option is not listed it has an value of empty but the command may give it a default value. 
-   
-# A list of file paths can be abbreviated.    "built/core.libdesc core/bits.ls core/set.ls stdlib/ptr/bb.txt stdlib/test.html" will be an example.
-  The default directory path is "built" so "built/" can be dropped from the core.libdesc.
-    "+core" sets the directory path for files until it is set again.  This gives
-    "core.libdesc +core bits.ls  set.ls + stdlib ptr/bb.txt  test.html"
-    
-# The file extension can alse be abbreviated. Specifying an extension     ".ls" sets the file extension on the previous file and following files without an extension. This we get  "  core.libdesc +core bits.ls set +stdlib ptr bb.txt .html test".  Note that .html does not set the extension on bb.txt sense the proceeding .txt is an extension and not a file. 
-
-# The order the commands are listed may not be the order the commands are executed.
-Each command has a target  of the first file in the file list.
-Each  command has a source list of the remaining files in the file list and the library that is specified in the definition of the command.  All the source files must exists before the command is executed to create the target file. 
-
-define docsource tools
-
-define transform tools
+define transform tools transform input link
 
 define usegraph tools
 
 define front tools
 
+define prettyScript tools
+
 define testall testcore
 
+define makelib taubc makebitcode
 
-define makelib stdlib makebitcode
+define makelib1 taubc1 makebitcode
 
-define makelib1 stdlib1 makebitcode
+define makelib2 taubc2 makebitcode
 
-define makelib2 stdlib2 makebitcode
+define makelib0 taubc0 makebitcode
 
-define makelib0 orgstdlib makebitcode
+define startfresh shell  
 
-#define prettybuild stdlib prettystate
-
-#define libsrc0 orgstdlib libsrc
- 
-
-shell  startfresh >= orgstdlib.lib <=
-+bin taubuild.sh stdlib.bc putfile.c 
-+ stdlib tau.c tauthreads.c tau.h
+define open shell
 
 
-makelib0 >=stdlib1.lib  <=
-+stdlib makescript.ls main2 stdlib.ls
-+core lib.ls bits.ls encoding format1 format4 graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq textio file ptr indirect
-PEGrules
-+symbols lib.ls symbol2.ls typedict mytype symbolconstant symbol
-+compilerfront lib.ls   
-+compilerfront compilerfrontT.ls compilerfront  pass2 
-hashset localmap2 passparse passsymbol postbind symboldict 
-compileTimeT object01 objectio LEBencoding addprofile 
-   cmd2html PEG.ls  PEGmachine PEGparse newPretty prettyAttribute functionHeader
- symbolMode  
-  parser
- backparse
- newanal
-+codegen lib.ls persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmcode
-+tausupport lib.ls   taublockseq bitcast tausupport encodingsupport
-+built    start.ls libname=stdlib1
-exports= / stdlib 
+startfresh +bin taubuild.sh taubc.bc putfile.c tauconfig.ls
++tau2bc tau.c tauthreads.c tau.h
++.release.bld
+output: taubc0.lib
 
-shell # >=compilerfront.libsrc <=stdlib1.lib
+makelib0 +core bits.ls encoding format1 format4 graph process real seq set sparseseq stack standard
+UTF8 word xxhash otherseq textio file ptr indirect PEGrules   
+brandeskopf uniqueids
+  makeDAG layergraph   timestamp 
++symbols symbol2.ls typedict mytype symbolconstant symbol
++compilerfront
++compilerfront compilerfrontT.ls compilerfront pass2 hashset localmap2 passparse passsymbol
+postbind symboldict compileTimeT object01 objectio LEBencoding addprofile entrypoint PEG.ls
+ pretty prettyR prettySupport
+PEGmachine PEGparse    functionHeader symbolMode parser backparse 
++tau2bc persistant.ls bitstream codetemplates2 codegen codetemplates internalbc llvm llvmcode
+makescript.ls main2 llvm_exports.ls tauconfig.ls
++tausupport taublockseq bitcast tausupport encodingsupport
+exports: / llvm_exports
+output: taubc1.lib compilerfront.libsrc core tausupport symbols tau2bc
 
-shell # >=core.libsrc <=stdlib1.lib
+makelib1 +built core.libsrc symbols compilerfront tau2bc tausupport
+exports: / llvm_exports
+output: taubc2.lib
 
-shell # >=tausupport.libsrc <=stdlib1.lib
+makelib2 +built core.libsrc symbols tau2bc tausupport compilerfront
+exports: / llvm_exports
+info: 
+profile: 
+output: taubc.lib taubc.libsrc taubc.libinfo
 
-shell # >=symbols.libsrc <=stdlib1.lib
+makelib taubc.libinfo
++tools baseTypeCheck.ls   prettycompilerfront reconstructUses frontcmd graphcode cleanExports
+genPEG genEnumeration totext PEGdebug usegraph tau? PEGgenNoTable prettyScript
+  newsvg
+entryUses: frontcmd.callconfig compilerfrontT.callconfig llvmcode
+output: tools.lib tools.libsrc
 
-shell # >=codegen.libsrc <=stdlib1.lib
+makelib taubc.libinfo
++tests bug7.ls checking myseq testPoint randomphrase test11 test20 testencoding testmodules
+testprocess testseq tree wordfreq testopt test11a testcore seq8 testpackedseq testPEG testDifferentTypes
+testDifferentTypesB testanal
+output: testcore.lib testcore.libsrc
 
-makelib1 >=stdlib2.lib <=
-+stdlib makescript.ls main2  stdlib.ls
-+built core.libsrc symbols compilerfront codegen tausupport
-exports= / stdlib libname=stdlib2
+testall +tests opttests.ls
++$build taubc.libinfo
+output: testall.html
 
-makelib2 >=stdlib.lib <=
-+stdlib makescript.ls main2  stdlib.ls
-+built core.libsrc symbols  codegen tausupport compilerfront
-exports= / stdlib libname=stdlib
-  info= profile=
-  
-makelib >=common.lib <= stdlib.libinfo
-+common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph 
-commontests barycenter timestamp wordgraph
-uses=stdlib libname=common
-exports= / common
-
-
-makelib >=tools.lib <= common.libinfo stdlib  
-+tools  baseTypeCheck.ls doc   
-prettycompilerfront reconstructUses   frontcmd  
-+tools graphcode   cleanExports genPEG
-  genEnumeration 
-   totext PEGdebug usegraph  tau? 
-PEGgenNoTable.ls
-+built common.lib 
-libname=tools
-uses=common stdlib
-  entryUses=  frontcmd.callconfig
-  compilerfrontT.callconfig
- llvmcode
- 
- 
- 
- makelib >=testcore.lib <=stdlib.libinfo
-+tests lib.ls bug7.ls checking myseq testPoint randomphrase test11 
-test20 testencoding testmodules testprocess testseq tree wordfreq 
-testopt test11a testcore seq8  testpackedseq testPEG Helloworld
-testDifferentTypes testDifferentTypesB testanal 
-+ compilerFront newanal
-uses=stdlib libname=testcore 
-
-testall >=testall.html <=
-+tests opttests.ls
-+$build stdlib.libinfo
-
-
-define libsrc stdlib
-
-
-
-makelib  >= webassembly.lib <=stdlib.libinfo
+makelib taubc.libinfo
 +webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile
-uses=stdlib libname= webassembly 
+output: webassembly.lib webassembly.libsrc
 
 define wasm webassembly
 
+####documentation
 
-libsrc  >= webcore.libsrc <=core.libsrc tausupport
-+webassembly template.js
-+webcore webIOtypes.ls webIO SpecialExports JS webHTTP SpecialImports
-+null lib
-+common   barycenter layergraph makeDAG bandeskopf
-
-#### documentation
-
-docsource  >=
-+documentation stdlibdoc.html
-<=+$build stdlib.libsrc
-
-docsource  >=
-+documentation commondoc.html
-<=+$build common.libsrc
-
-define tau? tools 
-
-#tau?  >= +documentationm cmddoc.html <= out=full
-
-
-transform >=
-+documentation taudoc.html
- <= +tests docsrc.ls  doccmd docPEGsrc.ls   
-+tests docpatterns docprofileExampleSrc.ls enumexample
-html= h1 h2 h3 h4 h5 h6
-
-makelib  >= doccomp.lib   <=stdlib.libinfo  +tmp PEGex.ls PEGex2 PEGex3 +tests docsrc.ls +tests docpatterns
-+enumexample.ls
-uses= stdlib libname=doccomp
-
-
-transform  >= xxx1.html  <=+tests docPEGsrc.ls  
-
-shell # >= +tmp PEGex.ls  <=+built xxx1.html
-
-shell # >= +tmp PEGex2.ls  <=+built xxx1.html
-
-shell # >= +tmp PEGex3.ls  <=+built xxx1.html
-
-
-transform  >=
-+documentation installdoc.html
- <=+tools install.txt
-html= noindex
-
-usegraph  >=
-+documentation Ex1usegraph.html
- <=+$build core.libsrc
-
-usegraph  >=
-+documentation Ex2usegraph.html
- <=+$build core.libsrc
-exclude = seq standard
-
-usegraph  >=
-+documentation Ex3usegraph.html
- <=+$build core.libsrc
-include = UTF8 words standard textio xxhash
-exclude = seq standard
-
-#transform
-+documentation profileExampleSrc.html
-+tests docprofileExampleSrc.ls  
- html= Module
-
-####
-
-
- front   >= baseTypeCheck.html  <=stdlib.libsrc
-out=baseTypeCheck
-
-# front callgraphwithin.html tools.libsrc stdlib.libinfo common.libinfo
-mods=genPEG
-within=
-
-wasm   >= wbeizer.wasm <= webcore.libsrc  symbols.libsrc 
-+ webcore webProfileSupport.ls
-+ tests profile
-   +compilerfront object01.ls objectio LEBencoding
-   +tools graphcode 
-   +common svg2graph uniqueids 
-+webapps Bcubic.html Bquadratic wbeizer.ls
-exports=wbeizer 
-Library=wbeizer
- info=  profile=
-
-
-define cmd2html stdlib
-
-
-cmd2html    >= runcmdcreateinfo.html   <=+tools usegraph.ls doc.ls frontcmd.ls   
-  libname=runcmd 
-  
- shell # >=    runcmd.html  <= runcmdcreateinfo.html
-
-shell # >=    runcmd.ls  <= runcmdcreateinfo.html
-
-
-wasm   >= runcmd.wasm  <=webcore.libsrc  symbols compilerfront 
-+common svg2graph.ls uniqueids wordgraph.ls
-+built runcmd.html runcmd.ls 
-+tools doc.ls  usegraph    graphcode
- frontcmd  baseTypeCheck  prettycompilerfront reconstructUses cleanExports genPEG PEGgenNoTable genEnumeration
-totext 
- + tests profile.ls
-+ webapps webtools2 
-+ tests docProfileExampleSrc.ls
-exports=runcmd
-Library=runcmd
-info=
-
-makelib >= profileExample.lib <=common.libinfo stdlib 
- +tests lib.ls docProfileExampleSrc.ls  profile
- +tools graphcode
-uses=common stdlib libname=profileExample
- profile= info=
- 
- define profileExample profileExample profileExample
-
- 
-  profileExample >= +documentation profileExample.html 
-
-
-makelib >= printbitcodes.lib  <=stdlib.libinfo 
-+printbitcodes printbitcodes.ls bitcodesupport.ls slotdesc llvm2
-runcode
-uses=stdlib libname=printbitcodes
-
-define printbitcodes printbitcodes printbitcodes
-
-
-
-printbitcodes >= ppp.ls <= profileExample.bc profileExample.lib  bitcode= 
-
-  makelib >= ppp.lib  <= stdlib.libinfo ppp.ls
-+printbitcodes runcode bitcodesupport  
-uses = stdlib libname=ppp
-options = bitcode
-
- define regen ppp test2
-
-
-regen  >= regen.bc 
-
- 
-# transform hhh.html core.libsrc bind=
- 
- transform  >=transform1info.html  <=+built  stdlib.libsrc  common  tools   webassembly testcore printbitcodes + tests lib.ls  opttests profile   profileCompile + webcore lib.ls JS.ls SpecialExports SpecialImports  webHTTP  webIO  webIOtypes  webProfileSupport +webapps lib wbeizer  webtools2
-
-#code for profileCompiler
-
-define makelibP stdlibP makebitcode
-
-define profileCompile  profileCompile
-
-makelib  >= stdlibP.lib
-<=+stdlib makescript.ls main2  stdlib.ls
-+built core.libsrc symbols  codegen tausupport compilerfront common
-exports= / stdlib / common  libname=stdlibP
-  info= profile=
-
-
-makelibP  >= profileCompile.lib   
-<=stdlibP.libinfo +tests profileCompile.ls profile.ls
-+tools graphcode 
-uses=stdlibP
-exports= profileCompile libname=profileCompile
- profile= 
-
-profileCompile >=profileCompile.html <=+stdlib makescript.ls main2  stdlib.ls+built core.libsrc symbols  codegen tausupport compilerfront exports= / stdlib library=stdlib5  
+define tau? tools
 
 define buildhelp tools
 
-buildhelp >= +tmp/tools  tau?.ls <= +tools tau?.ls  +built tools.libsrc  stdlib webassembly
+buildhelp tools.libsrc taubc
+doc: 
+output: cmddoc.ls
 
+transform +tests docsrc.ls
+html: h1 h2 h3 h4 h5 h6
+output: +documentation taudoc.html
+
+makelib taubc.libinfo
++tmp PEGex.ls PEGex2 PEGex3
++tests docsrc.ls
++tests docpatterns
++enumexample.ls
+output: doccomp.lib
+
+transform +tests docPEGsrc.ls
+output: xxx1.html
++tmp PEGex.ls PEGex2 PEGex3
+
+transform +tests docinstall.txt
++built cmddoc.ls
++tests docPEGsrc.ls docpatterns docprofileExampleSrc enumexample docinstall2.txt
+html: h1 h2 h3 h4 h5 h6
+output: +documentation installdoc.html
+
+usegraph +$build core.libsrc
+output: +documentation Ex1usegraph.html
+
+usegraph +$build core.libsrc
+exclude: seq standard
+output: +documentation Ex2usegraph.html
+
+usegraph +$build core.libsrc
+include: UTF8 word standard textio xxhash
+exclude: seq standard
+output: +documentation Ex3usegraph.html
+
+transform+tests docprofileExampleSrc.ls html: Module output:+documentation profileExampleSrc.html
+
+transform   link:   core.libsrc html: h1
+output: +documentation core.html
+
+transform   core.libsrc tausupport  
+link:    webcore.libsrc +documentation core.html html: h1
+output: +documentation webcore.html
+
+ 
+
+transform webcore.libsrc tausupport core symbols compilerfront tools
++webapps webcallconfig.ls  webcmd.html
++tau2bc makescript.ls     link:  +webapps webcmd.ls +documentation core.html  webcore
+html: h1 h2 h3
+output: +documentation webcmd.html
+
+####
+
+front taubc.libsrc
+%: baseTypeCheck
+output: baseTypeCheck.html
+
+wasm +webcore webIOtypes.ls webIO SpecialExports JS webHTTP SpecialImports
++tausupport taublockseq bitcast tausupport encodingsupport
++core bits.ls encoding format1 format4 graph process real seq set sparseseq stack standard
+UTF8 word xxhash otherseq textio file ptr indirect PEGrules
+Library: webcore
+output: xx.wasm webcore.libsrc
+
+wasm webcore.libsrc core symbols tausupport
++webapps wbeizer.ls Bcubic.html Bquadratic.html
++webcore webProfileSupport.ls
++compilerfront object01.ls objectio LEBencoding
++tests profile
++tools graphcode newsvg
+exports: wbeizer
+Library: wbeizer
+info: 
+profile: 
+output: wbeizer.wasm
+
+wasm webcore.libsrc tausupport core symbols compilerfront tools
++webapps webcallconfig.ls webcmd.ls webcmd.html
++tau2bc makescript.ls
+Library: webcmd
+exports: webcmd
+output: webcmd.wasm
+
+makelib taubc.libinfo
++tests docProfileExampleSrc.ls profile 
++tools  newsvg
+profile: 
+info: 
+output: profileExample.lib profileExample.bc
+
+define profileExample profileExample profileExample
+
+profileExample output: +documentation profileExample.html
+
+makelib taubc.libinfo
++printbitcodes printbitcodes.ls bitcodesupport.ls slotdesc llvm2 runcode
+output: printbitcodes.lib printbitcodes.libsrc
+
+define printbitcodes printbitcodes printbitcodes
+
+printbitcodes profileExample.bc profileExample.lib
+bitcode: 
+output: ppp.ls
+
+makelib taubc.libinfo ppp.ls
++printbitcodes runcode bitcodesupport
+options: bitcode
+output: ppp.lib
+
+define regen ppp test2
+
+regen output: regen.bc
+
+transform  core.libsrc bind:  output: hhh.html
+
+transform +built taubc.libsrc tools webassembly testcore printbitcodes
++tests opttests.ls profile profileCompile
++webcore JS.ls SpecialExports SpecialImports webHTTP webIO webIOtypes webProfileSupport
++webapps wbeizer  
+output: transform1info.html
+
+#code for profileCompiler
+
+define makelibP taubcP makebitcode
+
+define profileCompile profileCompile
+
+makelib +built core.libsrc symbols tau2bc tausupport compilerfront
+exports: / llvm_exports
+info: 
+profile: 
+output: taubcP.lib taubcP.libinfo
+
+makelibP taubcP.libinfo
++tests profileCompile.ls profile.ls
++tools newsvg 
+exports: profileCompile
+profile: 
+output: profileCompile.lib
+
+profileCompile +built core.libsrc symbols tau2bc tausupport compilerfront
+exports: / llvm_exports
+library: taubc5
+output: profileCompile.html
+
+buildhelp tools.libsrc taubc webassembly transform1info.html
+target: +tools tau?.ls
+output: +tmp/tools tau?.ls
+
+
+tau? %:shellscript
+output: taucommands.sh
+
+prettyScript +.release.bld
+output: +tmp release.bld
+
+#### editgraph #####
+
+makelib  taubc.libinfo  +tools genPointModule.ls 
+output: genPointModule .lib
+
+define genPointModule genPointModule
+
+genPointModule  typenames:  point2d matrix2 elements:x y   output:  point2d.ls
+
+transform point2d.ls  target: common output: gen2.txt +common point2d.ls  
+
+
+genPointModule  typenames:  point3d matrix elements:x y z   output: point3d.ls
+
+wasm webcore.libsrc core   tausupport
++webapps editgraph.ls editgraph.html 
++common point2d.ls 
+exports: editgraph
+Library: weditgraph
+output: weditgraph.wasm
+ 

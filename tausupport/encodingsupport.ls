@@ -22,31 +22,30 @@ use encoding.typename
 
 use bitcast.encodingstate.typename
 
-type typename is name:seq.word
-
-Export type:typename
-
 Export type:einfo
 
 Export type:processflds
 
+Export type:typename
+
+type typename is name:seq.word
+
 Function geteinfo(gl:ptr, name:seq.word) einfo
 let no = fld:int(gl, 0)
 let encodingno =
- if no > 0 then
- no
- else if subseq(name, 1, 2) = "char standard" then
- 1
- else if subseq(name, 1, 2) = "typename encodingsupport" then
- 2
- else let newno = addorder.typename.name + 2 let discard = set(gl, newno), newno,
+ if no > 0 then no
+ else if subseq(name, 1, 2) = "char standard" then 1
+ else if subseq(name, 1, 2) = "typename encodingsupport" then 2
+ else
+  let newno = addorder.typename.name + 2
+  let discard = set(gl, newno),
+  newno,
 geteinfo2(encodingno, 0)
 
 Function geteinfo2(encodingno:int, dummy:int) einfo
 let cp = currentprocess
 let a = evector.cp,
-if encodingno = encodingno.thisone.a then
-thisone.a
+if encodingno = encodingno.thisone.a then thisone.a
 else if encodingno ≤ n.vector.a ∧ encodingno.encodingno#vector.a > 0 then
  let this = encodingno#vector.a
  let discard = set(set(toptr.a, toptr.vector.a), toptr.this),
@@ -68,7 +67,7 @@ let discard =
   acc = set(set(t, 0), newlen)
   , cnt = 1
   , e ∈ vin + constantseq(encodingno - n.vin, einfo(empty:encodingstate.typename, 0, cp))
- do next(set(acc, toptr.if cnt = encodingno then b else e), cnt + 1),
+ do next(set(acc, toptr(if cnt = encodingno then b else e)), cnt + 1),
  0
 let discard2 = set(set(toptr.a, toptr.newvector), toptr.b),
 b
@@ -93,8 +92,8 @@ type einfo is state45:ptr, encodingno:int, allocatein:indirect.processflds
 type evector is vector:seq.einfo, thisone:einfo
 
 function einfo(
- state45:encodingstate.typename
- , encodingno:int
- , allocatein:processflds
+state45:encodingstate.typename
+, encodingno:int
+, allocatein:processflds
 ) einfo
 einfo(toptr.state45, encodingno, indirect.allocatein) 

@@ -1,8 +1,20 @@
 Module graphcode
 
+use seq.arc.int
+
+use set.arc.int
+
+use graph.int
+
+use seq.labeledNode
+
+use set.labeledarc
+
+use newsvg
+
 use standard
 
-use symbol
+use set.arc.symbol
 
 use graph.symbol
 
@@ -10,9 +22,9 @@ use seq.symbol
 
 use set.symbol
 
-use svg2graph.symbol
+use symbol2
 
-use seq.arc.symloc
+use set.arc.symloc
 
 use graph.symloc
 
@@ -22,17 +34,28 @@ use set.symloc
 
 use stack.symloc
 
-use svg2graph.symloc
+Function drawgraph(g:graph.symbol) seq.word
+for arclist = empty:seq.arc.int, arc ∈ toseq.arcs.g
+do arclist + arc(findindex(nodes.g, tail.arc), findindex(nodes.g, head.arc))
+for nodeinfo = empty:seq.labeledNode, node ∈ toseq.nodes.g
+do nodeinfo + labeledNode("", [name.node], %.node),
+drawgraph(newgraph.arclist, nodeinfo, empty:set.labeledarc)
 
-Export drawgraph(graph.symbol) seq.word {From svg2graph.symbol}
+Function drawgraph(g:graph.symloc) seq.word
+for arclist = empty:seq.arc.int, arc ∈ toseq.arcs.g
+do arclist + arc(findindex(nodes.g, tail.arc), findindex(nodes.g, head.arc))
+for nodeinfo = empty:seq.labeledNode, node ∈ toseq.nodes.g
+do
+ let t = %.sym.node
+ let t2 = if 1^t ∈ "/br" then t >> 1 else t,
+ nodeinfo + labeledNode("", node2text.node, %.loc.node + t2),
+drawgraph(newgraph.arclist, nodeinfo, empty:set.labeledarc)
 
 type symloc is loc:int, sym:symbol
 
 function =(a:symloc, b:symloc) boolean loc.a = loc.b
 
 function >1(a:symloc, b:symloc) ordering loc.a >1 loc.b
-
-function %(a:symloc) seq.word %.loc.a + %.sym.a
 
 Function tograph(s:seq.symbol) seq.word
 for acc = empty:seq.arc.symloc, stk = empty:stack.symloc, i ∈ arithseq(n.s, 1, 1)
@@ -47,27 +70,24 @@ do
   else
    for stk2 = stk, sons = empty:seq.symloc, count = nopara.sym, k ∈ toseq.stk
    while count > 0
-   do let top = top.stk2, next(pop.stk2, sons + top, if isdefine.sym.top then count else count - 1),
+   do
+    let top = top.stk2,
+    next(pop.stk2, sons + top, if isdefine.sym.top then count else count - 1),
    sons
- let newstk = pop(stk, n.sons)
+ let newstk = pop(stk, n.sons),
  let tail = symloc(i, sym),
- next(for arcs = acc, sy ∈ sons do arcs + arc(tail, sy), arcs, push(newstk, tail)),
+ next(
+  for arcs = acc, sy ∈ sons do arcs + arc(tail, sy),
+  arcs
+  , push(newstk, tail)
+ ),
 drawgraph.newgraph.acc
-
-Function generatenode(a:set.symloc) symloc symloc(n.a, Lit.0)
 
 Function node2text(a:symloc) seq.word
 let sy = sym.a,
-if isloopblock.sy then
-"Loop:^(firstvar.sy)"
-else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then
-%.sy
-else [name.sy]
-
-Function nodeTitle(a:symloc) seq.word %.sym.a
-
-Function generatenode(a:set.symbol) symbol Lit.n.a
-
-Function node2text(a:symbol) seq.word [name.a]
-
-Function nodeTitle(a:symbol) seq.word %.a 
+if isloopblock.sy then "Loop:^(firstvar.sy)"
+else if isspecial.sy then
+ let t = %.sy,
+ if 1^t ∈ "/br" then t >> 1 else t
+else if isconst.sy ∨ islocal.sy then %.sy
+else [name.sy] 

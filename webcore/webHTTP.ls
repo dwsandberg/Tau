@@ -26,7 +26,13 @@ use webIOtypes
 
 use bitcast.JS.HTTPstate.seq.word
 
-type HTTPstate is files:seq.file, args:T, idx:int, finalcall:seq.word, method:seq.word
+type HTTPstate is
+files:seq.file
+, args:T
+, idx:int
+, finalcall:seq.word
+, method:seq.word
+, funcname:seq.word
 
 Export type:HTTPstate.T
 
@@ -41,19 +47,20 @@ Export finalcall(HTTPstate.T) seq.word
 Export method(HTTPstate.T) seq.word
 
 Export HTTPstate(
- files:seq.file
- , args:T
- , idx:int
- , finalcall:seq.word
- , method:seq.word
+files:seq.file
+, args:T
+, idx:int
+, finalcall:seq.word
+, method:seq.word
+, funcname:seq.word
 ) HTTPstate.T
 
 function HTTP(
- name:seq.word
- , header:seq.word
- , body:seq.byte
- , followfunc:seq.word
- , state:HTTPstate.T
+name:seq.word
+, header:seq.word
+, body:seq.byte
+, followfunc:seq.word
+, state:HTTPstate.T
 ) real
 {OPTION INLINE}
 jsHTTP(
@@ -64,33 +71,39 @@ jsHTTP(
  , bitcast:JS.HTTPstate.seq.word(toptr.toJS.state)
 )
 
-Function decodeZ(h2:JS.HTTPstate.T, h:JS.HTTPresult) HTTPstate.T
+Function decodeZ(h2:JS.HTTPstate.T, h:JS.HTTPresult) real
 let s = fromJS.h2
 let newfiles =
- if between(idx.s, 1, n.files.s) ∧ method.s = "GET" then
+ if between(idx.s, 1, n.files.s) then
   {update file with result ???? need to handle errors}
-  replace(files.s, idx.s, file(fn.(idx.s)#files.s, result.fromJS.h))
+  let tmp = fromJS.h,
+  replace(files.s, idx.s, file(fn.(idx.s)#files.s, [result.tmp], header.tmp))
  else files.s
-let newstate = HTTPstate(newfiles, args.s, idx.s + 1, finalcall.s, method.s),
+let newstate = HTTPstate(newfiles, args.s, idx.s + 1, finalcall.s, method.s, funcname.s),
 if idx.s = n.files.s then
  {all files have been processed}
- let t = HTTP("", "NONE", empty:seq.byte, finalcall.s, newstate) {never gets here} s
-else if idx.s > n.files.s then
-newstate
+ let t = HTTP("", "NONE", empty:seq.byte, finalcall.s, newstate)
+ {never gets here}
+ 0.0
 else
  let nameprefix = if method.s = "GET" then "/" else "../cgi-bin/putfile.cgi?"
  let this = (idx.newstate)#files.s
- let t = HTTP(nameprefix + fullname.fn.this, method.s, data.this, "decodeZ", newstate)
+ let t = HTTP(nameprefix + fullname.fn.this, method.s, data.this, funcname.s, newstate),
  {never gets here}
- newstate
+ 0.0
 
-Function readfiles(files:seq.file, args:T, callback:seq.word) real
-let z = decodeZ(toJS.HTTPstate(files, args, 0, callback, "GET"), empty:JS.HTTPresult),
-0.0
+Function readarg(
+files:seq.file
+, args:T
+, callback:seq.word
+, funcname:seq.word
+) JS.HTTPstate.T
+toJS.HTTPstate(files, args, 0, callback, "GET", funcname)
 
-Function writefiles(files:seq.file, args:T, callback:seq.word) real
-let z = decodeZ(
- toJS.HTTPstate(files, args, 0, callback, "PUT Content-Type:application/text")
- , empty:JS.HTTPresult
-),
-0.0 
+Function writearg(
+files:seq.file
+, args:T
+, callback:seq.word
+, funcname:seq.word
+) JS.HTTPstate.T
+toJS.HTTPstate(files, args, 0, callback, "PUT Content-Type:application/text", funcname) 

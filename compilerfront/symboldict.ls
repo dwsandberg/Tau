@@ -32,17 +32,17 @@ Function symboldict(d:set.symbol) symboldict symboldict(d, empty:set.symdef)
 Function requires(d:symboldict, sym:symbol) seq.symbol
 if hasrequires.sym then
  let t = getSymdef(requires.d, sym),
-  if isempty.t then
-  empty:seq.symbol
-  else assert not.isempty.t report "requires^(sym)", code.1#t
+ if isempty.t then empty:seq.symbol
+ else
+  assert not.isempty.t report "requires^(sym)",
+  code.1#t
 else empty:seq.symbol
 
 Function restorenext(dict:symboldict) symboldict
 let thisnesting = 1#lookupbysig(dict, "for")
 let b = getCode(requires.dict, thisnesting)
 let dict1 =
- if n.b = 2 then
- dict - asset(b + thisnesting)
+ if n.b = 2 then dict - asset(b + thisnesting)
  else dict - asset(subseq(b, 1, 2) + thisnesting) + 3#b + 4#b,
 dict1
  + placeholder(".fora", resulttype.thisnesting)
@@ -58,16 +58,15 @@ symbol(
 )
 
 Function addAccum(
- dict:symboldict
- , nextSym:symbol
- , basetype:mytype
- , oldnesting:set.symbol
- , elementSym:symbol
+dict:symboldict
+, nextSym:symbol
+, basetype:mytype
+, oldnesting:set.symbol
+, elementSym:symbol
 ) symboldict
 let nestingsym = symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
 let tmp =
- if isempty.oldnesting then
- [nextSym, elementSym]
+ if isempty.oldnesting then [nextSym, elementSym]
  else [nextSym, elementSym, 1#oldnesting, 1#getCode(requires.dict, 1#oldnesting)]
 let a = asset.dict
 for acc = a \ asset(tmp << 2), n ∈ [".forxx", ".foryy"]
