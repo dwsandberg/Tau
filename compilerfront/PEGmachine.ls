@@ -14,7 +14,7 @@ use seq.pegrule
 
 use standard
 
-use otherseq.seq.word
+use seq1.seq.word
 
 use stack.seq.word
 
@@ -45,15 +45,15 @@ actno:int
 , strings:seq.seq.word
 , t:seq.word
 ) seq.word
-for stk = empty:stack.seq.word, inst ∈ actno#actions.actions
+for stk = empty:stack.seq.word, inst ∈ (actions.actions) sub actno
 do
- if inst > 0 then push(stk, inst#constants.actions)
- else if inst <-n.otherinst then push(stk, (-n.otherinst - inst)#strings)
+ if inst > 0 then push(stk, (constants.actions) sub inst)
+ else if inst <-n.otherinst then push(stk, strings sub (-n.otherinst - inst))
  else if inst = /e then push(stk, "")
  else
   assert inst = /length report "internal runMachine error"
   for acc = "", e ∈ toseq.stk << 1 do acc + e,
-  push(push(empty:stack.seq.word, 1#toseq.stk), "~length^(n.acc)^(acc)")
+  push(push(empty:stack.seq.word, (toseq.stk) sub 1), "~length:(n.acc):(acc)")
 for acc = "", e ∈ toseq.stk do acc + e,
 acc
 
@@ -73,7 +73,7 @@ do
   for acc = acc0, part ∈ parts.r
   do
    for subs = otherinst, i ∈ arithseq(NTcount(part, gin) + 1, 1, 0)
-   do subs + merge."$.^(i)"
+   do subs + merge."$.:(i)"
    for str = "", consts = constants.acc, actions = empty:seq.int, w ∈ preprocess.replacement.part
    do
     let i = findindex(subs, w),

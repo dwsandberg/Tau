@@ -1,4 +1,20 @@
-Module llvm_exports
+Module llvm_exports.T
+
+use kernal
+
+use symboldict
+
+use stateFunctions
+
+use token
+
+use svg
+
+use drawGraph.T
+
+use orderNodes.T
+
+use layernode
 
 use LEBencoding
 
@@ -8,23 +24,45 @@ use PEGparse
 
 use PEGrules
 
+use arc.T
+
+use bitcast.T
+
+use compileTimeT.T
+
+use compilerfrontT.T
+
+use encoding.T
+
+use graph.T
+
+use indirect.T
+
+use objectio.T
+
+use seq1.T
+
+use process.T
+
+use seq.T
+
+use set.T
+
+use sort.T
+
+use sparseseq.T
+
+use stack.T
+
 use UTF8
 
 use backparse
-
-use bitcast
 
 use bits
 
 use brandeskopf
 
-use compileTimeT
-
 use compilerfront
-
-use compilerfrontT
-
-use encoding
 
 use encodingsupport
 
@@ -34,13 +72,7 @@ use file
 
 use functionHeader
 
-use graph
-
-use indirect
-
 use internalbc
-
-use layergraph
 
 use llvm
 
@@ -48,37 +80,23 @@ use llvmcode
 
 use main2
 
-use makeDAG
-
 use makescript
 
 use mytype
 
-use objectio
+use orderModules
 
-use otherseq
+use orderNodes.T
 
 use pretty
-
-use process
 
 use ptr
 
 use real
 
-use seq
-
-use set
-
-use sparseseq
-
-use stack
-
 use standard
 
-use symbol
-
-use symbol2
+use symbol1
 
 use tausupport
 

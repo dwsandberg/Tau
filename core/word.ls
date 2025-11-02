@@ -1,34 +1,29 @@
 Module word
 
-use UTF8
+use bits
+
+use seq.char
 
 use encoding.seq.char
 
-use standard
+use seq.int
 
-use otherseq.alphaword
+use kernal
 
-use otherseq.alphawords
-
-use otherseq.char
+use seq.word
 
 use xxhash
 
-Export type:alphaword
+function tointseq(a:seq.char) seq.int
+{This is just a type change and the compiler recognizes this and does not generate code}
+for acc = empty:seq.int, @e ∈ a do acc + toint.@e,
+acc
 
-Export toword(alphaword) word
+Function word(a:encoding.seq.char) word word.valueofencoding.a
 
-Export word(encoding.seq.char) word
+Function asencoding(w:word) encoding.seq.char to:encoding.seq.char(rawvalue.w)
 
-Export type:word
-
-Export alphaword(word) alphaword
-
-Export asencoding(w:word) encoding.seq.char
-
-Export >1(a:seq.alphaword, b:seq.alphaword) ordering {From otherseq.alphaword}
-
-type word is asencoding:encoding.seq.char
+Function >1(a:char, b:char) ordering toint.a >1 toint.b
 
 Function hash(a:seq.char) int
 for acc = hashstart32.0, @e ∈ tointseq.a do hash32(acc, @e),
@@ -46,9 +41,13 @@ decode.asencoding.w
 
 Function hash(a:word) int hash.asencoding.a
 
-Function =(a:word, b:word) boolean
-{OPTION COMPILETIME}
-asencoding.a = asencoding.b
+Function hash(a:seq.word) int
+for acc = hashstart, @e ∈ a do hash(acc, hash.@e),
+finalmix.acc
+
+Function hash(a:seq.int) int
+for acc = hashstart, @e ∈ a do hash(acc, @e),
+finalmix.acc
 
 Function >1(a:word, b:word) ordering asencoding.a >1 asencoding.b
 
@@ -58,36 +57,51 @@ Function merge(a:seq.word) word
 for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e,
 encodeword.acc
 
-type alphaword is toword:word
+Function toword(n:int) word
+{OPTION NOINLINE COMPILETIME
+/br Covert integer to sequence of characters represented as a single word. }
+encodeword.tochars.n
 
-Function toalphaseq(a:seq.word) seq.alphaword
-{This is just a type change and the compiler recognizes this and does not generate code}
-for acc = empty:seq.alphaword, @e ∈ a do acc + alphaword.@e,
-acc
+Function tochars(n:int) seq.char
+if n < 0 then [{hyphenchar} char.45] + tochars(n, 10) else tochars(-n, 10)
 
-Function ?alpha(a:char, b:char) ordering a >1 b
+function tochars(n:int, base:int) seq.char
+{n should always be negative. This is to handle the smallest integer in the twos complement representation of integers}
+if base + n > 0 then [char(48 - n)]
+else tochars(n / base, base) + char(48 + n / base * base - n)
 
-Function >1(a:alphaword, b:alphaword) ordering
-if toword.a = toword.b then EQ else ?alpha(decodeword.toword.a, decodeword.toword.b)
+Function toint(w:word) int
+{Convert an integer represented as a word to an int}
+cvttoint.decodeword.w
 
-Function towordseq(a:seq.alphaword) seq.word
-for acc = empty:seq.word, @e ∈ a do acc + toword.@e,
-acc
+Function cvttoint(s:seq.char) int
+{Hex values starting with 0x or 0X are allowed. }
+if n.s > 2 ∧ s sub 2 ∈ decodeword."Xx" sub 1 then
+ for b = 0x0, c ∈ s
+ do
+  let i = toint.c - toint.char1."0",
+  if between(i, 0, 9) then b << 4 ∨ bits.i
+  else
+   let i2 = toint.c - toint.char1."a",
+   if between(i2, 0, 5) then b << 4 ∨ bits(i2 + 10)
+   else
+    let i3 = toint.c - toint.char1."A",
+    if between(i3, 0, 5) then b << 4 ∨ bits(i3 + 10)
+    else
+     assert c ∈ [char1."x", char1."X", {no breack space} char.160] report "invalid hex digit" + encodeword.s,
+     b,
+ toint.b
+else
+ for val = 0, c ∈ s
+ do
+  let i = toint.c - toint.char1."0",
+  if between(i, 0, 9) then val * 10 - i
+  else
+   assert c ∈ [char1."-", {no breack space} char.160] report "invalid digit" + encodeword.s + stacktrace,
+   val
+ {Since there are more negative numbers in twos-complement we calculate using negative values. }
+ if val = 0 ∨ s sub 1 = char1."-" then val else-val
 
-Function alphasort(a:seq.word) seq.word
-{perform alphabetical sort}
-towordseq.sort.toalphaseq.a
-
-type alphawords is toseq:seq.alphaword
-
-function ?alpha(a:alphaword, b:alphaword) ordering a >1 b
-
-Function >1(a:alphawords, b:alphawords) ordering ?alpha(toseq.a, toseq.b)
-
-Function alphasort(a:seq.seq.word) seq.seq.word
-{perform alphabetical sort}
-for acc = empty:seq.alphawords, s ∈ a
-do acc + alphawords.toalphaseq.s
-for acc2 = empty:seq.seq.word, s2 ∈ sort.acc
-do acc2 + towordseq.toseq.s2,
-acc2 
+Function char1(s:seq.word) char
+{* First character of first word of s}
+(decodeword.s sub 1) sub 1 

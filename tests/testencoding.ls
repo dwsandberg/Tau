@@ -53,7 +53,7 @@ acc
 Function testencoding seq.word
 {must export this module so encoding type can be figured out}
 let p = process.process1,
-if aborted.p then "Failed encoding^(message.p)"
+if aborted.p then "Failed encoding:(message.p)"
 else
  let s1 = list.result.p
  let z =
@@ -82,7 +82,7 @@ encodingdata:testrecord
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char
 
 function testdeep1 testdeep
-testdeep("A BC DEF", tree("LIT 1", [tree."PARAM 1"]), decodeword.1#"TEST")
+testdeep("A BC DEF", tree("LIT 1", [tree."PARAM 1"]), decodeword."TEST" sub 1)
 
 function =(a:testdeep, b:testdeep) boolean
 fld1.a = fld1.b ∧ fld2.a = fld2.b ∧ fld3.a = fld3.b 

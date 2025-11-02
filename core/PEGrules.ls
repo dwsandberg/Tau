@@ -6,25 +6,29 @@ use bits
 
 use seq.int
 
-use otherseq.pegpart
+use seq1.oneRule
 
-use otherseq.pegrule
+use set.oneRule
+
+use seq1.pegpart
+
+use seq.pegpart
+
+use seq1.pegrule
 
 use set.pegrule
-
-use otherseq.range
-
-use set.range
 
 use standard
 
 use seq.state
 
-use otherseq.tableEntry
+use seq1.tableEntry
 
-use otherseq.word
+use seq1.word
 
 use set.word
+
+use sort.word
 
 Export state(i:int) state
 
@@ -86,13 +90,13 @@ for
 do
  for pZ = "", p!Z = "", p ∈ parts.r
  do
-  for eZ = pZ, e!Z = p!Z, last = 1#"?", e ∈ part.p
+  for eZ = pZ, e!Z = p!Z, last = "?" sub 1, e ∈ part.p
   do
    if e ∈ "!" then next(eZ, e!Z, e)
    else if last ∈ "!" then next(eZ, e!Z + e, e)
    else next(eZ + e, e!Z, e),
   next(eZ, e!Z)
- assert leftside.r ∉ NonT ∪ NonT* report "Duplicate Non-Terminal:^(leftside.r)^(%(2, g))"
+ assert leftside.r ∉ NonT ∪ NonT* report "Duplicate Non-Terminal::(leftside.r):(%(2, g))"
  let noStates = n.pZ + n.p!Z,
  let newg = newg1 + pegrule(kind.r, leftside.r, parts.r, noStates, begin),
  if kind.r ∈ "*+" then next(rZ ∪ asset.pZ, r!Z ∪ asset.p!Z, NonT, NonT* + leftside.r, begin + noStates, newg)
@@ -103,25 +107,19 @@ let NonTAdd = NonT! ∩ rZ
 let NonTchange = NonT! \ NonTAdd
 for acc = empty:seq.pegrule, add = empty:seq.pegrule, r ∈ newg1
 do
- if leftside.r ∈ NonTchange then next(acc + pegrule(1#"!", leftside.r, parts.r, nostates.r, begin.r), add)
+ if leftside.r ∈ NonTchange then next(acc + pegrule("!" sub 1, leftside.r, parts.r, nostates.r, begin.r), add)
  else if leftside.r ∈ NonTAdd then next(acc, add + r)
  else next(acc + r, add)
-assert isempty.add report "PEG grammar not implemented using same non-terminal with ! and without !",
+assert isempty.add report
+ "PEG grammar not implemented using same non-terminal with ! and without !
+ /br NonT!:(toseq.NonT!) /br NonTAdd:(toseq.NonTAdd)",
 acc
 
 -----------
 
-use set.word
-
-use set.oneRule
-
-use otherseq.oneRule
-
-use otherseq.word
-
 function smallest(costs:set.oneRule, w:word) seq.word
 let l = lookup(costs, oneRule(w, "", false)),
-if isempty.l then [w] else right.1#l
+if isempty.l then [w] else right.l sub 1
 
 function smallest(rules:seq.pegrule) set.oneRule
 for nonTerminals = empty:set.word, r ∈ rules
@@ -132,21 +130,19 @@ do
  else
   for acc2 = acc1, p ∈ parts.r
   do
-   for right = "", last = 1#"?", w ∈ part.p
+   for right = "", last = "?" sub 1, w ∈ part.p
    do if w ∈ "!" ∨ last ∈ "!" then next(right, w) else next(right + w, w),
    acc2 + oneRule(leftside.r, right, isempty(asset.part.p ∩ nonTerminals)),
   acc2
 for s = acc1, continue = true
 while continue
 do
- let f = sub(s, 1#s)
- for acc = [f], last = f, changed = right.f ≠ right.1#s, e0 ∈ toseq.s << 1
+ let f = substitute(s, s sub 1)
+ for acc = [f], last = f, changed = right.f ≠ right.s sub 1, e0 ∈ toseq.s << 1
  do
-  let e = sub(s, e0)
+  let e = substitute(s, e0)
   let newchanged = changed ∨ right.e ≠ right.e0,
-  if left.last = left.e ∧ allTerminals.last then
-   if allTerminals.e ∨ {n.right.last /le n.right.e} true then next(acc, last, true)
-   else next(acc + e, last, newchanged)
+  if left.last = left.e ∧ allTerminals.last then if allTerminals.e then next(acc, last, true) else next(acc + e, last, newchanged)
   else next(acc + e, e, newchanged),
  next(asset.acc, changed),
 s
@@ -157,13 +153,13 @@ function >1(a:oneRule, b:oneRule) ordering left.a >1 left.b ∧ right.a >1 right
 
 function >2(a:oneRule, b:oneRule) ordering left.a >1 left.b
 
-function sub(z:set.oneRule, e:oneRule) oneRule
+function substitute(z:set.oneRule, e:oneRule) oneRule
 if allTerminals.e then e
 else
  for rightNew = "", all = true, w ∈ right.e
  do
   let find = findelement2(z, oneRule(w, [w], false)),
-  if n.find = 1 then next(rightNew + right.1#find, all ∧ allTerminals.1#find)
+  if n.find = 1 then next(rightNew + right.find sub 1, all ∧ allTerminals.find sub 1)
   else next(rightNew + w, all ∧ n.find = 0),
  oneRule(left.e, rightNew, all)
 
@@ -195,27 +191,27 @@ let terms =
  \ Non
  \ asset."/ !
  /br"
-let unusedNon = toseq(Non \ asset.rightsides - leftside.1#g),
+let unusedNon = toseq(Non \ asset.rightsides - leftside.g sub 1),
 checkrules.g
- + (if isempty.unusedNon then "" else "/br Unused non-terminals:^(unusedNon)")
- + "/br Non-terminals:^(alphasort.toseq.Non) /br Terminals:^(alphasort.toseq.terms)"
+ + (if isempty.unusedNon then "" else "/br Unused non-terminals::(unusedNon)")
+ + "/br Non-terminals::(sort>alpha.toseq.Non) /br Terminals::(sort>alpha.toseq.terms)"
  + %(5, g)
 
 Function %(format:int, newg:seq.pegrule) seq.word
 {1 as string 2-as table 3-as table with action 4-as txt 6-as code}
-let action = format#["/action", "", "/cell", "", "", dq + "="]
-let part = format#["/br /", "/row /cell", "/row /cell", "/", "/", "/br,^(dq) /"]
+let action = ["/action", "", "/cell", "", "", dq + "="] sub format
+let part = ["/br /", "/row /cell", "/row /cell", "/", "/", "/br,:(dq) /"] sub format
 let rule =
- format
- #[
+ [
   "/br"
   , "/row"
   , "/row"
-  , "/br^(escapeformat) /br^(escapeformat)"
+  , "/br:(escapeformat) /br:(escapeformat)"
   , "/br"
-  , "/br,^(dq)"
+  , "/br,:(dq)"
  ]
-let arrow = format#["", "/cell", "/cell", "←", "←", ""]
+ sub format
+let arrow = ["", "/cell", "/cell", "←", "←", ""] sub format
 for txt0 = "", r ∈ newg
 do
  for txt1 = "", e ∈ parts.r
@@ -224,8 +220,8 @@ do
   + (rule + (if kind.r ∈ "*+" then [kind.r] else "") + %.leftside.r + arrow + txt1),
 if format ∈ [2, 3] then
  "<* table
- /row left /cell right /cell action^(txt0) *>"
-else if format = 4 then "function genPEG (attributeType:word) seq.boolean [^(subseq(txt0, 3, n.txt0 - 3))]"
+ /row left /cell right /cell action:(txt0) *>"
+else if format = 4 then "function genPEG (attributeType:word) seq.boolean [:(subseq(txt0, 3, n.txt0 - 3))]"
 else txt0 >> 1
 
 function checkrules(g:seq.pegrule) seq.word
@@ -236,14 +232,14 @@ do
  else
   for message = "", p ∈ parts.r
   do
-   for isempty = true, last = 1#"?", e ∈ part.p
+   for isempty = true, last = "?" sub 1, e ∈ part.p
    while isempty
    do
     if last ∈ "!" then next(true, e)
     else
      let t = lookup(small, oneRule(e, "", true)),
-     if isempty.t then next(false, e) else next(isempty.right.1#t, e),
-   if isempty then message + "illegal rule *^(leftside.r)^(part.p) /br" else message,
+     if isempty.t then next(false, e) else next(isempty.right.t sub 1, e),
+   if isempty then message + "illegal rule *:(leftside.r):(part.p) /br" else message,
   acc + message,
 acc
 
@@ -257,8 +253,8 @@ Function makeTbl(gin:seq.pegrule, recover:boolean) seq.tableEntry
 let small = if recover then smallest.gin else empty:set.oneRule
 let gset = asset.gin
 for lambdas = "", r ∈ gin
-do if isempty.part.1#parts.r then lambdas + leftside.r else lambdas
-for table = [tableEntry(NT.2, 1#"?", Match, Failure, "")], reduce0 = 2, s ∈ gin
+do if isempty.part.(parts.r) sub 1 then lambdas + leftside.r else lambdas
+for table = [tableEntry(NT.2, "?" sub 1, Match, Failure, "")], reduce0 = 2, s ∈ gin
 do
  for isAll* = kind.s ∈ "*+", p ∈ parts.s
  while isAll*
@@ -268,13 +264,13 @@ do
   , nextstate2 = begin.s
   , ruletable = table
   , partno = 1
-  , lastpart = 1#parts.s
+  , lastpart = (parts.s) sub 1
   , p ∈ parts.s
  do
   let reduce = partno + reduce0 - 1
   for nextpart = nextstate2, e ∈ part.p
   do if e ∈ "!" then nextpart else nextpart + 1,
-  for parttable = ruletable, thisstate = nextstate2, last = 1#"?", count = 1, e ∈ part.p
+  for parttable = ruletable, thisstate = nextstate2, last = "?" sub 1, count = 1, e ∈ part.p
   do
    if e ∈ "!" then next(parttable, thisstate, e, count + 1)
    else
@@ -285,7 +281,7 @@ do
       else if kind.s ∈ "*+" then Reduce*(reduce, begin.s)
       else Reduce.reduce
      else
-      let tmp = (count + 1)#part.p,
+      let tmp = (part.p) sub (count + 1),
       if tmp ∈ lambdas then
        for x = 2, r ∈ gin while leftside.r ≠ tmp do x + n.parts.r,
        Lambda(x, if count + 2 ≤ n.part.p then thisstate + 2 else Reduce.reduce)
@@ -296,12 +292,12 @@ do
       else if isAll* then All
       else if kind.s ∈ "*+" then Success*
       else Fail
-     else if isempty.part.(partno + 1)#parts.s then Reduce(reduce + 1)
+     else if isempty.part.(parts.s) sub (partno + 1) then Reduce(reduce + 1)
      else nextpart
-    for RecoverEnding = "", last0 = 1#"?", w ∈ if recover then part.p << (count - 1) else ""
+    for RecoverEnding = "", last0 = "?" sub 1, w ∈ if recover then part.p << (count - 1) else ""
     do next(if w ∈ "!" ∨ last0 ∈ "!" then RecoverEnding else RecoverEnding + smallest(small, w), w)
     let C =
-     if e ∈ "any Any" then tableEntry(MatchAny, 1#"?", success1, failmatch, RecoverEnding)
+     if e ∈ "any Any" then tableEntry(MatchAny, "?" sub 1, success1, failmatch, RecoverEnding)
      else
       let look = lookup(gset, pegrule(last, e, empty:seq.pegpart, 0, NT)),
       if isempty.look then
@@ -309,8 +305,8 @@ do
        else tableEntry(T, e, success1, failmatch, RecoverEnding)
       else
        tableEntry(
-        if kind.1#look ∈ "*+" then NT*.begin.1#look else NT.begin.1#look
-        , leftside.1#look
+        if kind.look sub 1 ∈ "*+" then NT*.begin.look sub 1 else NT.begin.look sub 1
+        , leftside.look sub 1
         , success1
         , failmatch
         , RecoverEnding
@@ -327,7 +323,7 @@ do
       {part shares prefix with previous part so avoid backtracking. }
       if isempty.accT then
        let zidx = index.thisstate - n.part.lastpart
-       let z = zidx#parttable,
+       let z = parttable sub zidx,
        if action.z = T then replace(parttable, zidx, tableEntry(T', match.z, Sstate.z, thisstate, recover.z))
        else if action.action.z ∈ [NT, NT*] ∧ index.action.z = index.action.C then
         let look = lookup(gset, pegrule(last, match.z, empty:seq.pegpart, 0, NT)),
@@ -335,20 +331,20 @@ do
        else parttable
       else if action.action.C ∉ [T, NT, NT*] then parttable
       else
-       let kidx = 1^accT
-       let z = kidx#parttable,
+       let kidx = accT sub n.accT
+       let z = parttable sub kidx,
        if action.z = T then
         replace(
          parttable
          , kidx
-         , if count = 1 ∨ action.action.(kidx - 1)#parttable ∉ [NT, NT*] then tableEntry(T', match.z, Sstate.z, Fstate.C, recover.z)
+         , if count = 1 ∨ action.action.parttable sub (kidx - 1) ∉ [NT, NT*] then tableEntry(T', match.z, Sstate.z, Fstate.C, recover.z)
          else tableEntry(T', match.z, Sstate.z, thisstate, recover.z)
         )
        else if count = n.part.p ∧ e ∈ lambdas then
         for newtbl1 = parttable, l ∈ accT
         do
          let tidx = l + 1
-         let z3 = tidx#parttable,
+         let z3 = parttable sub tidx,
          replace(newtbl1, tidx, tableEntry(action.z3, match.z3, Sstate.z3, Sstate.C, recover.z3)),
         newtbl1
        else
@@ -356,9 +352,9 @@ do
         let newFstate = if action.Fstate.C ∈ [Idx, NT, NT*] then S'.Fstate.C else Fstate.C
         for newtbl1 = parttable, l ∈ accT
         do
-         let e2 = l#parttable,
+         let e2 = parttable sub l,
          if index.Fstate.z = index.Fstate.e2 ∧ action.Fstate.e2 ∉ [Fail] then
-          assert action.Fstate.e2 ∈ [Idx, NT, NT*, S'] report "ProBLEM^(Fstate.e2)",
+          assert action.Fstate.e2 ∈ [Idx, NT, NT*, S'] report "ProBLEM:(Fstate.e2)",
           replace(
            newtbl1
            , l
@@ -382,12 +378,6 @@ do
   fixPlus(subseq(table1, 1, index.begin.r - 1), thisrule, table1 << (index.begin.r + n.thisrule - 1))
  else table1,
 removeIdx.table1
-
-type range is left:word, start:int, stop:int
-
-function >1(a:range, b:range) ordering start.a >1 start.b
-
-function %(a:range) seq.word %.left.a + %.start.a + %.stop.a
 
 function fixPlus(
 table0:seq.tableEntry
@@ -441,7 +431,7 @@ function removeIdx(s:state, tbl:seq.tableEntry) state
 {Remove Idx from table. The action of tableEntries will be !T T T' NT NT* or MatchAny.If Idx instruction points to the ith element in the table, it will be changed to !T.i, T.i, T'.i, NT.i, NT*.i to include the kind of the table element.The instruction S', Idx, Discard*, NT, Reduce*, also contains a pointer into the table so they also will be updated. }
 if index.s = 0 ∨ action.s ∉ [S', Idx, Discard*, NT, NT*, Reduce*, Lambda] then s
 else
- let tblaction = action.action.(index.s)#tbl
+ let tblaction = action.action.tbl sub index.s
  let action =
   if tblaction = NT then NT.index.s
   else if tblaction = NT* then NT*.index.s
@@ -460,7 +450,7 @@ else
  else if action.nextState2.Lambda = Reduce then s
  else Lambda(reduceNo.s, action)
 
-function %(p:pegpart) seq.word "/br^(part.p)"
+function %(p:pegpart) seq.word "/br:(part.p)"
 
 Function replaceWords(str:seq.word, subs:seq.word) seq.word
 {subs is of format w1 r1, w2 r2,... , wn rn where w1 is a word and r1 is zero or more words.
@@ -493,7 +483,8 @@ else
   newtable
    + if action.e ∈ [T, !T, T'] then
    let m = replaceWords([match.e], subs),
-   if m = [match.e] then e else tableEntry(action.e, 1#m, Sstate.e, Fstate.e, recover.e)
+   if m = [match.e] then e
+   else tableEntry(action.e, m sub 1, Sstate.e, Fstate.e, recover.e)
   else e,
  newtable
 
@@ -513,21 +504,21 @@ for acc = "", rowno = 1, a ∈ t
 do
  next(
   acc
-   + (if action.action.a = Reduce then "/row^(rowno)^(action.a) /cell /cell^(Sstate.a) /cell^(Fstate.a) /cell^(recover.a)"
-  else "/row^(rowno)^(action.a) /cell^(escapeformat)^([match.a])^(escapeformat) /cell^(Sstate.a) /cell^(Fstate.a) /cell^(recover.a)")
+   + (if action.action.a = Reduce then "/row:(rowno):(action.a) /cell /cell:(Sstate.a) /cell:(Fstate.a) /cell:(recover.a)"
+  else "/row:(rowno):(action.a) /cell:(escapeformat):([match.a]):(escapeformat) /cell:(Sstate.a) /cell:(Fstate.a) /cell:(recover.a)")
   , rowno + 1
  ),
-"<* table^(acc) *>"
+"<* table:(acc) *>"
 
 Function >1(a:state, b:state) ordering toint.a >1 toint.b
 
 Function %(s:state) seq.word
 let action = action.s,
 if s = Match then "Match"
-else if action = Reduce then "Reduce.^(reduceNo.s)"
-else if action = Reduce* then "Reduce* (^(reduceNo.s),^(nextState.s))"
-else if action = Lambda then "Lambda (^(reduceNo.s),^(nextState2.s))"
-else if action = NT ∧ action.nextState.s = NT then "NT.^(index.nextState.s)"
+else if action = Reduce then "Reduce.:(reduceNo.s)"
+else if action = Reduce* then "Reduce* (:(reduceNo.s),:(nextState.s))"
+else if action = Lambda then "Lambda (:(reduceNo.s),:(nextState2.s))"
+else if action = NT ∧ action.nextState.s = NT then "NT.:(index.nextState.s)"
 else if action ∈ [Discard*, NT, S'] then decode.action + "." + %.nextState.s
 else if index.s = 0 then decode.action
 else decode.action + "." + %.index.s
@@ -604,7 +595,7 @@ Function /All seq.word "/All"
 The state T' is like T but does not rollback result on failure. Similarly actionP but does not rollback result on failure.
 
 function genEnum seq.seq.word
-["newType: state values: Failure Reduce Idx MatchAny T Fail Success* !T Discard* All Discard NT !Reduce !Fail Reduce* Lambda All* NT* S' T'"]
+["newType: state names: Failure Reduce Idx MatchAny T Fail Success* !T Discard* All Discard NT !Reduce !Fail Reduce* Lambda All* NT* S' T'"]
 
 <<<< Below is auto generated code >>>>
 
@@ -683,11 +674,11 @@ let discard =
   , T'
  ]
 let i = toint.code,
-if between(i + 1, 1, 20) then
+if between(i, 0, 19) then
  let r =
   [
-   (i + 1)
-   #"Failure Reduce Idx MatchAny T Fail Success* !T Discard* All Discard NT !Reduce !Fail Reduce* Lambda All* NT* S' T'"
+   "Failure Reduce Idx MatchAny T Fail Success* !T Discard* All Discard NT !Reduce !Fail Reduce* Lambda All* NT* S' T'"
+   sub (i + 1)
   ],
  if r ≠ "?" then r else "state." + toword.i
 else "state." + toword.i 

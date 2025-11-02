@@ -33,11 +33,11 @@ function since if a procedure is expaned inline, no profile results will be show
 
 Function profileExample  seq.word
 {OPTION PROFILE NOINLINE COMMAND /strong profile Example}
-let p = process.processtest(2^2 + 3)
-let p2 = subtest(2^2 + 3),
-"test^({subtest.4+} result.p)^(profileresults."time")"
+let p = process.processtest(2 sup 2 + 3)
+let p2 = subtest(2 sup 2 + 3),
+"test:({subtest.4+} result.p):(profileresults."time")"
 
-function subtest(i:int) seq.word {OPTION PROFILE NOINLINE} %(i^10 + tr.i)
+function subtest(i:int) seq.word {OPTION PROFILE NOINLINE} %(i sup 10 + tr.i)
 
 function tr(n:int) int
 {OPTION PROFILE NOINLINE}

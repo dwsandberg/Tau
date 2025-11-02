@@ -1,6 +1,6 @@
 Module seq.T
 
-use standard
+use kernal
 
 Export type:pseq.T
 
@@ -27,9 +27,10 @@ Builtin empty:seq.T seq.T {empty seq}
 Builtin idxNB(a:seq.T, i:int) T
 
 Function =(a:seq.T, b:seq.T) boolean
+{OPTION COMPILETIME}
 for isequal = n.a = n.b, i = 1, e ∈ a
 while isequal
-do next(e = i#b, i + 1),
+do next(e = b sub i, i + 1),
 isequal
 
 Function ∈(a:T, s:seq.T) boolean
@@ -88,8 +89,8 @@ if start > finish then empty:seq.T
 else if start < 1 then subseq(s, 1, finish)
 else if finish > n.s then subseq(s, start, n.s)
 else if start = 1 ∧ n.s = finish then s
-else if start = finish + 1 then [start#s, finish#s]
-else if start + 1 ≥ finish then if start = finish then [start#s] else [start#s, finish#s]
+else if start = finish + 1 then [s sub start, s sub finish]
+else if start + 1 ≥ finish then if start = finish then [s sub start] else [s sub start, s sub finish]
 else
  let p = to:pseq.T(s),
  if n.toseq.p = 0 then toseq.pseq(finish - start + 1, s, s, start - 1)
@@ -112,13 +113,13 @@ subseq(s, 1, n.s - i)
 
 Builtin n(s:seq.T) int {length of string}
 
-Function #(i:int, s:seq.T) T
+Function sub(s:seq.T, i:int) T
 {Number elements in sequence from 1 to n.s and return the element numbered i}
 assert i > 0 ∧ i ≤ n.s ∨ getseqtype.s > 1 report outofbounds:T,
 idxNB(s, i)
 
 builtin outofbounds:T seq.word
 
-Function ^(i:int, s:seq.T) T
-{Number elements in sequence from n.s to 1 and return the element numbered i}
-(n.s - (i - 1))#s 
+Function last(s:seq.T) T
+{last element of sequence}
+s sub n.s 

@@ -2,35 +2,33 @@ Module totext
 
 use UTF8
 
-use backparse
+use backparse3
 
 use file
-
-use otherseq.int
 
 use seq.int
 
 use seq.seq.int
 
-use otherseq.mytype
+use seq1.int
 
 use seq.mytype
 
-use otherseq.paravalues
+use seq1.mytype
 
-use otherseq.patternType
+use seq1.paravalues
+
+use seq1.patternType
 
 use standard
 
-use symbol
-
-use otherseq.symbol
-
 use seq.symbol
+
+use seq1.symbol
 
 use set.symbol
 
-use symbol2
+use symbol1
 
 use seq.symdef
 
@@ -38,15 +36,15 @@ use set.symdef
 
 use word
 
-use otherseq.word
-
 use seq.word
-
-use otherseq.seq.word
 
 use seq.seq.word
 
+use seq1.seq.word
+
 use stack.seq.word
+
+use seq1.word
 
 Export type:patternType
 
@@ -54,7 +52,10 @@ type paravalues is parano:int, value:seq.symbol
 
 function >1(a:paravalues, b:paravalues) ordering parano.a >1 parano.b
 
-function %(p:paravalues) seq.word "::^(parano.p)^(value.p)"
+function %(p:paravalues) seq.word ":::(parano.p):(value.p)"
+
+function ifempty(a:seq.symbol, replacementValue:seq.symbol) seq.symbol
+if isempty.a then replacementValue else a
 
 Function changes(m:midpoint, patterns:seq.patternType) seq.symdef
 for psyms = empty:set.symbol, pat ∈ patterns
@@ -64,11 +65,9 @@ do
  if paragraphno.e = 0 ∨ sym.e ∈ psyms then acc4
  else
   for newcode = empty:seq.symbol, pat ∈ patterns
-  do
-   let tmp = replace2(if isempty.newcode then code.e else newcode, pattern.pat, replacement.pat, nopara.pat),
-   if isempty.tmp then newcode else tmp,
+  do ifempty(replace32(if isempty.newcode then code.e else newcode, pat), newcode),
   if isempty.newcode then acc4
-  else acc4 + symdef4(sym.e, newcode, paragraphno.e, getOptionsBits.e),
+  else acc4 + symdef4(sym.e, newcode, paragraphno.e, options.e),
 acc4
 
 Function getpatterns(m:midpoint, patternmods:seq.word) seq.patternType
@@ -79,7 +78,7 @@ else
  for patterns = empty:seq.patternType, psym ∈ acc
  do
   let code = getCode(prg.m, psym),
-  if isempty.code ∨ not.isSequence.1^code ∨ nopara.1^code ≠ 2 then patterns
+  if isempty.code ∨ kind.code sub n.code ≠ ksequence ∨ nopara.code sub n.code ≠ 2 then patterns
   else
    let para2 = backparse3(code, n.code - 1, true)
    let para1 = backparse3(code, para2 - 1, true),
@@ -93,21 +92,12 @@ type patternType is psym:symbol, nopara:int, pattern:seq.symbol, replacement:seq
 
 function name(p:patternType) word name.psym.p
 
-Function >1(a:patternType, b:patternType) ordering alphaword.name.a >1 alphaword.name.b
+Function >1(a:patternType, b:patternType) ordering name.a >alpha name.b
 
 Function %(p:patternType) seq.word %.name.p
 
-Function replace(
-code:seq.symbol
-, pattern:seq.symbol
-, replacement:seq.symbol
-, nopara:int
-) seq.symbol
-let tmp = replace2(code, pattern, replacement, nopara),
-if isempty.tmp then code else tmp
-
 function eq2(p:mytype, a:mytype) boolean
-abstracttypename.p = 1#"*"
+abstracttypename.p = "*" sub 1
 ∨ p = a
 ∨ abstracttype.p = abstracttype.a ∧ eq2(parameter.p, parameter.a)
 
@@ -116,25 +106,23 @@ let tomatch = types.p
 for same = true, idx = 1, atype ∈ types.a
 while same
 do
- let ptype = idx#tomatch,
+ let ptype = tomatch sub idx,
  next(eq2(ptype, atype), idx + 1),
 same
 
-Function replace2(
-code:seq.symbol
-, pattern:seq.symbol
-, replacement:seq.symbol
-, nopara:int
-) seq.symbol
+function replace32(code:seq.symbol, pat:patternType) seq.symbol
+let pattern = pattern.pat,
 if n.code < n.pattern then empty:seq.symbol
 else
+ let replacement = replacement.pat
+ let nopara = nopara.pat,
  for A = empty:seq.int, skip = 0, patternidx = n.pattern, place = n.code, sym ∈ reverse.code
  while patternidx > 0
  do
   if skip > 0 then next(A, skip - 1, patternidx, place - 1)
   else
-   let p = patternidx#pattern,
-   if islocal.p ∧ value.p ≤ nopara then
+   let p = pattern sub patternidx,
+   if kind.p = klocal ∧ value.p ≤ nopara then
     let z = backparse3(code, place, nopara - n.A = 1),
     next(A + [value.p, z, place], place - z, patternidx - 1, place - 1)
    else if name.module.p = name.module.sym ∧ name.p = name.sym ∧ nopara.p = nopara.sym ∧ sametypes(p, sym) then next(if patternidx = n.pattern then [place] else A, skip, patternidx - 1, place - 1)
@@ -143,15 +131,12 @@ else
  else
   for acc = empty:seq.paravalues, i ∈ arithseq(n.A / 3, 3, 2)
   do
-   setinsert(
-    acc
-    , paravalues(i#A, replace(subseq(code, (i + 1)#A, (i + 2)#A), pattern, replacement, nopara))
-   )
+   let code1 = subseq(code, A sub (i + 1), A sub (i + 2)),
+   setinsert(acc, paravalues(A sub i, ifempty(replace32(code1, pat), code1)))
   for new = empty:seq.symbol, sym ∈ replacement
-  do if islocal.sym then new + value.(value.sym)#acc else new + sym,
-  replace(code >> (n.code - place + skip), pattern, replacement, nopara)
-   + new
-   + code << 1#A
+  do if kind.sym = klocal then new + value.acc sub value.sym else new + sym,
+  let code1 = code >> (n.code - place + skip),
+  ifempty(replace32(code1, pat), code1) + new + code << A sub 1
 
 function showZ(out:seq.word) seq.word
 for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),

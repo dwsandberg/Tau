@@ -23,7 +23,7 @@ Export sons(t:tree.T) seq.tree.T
 
 Export tree(l:T, s:seq.tree.T) tree.T
 
-Function #(i:int, t:tree.T) tree.T i#sons.t
+Function sub(t:tree.T, i:int) tree.T (sons.t) sub i
 
 Function nosons(t:tree.T) int n.sons.t
 
@@ -38,8 +38,8 @@ Function %(t:tree.T) seq.word
 if nosons.t = 0 then %.label.t
 else
  %.label.t
-  + if nosons.t = 1 then ".^(1#t)"
+  + if nosons.t = 1 then ".:(t sub 1)"
  else
-  "(^(for acc = "", e ∈ sons.t do acc + %.e + ",",
+  "(:(for acc = "", e ∈ sons.t do acc + %.e + ",",
   acc >> 1 + ")")"
  

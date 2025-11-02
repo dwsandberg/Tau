@@ -4,41 +4,33 @@ use PEG
 
 use PEGparse
 
-use UTF8
-
 use file
 
-use otherseq.frame
+use seq1.frame
 
-use otherseq.int
-
-use seq.int
-
-use seq.seq.int
+use seq1.int
 
 use seq.pegrule
 
 use standard
 
-use otherseq.tableEntry
-
 use seq.seq.tableEntry
+
+use seq1.tableEntry
 
 use textio
 
-use otherseq.word
-
 use seq.word
-
-use otherseq.seq.word
 
 use seq.seq.word
 
 use seq.seq.seq.word
 
-use set.word
+use seq1.seq.word
 
-use otherseq.seq.word
+use seq1.word
+
+use set.word
 
 Function PEGdebug(input:seq.file, steps:seq.word, notable:boolean) seq.word
 {COMMAND /strong PEGdebug displays trace of running a PEG. 
@@ -47,23 +39,23 @@ Function PEGdebug(input:seq.file, steps:seq.word, notable:boolean) seq.word
 /br-/strong notable. Do not display parse table or grammar.}
 let in = breakparagraph.input << 1
 assert n.in > 1 report "Expected first paragraph of input to be input and second paragraph to be the grammar"
-let gin = adjust.PEGparse.2#in
+let gin = adjust.PEGparse.in sub 2
 let tab =
  maketable(
   gin
-  , "dq^(dq), // /, //action /action, //br
+  , "dq:(dq), // /, //action /action, //br
   /br"
   , true
  )
-let inputtxt = 1#in
-let start = if isempty.steps then 1 else toint.1#steps
-let end = if n.steps < 2 then start + 999 else toint.1^steps
+let inputtxt = in sub 1
+let start = if isempty.steps then 1 else toint.steps sub 1
+let end = if n.steps < 2 then start + 999 else toint.last.steps
 let r = parse(inputtxt, entries.tab, "", tab, start, end),
 [status.r]
  + (if status.r ∈ "Failed" then subseq(inputtxt, 1, i.top.stk.r - 1) + "RI (" + recoveryEnding(r, entries.tab) + ")"
 else result.r)
  + trace.r
- + if notable then "" else "/p PEG parse table^(tab) /p^(%(3, gin))"
+ + if notable then "" else "/p PEG parse table:(tab) /p:(%(3, gin))"
 
 Function toAttribute(b:seq.word, a:seq.word) seq.word a
 
@@ -74,7 +66,7 @@ runMachine(partno, common, R, "")
 
 function endMark word encodeword.[char.254]
 
-function PEGgen(
+function genPEG(
 error:boolean
 , seqElementType:word
 , attributeType:seq.word
@@ -89,24 +81,24 @@ error:boolean
 
 <<<< Below is auto generated code >>>>
 
-function $(int) seq.word 1#empty:seq.seq.word
+function $(int) seq.word empty:seq.seq.word sub 1
 
 use standard
 
 use seq.tableEntry
 
-use otherseq.frame
+use seq1.frame
 
 use stack.frame
 
-use otherseq.seq.word
+use seq1.seq.word
 
 use PEGrules
 
 function recoveryEnding(rinfo:recoverInfo, mytable:seq.tableEntry) seq.word
 for acc = "", frame ∈ reverse.toseq.stk.rinfo
 do
- if action.Sstate.frame ∈ [T, T', NT] then acc + recover.(index.Sstate.frame)#mytable
+ if action.Sstate.frame ∈ [T, T', NT] then acc + recover.mytable sub index.Sstate.frame
  else acc,
 acc
 
@@ -118,18 +110,25 @@ Sstate:state
 , faili:int
 , failresult:seq.seq.word
 
-type recoverInfo is stk:stack.frame, input:seq.word, place:int, trace:seq.word
+type recoverInfo is
+stk:stack.frame
+, input:seq.word
+, place:int
+, faili:int
+, trace:seq.word
 
 Function status(a:recoverInfo) word
-if Sstate.top.stk.a ≠ Match then 1#"Failed"
-else if place.a = {length of input} faili.top.stk.a then 1#"Match"
-else 1#"MatchPrefix"
+if Sstate.top.stk.a ≠ Match then 'Failed
+else if place.a = {length of input} faili.top.stk.a then 'Match
+else 'MatchPrefix
 
-Function result(a:recoverInfo) seq.word 1^result.top.stk.a
+Function result(a:recoverInfo) seq.word
+let t = result.top.stk.a,
+t sub n.t
 
 function tracestart(trace:seq.word) seq.word
-"/br Key to column labels S--step no; D--Depth of Stack F--on fail reset I to F; I--Location in input; Lower case are values on top of stack <* table
-/row S /cell D /cell f /cell success /cell fail /cell result /cell Result /cell F /cell State /cell I /cell Remaining input^(trace) *>"
+"Key to column labels S--step no; D--Depth of Stack F--on fail reset I to F; I--Location in input; Lower case are values on top of stack <* table
+/row S /cell D /cell f /cell success /cell fail /cell result /cell Result /cell F /cell State /cell I /cell Remaining input:(trace) *>"
 
 function trace(
 stepno:int
@@ -145,9 +144,9 @@ stepno:int
 let stkdata =
  %.n.toseq.stk
   + if isempty.stk then "/cell /cell /cell /cell"
- else "/cell^(faili.top.stk) /cell^(Sstate.top.stk) /cell^(Fstate.top.stk) /cell^(1^result.top.stk)",
+ else "/cell:(faili.top.stk) /cell:(Sstate.top.stk) /cell:(Fstate.top.stk) /cell:(last.result.top.stk)",
 trace0
- + "/row^(stepno) /cell^(stkdata) /cell^(%("^", result) >> 1) /cell^(faili) /cell^(state) /cell^(i) /cell^(subseq(input, i, min(i + 20, n.input - 1))) /cell^(recovery)"
+ + "/row:(stepno) /cell:(stkdata) /cell:(%("^", result) >> 1) /cell:(faili) /cell:(state) /cell:(i) /cell:(subseq(input, i, min(i + 20, n.input - 1))) /cell:(recovery)"
 
 function parse(
 myinput0:seq.word
@@ -162,11 +161,11 @@ let packedTable = packed.table
 for
  stepno = 1
  , trace0 = ""
- , rinfo = recoverInfo(empty:stack.frame, myinput, 0, "")
+ , rinfo = recoverInfo(empty:stack.frame, myinput, 0, 1, "")
  , stk = empty:stack.frame
  , state = startstate
  , i = 1
- , inputi = 1#myinput
+ , inputi = myinput sub 1
  , result = [initAttr]
  , faili = 1
  , failresult = [initAttr]
@@ -177,7 +176,7 @@ do
   else
    let tmp =
     if isempty.stk.rinfo then ""
-    else "^(place.rinfo) /cell" + recoveryEnding(rinfo, table),
+    else ":(place.rinfo) /cell:(recoveryEnding(rinfo, table))",
    trace(stepno, trace0, stk, result, faili, state, i, myinput, tmp)
  let actionState = action.state,
  if actionState = Fail then
@@ -227,11 +226,11 @@ do
   )
  else if actionState = Discard* then
   let top = top.stk
-  let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i, trace) else rinfo,
+  let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i, faili, trace) else rinfo,
   next(stepno + 1, trace, newrinfo, stk, nextState.state, i, inputi, result.top, i, result.top)
  else if actionState = All then
   let top = top.stk
-  let att = [toAttribute(1^result, subseq(myinput, i.top, i - 1))],
+  let att = [toAttribute(result sub n.result, subseq(myinput, i.top, i - 1))],
   next(
    stepno + 1
    , trace
@@ -245,7 +244,7 @@ do
    , failresult.top
   )
  else if actionState = Lambda then
-  let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i, trace) else rinfo
+  let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i, faili, trace) else rinfo
   let att = [action(reduceNo.state, result, common, newrinfo)],
   next(
    stepno + 1
@@ -261,7 +260,9 @@ do
   )
  else if actionState = Reduce then
   let top = top.stk
-  let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i, trace) else rinfo,
+  let newrinfo =
+   if i > place.rinfo ∨ faili ≠ faili.rinfo then recoverInfo(stk, myinput, i, faili, trace)
+   else rinfo,
   let att = [action(reduceNo.state, result, common, newrinfo)],
   next(
    stepno + 1
@@ -276,7 +277,9 @@ do
    , failresult.top
   )
  else if actionState = Reduce* then
-  let newrinfo = if i > place.rinfo then recoverInfo(stk, myinput, i, trace) else rinfo
+  let newrinfo =
+   if i > place.rinfo ∨ faili ≠ faili.rinfo then recoverInfo(stk, myinput, i, faili, trace)
+   else rinfo
   let att = [action(reduceNo.state, result, common, newrinfo)],
   let top = top.stk,
   next(stepno + 1, trace, newrinfo, stk, nextState.state, i, inputi, att, i, att)
@@ -362,7 +365,7 @@ do
    {fail}
    next(stepno + 1, trace, rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
-   let reslt = result + toAttribute(1^result, [inputi])
+   let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),
    next(stepno + 1, trace, rinfo, stk, Sstate.te, i + 1, ini, reslt, faili, failresult)
  else if actionState = T' then
@@ -384,13 +387,14 @@ do
  else
   {match non Terminal}
   let te = idxNB(packedTable, index.state)
-  assert action.action.te ∈ [NT, NT*] report "PROBLEM PEG^(state)"
+  assert action.action.te ∈ [NT, NT*] report "PROBLEM PEG:(state)"
   let newstk = push(stk, frame(Sstate.te, Fstate.te, i, result, faili, failresult)),
-  let tmp = [toAttribute(1^result, empty:seq.word)],
+  let tmp = [toAttribute(result sub n.result, empty:seq.word)],
   next(stepno + 1, trace, rinfo, newstk, nextState.action.te, i, inputi, tmp, i, tmp),
 recoverInfo(
  push(stk.rinfo, frame(state, state, place.rinfo, result, n.myinput, result))
  , input.rinfo
  , place.rinfo
+ , faili.rinfo
  , tracestart.trace0
 ) 

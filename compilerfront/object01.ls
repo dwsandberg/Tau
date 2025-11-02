@@ -10,7 +10,9 @@ use seq.byte
 
 use bitcast.int
 
-use otherseq.int
+use seq1.int
+
+use seq.int
 
 use bitcast.seq.int
 
@@ -22,17 +24,43 @@ use seq.seq.mytype
 
 use set.mytype
 
+use seq.packed2
+
+use bitcast.seq.packed2
+
+use seq.packed3
+
+use bitcast.seq.packed3
+
+use seq.packed4
+
+use bitcast.seq.packed4
+
+use seq.packed5
+
+use bitcast.seq.packed5
+
+use seq.packed6
+
+use bitcast.seq.packed6
+
 use ptr
 
 use bitcast.ptr
 
 use seq.ptr
 
+use bitcast.seq.ptr
+
 use stack.ptr
+
+use seq.real
+
+use bitcast.seq.real
 
 use standard
 
-use symbol2
+use symbol1
 
 use encoding.tableentry
 
@@ -50,22 +78,22 @@ function hash(a:tableentry) int hash.key.a
 
 function =(a:tableentry, b:tableentry) boolean key.a = key.b
 
-function %(i:tableentry) seq.word "/br^(key.i)"
+function %(i:tableentry) seq.word "/br:(key.i)"
 
 Function formatTypeDef(defs0:seq.seq.mytype) seq.seq.int
 let defs = fix5.defs0
 for acc = empty:seq.seq.int, def ∈ defs
 do
- if isseq.1#def then
+ if isseq.def sub 1 then
   let idx =
-   for idx = 1, d ∈ defs while 1#d ≠ parameter.1#def do idx + 1,
+   for idx = 1, d ∈ defs while d sub 1 ≠ parameter.def sub 1 do idx + 1,
    idx,
   acc + [-idx]
  else
   for coded = empty:seq.int, t0 ∈ def << 1
   do
    let t = if isseq.t0 then parameter.t0 else t0
-   for idx = 1, d ∈ defs while 1#d ≠ t do idx + 1,
+   for idx = 1, d ∈ defs while d sub 1 ≠ t do idx + 1,
    coded + if isseq.t0 then-idx else idx,
   acc + if isempty.coded then [n.acc + 1] else coded,
 acc
@@ -107,24 +135,22 @@ The first record is the root time. The next records with be [2], [3], [4] which 
 When reconstructing objects, an object is built from each record. If the records is a buildword, buildtblrecord or a buldtblseq then the result object is added as the last element in the table otherwise the result object is placed on the stack. Elements of the record that are positive refer to and object in the table and negative elements refer to objects on the stack. After the object is built, the element references are pop from the stack. }
 
 Function fix5(a0:seq.seq.mytype) seq.seq.mytype
-let root = 1#a0
+let root = a0 sub 1
 let a = [root, [typeint], [typeword], [typereal]] + a0 << 1
-let singlerow =
- for singlerow = empty:seq.seq.mytype, row ∈ a
- do if n.row = 2 then singlerow + row else singlerow,
- singlerow,
+for singlerow = empty:seq.seq.mytype, row ∈ a
+do if n.row = 2 then singlerow + row else singlerow,
 close(
  if isempty.singlerow then a
  else
-  {remove555 types not represented by a record}
+  {remove types not represented by a record}
   for result = empty:seq.seq.mytype, row2 ∈ a
   do
    result
-    + for acc = [1#row2], t ∈ row2 << 1
-   do acc + sub(t, singlerow),
+    + for acc = [row2 sub 1], t ∈ row2 << 1
+   do acc + substitute(t, singlerow),
    acc
   for acc = empty:seq.seq.mytype, row ∈ result
-  do if n.row = 2 ∧ not.isseq.1#row then acc else acc + row,
+  do if n.row = 2 ∧ not.isseq.row sub 1 then acc else acc + row,
   acc
 )
 
@@ -133,9 +159,9 @@ function close(x:seq.seq.mytype) seq.seq.mytype
 for defs = empty:seq.mytype, used = empty:seq.mytype, def ∈ x
 do
  next(
-  defs + 1#def
+  defs + def sub 1
   , used
-   + (if isseq.1#def then [parameter.1#def]
+   + (if isseq.def sub 1 then [parameter.def sub 1]
   else
    for acc = empty:seq.mytype, d ∈ def << 1
    do if not.isseq.d then acc + d else if not.isseq.parameter.d then acc else acc + parameter.d,
@@ -149,21 +175,21 @@ else
  do acc + [new],
  close.acc
 
-function sub(t:mytype, singlerow:seq.seq.mytype) mytype
+function substitute(t:mytype, singlerow:seq.seq.mytype) mytype
 if t ∈ [typeint, typeword, typereal] then t
-else if isseq.t then seqof.sub(parameter.t, singlerow)
+else if isseq.t then seqof.substitute(parameter.t, singlerow)
 else
  for acc = t, row ∈ singlerow
- do if t = 1#row then 1^row else acc,
+ do if t = row sub 1 then row sub n.row else acc,
  acc
 
 Function outrec(inobj:ptr, allpatterns:seq.seq.int) seq.seq.int
 allpatterns + [-1] + outrec(empty:seq.seq.int, inobj, allpatterns,-1)
 
 function resulttype(packedsize:int, elementtypeidx:int) word
-if elementtypeidx ∈ [word0, int0] then 1#"int"
-else if elementtypeidx = real0 then 1#"real"
-else packedsize#"ptr packed2 packed3 packed4 packed5 packed6"
+if elementtypeidx ∈ [word0, int0] then "int" sub 1
+else if elementtypeidx = real0 then "real" sub 1
+else "ptr packed2 packed3 packed4 packed5 packed6" sub packedsize
 
 function outrec(
 finished0:seq.seq.int
@@ -171,10 +197,10 @@ finished0:seq.seq.int
 , allpatterns:seq.seq.int
 , patternidx:int
 ) seq.seq.int
-let pattern = if patternidx < 0 then empty:seq.int else patternidx#allpatterns,
-if patternidx < 0 ∨ n.pattern = 1 ∧ 1#pattern < 0 then
- let eletypeidx = if patternidx < 0 then-patternidx else-1#(patternidx#allpatterns)
- let elepattern = packedpattern(eletypeidx#allpatterns, eletypeidx)
+let pattern = if patternidx < 0 then empty:seq.int else allpatterns sub patternidx,
+if patternidx < 0 ∨ n.pattern = 1 ∧ pattern sub 1 < 0 then
+ let eletypeidx = if patternidx < 0 then-patternidx else-(allpatterns sub patternidx) sub 1
+ let elepattern = packedpattern(allpatterns sub eletypeidx, eletypeidx)
  let packedsize = if n.elepattern > 6 then 1 else n.elepattern
  let obj = packobject(resulttype(packedsize, eletypeidx), inobj),
  let seqlen = n.bitcast:seq.int(obj),
@@ -222,16 +248,17 @@ do
   let w = addorder.tableentry.te,
   next(acc + w, idx + 1, stkcount, if maxencoding < w then finished + te else finished)
  else
-  let t = outrec(finished, fld:ptr(obj, idx), allpatterns, typ),
-  if 1#(1^t) ∈ [buildtblrecord, buildtblseq] then
+  let t = outrec(finished, fld:ptr(obj, idx), allpatterns, typ)
+  let last = t sub n.t,
+  if last sub 1 ∈ [buildtblrecord, buildtblseq] then
    let maxencoding = n.encodingdata:tableentry
-   let w = addorder.tableentry.1^t,
+   let w = addorder.tableentry.last,
    next(acc + w, idx + 1, stkcount, if w > maxencoding then t else t >> 1)
   else next(acc + -(stkcount + 1), idx + 1, stkcount + 1, t),
 finished
  + if stkcount > 0 then adjuststkcounts(acc, fldtypes, stkcount)
 else if buildtype = buildrecord ∧ n.acc < 10 then [buildtblrecord] + acc << 1
-else if buildtype = buildseq ∧ (n.acc < 10 ∨ 2#acc = word0 ∧ n.acc < 300) then [buildtblseq] + acc << 1
+else if buildtype = buildseq ∧ (n.acc < 10 ∨ acc sub 2 = word0 ∧ n.acc < 300) then [buildtblseq] + acc << 1
 else acc
 
 function dumptable seq.word
@@ -246,38 +273,38 @@ txt
 
 Function inrec(inrecs:seq.seq.int) ptr
 let allpatterns =
- for idx = 0, pat ∈ inrecs while 1#pat ≠-1 do idx + 1,
+ for idx = 0, pat ∈ inrecs while pat sub 1 ≠-1 do idx + 1,
  subseq(inrecs, 1, idx)
 for stk = empty:stack.ptr, map = empty:seq.int, rec ∈ inrecs << (n.allpatterns + 1)
 do
- if 1#rec = buildword then
+ if rec sub 1 = buildword then
   {add word entry to map}
   next(
    stk
    , for acc = empty:seq.char, i ∈ rec << 1 do acc + char.i,
    map + hash.encodeword.acc
   )
- else if 1#rec = buildblock then
-  let noblocks = 3#rec
-  let eletypeidx = 2#rec
-  let seqelepat = eletypeidx#allpatterns
+ else if rec sub 1 = buildblock then
+  let noblocks = rec sub 3
+  let eletypeidx = rec sub 2
+  let seqelepat = allpatterns sub eletypeidx
   let elepattern = packedpattern(seqelepat, eletypeidx)
   let obj = allocatespace(noblocks + 2)
-  let firstp = set(set(obj, blocktype.resulttype(n.elepattern, eletypeidx)), 4#rec),
+  let firstp = set(set(obj, blocktype.resulttype(n.elepattern, eletypeidx)), rec sub 4),
   let newstk =
    for p = firstp, m = 0, val ∈ rec << 4
    do
-    if val > 0 then next(set(p, val#map), m)
+    if val > 0 then next(set(p, map sub val), m)
     else next(set(p, undertop(stk,-val - 1)), if val < m then val else m),
    push(pop(stk,-m), obj),
   next(newstk, map)
  else
   let newstk =
-   if 1#rec = buildseq ∨ 1#rec = buildtblseq then
-    let eletypeidx = 2#rec
-    let seqelepat = eletypeidx#allpatterns
+   if rec sub 1 = buildseq ∨ rec sub 1 = buildtblseq then
+    let eletypeidx = rec sub 2
+    let seqelepat = allpatterns sub eletypeidx
     let elepattern = packedpattern(seqelepat, eletypeidx)
-    let seqlen = 3#rec
+    let seqlen = rec sub 3
     let packedsize = n.elepattern
     let fldtypes = patternseq(seqlen * packedsize, elepattern)
     let blksize = 100
@@ -293,14 +320,14 @@ do
      let newblksize =
       if i - 4 = myblksz * (n.objs + 1) then min(n.fldtypes - myblksz * (n.objs + 1), myblksz)
       else 0
-     assert newblksize < 8000 report "XXX^(newblksize)"
+     assert newblksize < 8000 report "XXX:(newblksize)"
      let newobjs = if newblksize = 0 then objs else objs + allocatespace(newblksize + 2)
      let newp =
       if newblksize = 0 then p
-      else set(set(1^newobjs, if packedsize = 1 then 0 else 1), newblksize / packedsize),
-     let val = i#rec,
+      else set(set(newobjs sub n.newobjs, if packedsize = 1 then 0 else 1), newblksize / packedsize),
+     let val = rec sub i,
      if typ ∈ [int0, real0] then next(set(newp, val), i + 1, m, newobjs)
-     else if val > 0 then next(set(newp, val#map), i + 1, m, newobjs)
+     else if val > 0 then next(set(newp, map sub val), i + 1, m, newobjs)
      else next(set(newp, undertop(stk,-val - 1)), i + 1, if val < m then val else m, newobjs)
     let resulttype = resulttype(packedsize, eletypeidx)
     for acc = obj, o ∈ objs do cat(acc, o, resulttype)
@@ -308,27 +335,27 @@ do
     assert not.isempty.fx report "??",
     fx
    else
-    assert 1#rec ∈ [buildtblrecord, buildrecord] report "PROBLEM object01"
+    assert rec sub 1 ∈ [buildtblrecord, buildrecord] report "PROBLEM object01"
     {buildrecord}
-    let pattern = (2#rec)#allpatterns
+    let pattern = allpatterns sub (rec sub 2)
     assert n.pattern < 8000 report "to big of a pattern"
     let obj = allocatespace.n.pattern,
     for p = obj, i = 3, m = 0, typ ∈ pattern
     do
-     let val = i#rec,
+     let val = rec sub i,
      if typ ∈ [int0, real0] then next(set(p, val), i + 1, m)
-     else if val > 0 then next(set(p, val#map), i + 1, m)
+     else if val > 0 then next(set(p, map sub val), i + 1, m)
      else next(set(p, undertop(stk,-val - 1)), i + 1, if val < m then val else m),
     push(pop(stk,-m), obj),
-  if 1#rec ∈ [buildtblseq, buildtblrecord] then next(pop.newstk, map + bitcast:int(top.newstk))
+  if rec sub 1 ∈ [buildtblseq, buildtblrecord] then next(pop.newstk, map + bitcast:int(top.newstk))
   else next(newstk, map),
-if isempty.stk then bitcast:ptr(1^map) else top.stk
+if isempty.stk then bitcast:ptr(map sub n.map) else top.stk
 
 function adjuststkcounts(rec:seq.int, fldtypes:seq.int, stkcount:int) seq.int
 let k = n.rec - n.fldtypes
 for acc = subseq(rec, 1, k), i = k + 1, typ ∈ fldtypes
 do
- let val = i#rec,
+ let val = rec sub i,
  next(
   if typ ∈ [int0, real0, word0] ∨ val > 0 then acc + val
   else acc + (-stkcount - val - 1)
@@ -376,5 +403,30 @@ all
 
 function packedpattern(seqelementpat:seq.int, eletypeidx:int) seq.int
 if not.between(n.seqelementpat, 2, {must match packed seqs in implementation} 6)
-∨ 1#seqelementpat = 0 then [eletypeidx]
-else seqelementpat 
+∨ seqelementpat sub 1 = 0 then [eletypeidx]
+else seqelementpat
+
+Function packobject(typ:word, obj:ptr) ptr
+if typ ∈ "int" then toptr.packed.bitcast:seq.int(obj)
+else if typ ∈ "real" then toptr.packed.bitcast:seq.real(obj)
+else if typ ∈ "ptr" then toptr.packed.bitcast:seq.ptr(obj)
+else if typ ∈ "packed2" then toptr.packed.bitcast:seq.packed2(obj)
+else if typ ∈ "packed3" then toptr.packed.bitcast:seq.packed3(obj)
+else if typ ∈ "packed4" then toptr.packed.bitcast:seq.packed4(obj)
+else if typ ∈ "packed5" then toptr.packed.bitcast:seq.packed5(obj)
+else
+ assert typ ∈ "packed6" report "packing not found" + typ,
+ toptr.packed.bitcast:seq.packed6(obj)
+
+Function cat(obj1:ptr, obj2:ptr, typ:word) ptr
+if typ ∈ "int" then toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
+else if typ ∈ "real" then toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
+else if typ ∈ "ptr" then toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
+else if typ ∈ "packed2" then toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
+else if typ ∈ "packed3" then toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
+else if typ ∈ "packed4" then toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
+else if typ ∈ "packed5" then toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
+else
+ assert typ ∈ "packed6" report "packing cat not found" + typ,
+ toptr(bitcast:seq.packed6(obj1) + bitcast:seq.packed6(obj2))
+ 

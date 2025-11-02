@@ -2,7 +2,7 @@ Module encodingsupport
 
 use bitcast.einfo
 
-use otherseq.einfo
+use seq1.einfo
 
 use bitcast.seq.einfo
 
@@ -10,17 +10,23 @@ use bitcast.evector
 
 use bitcast.int
 
+use kernal
+
 use indirect.processflds
+
+use seq.processflds
 
 use ptr
 
 use bitcast.ptr
 
-use standard
-
 use encoding.typename
 
 use bitcast.encodingstate.typename
+
+use word
+
+use seq.word
 
 Export type:einfo
 
@@ -34,7 +40,7 @@ Function geteinfo(gl:ptr, name:seq.word) einfo
 let no = fld:int(gl, 0)
 let encodingno =
  if no > 0 then no
- else if subseq(name, 1, 2) = "char standard" then 1
+ else if {subseq (name, 1, 2) =" char kernal"} subseq(name, 1, 1) = "char" then 1
  else if subseq(name, 1, 2) = "typename encodingsupport" then 2
  else
   let newno = addorder.typename.name + 2
@@ -46,8 +52,8 @@ Function geteinfo2(encodingno:int, dummy:int) einfo
 let cp = currentprocess
 let a = evector.cp,
 if encodingno = encodingno.thisone.a then thisone.a
-else if encodingno ≤ n.vector.a ∧ encodingno.encodingno#vector.a > 0 then
- let this = encodingno#vector.a
+else if encodingno ≤ n.vector.a ∧ encodingno.(vector.a) sub encodingno > 0 then
+ let this = (vector.a) sub encodingno
  let discard = set(set(toptr.a, toptr.vector.a), toptr.this),
  this
 else evectorUpdate.einfo(empty:encodingstate.typename, encodingno, cp)

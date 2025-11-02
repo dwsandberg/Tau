@@ -4,19 +4,21 @@ use seq.mytype
 
 use encoding.parc2
 
-use otherseq.parc2
+use seq1.parc2
 
 use standard
 
-use symbol
+use arc.symbol
+
+use graph.arc.symbol
 
 use set.arc.symbol
 
-use graph.symbol
-
-use otherseq.symbol
+use seq1.symbol
 
 use set.symbol
+
+use symbol1
 
 use set.symdef
 
@@ -26,13 +28,8 @@ function subaddprofile(sd:symdef, recursive:set.symbol) seq.symbol
 {assert name.sym.sd /nin" testprofile" report" KL"+%.sym.sd+%.code.sd,}
 for acc2 = empty:seq.symbol, sym ∈ code.sd
 do
- if isconstantorspecial.sym
- ∨ isInternal.sym
- ∨ isFref.sym
- ∨ isGlobal.sym
- ∨ isBuiltin.sym ∧ (name.sym ∉ "createthreadZ" ∨ n.acc2 ≤ 1 ∨ not.isFref.(n.acc2 - 1)#acc2) then acc2 + sym
- else if isBuiltin.sym then
-  let functocall = (n.acc2 - 1)#acc2
+ if kind.sym = kcreatethreadZ ∧ not.isempty.acc2 ∧ kind.acc2 sub (n.acc2 - 1) = kfref then
+  let functocall = acc2 sub (n.acc2 - 1)
   let offset = valueofencoding.encode.parc2(sym.sd, basesym.functocall) * 6 + (2 - 6),
   acc2 >> 3
    + [
@@ -40,27 +37,28 @@ do
    , Lit.0
    , Getfld.seqof.typeptr
    , Lit(offset + 2)
-   , symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
-   , symbol(internalmod, "bitcast", typeptr, typeint)
-   , (n.acc2 - 1)#acc2
-   , 1^acc2
+   , symbol(internalmod, "GEP", [seqof.typeptr, typeint], typeptr)
+   , symbol(internalmod, "bitcast", [typeptr], typeint)
+   , acc2 sub (n.acc2 - 1)
+   , acc2 sub n.acc2
    , sym
   ]
- else
+ else if kind.sym ∈ isOrdinary then
   let offset = valueofencoding.encode.parc2(sym.sd, sym) * 6 + (2 - 6),
-  acc2 + profileCallNR(offset, sym, n.code.sd + n.acc2, sym ∈ recursive),
+  acc2 + profileCallNR(offset, sym, n.code.sd + n.acc2, sym ∈ recursive)
+ else acc2 + sym,
 acc2
 
 Function addprofile(prg:set.symdef, libname:word) set.symdef
 let recursive = asset.recursiveFunctions(toseq.prg, empty:set.symbol)
 for acc = empty:set.symdef, sd ∈ toseq.prg
 do
- if isPROFILE.sd ∧ not.isAbstract.module.sym.sd then acc + symdef4(sym.sd, subaddprofile(sd, recursive), paragraphno.sd, getOptionsBits.sd)
+ if PROFILE ∈ options.sd ∧ not.isAbstract.module.sym.sd then acc + symdef4(sym.sd, subaddprofile(sd, recursive), paragraphno.sd, options.sd)
  else acc,
 acc ∪ initProfileDefinition.libname
 
 function profiledata symbol
-symbol(moduleref."internallib $global", "profiledata", empty:seq.mytype, typeptr)
+symbol4(moduleref."internallib $global", "profiledata" sub 1, type?, empty:seq.mytype, typeptr)
 
 function profileCallNR(
 offset:int
@@ -70,9 +68,9 @@ offset:int
 ) seq.symbol
 let before =
  [
-  symbol(internalmod, "clock", typeint)
+  symbol(internalmod, "clock", empty:seq.mytype, typeint)
   , Define(nextvar + 1)
-  , symbol(internalmod, "spacecount", typeint)
+  , symbol(internalmod, "spacecount", empty:seq.mytype, typeint)
   , Define(nextvar + 2)
   , callee
  ]
@@ -84,8 +82,8 @@ let after =
   , Lit.0
   , Getfld.seqof.typeptr
   , Lit(offset + 2)
-  , symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
-  , symbol(moduleref."* tausupport", "profileUpdate", typeint, typeint, typeptr, typeint)
+  , symbol(internalmod, "GEP", [seqof.typeptr, typeint], typeptr)
+  , symbol(moduleref."* tausupport", "profileUpdate", [typeint, typeint, typeptr], typeint)
  ],
 if recursive then
  adjust(offset, nextvar, 1)
@@ -99,7 +97,7 @@ else before + after + Define.nextvar
 function adjust(offset:int, nextvar:int, litvalue:int) seq.symbol
 [profiledata, Lit.0, Getfld.seqof.typeptr]
  + Lit(offset + 5)
- + symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
+ + symbol(internalmod, "GEP", [seqof.typeptr, typeint], typeptr)
  + Define(nextvar + 3)
  + [
  {get value and increment} Local(nextvar + 3)
@@ -137,9 +135,9 @@ let data =
   + Local.1
   + setSym.typeptr,
 asset.[
- symdef(symbol(moduleref.[libname, 1#"initialize"], "initProfile", typeptr), data, 0)
+ symdef(symbol(moduleref.[libname, "initialize" sub 1], "initProfile", typeptr), data, 0)
  , symdef(
-  symbol(moduleref.[libname, 1#"initialize"], "profileData", typeptr)
+  symbol(moduleref.[libname, "initialize" sub 1], "profileData", typeptr)
   , [profiledata, Lit.0, Getfld.typeptr]
   , 0
  )
@@ -162,13 +160,13 @@ do
   ),
 cyclenodes.newgraph.toseq.arcs
 
-function removeSinksSources(g:graph.symbol) graph.symbol
+function removeSinksSources(g:graph.arc.symbol) graph.arc.symbol
 let sinks = sinks.g
 let remove = if isempty.sinks then sources.g else sinks,
 if isempty.remove then g else removeSinksSources.subgraph(g, nodes.g \ asset.remove)
 
-function cyclenodes(g:graph.symbol) seq.symbol
+function cyclenodes(g:graph.arc.symbol) seq.symbol
 let tc = transitiveClosure.removeSinksSources.g
 for acc = empty:seq.symbol, n ∈ toseq.nodes.tc
-do if arc(n, n) ∈ arcs.tc then acc + n else acc,
+do if toarc.n ∈ arcs.tc then acc + n else acc,
 acc 

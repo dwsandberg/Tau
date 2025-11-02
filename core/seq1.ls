@@ -1,10 +1,16 @@
-Module otherseq.T
+Module seq1.T
 
 use seq.T
 
 use seq.seq.T
 
-use standard
+use seq.int
+
+use kernal
+
+use word
+
+use seq.word
 
 Export type:arithmeticseq.T
 
@@ -16,7 +22,7 @@ Export ispseq(s:seq.T) boolean {From seq.T}
 
 Export n(a:seq.T) int {From seq.T}
 
-Export #(int, seq.T) T {From seq.T}
+Export sub(s:seq.T, i:int) T
 
 Export +(a:seq.T, b:seq.T) seq.T {From seq.T}
 
@@ -28,7 +34,7 @@ Export =(a:seq.T, b:seq.T) boolean {From seq.T}
 
 Export >>(s:seq.T, i:int) seq.T {* removes i elements from end of s} {From seq.T}
 
-Export ^(int, s:seq.T) T {From seq.T}
+Export last(seq.T) T
 
 Export empty:seq.T seq.T {From seq.T}
 
@@ -39,7 +45,9 @@ Export subseq(s:seq.T, start:int, finish:int) seq.T {From seq.T}
 Export ∈(a:T, s:seq.T) boolean {From seq.T}
 
 Function reverse(s:seq.T) seq.T
-for acc = empty:seq.T, i = n.s while i > 0 do next(acc + i#s, i - 1),
+for acc = empty:seq.T, i = n.s
+while i > 0
+do next(acc + s sub i, i - 1),
 acc
 
 type cseq is sequence, element:T
@@ -51,24 +59,34 @@ Function constantseq(len:int, element:T) seq.T toseq.cseq(len, element)
 type patternseq is sequence, patternlen:int, elements:seq.T
 
 function sequenceIndex(s:patternseq.T, i:int) T
-((i - 1) mod patternlen.s + 1)#elements.s
+(elements.s) sub ((i - 1) mod patternlen.s + 1)
 
 Function patternseq(len:int, element:seq.T) seq.T
 toseq.patternseq(len, n.element, element)
 
 Function replace(s:seq.T, index:int, value:T) seq.T
 if not.ispseq.s then
- for acc = empty:seq.T, i = 1 while i < index do next(acc + i#s, i + 1)
+ for acc = empty:seq.T, i = 1
+ while i < index
+ do next(acc + s sub i, i + 1)
  for oldacc = acc + value, j = index + 1
  while j ≤ n.s
- do next(oldacc + j#s, j + 1),
+ do next(oldacc + s sub j, j + 1),
  oldacc
 else
  let p = to:pseq.T(s),
  if index > n.a.p then a.p + replace(b.p, index - n.a.p, value)
  else replace(a.p, index, value) + b.p
 
--------------------------------
+Export type:arithmeticseq.T
+
+Export arithmeticseq(int, step:T, start:T) arithmeticseq.T
+
+Export step(arithmeticseq.T) T
+
+Export start(arithmeticseq.T) T
+
+Export toseq(arithmeticseq.T) seq.T
 
 type arithmeticseq is sequence, step:T, start:T
 
@@ -78,7 +96,7 @@ unbound *(int, T) T
 
 unbound =(T, T) boolean
 
-function sequenceIndex(s:arithmeticseq.T, i:int) T start.s + (i - 1) * step.s
+Function sequenceIndex(s:arithmeticseq.T, i:int) T start.s + (i - 1) * step.s
 
 Function arithseq(length:int, step:T, start:T) seq.T
 toseq.arithmeticseq(length, step, start)
@@ -93,10 +111,12 @@ if lengtha > lengthb then GT else if lengtha < lengthb then LT else subcmp(a, b,
 function subcmp(a:seq.T, b:seq.T, i:int) ordering
 if i > n.a then EQ
 else
- let c = i#a >1 i#b,
+ let c = a sub i >1 b sub i,
  if c = EQ then subcmp(a, b, i + 1) else c
 
 unbound >2(T, T) ordering
+
+precedence > for >1 >2 >3 >4 >alpha
 
 Function >2(a:seq.T, b:seq.T) ordering
 let lengtha = n.a
@@ -106,40 +126,10 @@ if lengtha > lengthb then GT else if lengtha < lengthb then LT else subcmp2(a, b
 function subcmp2(a:seq.T, b:seq.T, i:int) ordering
 if i > n.a then EQ
 else
- let c = i#a >2 i#b,
+ let c = a sub i >2 b sub i,
  if c = EQ then subcmp2(a, b, i + 1) else c
 
-unbound ?alpha(T, T) ordering
-
-Function ?alpha(a:seq.T, b:seq.T) ordering subcmpalpha(a, b, 1)
-
-function subcmpalpha(a:seq.T, b:seq.T, i:int) ordering
-let lengtha = n.a
-let lengthb = n.b,
-if i ≤ lengtha ∧ i ≤ lengthb then
- let c = ?alpha(i#a, i#b),
- if c = EQ then subcmpalpha(a, b, i + 1) else c
-else if n.a = n.b then EQ
-else if n.a > n.b then GT
-else LT
-
-Function sort(a:seq.T) seq.T
-if n.a < 2 then a
-else merge(sort.subseq(a, 1, n.a / 2), sort.subseq(a, n.a / 2 + 1, n.a))
-
-Function merge(a:seq.T, b:seq.T) seq.T
-{* combines sorted seq}
-if n.a = 0 then b
-else if n.b = 0 then a
-else if 1#b >1 (n.a)#a = GT then a + b
-else if 1#a >1 (n.b)#b = GT then b + a
-else submerge(a, b, 1, 1)
-
-function submerge(a:seq.T, b:seq.T, i:int, j:int) seq.T
-if i > n.a then subseq(b, j, n.b)
-else if j > n.b then subseq(a, i, n.a)
-else if j#b >1 i#a = LT then [j#b] + submerge(a, b, i, j + 1)
-else [i#a] + submerge(a, b, i + 1, j)
+unbound >1(T, T) ordering
 
 Function binarysearch(s:seq.T, val:T) int
 {* binarysearch returns position in seq if found and the negation of the posistion if not found}
@@ -196,14 +186,14 @@ str:seq.T
 ) seq.seq.T
 if j > n.b then result + (str + subseq(a, start, n.a))
 else
- let i = j#b,
+ let i = b sub j,
  if currentquote ≠ seperator then
   {in quoted string}
-  if i#a = seperator then break(str, currentquote, seperator, a, b, j + 1, start, result)
-  else if i#a = currentquote ∧ i = n.a then result + (str + subseq(a, start, i - 1))
-  else if i#a = currentquote ∧ (i + 1)#a = currentquote then break(subseq(a, start, i), currentquote, seperator, a, b, j + 2, i + 2, result)
+  if a sub i = seperator then break(str, currentquote, seperator, a, b, j + 1, start, result)
+  else if a sub i = currentquote ∧ i = n.a then result + (str + subseq(a, start, i - 1))
+  else if a sub i = currentquote ∧ a sub (i + 1) = currentquote then break(subseq(a, start, i), currentquote, seperator, a, b, j + 2, i + 2, result)
   else
-   assert i#a ≠ seperator ∧ (i + 1)#a = seperator report "Format problem",
+   assert a sub i ≠ seperator ∧ a sub (i + 1) = seperator report "Format problem",
    break(
     empty:seq.T
     , seperator
@@ -216,7 +206,7 @@ else
    )
  else
   {not in quoted string}
-  if i#a = seperator then
+  if a sub i = seperator then
    break(
     empty:seq.T
     , seperator
@@ -229,12 +219,14 @@ else
    )
   else
    assert isempty(str + subseq(a, start, i - 1)) report "Format problem",
-   break(str, i#a, seperator, a, b, j + 1, i + 1, result)
+   break(str, a sub i, seperator, a, b, j + 1, i + 1, result)
 
 Function findindex(s:seq.T, w:T) int
 {result > length.s when element is not found.Otherwise results is location in sequence}
 for i = 1, e ∈ s while e ≠ w do i + 1,
 i
+
+unbound =(T, T) boolean
 
 -------------------------------
 

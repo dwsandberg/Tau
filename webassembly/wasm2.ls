@@ -12,7 +12,7 @@ use standard
 
 use seq.symbol
 
-use symbol2
+use symbol1
 
 use wasm
 
@@ -20,25 +20,23 @@ Function %(a:seq.byte) seq.word
 for acc = "bytes:", @e ∈ a do acc + %.@e,
 acc
 
-Function allocatesym symbol symbol(moduleref."? core32", "allocate", typeint, typeptr)
+Function allocatesym symbol symbol(moduleref."? core32", "allocate", [typeint], typeptr)
 
 Function recordsym(alltypes:typedict, sym:symbol) symbol
-for acc = empty:seq.mytype, typ ∈ paratypes.sym
-do
- let kind = basetype(typ, alltypes),
- acc + if kind = typeboolean ∨ kind = typereal then kind else typeint,
+for acc = empty:seq.mytype, kind ∈ basetype(paratypes.sym, alltypes)
+do acc + if kind = typeboolean ∨ kind = typereal then kind else typeint,
 symbol(moduleref."* $$record", "$$record", acc, typeint)
 
 Function initwordsbody(initprofile:seq.symbol, libname:word) seq.byte
 let empty = const32.getoffset("", libname)
-let charseq = seqof.typeref."char standard *"
-let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint),
+let charseq = seqof.typeref."char kernal *"
+let symboladdwords = symbol(moduleref("* encoding", charseq), "addencodings", [seqof.charseq], typeint),
 funcbody(
  [i32, i64]
  , store(const32.0, empty, encodings)
   + store(const32.0, empty, thisencoding)
   + switchcontext.newcontext2.0
-  + (if isempty.initprofile then empty:seq.byte else Wcall.1#initprofile + drop)
+  + (if isempty.initprofile then empty:seq.byte else Wcall.initprofile sub 1 + drop)
   + const64.getoffset(initialwordconst.libname, libname)
   + Wcall.symboladdwords
   + Wdefine.1
@@ -75,7 +73,7 @@ let funccall =
   + Wdefine.4,
 addf(
  alltypes
- , symbol(internalmod, "processbody", typereal, typereal, typereal)
+ , symbol(internalmod, "processbody", [typereal, typereal], typereal)
  , funcbody(
   [i32, i32, i64, i32]
   , switchcontext.newcontext2.2
@@ -111,7 +109,7 @@ addf(
 Function handleerrorfunc(alltypes:typedict, libname:word) int
 addf(
  alltypes
- , symbol(internalmod, "handleerror", typereal, typereal)
+ , symbol(internalmod, "handleerror", [typereal], typereal)
  , funcbody(
   [i32, i64]
   , Wlocal.0
@@ -125,7 +123,7 @@ addf(
    + Wlocal.2
    + Wcall.symbol4(
    moduleref("* seq", typeword)
-   , 1#"type"
+   , "type" sub 1
    , seqof.typeword
    , [seqof.typeword]
    , seqof.typeword
@@ -235,8 +233,11 @@ addf(
 
 /Function addencodingfunc (alltypes:typedict) int let einfo = 0 let data = 1 let addfunc = 2 let owningprocess = 3 let callingprocess = 4 let calladd2 = Wlocal.einfo+Wlocal.data+Wlocal.addfunc+i32wrapi64+Wcallindirect.typeindex ([i64, i64], i64) addf (alltypes, symbol (internalmod," addencoding4", [typeptr, typeint, typeint], typeptr), {parameters einfo, data, add2} funcbody ([i32, i32], load (Wlocal.einfo+i32wrapi64, 16)+Wdefine.owningprocess+Wlocal.owningprocess+Gcurrentprocess+Wdefine.callingprocess+Wlocal.callingprocess+i32eq+Wif (i64, calladd2, {change so space is allocate from owningprocess} switchcontext.Wlocal.owningprocess+{call code to add encoding} calladd2+{change back so space in allocated in orignal process} switchcontext.Wlocal.callingprocess)+return))
 
-function load64(b:seq.byte, offset:int) seq.byte
-b + i32wrapi64 + i64load + tobyte.3 + tobyte.offset
+Function load64(b:seq.byte, offset:int) seq.byte
+b + i32wrapi64 + i64load + tobyte.3 + LEBu.offset
+
+Function load32(b:seq.byte, offset:int) seq.byte
+b + i32wrapi64 + i32load + tobyte.2 + LEBu.offset
 
 function nextfree int 4
 
@@ -260,13 +261,13 @@ Gfreeblocks
  + i32eq
  + Wif(
  void
- , setGlobal(nextfree, const32.1 + [memorygrow, tobyte.0] + const32.2^16 + i32mul)
+ , setGlobal(nextfree, const32.1 + [memorygrow, tobyte.0] + const32.2 sup 16 + i32mul)
  , setGlobal(nextfree, Gfreeblocks)
   + setGlobal(freeblocks, load(Gfreeblocks, 0))
   + Gnextfree
   + i64extendi32u
   + const64.8192
-  + Wcall.symbol(moduleref."* webIOtypes", "set2zero", typeptr, typeint, typeptr)
+  + Wcall.symbol(internalmod, "set2zero", [typeptr, typeint], typeptr)
   + drop
 )
  + (if link then
@@ -279,6 +280,64 @@ Gfreeblocks
 else empty:seq.byte)
  + setGlobal(nextfree, Gnextfree + const32.8 + i32add)
  + setGlobal(lastfree, Gnextfree + const32(8180 * 8) + i32add)
+
+function brX(i:int) seq.byte if i = 0 then empty:seq.byte else [br] + LEBu.i
+
+Function set2zero(alltypes:typedict) int
+{Function set2zero (p:ptr, size:int) ptr if size = 0 then p else set2zero (set (p, 0), size-1)}
+addf(
+ alltypes
+ , symbol(internalmod, "set2zero", [typeptr, typeint], typeptr)
+ , funcbody(
+  [i64, i64, i64, i64]
+  , Wlocal.0
+   + Wlocal.1
+   + Wdefine.3
+   + Wdefine.2
+   + {label = @1} block
+   + asbytes.i64
+   + {label = @2} loop
+   + asbytes.void
+   + {label = @3} block
+   + asbytes.void
+   + {label = @4} block
+   + asbytes.void
+   + Wlocal.3
+   + const64.0
+   + i64eq
+   + {@4} brif
+   + LEBu.0
+   + {@3} brX.1
+   + END
+   + Wlocal.2
+   + {@1} brX.2
+   + END
+   + Wlocal.2
+   + const64.0
+   + Wdefine.4
+   + Wdefine.5
+   + Wlocal.5
+   + i32wrapi64
+   + Wlocal.4
+   + i64store
+   + byte.3
+   + LEBu.0
+   + Wlocal.5
+   + const64.8
+   + i64add
+   + Wlocal.3
+   + const64.1
+   + i64sub
+   + Wdefine.3
+   + Wdefine.2
+   + br
+   + LEBu.0
+   + END
+   + unreachable
+   + END
+   + return
+ )
+)
 
 Function allocatefunc(alltypes:typedict) int
 addf(
@@ -341,7 +400,7 @@ Wif(type, thenclause, empty:seq.byte)
 
 function Wif(type:wtype, thenclause:seq.byte, elseclause:seq.byte) seq.byte
 [tobyte.0x04]
- + 1#asbytes.type
+ + (asbytes.type) sub 1
  + thenclause
  + (if isempty.elseclause then empty:seq.byte else [tobyte.0x05] + elseclause)
  + END

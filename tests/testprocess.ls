@@ -6,9 +6,9 @@ use process.boolean
 
 use checking
 
-use otherseq.int
-
 use process.int
+
+use sort.int
 
 use real
 
@@ -22,13 +22,23 @@ use tausupport
 
 use process.seq.word
 
+use seq1.seq.word
+
+use seq1.word
+
+use sort.seq.word
+
+use sort.word
+
+use stateFunctions
+
 type returntype is a:int, b:int, c:seq.word
 
 function testprocess3 returntype returntype(4, 40, "a test")
 
 function isprefix(prefix:seq.word, s:seq.word) boolean subseq(s, 1, n.prefix) = prefix
 
-function testout(i:int) seq.word [i#"one two three"]
+function testout(i:int) seq.word ["one two three" sub i]
 
 function square(a:real) real a * a
 
@@ -43,39 +53,38 @@ function arg4(a:int, b:int, c:int, d:int) int a + b + c + d
 Function testreal seq.word
 check(
  [
-  print(3, sqrt.2.0) = "1.414"
-  , print(2, toreal.3) = "3.00"
+  %(3, sqrt.2.0) = "1.414"
+  , %(2, toreal.3) = "3.00"
   , intpart.3.1 = 3
-  , print(3, 2.0 / 3.0) = "0.667"
+  , %(3, 2.0 / 3.0) = "0.667"
   , 2.0 + 3.0 = 5.0
   , 2.0 * 3.0 = 6.0
-  , print(5, 2.3 - 1.1) = "1.20000"
-  , print(5, cos.0.4) = "0.92106"
-  , print(5, sin.0.4) = "0.38942"
+  , %(5, 2.3 - 1.1) = "1.20000"
+  , %(5, cos.0.4) = "0.92106"
+  , %(5, sin.0.4) = "0.38942"
   , 1.0 >1 2.0 = LT
   ,-1.9 >1-3.0 = GT
   , 3.00 >1 3.000 = EQ
   , abs.-1.9 = 1.9
   , min(-2.1,-2.0) =-2.1
   , max(-2.1,-2.0) =-2.0
-  , print(5, decpart.2.234) = "0.23400"
-  , print(5, 0.0001) = "0.00010"
-  , print(5, tan(pi / 4.0)) = "1.00000"
-  , print(5, arcsin.sin.0.5) = "0.50000"
-  , print(5, arccos.cos.0.5) = "0.50000"
-  , print(
+  , %(5, decpart.2.234) = "0.23400"
+  , %(5, 0.0001) = "0.00010"
+  , %(5, tan(pi / 4.0)) = "1.00000"
+  , %(5, arcsin.sin.0.5) = "0.50000"
+  , %(5, arccos.cos.0.5) = "0.50000"
+  , %(
    3
    , for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e,
    acc
   )
   = "38.000"
-  , "23.45000-18.45000" = print(5, 23.45) + print(5, 5.0 - 23.45)
-  ,-2^4 =-16
-  , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
+  , "23.45000-18.45000" = %(5, 23.45) + %(5, 5.0 - 23.45)
+  ,-2 sup 4 =-16
+  , sort>alpha."function segment s seq int i seq word addcomma toword merge C 1 toword"
   = "1 C addcomma function i int merge s segment seq seq toword toword word"
-  , for acc = "", @e ∈ alphasort.["z b", "a b", "a a", "test 23", "test 20"]
-  do acc + @e + "/",
-  acc >> 1 = "a a / a b / test 20 / test 23 / z b"
+  , let data = ["test", "z b", "a b", "a a", "test 23", "test 20"],
+  %("/", sort>alpha.data) >> 1 = "a a / a b / test / test 20 / test 23 / z b"
  ]
  , "real"
 )
@@ -88,7 +97,7 @@ let y =
   , isprefix("out of bounds", message.process.testout.0)
   , isprefix("out of bounds", message.process.testout.-10)
   , isprefix("out of bounds", message.process.testout.4)
-  , isprefix("invalid digit", message.process.toint.1#"0A")
+  , isprefix("invalid digit", message.process.toint."0A" sub 1)
   , message.process.testout.1 = "normal exit"
   , aborted.process.testout.5
   , not.aborted.process.testout.2
@@ -96,7 +105,7 @@ let y =
   , {10} result.process.pi = pi
   , result.process.intpart.3.1 = 3
   , result.process.square.4 = 16.0
-  , result.process.print(3, 3.0) = "3.000"
+  , result.process.%(3, 3.0) = "3.000"
   , result.process(3 * 4.0) = 12.0
   , result.process(12.0 / 3) = 4.0
   , result.process.testout.3 = "three"
@@ -162,11 +171,11 @@ let mean = toreal.sum / 256.0
 for sqs = 0.0, x ∈ acc
 do
  let cnt = toreal(x / 256),
- sqs + (cnt - mean)^2
+ sqs + (cnt - mean) sup 2
 let stddev = sqrt(sqs / 256.0),
 (if mean / stddev > 5.4 then "PASS" else "FAIL")
- + print(3, toreal.samplesize * 16.0 / 256.0)
+ + %(3, toreal.samplesize * 16.0 / 256.0)
  + "mean"
- + print(3, mean)
+ + %(3, mean)
  + "std dev"
- + print(3, stddev) 
+ + %(3, stddev) 

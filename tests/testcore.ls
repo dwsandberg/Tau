@@ -1,5 +1,7 @@
 Module testcore
 
+precedence > for >1 >2 >3 >4 >alpha
+
 use test11a
 
 use testopt
@@ -17,7 +19,7 @@ Function testall(input:seq.file, noseq:boolean) seq.word
 testcore.noseq
  + test11a.input
  + if isempty.input then "no opt test file specified"
-else if ext.fn.1#input ∈ "ls" then testopt.input
+else if ext.fn.input sub 1 ∈ "ls" then testopt.input
 else ""
 
 use bug7
@@ -51,7 +53,7 @@ use timestamp
 function checkhash seq.word
 if for
  l = empty:seq.int
- , w ∈ "Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].:^(dq) _^.384 52 3 [2 4 5 a b c d e 1 k+= {} 1 2∪ this is test three four five test11 0 SPACE 2∪ code glyph 48 49 50 51 53 54 6"
+ , w ∈ "Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].::(dq) _ ^.384 52 3 [2 4 5 a b c d e 1 k+= {} 1 2∪ this is test three four five test11 0 SPACE 2∪ code glyph 48 49 50 51 53 54 6"
 do l + hash.decodeword.w,
 l
 = [
@@ -155,7 +157,7 @@ if [
 = [2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
 ∧ textformat."2023-7-5.10:8:7" = textformat.print.ts
 ∧ dayofyear.ts = 186
-∧ asseconds.totimestamp.212555268487 = 212555268487 then "PASS timestamp"
+∧ seconds.timestamp.212555268487 = 212555268487 then "PASS timestamp"
 else "FAIL timestamp"
 
 use UTF8

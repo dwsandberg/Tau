@@ -88,7 +88,7 @@ in a comment of a function that meets the following conditions:
   Is a  valid function 
  /br Define with Function
  /br Has parameter types of seq.word ,seq.file, or boolean. 
- /br Has a return type of seq.word or seq.file.
+ /br Has a return type of seq.word , seq.byte, seq.UTF8, or  seq.file.
  /br the word COMMAND is in comment immediately following the return type.
 *>
 
@@ -110,27 +110,26 @@ seq.word is given an empty value. So the following will all give the same result
   /br tau?  %:full  *>
 
 If a value is supplied for cmd, only documentation for that command is given. 
-   Since cmd is both the the first argument  given and the first argumentin the defining procedure  ,  the cmd can be omitted. Hence the following will give the same result:
+   Since cmd is both   the first argument  given and the first argument in the defining procedure  ,  the cmd can be omitted. Hence the following will give the same result: 
 <* block 
-tau? cmd: usegraph %: full 
+/br tau? cmd: usegraph %: full 
 /br tau? usegraph %: full 
 *>
 
- For parameters of boolean type the value is false if the parameter is omitted or if the value  /em false.  Any other value for a boolean parameter
- is interpreted as /em true.  
+ For boolean parameters, the value is false if the parameter is omitted or if the value is  /em false.  All other values for a boolean parameter
+ are interpreted as /em true.  
  
-Parameters of type seq.file  also are replaced with a string.
-The string   is processed as filenames and the file from the filing system is fetched.
-Multiple formats are allowed for file names.  
- <* block  directory/file1.ls directory/file2.ls directory/file3.ls  *>
-The directory does not need to be specified  for every file:
-<* block  + directory file1.ls file2.ls file3.ls *>
+For parameters of type seq.file in the defining procedure,
+The string in the command   is processed as filenames and the file from the filing system is fetched. 
+Multiple formats are allowed for file names. For example the usegraph command takes multiple file names as the argument. <* block usegraph  core/standard.ls core/word.ls core/sort.ls *>
+ The directory does not need to be specified  for every file:
+<* block  + core standard.ls word.ls sort.ls *>
 The file extension also does not need to be repeated:
-<* block  + directory file1.ls file2  file3  *>
+<* block  + core standard.ls word  sort   *>
 The file extension can be before the first file:
-<* block  + directory.ls file1  file2  file3  *>
-All the above forms are specifiy the same files. If There is   no directory use:
-<* block  +.ls file1  file2  file3  *>
+<* block  + directory.ls standard  word  sort  *>
+ If There is   no directory use:
+<* block  +.ls standard  word  sort  *>
 The following three string all represent the same file
 <* block  directory/directory/file1.ls 
 /br +directory directory/file1.ls
@@ -169,7 +168,7 @@ the fourth word is the name of the command in the executable.  The command to re
 the command to invoke the Tau complier that produces an executable would be
 <* block define makelib  taubc makebitcode *>  
 
-The definition of user defined command must occur before it's use.  The paragraphs can be reorder as long as   this constraint is maintained. 
+The definition of user defined command must occur before it's use.  The paragraphs can be reordered as long as   this constraint is maintained. 
 
 
 An alternate form for the makelib command in the hello.bld file is 

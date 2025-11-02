@@ -1,10 +1,14 @@
 Module test11
 
+use bits
+
 use seq.boolean
+
+use seq.byte
 
 use checking
 
-use otherseq.int
+use seq1.int
 
 use set.int
 
@@ -16,7 +20,7 @@ use standard
 
 use textio
 
-use otherseq.word
+use seq1.word
 
 function t001 boolean 0 - 4 = 1 - 2 - 3
 
@@ -39,12 +43,9 @@ test cat of sequences
 
 function t007 boolean [2, 3] = [2] + [3]
 
-function ff(seed:int, x:int) int
-if x = 1 then pseudorandom.seed else ff(pseudorandom.seed, x - 1)
-
 function t008 boolean
 {testing random number generator}
-1043618065 = ff(1, 10000)
+-4275271656009670494 = randomseq(1, 10000) sub 10000
 
 function gen(n:int) seq.int if n = 1 then [n] else gen(n - 1) + [n * n]
 
@@ -88,7 +89,7 @@ function t019 boolean 1 = findindex([3], 3)
 
 function t020 boolean 5 = findindex([2, 4, 3, 8, 1, 3] + constantseq(4, 1), 1)
 
-function t021 boolean 28 = 7#constantseq(13, 5) + n.constantseq(23, 3)
+function t021 boolean 28 = constantseq(13, 5) sub 7 + n.constantseq(23, 3)
 
 / function t022 boolean [3, 6] = all (3, [2, 4, 3, 8, 1, 3])
 
@@ -124,13 +125,13 @@ for acc = true, e ∈ [23, 4, 5, 255, 7, 2, 255]
 do acc ∨ isbyte.e,
 acc
 
-function t033 boolean 6 = toint(if true then 1#"3" else 1#"5") + 3
+function t033 boolean 6 = toint(if true then "3" sub 1 else "5" sub 1) + 3
 
 function t034 boolean 3464 = 3456 + (if true then 3 else 1) + 5
 
-function print(a:seq.int) seq.word "[^(%(",", a) >> 1)]"
+function %comma(a:seq.int) seq.word "[:(%(",", a) >> 1)]"
 
-function t035 boolean "[2, 3, 4, 5]" = print.[2, 3, 4, 5]
+function t035 boolean "[2, 3, 4, 5]" = %comma.[2, 3, 4, 5]
 
 function t036 boolean
 10
@@ -152,9 +153,10 @@ function t039 boolean
 let a = 6 * 6,
 a + a = 72
 
-function t040 boolean "a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, 1#"k")
+function t040 boolean
+"a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, "k" sub 1)
 
-function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, 1#"k")
+function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, "k" sub 1)
 
 function t042 boolean
 97
@@ -167,23 +169,18 @@ function t043 boolean
 do acc + [toword.e, encodeword.[char.e]],
 acc
 
-function t044 boolean
-dq + "#()+,-.. :: = []" + "^" + "{}" = standalonechars
-
-use bits
-
-use seq.byte
+function t044 boolean dq + "()+,-.. :: = [] {}" = standalonechars
 
 function standalonechars seq.word
 for acc0 = [tobyte.70], i ∈ arithseq(127 - 32, 1, 33)
 do acc0 + tobyte.i + tobyte.70 + tobyte.i + tobyte.32 + tobyte.70
-for acc1 = "F", w ∈ 1#breakparagraph.acc0
-do if w ∈ "F" ∨ n.decodeword.w > 2 ∨ w = 1^acc1 then acc1 else acc1 + w,
+for acc1 = "F", w ∈ (breakparagraph.acc0) sub 1
+do if w ∈ "F" ∨ n.decodeword.w > 2 ∨ w = last.acc1 then acc1 else acc1 + w,
 acc1 << 1
 
 function t045 boolean
 {testing UNICODE to word conversion and no-break space in integer 8746}
-decodeword.1#"1 2∪" = [char.49, char.160, char.50, char.87 46]
+decodeword."1 2∪" sub 1 = [char.49, char.160, char.50, char.87 46]
 
 function testset set.int asset.[2, 5, 6, 9, 12, 15, 35, 36]
 
@@ -194,7 +191,7 @@ toseq.findelement2(testset, 36) = [35, 36] ∧ toseq.findelement2(testset, 15) =
 
 type Tpair is a:int, b:seq.word
 
-function debug234(s:seq.int) boolean 1#s = 1#asset.s
+function debug234(s:seq.int) boolean s sub 1 = (asset.s) sub 1
 
 Function test11 seq.word
 let descard = debug234.[1, 2, 3]

@@ -10,9 +10,9 @@ use set.mytype
 
 use standard
 
-use symbol
-
 use set.symbol
+
+use symbol
 
 use seq.typeentry
 
@@ -26,11 +26,21 @@ type typeentry is totypeseq:seq.mytype
 
 type typedict is totypedict:set.typeentry
 
+Function typepacked2 mytype typeref."packed2 tausupport *"
+
+Function typepacked3 mytype typeref."packed3 tausupport *"
+
+Function typepacked4 mytype typeref."packed4 tausupport *"
+
+Function typepacked5 mytype typeref."packed5 tausupport *"
+
+Function typepacked6 mytype typeref."packed6 tausupport *"
+
 Function emptytypedict typedict typedict.empty:set.typeentry
 
-function >1(a:typeentry, b:typeentry) ordering 1#totypeseq.a >1 1#totypeseq.b
+function >1(a:typeentry, b:typeentry) ordering (totypeseq.a) sub 1 >1 (totypeseq.b) sub 1
 
-function type(a:typeentry) mytype 1#totypeseq.a
+function type(a:typeentry) mytype (totypeseq.a) sub 1
 
 function flatflds(a:typeentry) seq.mytype totypeseq.a << 1
 
@@ -57,15 +67,15 @@ else
     if iscore4.subfld ∨ subfld = typeT ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
    assert n.totypedict.alltypes < n.totypedict.acc report
-    "PROBLEM^(type) flat:^(for txt = "", g ∈ flatflds do txt + %.g,
-    txt + "/br")^(acc)",
+    "PROBLEM:(type) flat::(for txt = "", g ∈ flatflds do txt + %.g,
+    txt + "/br"):(acc)",
    addtype(acc, type)
 
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype) typedict
 for typesused = empty:seq.mytype, sym ∈ toseq.syms
 do typesused + typesused.sym
 for typesyms = empty:set.typeentry, tp ∈ types
-do typesyms + typeentry(1#tp, tp << 1)
+do typesyms + typeentry(tp sub 1, tp << 1)
 for acc3 = toseq.typesyms, q ∈ toseq.asset.typesused
 do
  let z = typeentry(q, empty:seq.mytype),
@@ -83,17 +93,14 @@ acc
 function resolvetypesize(prg1:seq.typeentry) typedict
 let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5 report
- "recursive type problem:
- /br^(for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + "/br",
+ "recursive type problem:/br:(for acc10 = "", h ∈ unknown.bx5
+ do acc10 + "type:(type.h) is:(%(",", flatflds.h))" >> 1 + "/br",
  acc10)"
 for acc = emptytypedict, d ∈ toseq.known.bx5
 do add(acc, type.d, flatflds.d),
 acc
 
-function print2(h:typeentry) seq.word
-for acc = "type^(type.h) is", z ∈ flatflds.h
-do acc + %.z + ",",
-acc >> 1
+use seq1.mytype
 
 function checkflat(types:set.typeentry, unknown:seq.typeentry) checkflatresult2
 for known = types, notflat = empty:seq.typeentry, p ∈ unknown
@@ -124,7 +131,7 @@ function expandflat(type:mytype, flatflds:seq.mytype, types:set.typeentry) seq.m
 if isempty.flatflds then
  let f3 = lookup(types, typeentry(abstracttype.type, empty:seq.mytype)),
  if isempty.f3 then flatflds
- else expandflat(type, replaceT(parameter.type, flatflds.1#f3), types)
+ else expandflat(type, replaceT(parameter.type, flatflds.f3 sub 1), types)
 else
  for acc = empty:seq.mytype, unchanged = true, t ∈ flatflds
  do
@@ -137,8 +144,8 @@ else
     else
      let f3 = lookup(types, typeentry(t2, empty:seq.mytype)),
      if isempty.f3 then next(acc + t, unchanged)
-     else next(acc + replaceT(parameter.t, flatflds.1#f3), false)
-   else next(acc + flatflds.1#f, false),
+     else next(acc + replaceT(parameter.t, flatflds.f3 sub 1), false)
+   else next(acc + flatflds.f sub 1, false),
  if unchanged then flatflds else expandflat(type, acc, types)
 
 function replaceT(with:mytype, typs:seq.mytype) seq.mytype
@@ -163,7 +170,7 @@ typedict(totypedict.alltypes + typeentry(t, flatflds))
 
 Function flatflds(alltypes:typedict, type:mytype) seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype)),
-if isempty.t then empty:seq.mytype else flatflds.1#t
+if isempty.t then empty:seq.mytype else flatflds.t sub 1
 
 Function subdict(all:typedict, t:mytype) typedict
 let sub = typedict.lookup(totypedict.all, typeentry(t, empty:seq.mytype)),
@@ -185,14 +192,22 @@ do
  if isempty.x ∧ isseq.t then new + typeentry(t, [t]) else new ∪ x,
 if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new))
 
+Function basetype(a:seq.mytype, alltypes:typedict) seq.mytype
+for acc = empty:seq.mytype, e ∈ a
+do acc + basetype(e, alltypes),
+acc
+
 Function basetype(typ:mytype, alltypes:typedict) mytype
 if isseq.typ then
  let para = parameter.typ,
  if para = typebyte ∨ iscore4.typ ∨ typ = typeT then typ
- else seqof.coretype(parameter.typ, alltypes, packedtypes)
-else coretype(typ, alltypes, empty:seq.mytype)
+ else seqof.coretype(parameter.typ, alltypes, false)
+else coretype(typ, alltypes, true)
 
-function coretype(typ:mytype, alltypes:typedict, maxsize:seq.mytype) mytype
+function coretype(typ:mytype, alltypes:typedict, nopacked:boolean) mytype
+let maxsize =
+ if nopacked then empty:seq.mytype
+ else [typepacked2, typepacked3, typepacked4, typepacked5, typepacked6],
 if iscore4.typ ∨ typ = typeT then typ
 else if isencoding.typ then typeint
 else if isseq.typ then typeptr
@@ -205,8 +220,8 @@ else
    j
   else flatflds1,
  let fldsize = n.flatflds,
- if fldsize = 1 then coretype(1#flatflds, alltypes, empty:seq.mytype)
+ if fldsize = 1 then coretype(flatflds sub 1, alltypes, nopacked)
  else if fldsize = 0 then typ
  else if fldsize - 1 > n.maxsize then typeptr
- else (fldsize - 1)#maxsize
+ else maxsize sub (fldsize - 1)
  

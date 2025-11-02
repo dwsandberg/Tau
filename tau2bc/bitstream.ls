@@ -2,7 +2,7 @@ Module bitstream
 
 use bits
 
-use otherseq.bits
+use seq1.bits
 
 use standard
 
@@ -41,18 +41,18 @@ else
  acc
 
 function firstword(x:bitstream) bits
-if isempty.fullwords.x then endpart.x else 1#fullwords.x
+if isempty.fullwords.x then endpart.x else (fullwords.x) sub 1
 
 function ithword(x:bitstream, i:int) bits
-if i > n.fullwords.x then endpart.x else i#fullwords.x
+if i > n.fullwords.x then endpart.x else (fullwords.x) sub i
 
 Function bitstream(length:int, val:bits) bitstream
-bitstream(length, bits(2^length - 1) ∧ val, empty:seq.bits)
+bitstream(length, bits(2 sup length - 1) ∧ val, empty:seq.bits)
 
 Function index(s:bitstream, i:int, sizebits:int) bits
 endpart.subseq(s, (i - 1) * sizebits + 1, i * sizebits)
 
-function #(i:int, s:bitstream) byte tobyte.toint.index(s, i, 8)
+function sub(s:bitstream, i:int) byte tobyte.toint.index(s, i, 8)
 
 Function subseq(s:bitstream, start:int, finish:int) bitstream
 let len = finish - start + 1
@@ -106,7 +106,7 @@ else
  else
   let allwords = shiftleft(2, firstword.b >> steal, fullwords.b + endpart.b, partbitsa, firstpart),
   if partbitsb > steal ∨ partbitsb = 0 then bitstream(length.a + length.b, endpart.b >> steal, allwords)
-  else bitstream(length.a + length.b, 1^allwords, allwords >> 1)
+  else bitstream(length.a + length.b, allwords sub n.allwords, allwords >> 1)
 
 Function add(a:bitstream, b:bits, nobits:int) bitstream
 let partbitsa = toint(bits.length.a ∧ bits(64 - 1))
@@ -135,7 +135,7 @@ i:int
 ) seq.bits
 if i > n.allwords then result
 else
- let next = i#allwords,
+ let next = allwords sub i,
  shiftleft(
   i + 1
   , next >> (64 - shiftleft)

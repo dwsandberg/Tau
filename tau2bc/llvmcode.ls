@@ -2,7 +2,13 @@ Module llvmcode
 
 use UTF8
 
-use otherseq.addrsym
+use encoding.addrsym
+
+use seq1.addrsym
+
+use seq.seq.addrsym
+
+use sort.addrsym
 
 use bits
 
@@ -30,7 +36,7 @@ use seq.mytype
 
 use standard
 
-use symbol2
+use symbol1
 
 use tausupport
 
@@ -57,15 +63,9 @@ function >1(a:addrsym, b:addrsym) ordering addr.a >1 addr.b
 
 builtin addresssymbols seq.seq.addrsym
 
-use encoding.addrsym
-
 function =(a:addrsym, b:addrsym) boolean sym.a = sym.b
 
 function hash(a:addrsym) int hash.sym.a
-
-use symbol
-
-use seq.seq.addrsym
 
 function lookup(sym:symbol) int
 let data = encodingdata:addrsym
@@ -77,7 +77,7 @@ do
   discard,
  0
 let t = findencode.addrsym(0, sym),
-if isempty.t then 0 else addr.1#t
+if isempty.t then 0 else addr.t sub 1
 
 Function bcwordsep char char.255
 
@@ -94,7 +94,7 @@ do
  let i = binarysearch(t, addrsym(r, Lit.1)),
  txt
   + %.r
-  + (if between(-i - 1, 1, n.t) then %.sym.(-i - 1)#t else "")
+  + (if between(-i - 1, 1, n.t) then %.sym.t sub (-i - 1) else "")
   + "/br",
 txt
 
@@ -117,7 +117,7 @@ do
    for UTF8msg = emptyUTF8, w ∈ "500 Error opening file"
    do UTF8msg + decodeword.w + char.32,
    file(fn, empty:seq.seq.byte, UTF8msg)
-  else file(fn, [result.a + body2.a], emptyUTF8 + decodeword.1#"200"),
+  else file(fn, [result.a + body2.a], emptyUTF8 + decodeword."200" sub 1),
  acc + acc1
 let err = errors.acc,
 acc

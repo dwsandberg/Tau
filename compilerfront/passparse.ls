@@ -10,15 +10,17 @@ use set.passsymbols
 
 use standard
 
-use symbol
+use arc.symbol
+
+use graph.arc.symbol
 
 use set.arc.symbol
-
-use graph.symbol
 
 use seq.symbol
 
 use set.symbol
+
+use symbol1
 
 use symboldict
 
@@ -30,17 +32,15 @@ do
  let sym = sym.p
  for arcs = outer, codesym ∈ code.p
  do
-  if isspecial.codesym ∨ not.isAbstract.module.codesym ∨ sym = codesym ∨ isBuiltin.codesym then arcs
-  else if inModFor.codesym then
-   if name.codesym ∈ "name for" then arcs
-   else arcs + arc(sym, indexsymbol.resulttype.codesym)
-  else arcs + arc(sym, codesym),
+  if not.isAbstract.module.codesym ∨ sym = codesym then arcs
+  else if kind.codesym ∈ [kother, kcompoundname, kcat, kidx, kmakereal, kmember, kfref] then arcs + arc(sym, codesym)
+  else arcs,
  arcs,
 outer
 
 function removesinks(
 sinkstokeep:set.symbol
-, g:graph.symbol
+, g:graph.arc.symbol
 , toprocess:seq.symbol
 ) seq.arc.symbol
 {removes sinks that are not unbound and parameter of module is typeT
@@ -69,14 +69,14 @@ allmods:set.passsymbols
 , requireUnbound:set.symdef
 ) seq.symdef
 {OPTION PROFILE}
-let mode = if textmode then 1#"text" else 1#"body"
+let mode = if textmode then "text" sub 1 else "body" sub 1
 for prg = empty:seq.symdef, m ∈ toseq.modlist
 do
  let partdict = formsymboldict(allmods, m, requireUnbound, mode)
  for acc = empty:seq.symdef, p ∈ srclink.m
  do
-  let symsrc = (paragraphno.p)#src,
-  if 1#symsrc ∈ "Builtin builtin" then
+  let symsrc = src sub paragraphno.p,
+  if symsrc sub 1 ∈ "Builtin builtin" then
    if isSimple.module.sym.p then
     acc
      + symdef4(sym.p, empty:seq.symbol, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
@@ -90,13 +90,13 @@ do
      , code
       + [
       if issimplename.sym then symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
-      else symbol4(builtinmod.typeT, wordname.sym, 1#nametype.sym, paratypes.sym, resulttype.sym)
+      else symbol4(builtinmod.typeT, wordname.sym, (nametype.sym) sub 1, paratypes.sym, resulttype.sym)
      ]
      , 0
     )
-  else if 1#symsrc ∈ "Export" then acc
+  else if symsrc sub 1 ∈ "Export" then acc
   else
-   assert 1#symsrc ∈ "Function function" report symsrc
+   assert symsrc sub 1 ∈ "Function function" report symsrc
    let dict = symboldict(syms.partdict, req.partdict),
    let code = parser(symsrc, dict, typedict.m, textmode),
    acc + symdef4(sym.p, code, paragraphno.p, commentoptions(symsrc, nopara.sym.p)),
@@ -112,32 +112,39 @@ for prg = prgin, m ∈ toseq.modlist
 do
  for acc = prg, p ∈ srclink.m
  do
-  let symsrc = (paragraphno.p)#src,
-  if 1#symsrc ∈ "Export" then
+  let symsrc = src sub paragraphno.p,
+  if symsrc sub 1 ∈ "Export" then
    let sd = getSymdef(acc, sym.p),
    if isempty.sd then acc
    else
     symdef4(
      sym.p
-     , code.1#sd
-     , paragraphno.1#sd
-     , commentoptions(symsrc, nopara.sym.p) + getOptions.1#sd
+     , code.sd sub 1
+     , paragraphno.sd sub 1
+     , commentoptions(symsrc, nopara.sym.p) + options.sd sub 1
     )
     ∪ acc
   else acc,
  acc,
 prg
 
-function commentoptions(s:seq.word, nopara:int) seq.word
-let s0 = s << (if nopara = 0 then 0 else findindex(s, 1#")"))
-let s1 = s0 << findindex(s0, 1#"{"),
-if isempty.s1 ∨ 1#s1 ∉ "OPTION COMMAND" then ""
+function commentoptions(s:seq.word, nopara:int) symdefOption
+let s0 = s << (if nopara = 0 then 0 else findindex(s, ")" sub 1))
+let s1 = s0 << findindex(s0, "{" sub 1),
+if isempty.s1 ∨ s1 sub 1 ∉ "OPTION COMMAND" then NOOPTIONS
 else
- for acc = "", w ∈ s1
+ for acc = NOOPTIONS, w ∈ s1
  while w
  ∉ "{}
  /br"
- do if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE COMMAND" then acc + w else acc,
+ do
+  if w ∈ "PROFILE" then acc + PROFILE + NOINLINE
+  else if w ∈ "STATE" then acc + STATE
+  else if w ∈ "COMPILETIME" then acc + COMPILETIME
+  else if w ∈ "NOINLINE" then acc + NOINLINE
+  else if w ∈ "INLINE" then acc + INLINE
+  else if w ∈ "COMMAND" then acc + COMMAND
+  else acc,
  acc
 
 Function buildrequires(prg:seq.symdef) set.symdef
@@ -146,8 +153,8 @@ let g3 = newgraph.abstractarcs.prg
 /br 1:is unbound and module parameter is T
 /br 2:is not unbound and module parameter is T
 /br 3:module parameter is not T
-/br examples:otherseq.T:= (T, T) boolean ; otherseq.T:step (arithmeticseq.T) T ;
-/br otherseq.sparseele.T:binarysearch (seq.sparseele.T)}
+/br examples:seq1.T:= (T, T) boolean ; seq1.T:step (arithmeticseq.T) T ;
+/br seq1.sparseele.T:binarysearch (seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 {change many-to-one relation defined by arcs in g4 into format of set.symdef}

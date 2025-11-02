@@ -2,7 +2,7 @@ Module bitcodesupport
 
 use UTF8
 
-use otherseq.int
+use seq1.int
 
 use seq.seq.int
 
@@ -36,15 +36,15 @@ Function printtype(s:seq.seq.int, i:int, llvm:boolean) seq.word
 if i = 1 then "conststype"
 else
  {if i = 2 then" profiletype" else}
- let a = (i + 2)#s
- let tp = typeop.1#a,
- if tp = INTEGER then [merge("i" + toword.2#a)]
- else if tp = ARRAY then "array (" + toword.2#a + "," + printtype(s, 3#a, llvm) + ")"
+ let a = s sub (i + 2)
+ let tp = typeop.a sub 1,
+ if tp = INTEGER then [merge("i" + toword.a sub 2)]
+ else if tp = ARRAY then "array (" + toword.a sub 2 + "," + printtype(s, a sub 3, llvm) + ")"
  else if tp = POINTER then
-  if llvm then printtype(s, 2#a, llvm) + "*"
-  else "ptr.^(printtype(s, 2#a, llvm))"
+  if llvm then printtype(s, a sub 2, llvm) + "*"
+  else "ptr.:(printtype(s, a sub 2, llvm))"
  else if tp = FUNCTION then
-  "function.[^(for acc = "", @e ∈ subseq(a, 3, n.a)
+  "function.[:(for acc = "", @e ∈ subseq(a, 3, n.a)
   do acc + printtype(s, @e, llvm) + ",",
   acc >> 1)]"
  else if tp = TVOID then "VOID"
@@ -66,22 +66,22 @@ acc
 
 Function number(s:seq.seq.word) seq.word
 for txt = "", label = 0, p ∈ s
-do next(txt + "{^(label)}^(p) /br,", label + 1),
+do next(txt + "{:(label)}:(p) /br,", label + 1),
 txt >> 2
 
 Function printrecord(id:blockop, a:seq.int) seq.word
-if id = VALUESYMTABLE then "function" + encodeword.tocharseq.subseq(a, 3, n.a) + "int" + toword.2#a
-else if 1#a =-1 then "[-1,^(decode.blockop.2#a),^(%(",", subseq(a, 2, n.a)) >> 1)]"
-else if 1#a =-2 then printabbr.a
-else if id = INFOBLOCK ∧ n.a = 2 ∧ 1#a = SETBID then "[SETBID,^(decode.blockop.2#a)]"
+if id = VALUESYMTABLE then "function" + encodeword.tocharseq.subseq(a, 3, n.a) + "int" + toword.a sub 2
+else if a sub 1 =-1 then "[-1,:(decode.blockop.a sub 2),:(%(",", subseq(a, 2, n.a)) >> 1)]"
+else if a sub 1 =-2 then printabbr.a
+else if id = INFOBLOCK ∧ n.a = 2 ∧ a sub 1 = SETBID then "[SETBID,:(decode.blockop.a sub 2)]"
 else
- let code = 1#a
+ let code = a sub 1
  let recordtype =
   if id = MODULE then decode.moduleop.code
   else if id = TYPES then decode.typeop.code
   else if id = FUNCTIONBLK then decode.instop.code
   else if id = CONSTANTS then decode.constop.code
   else [toword.code],
- if n.a = 1 then "[toint.^(recordtype)]"
- else "[toint.^(recordtype),^(%(",", subseq(a, 2, n.a)) >> 1)]"
+ if n.a = 1 then "[toint.:(recordtype)]"
+ else "[toint.:(recordtype),:(%(",", subseq(a, 2, n.a)) >> 1)]"
  

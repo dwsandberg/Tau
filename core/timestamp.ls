@@ -8,9 +8,9 @@ use seq.byte
 
 use standard
 
-Export type:timestamp
+use kernal
 
-type timestamp is toint:int
+Export type:timestamp
 
 function subseq(a:UTF8, i:int, j:int) UTF8 UTF8.subseq(toseqbyte.a, i, j)
 
@@ -26,8 +26,8 @@ let amonth = if month > 2 then month else month + 12,
  + 1461 * ayear / 4
 
 Function dayofyear(t:timestamp) int
-toint.t / (24 * 60 * 60)
- - tojulian(1#fromJuliantointseq(toint.t / (24 * 60 * 60)), 1, 1)
+seconds.t / (24 * 60 * 60)
+ - tojulian(fromJuliantointseq(seconds.t / (24 * 60 * 60)) sub 1, 1, 1)
  + 1
 
 Function fromJuliantointseq(dt:int) seq.int
@@ -62,33 +62,30 @@ timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second
 
 Function decompose(ts:timestamp) seq.int
 {returns sequence of year, month, day, hour, minute, second}
-let t = asseconds.ts
-let a = t mod (24 * 60 * 60)
+let a = seconds.ts mod (24 * 60 * 60)
 let seconds = a mod 60
 let minutes = a / 60 mod 60
 let hours = a / 3600,
-fromJuliantointseq(t / (24 * 60 * 60)) + [hours, minutes, seconds]
+fromJuliantointseq(seconds.ts / (24 * 60 * 60)) + [hours, minutes, seconds]
 
 Function print(ts:timestamp) seq.word
 let d = decompose.ts,
 [
  merge.[
-  toword.1#d
-  , 1#"-"
-  , toword.2#d
-  , 1#"-"
-  , toword.3#d
-  , 1#"."
-  , toword.4#d
-  , 1#":"
-  , toword.5#d
-  , 1#":"
-  , toword.6#d
+  toword.d sub 1
+  , "-" sub 1
+  , toword.d sub 2
+  , "-" sub 1
+  , toword.d sub 3
+  , "." sub 1
+  , toword.d sub 4
+  , ":" sub 1
+  , toword.d sub 5
+  , ":" sub 1
+  , toword.d sub 6
  ]
 ]
 
-Builtin currenttime timestamp {OPTION STATE}
+Export seconds(t:timestamp) int
 
-Function asseconds(t:timestamp) int toint.t
-
-Function totimestamp(seconds:int) timestamp timestamp.seconds 
+Export timestamp(seconds:int) timestamp 

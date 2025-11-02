@@ -6,13 +6,11 @@ use standard
 
 use compilerfrontT.callconfig
 
-use symbol2
+use symbol1
 
 Export compilerFront:callconfig(seq.word, seq.file, seq.word, seq.word) midpoint
 
-/use standard
 
-/use symbol2
 
 Export type:callconfig
 

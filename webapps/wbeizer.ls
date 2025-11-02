@@ -14,29 +14,29 @@ use webIO
 Function draw4 real
 {This keeps then paths in sync with the location of the control points}
 let c1 = getattributes("c1", "cx cy")
-let no = toint.1#getattributes("grp1", "data-segments")
-for lines = "M^(c1)", curve = "M^(c1)", i ∈ arithseq(no, 2, 2)
+let no = toint.getattributes("grp1", "data-segments") sub 1
+for lines = "M :(c1)", curve = "M :(c1)", i ∈ arithseq(no, 2, 2)
 do
- let c2 = getattributes([merge.[1#"c", toword.i]], "cx cy")
- let c3 = getattributes([merge.[1#"c", toword(i + 1)]], "cx cy"),
+ let c2 = getattributes([merge.["c" sub 1, toword.i]], "cx cy")
+ let c3 = getattributes([merge.["c" sub 1, toword(i + 1)]], "cx cy"),
  next(lines + "L" + c2 + "L" + c3, curve + "Q" + c2 + c3),
 setAttribute("lines", "d", lines) + setAttribute("curve", "d", curve)
 
 function split(c:seq.word) seq.seq.word
-if 2#c = 1#"." then [subseq(c, 1, 3), c << 3] else [[1#c], c << 1]
+if c sub 2 = "." sub 1 then [subseq(c, 1, 3), c << 3] else [[c sub 1], c << 1]
 
 function addsegment(thisid:word) real
-let no = toint.1#getattributes("grp1", "data-segments")
+let no = toint.getattributes("grp1", "data-segments") sub 1
 let new =
  for txt = empty:seq.seq.word, i ∈ arithseq(no * 2 + 1, 1, 1)
  do
   let id = merge("c" + toword.i)
   let c = getattributes([id], "cx cy"),
-   txt
-    + 
-    if thisid = id then
-    let t = toint.1#c, [c, [toword(t + 1)] + c << 1, [toword(t + 2)] + c << 1]
-    else [c],
+  txt
+   + if thisid = id then
+   let t = toint.c sub 1,
+   [c, [toword(t + 1)] + c << 1, [toword(t + 2)] + c << 1]
+  else [c],
  txt
 let svg =
  for svg = "", i = 1, c ∈ new
@@ -44,11 +44,11 @@ let svg =
   let d = split.c,
   next(
    svg
-    + "<circle id =^(dq.[merge("c" + toword.i)])^(sp) class =^(dq."draggable")^(sp)"
-    + "fill =^(dq."blue")^(sp)"
-    + "cx =^(dq.1#d)^(sp)"
-    + "cy =^(dq.2#d)^(sp)"
-    + "r =^(dq.".3")"
+    + "<circle id = :(dq.[merge("c" + toword.i)]) :(sp) class = :(dq."draggable") :(sp)"
+    + "fill = :(dq."blue") :(sp)"
+    + "cx = :(dq.d sub 1) :(sp)"
+    + "cy = :(dq.d sub 2) :(sp)"
+    + "r = :(dq.".3")"
     + "/>"
    , i + 1
   ),
@@ -59,9 +59,9 @@ let t = setAttribute("grp1", "data-segments", [toword(no + 1)]),
 
 function sp seq.word [encodeword.[char.32]]
 
-use otherseq.seq.word
+use seq1.seq.word
 
-Function myselect(id:jsbytes) real addsegment.1#towords.id
+Function myselect(id:jsbytes) real addsegment.(towords.id) sub 1
 
 Function showsvg real setElementValue("selected", getElementValue:jsbytes("svg10"))
 
@@ -79,8 +79,8 @@ let c1 = getattributes("c1", "cx cy")
 let c2 = getattributes("c2", "cx cy")
 let c3 = getattributes("c3", "cx cy")
 let c4 = getattributes("c4", "cx cy")
-let lines2 = "M^(c1) L^(c2) M^(c3) L^(c4)"
-let d2 = "M^(c1) C^(c2)^(c3)^(c4)",
+let lines2 = "M :(c1) L :(c2) M :(c3) L :(c4)"
+let d2 = "M :(c1) C :(c2) :(c3) :(c4)",
 setAttribute("lines", "d", lines2) + setAttribute("curve", "d", d2)
 
 Function Bcubic int intpart.drawcubic
@@ -97,7 +97,7 @@ use objectio.addrsym
 
 use object01
 
-use symbol2
+use symbol1
 
 use seq.addrsym
 
@@ -105,11 +105,9 @@ use bitcast.seq.addrsym
 
 Export type:addrsym
 
-Function test345 real 
+Function test345 real
 setElementValue("xx", profileresults."time") + callevent("svg10", "load")
 
-{let a = dump.decode2.vector2} let a = bitcast:seq.addrsym (inrec.vector2) {let a = inbytes:addrsym
-(vector2)} let r = for txt ="", e /in a do txt+%.addr.e+%.sym.e, txt, setElementValue (" xx"
-, r)
+{let a = dump.decode2.vector2} let a = bitcast:seq.addrsym (inrec.vector2) {let a = inbytes:addrsym (vector2)} let r = for txt ="", e ∈a do txt+%.addr.e+%.sym.e, txt, setElementValue (" xx", r)
 
 setElementValue (" xx", profileresults." time")+callevent (" svg10"," load") 

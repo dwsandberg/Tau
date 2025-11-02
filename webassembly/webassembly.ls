@@ -1,5 +1,7 @@
 Module webassembly
 
+precedence > for >1 >2 >3 >4 >alpha
+
 use UTF8
 
 use bits
@@ -12,23 +14,21 @@ use file
 
 use seq.file
 
+use seq.filename
+
 use llvmcode
+
+use pretty
 
 use standard
 
 use set.symbol
 
-use symbol2
+use symbol1
 
 use set.symdef
 
-use textio
-
 use wasmcompile
-
-use otherseq.word
-
-use otherseq.seq.word
 
 Function wasm(
 input:seq.file
@@ -50,14 +50,14 @@ let libexports =
   + (if profile then "webProfileSupport" else "")
 let rcinfo =
  compilerFront:callconfig(
-  "Library:^(libname) nojumptable" + (if profile then "profile" else "wasm")
+  "Library::(libname) nojumptable:(if profile then "profile" else "wasm")"
   , input
-  , "tausupport webIOtypes^(libexports)"
+  , "tausupport webIOtypes:(libexports)"
   , ""
  )
-let charseq = seqof.typeref."char standard *"
+let charseq = seqof.typeref."char kernal *"
 for
- syms2 = [symbol(moduleref("* encoding", charseq), "addencodings", seqof.charseq, typeint)]
+ syms2 = [symbol(moduleref("* encoding", charseq), "addencodings", [seqof.charseq], typeint)]
  , imports = empty:seq.symbol
  , m ∈ libmods.rcinfo
 do
@@ -66,34 +66,34 @@ do
  else next(syms2, imports)
 {should check for dup names on syms2}
 let scriptstart =
- for txt = "<script>^(LF)", sym ∈ syms2
+ for txt = "<script>:(LF)", sym ∈ syms2
  do
   let f =
    for args = "", i ∈ arithseq(nopara.sym, 1, 1)
-   do args + i#"a b c d e f g h i j k l m n o p q r s t u v w x y z" + ",",
+   do args + "a b c d e f g h i j k l m n o p q r s t u v w x y z" sub i + ",",
    [name.sym] + "(" + args >> 1 + ")"
   {Cannot just call reclaimspace after call to function f because f may be interpreted and return control will waiting for a callback. javascript global inprogress counts the number of callbacks we are waiting for. if inprogress is zero then it is safe to reclaim space.}
   txt
-   + "function^(f) {exports.^(f) ; if (inprogress^(merge."= =")"
-   + "0) exports.reclaimspace () ;}^(LF)",
+   + "function:(f) {exports.:(f) ; if (inprogress:(merge."= =")"
+   + "0) exports.reclaimspace () ;}:(LF)",
  txt
 let prg4 = asset.toseq.prg.rcinfo
 let initprofile0 = getSymdef(prg4, symbol(moduleref(libname + "initialize"), "initProfile", typeptr))
-let initprofile = if isempty.initprofile0 then empty:seq.symbol else [sym.1#initprofile0]
+let initprofile = if isempty.initprofile0 then empty:seq.symbol else [sym.initprofile0 sub 1]
 let wasmfiles =
  wasmcompile(
   typedict.rcinfo
   , prg4
   , toseq.asset(syms2 + initprofile)
-  , 1#tofilenames.output
+  , (tofilenames.output) sub 1
   , imports
   , info
   , initprofile
-  , 1#libname
+  , libname sub 1
  )
 let script =
  {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template.js")+toseqbyte.toUTF8." </script>" else}
- toseqbyte.textformat."<script src =^(merge.dq."/webassembly/template.js") > </script>"
+ toseqbyte.textformat."<script src =:(merge.dq."/webassembly/template.js") > </script>"
 for acc = wasmfiles, page ∈ input
 do
  if ext.fn.page ∉ "html" then acc
@@ -101,7 +101,7 @@ do
   let pagehtml = data.page,
   acc
    + file(
-   filename."+^(dirpath.fn.1#wasmfiles)^([name.fn.page]).html"
+   filename."+:(dirpath.fn.wasmfiles sub 1):([name.fn.page]).html"
    , pagehtml
     + script
     + toseqbyte.textformat(
@@ -111,10 +111,6 @@ do
   )
 let fns = tofilenames.output,
 if n.fns > 1 then acc + libsrc(rcinfo, tofilenames.output) else acc
-
-use pretty
-
-use seq.filename
 
 Function doc seq.word
 "Steps to call function f1 as a process.

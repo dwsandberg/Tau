@@ -1,6 +1,6 @@
 Module printbitcodes
 
-stats (" tools.bc")
+precedence > for >1 >2 >3 >4 >alpha
 
 use UTF8
 
@@ -14,15 +14,15 @@ use encoding.blockabbr
 
 use seq.blockabbr
 
-use otherseq.boolean
+use seq1.boolean
 
 use seq.boolean
 
-use otherseq.byte
+use seq1.byte
 
 use seq.char
 
-use otherseq.codefreq
+use seq1.codefreq
 
 use seq.codefreq
 
@@ -54,22 +54,24 @@ use standard
 
 use textio
 
-use otherseq.word
+use seq1.word
 
 use seq.word
 
-use otherseq.seq.word
+use seq1.seq.word
 
 use set.word
 
 use sparseseq.word
+
+use xxhash
 
 function getcontent(in:file) content
 let d = SBIT.data.in
 let start = if %.subseq(sbit.d, 1, 4) = "222 192 23 11" then val.getfixed(d, 65, 32) * 8 + 1 else 1
 let magic = subseq(sbit.d, 1, 4)
 assert magic = [tobyte.66, tobyte.67, tobyte.192, tobyte.222] report
- "incorrect magic^(subseq(sbit.d, 1, 4 * 101)) starting at"
+ "incorrect magic:(subseq(sbit.d, 1, 4 * 101)) starting at"
   + toword.start
   + toword.val.getfixed(d, 65, 32)
 let tX = getfixed(d, start + 32, 2)
@@ -97,7 +99,9 @@ getinfoB.m
 
 Function bitcodestats(input:seq.file) seq.word
 {COMMAND Print frequency of useage in bitcode file}
-for content = empty:seq.content, @e ∈ findsubblock(toint.FUNCTIONBLK, blocks.getcontent.1#input)
+for
+ content = empty:seq.content
+ , @e ∈ findsubblock(toint.FUNCTIONBLK, blocks.getcontent.input sub 1)
 do content + getinfoB.@e
 for insts = empty:seq.seq.int, @e ∈ content
 do insts + recs.@e
@@ -122,34 +126,34 @@ input:seq.file
 /br bitcode--includes code to generate module that can be compile with runcode.ls to regenerate the.bc file. 
 /br llvm--changes the format of the ouput to be more like the llvm.ll format. ???? not finished
 /br check--includes the orignial bc records in the output so any differences between the original and regenerated record can be detected. }
-let z = getcontent.1#input
-{let z2 = getinfo.(blocks.z)#5 @ (seperator."
+let z = getcontent.input sub 1
+{let z2 = getinfo.(blocks.z) # 5 @ (seperator."
 /br", printrecord.toint.MODULE,"", recs.z)}
 let functionblocks = findsubblock(toint.FUNCTIONBLK, blocks.z)
 let typeblock =
- if blockid.2#blocks.z = toint.TYPES then 2
+ if blockid.(blocks.z) sub 2 = toint.TYPES then 2
  else
-  assert blockid.1#blocks.z = toint.TYPES report "Expected TYPE Table as first block",
+  assert blockid.(blocks.z) sub 1 = toint.TYPES report "Expected TYPE Table as first block",
   1
 let types =
- for acc = empty:seq.seq.int, @e ∈ recs.getinfoB.typeblock#blocks.z
+ for acc = empty:seq.seq.int, @e ∈ recs.getinfoB.(blocks.z) sub typeblock
  do acc + removeabbr.@e,
  acc
 let q1 =
  for acc = empty:seq.seq.word, @e ∈ arithseq(n.types - 1, 1, 0)
  do acc + printtype(types, @e, llvm),
  acc
-assert blockid.1^blocks.z = toint.VALUESYMTABLE report "EXPECTED SYMBOL Table as last block"
-let symbols = recs.getinfoB.1^blocks.z
+assert blockid.last.blocks.z = toint.VALUESYMTABLE report "EXPECTED SYMBOL Table as last block"
+let symbols = recs.getinfoB.last.blocks.z
 let names =
- for acc = sparseseq.1#"undefinedname", @e ∈ symbols
+ for acc = sparseseq."undefinedname" sub 1, @e ∈ symbols
  do processsymentry(acc, @e),
  acc
 let slots2 = slotorder2(z, 4, empty:seq.slotdesc)
 let checkslots = number.check(slots2, q1)
-assert 1#"ERROR" ∉ checkslots report
+assert "ERROR" sub 1 ∉ checkslots report
  "check slot error (search for ERROR)
- /br^(number.q1)^(checkslots)"
+ /br:(number.q1):(checkslots)"
 let constanddefs = descslot(check, objects, slots2, names, q1)
 let ttt =
  for acc = "", e ∈ arithseq(n.q1, 1, 0) do acc + toword.e,
@@ -175,24 +179,24 @@ let str1 =
   /p use seq.file
   /p Function test2 (input:seq.file, output:seq.word) seq.file {COMMAND}
   /br let tobepatched = typ.array (-2, i64)
-  /br let discard = subseq (inittypes, 3, length.inittypes)
+  /br let discard = subseq (inittypes, 3, n.inittypes)
   /br let discard1 = initslots
-  /br for a = empty:seq.seq.seq.int, e /in bodies do a+finish.e
-  /br let bc = llvm ([^(for acc = "", @e ∈ subseq(recs.getinfoB.typeblock#blocks.z, 2, 3)
+  /br for a = empty:seq.seq.seq.int, e ∈ bodies do a+finish.e
+  /br let bc = llvm ([:(for acc = "", @e ∈ subseq(recs.getinfoB.(blocks.z) sub typeblock, 2, 3)
   do acc + printrecord(TYPES, @e) + ",",
-  acc >> 1)]+subseq (typerecords, 3, length.typerecords), a)
+  acc >> 1)]+subseq (typerecords, 3, n.typerecords), a)
   /br, [file (filename (output), bc)]
   /p Function inittypes seq.llvmtype
-  /br [^(number.q1)]
+  /br [:(number.q1)]
   /p Function initslots seq.slot
-  /br [^(number.constanddefs)]
+  /br [:(number.constanddefs)]
   /p Function bodies seq.track
-  /br [^(bodies)]"
+  /br [:(bodies)]"
  else obj2txt(objectfldslots(slots2, q1), constanddefs) + number.constanddefs + bodies,
 str1
 
 function removeabbr(s:seq.int) seq.seq.int
-if 1#s =-2 then empty:seq.seq.int else [s]
+if s sub 1 =-2 then empty:seq.seq.int else [s]
 
 type info is
 recs:seq.seq.int
@@ -219,15 +223,15 @@ let seperator =
 for result = empty:seq.word, codeblock = 1, slotno = 1, sl ∈ slots
 do
  let rec = rec.sl,
- if typ.sl ≠-1 ∨ 1#rec ≠ toint.FUNCTIONDEC ∨ {external function} 4#rec = 1 then next(result, codeblock, slotno + 1)
+ if typ.sl ≠-1 ∨ rec sub 1 ≠ toint.FUNCTIONDEC ∨ {external function} rec sub 4 = 1 then next(result, codeblock, slotno + 1)
  else
   {MODULECODEFUNCTION}
-  let typ = (2#rec + 1)#types
+  let typ = types sub (rec sub 2 + 1)
   let nopara =
    for acc = 0, e ∈ typ do if e ∈ "," then acc + 1 else acc,
    acc
   let offset = n.consts - 1
-  let inst = recs.getinfoB.codeblock#blocks
+  let inst = recs.getinfoB.blocks sub codeblock
   let blocklabels = findblocks(inst, 1, nopara + 1, [nopara])
   let newinfo = info(inst, offset, blocklabels, consts, types, check, llvm)
   let b1 = printfuncbody(newinfo, offset + nopara, llvm),
@@ -262,48 +266,50 @@ result
 function printfuncbody(info:info, slotP:int, llvm:boolean) seq.seq.word
 for slot = slotP, result = empty:seq.seq.word, inblock = 1, d ∈ recs.info
 do
- let tp = instop.1#d,
+ let tp = instop.d sub 1,
  if tp = instop.1 then {skip BLOCKCOUNT} next(slot, result, inblock)
  else
   let slotinc = if tp ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
   let ll = toword(slot - offset.info + inblock)
-  let reglabel = if slotinc = 1 then if llvm then [merge.[1#"%", ll]] else "r." + ll else ""
+  let reglabel =
+   if slotinc = 1 then if llvm then [merge.["%" sub 1, ll]] else "r." + ll
+   else ""
   let pattern =
    if tp = BINOP then
-    let op1 = relocate(info, slot, 2#d)
-    let op2 = relocate(info, slot, 3#d),
-    "binaryop (^(reglabel),^(decode.binaryop.4#d),^(op1),^(op2))"
+    let op1 = relocate(info, slot, d sub 2)
+    let op2 = relocate(info, slot, d sub 3),
+    "binaryop (:(reglabel),:(decode.binaryop.d sub 4),:(op1),:(op2))"
    else if tp = CMP2 then
-    let op1 = relocate(info, slot, 2#d)
-    let op2 = relocate(info, slot, 3#d),
-    "cmp2 (^(reglabel),^(decode.cmp2op.4#d),^(op1),^(op2))"
+    let op1 = relocate(info, slot, d sub 2)
+    let op2 = relocate(info, slot, d sub 3),
+    "cmp2 (:(reglabel),:(decode.cmp2op.d sub 4),:(op1),:(op2))"
    else if tp = CAST then
-    let op1 = relocate(info, slot, 2#d),
-    if llvm then reglabel + "=" + decode.castop.4#d + "," + op1 + "," + typ(info, 3#d)
-    else "cast (^(reglabel),^(decode.castop.4#d),^(op1),^(typ(info, 3#d)))"
+    let op1 = relocate(info, slot, d sub 2),
+    if llvm then reglabel + "=" + decode.castop.d sub 4 + "," + op1 + "," + typ(info, d sub 3)
+    else "cast (:(reglabel),:(decode.castop.d sub 4),:(op1),:(typ(info, d sub 3)))"
    else if tp ∈ [LOAD] then
-    let op1 = relocate(info, slot, 2#d),
-    "load (^(reglabel),^(op1),^(typ(info, 3#d)),^(decode.align.4#d))"
-   else if tp = RET then if n.d = 1 then "ret" else "ret (^(relocate(info, slot, 2#d)))"
+    let op1 = relocate(info, slot, d sub 2),
+    "load (:(reglabel),:(op1),:(typ(info, d sub 3)),:(decode.align.d sub 4))"
+   else if tp = RET then if n.d = 1 then "ret" else "ret (:(relocate(info, slot, d sub 2)))"
    else if tp ∈ [STORE] then
-    let op1 = relocate(info, slot, 2#d)
-    let op2 = relocate(info, slot, 3#d),
-    "store (^(op1),^(op2),^(decode.align.4#d))"
+    let op1 = relocate(info, slot, d sub 2)
+    let op2 = relocate(info, slot, d sub 3),
+    "store (:(op1),:(op2),:(decode.align.d sub 4))"
    else if tp = GEP then
-    "getelementptr (^(reglabel),^((3#d + 1)#types.info),^(for acc = "", @e ∈ subseq(d, 4, n.d)
+    "getelementptr (:(reglabel),:((types.info) sub (d sub 3 + 1)),:(for acc = "", @e ∈ subseq(d, 4, n.d)
     do acc + relocate(info, slot, @e) + ",",
     acc >> 1))"
    else if tp = CALL then
-    let fconst = relocate(info, slot, 5#d),
+    let fconst = relocate(info, slot, d sub 5),
     if llvm then
-     let tt = break(1#",", (4#d + 1)#types.info >> 1)
+     let tt = break("," sub 1, (types.info) sub (d sub 4 + 1) >> 1)
      let args =
       for acc = "", types = tt << 1, @e ∈ subseq(d, 6, n.d)
-      do next(acc + 1#types + relocate(info, slot, @e) + ",", types << 1),
+      do next(acc + types sub 1 + relocate(info, slot, @e) + ",", types << 1),
       acc >> 1,
      reglabel
       + "= call"
-      + 1#tt << 3
+      + tt sub 1 << 3
       + fconst
       + "("
       + (if n.args = 0 then ")" else args + ")")
@@ -312,37 +318,33 @@ do
       for acc = "", @e ∈ subseq(d, 6, n.d)
       do acc + relocate(info, slot, @e) + ",",
       acc >> 1,
-     "call (^(reglabel),^((4#d + 1)#types.info),^(fconst)^(if n.args = 0 then ")" else ", [^(args)])")"
-   else if tp = PHI then "phi (^(reglabel),^((2#d + 1)#types.info)^(phi2(info, slot, d, 3, "")))"
-   else if tp = ALLOCA then "alloca (^(reglabel),^((2#d + 1)#types.info),^((3#d + 1)#types.info),^(relocate(info, slot, 4#d)))"
+     "call (:(reglabel),:((types.info) sub (d sub 4 + 1)),:(fconst):(if n.args = 0 then ")" else ", [:(args)])")"
+   else if tp = PHI then "phi (:(reglabel),:((types.info) sub (d sub 2 + 1)):(phi2(info, slot, d, 3, "")))"
+   else if tp = ALLOCA then "alloca (:(reglabel),:((types.info) sub (d sub 2 + 1)),:((types.info) sub (d sub 3 + 1)),:(relocate(info, slot, d sub 4)))"
    else empty:seq.word,
   let inst =
    if not.isempty.pattern then pattern
    else if tp = BR then
     {assert false report @ (+, toword," BLOCKS", blocks.info)}
     if n.d = 4 then
-     let op1 = relocate(info, slot, 4#d),
-     if between(2#d, 1, n.blocks.info) ∧ between(3#d, 1, n.blocks.info) then
-      "br (^(op1),"
-       + toword.(2#d + 1)#blocks.info
+     let op1 = relocate(info, slot, d sub 4),
+     if between(d sub 2, 1, n.blocks.info) ∧ between(d sub 3, 1, n.blocks.info) then
+      "br (:(op1),"
+       + toword.(blocks.info) sub (d sub 2 + 1)
        + ","
-       + toword.(3#d + 1)#blocks.info
+       + toword.(blocks.info) sub (d sub 3 + 1)
        + ")"
      else "branch problem"
-    else if between(2#d, 1, n.blocks.info) then
-     "br.^(if between(2#d, 1, n.blocks.info) then [toword.(2#d + 1)#blocks.info]
+    else if between(d sub 2, 1, n.blocks.info) then
+     "br.:(if between(d sub 2, 1, n.blocks.info) then [toword.(blocks.info) sub (d sub 2 + 1)]
      else
-      "{"
-       + [toword.2#d]
-       + "} 0"
-       + "+
-      /br label."
-       + [ll]
+      "{:([toword.d sub 2])} 0+
+      /br label.:([ll])"
      )"
-    else "branch problem" + toword(2#d + 1)
+    else "branch problem" + toword(d sub 2 + 1)
    else
     reglabel
-     + decode.instop.1#d
+     + decode.instop.d sub 1
      + for acc = "", @e ∈ d do acc + toword.@e,
     acc,
   next(
@@ -355,8 +357,8 @@ result
 function phi2(info:info, slot:int, d:seq.int, i:int, result:seq.word) seq.word
 if i > n.d then result
 else
- let blklab = toword.((i + 1)#d + 1)#blocks.info
- let x = i#d
+ let blklab = toword.(blocks.info) sub (d sub (i + 1) + 1)
+ let x = d sub i
  let y = x / 2
  let arg = if x = 2 * y then y else-y,
  let reg = relocate(info, slot, arg),
@@ -370,14 +372,14 @@ else
 
 function relocate(info:info, slot:int, arg:int) seq.word
 let offset = offset.info,
-if {" ll"#1 in format.info} true then
+if {" ll" # 1 in format.info} true then
  if slot - arg ≥ offset then
   let x =
    for target = slot - arg - offset, b ∈ blocks.info
    while target ≥ b
    do target + 1,
    target,
-  if llvm.info then [merge.[1#"%", toword.x]] else "r.^(x)"
+  if llvm.info then [merge.["%" sub 1, toword.x]] else "r.:(x)"
  else if between(slot - arg + 1, 1, n.consts.info) then
   let t = lookupconst(consts.info, slot - arg + 1),
   if n.t > 10 then "slot." + toword(slot - arg + 1) else t
@@ -387,12 +389,12 @@ else
   + toword(if slot - arg ≥ offset then-(slot - arg - offset + 1) else slot - arg)
   + ")"
 
-function typ(info:info, arg:int) seq.word (arg + 1)#types.info
+function typ(info:info, arg:int) seq.word (types.info) sub (arg + 1)
 
 function findblocks(s:seq.seq.int, i:int, rslot:int, blocks:seq.int) seq.int
 if i > n.s then blocks
 else
- let tp = instop.1#(i#s)
+ let tp = instop.(s sub i) sub 1
  let newblocks = if tp = BR then blocks + (rslot + n.blocks - 1) else blocks,
  let slotinc = if tp ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0,
  findblocks(s, i + 1, rslot + slotinc, newblocks)
@@ -401,16 +403,16 @@ function slotorder2(z:content, j:int, result:seq.slotdesc) seq.slotdesc
 {result has blockid added as first element of record}
 if j > n.recs.z then result
 else
- let i = j#recs.z,
- if 1#i =-2 then slotorder2(z, j + 1, result)
- else if 1#i ≠-1 then
+ let i = (recs.z) sub j,
+ if i sub 1 =-2 then slotorder2(z, j + 1, result)
+ else if i sub 1 ≠-1 then
   {not a sub block}
-  if 1#i ∈ [toint.FUNCTIONDEC, toint.GLOBALVAR] then slotorder2(z, j + 1, result + slotdesc(-1, i))
+  if i sub 1 ∈ [toint.FUNCTIONDEC, toint.GLOBALVAR] then slotorder2(z, j + 1, result + slotdesc(-1, i))
   else slotorder2(z, j + 1, result)
  else
   let blocks = blocks.z,
-  if blockid.(3#i)#blocks = toint.CONSTANTS then
-   let recs = recs.getinfoB.(3#i)#blocks,
+  if blockid.blocks sub (i sub 3) = toint.CONSTANTS then
+   let recs = recs.getinfoB.blocks sub (i sub 3),
    slotorder2(z, j + 1, result + slotorder2(recs, 1,-1, empty:seq.slotdesc))
   else slotorder2(z, j + 1, result)
 
@@ -422,12 +424,12 @@ recs:seq.seq.int
 ) seq.slotdesc
 if i > n.recs then result
 else
- let a = i#recs,
- if 1#a = toint.SETTYPE then slotorder2(recs, i + 1, 2#a, result)
+ let a = recs sub i,
+ if a sub 1 = toint.SETTYPE then slotorder2(recs, i + 1, a sub 2, result)
  else slotorder2(recs, i + 1, lasttype, result + slotdesc(lasttype, a))
 
 function processsymentry(t:seq.word, a:seq.int) seq.word
-replaceS(t, 2#a + 1, [encodeword.tocharseq.subseq(a, 3, n.a)])
+replaceS(t, a sub 2 + 1, [encodeword.tocharseq.subseq(a, 3, n.a)])
 
 function label(
 prefix:seq.word
@@ -440,12 +442,12 @@ if i > n.items then result
 else
  let a =
   result
-   + (if i > n.labels then prefix + i#items else if i > 1 then "," else "")
+   + (if i > n.labels then prefix + items sub i else if i > 1 then "," else "")
    + prefix
    + "{"
-   + i#labels
+   + labels sub i
    + "}"
-   + i#items,
+   + items sub i,
  label(prefix, labels, items, i + 1, a)
 
 function filter(blockid:int, a:block) seq.block
@@ -477,13 +479,13 @@ if i > n.a then
   let discard = encode.blockabbr(blockid, list),
   1
 else
- let ai = i#a,
- if 1#ai = SETBID then
-  if isempty.list then processabbr(a, i + 1, 2#ai, list)
+ let ai = a sub i,
+ if ai sub 1 = SETBID then
+  if isempty.list then processabbr(a, i + 1, ai sub 2, list)
   else
    let discard = encode.blockabbr(blockid, list),
-   processabbr(a, i + 1, 2#ai, empty:seq.seq.int)
- else if 1#ai =-2 then processabbr(a, i + 1, blockid, list + i#a)
+   processabbr(a, i + 1, ai sub 2, empty:seq.seq.int)
+ else if ai sub 1 =-2 then processabbr(a, i + 1, blockid, list + a sub i)
  else processabbr(a, i + 1, blockid, list)
 
 type codefreq is count:int, w:int
@@ -493,15 +495,17 @@ function =(a:codefreq, b:codefreq) boolean false
 function >1(a:codefreq, b:codefreq) ordering count.a >1 count.b
 
 function count(s:seq.codefreq, w:int) seq.codefreq
-replaceS(s, w, [codefreq(count.w#s + 1, w)])
+replaceS(s, w, [codefreq(count.s sub w + 1, w)])
 
 function print(block:int, p:codefreq) seq.word
 if count.p = 0 then empty:seq.word
 else
- "/br the code^(printrecord(blockop.block, [w.p, 0])) occurs"
+ "/br the code:(printrecord(blockop.block, [w.p, 0])) occurs"
   + toword.count.p
   + "times. 
  /br"
+
+use sort.codefreq
 
 function removelowcount(mincount:int, p:codefreq) seq.codefreq
 if count.p < mincount then empty:seq.codefreq else [p]
@@ -515,4 +519,4 @@ for
 do acc + removelowcount(mincount, @e),
 sort.acc
 
-function count(s:seq.codefreq, w:seq.int) seq.codefreq count(s, 1#w) 
+function count(s:seq.codefreq, w:seq.int) seq.codefreq count(s, w sub 1) 

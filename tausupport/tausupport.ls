@@ -20,37 +20,21 @@ use encodingsupport
 
 use bitcast.int
 
+use seq1.int
+
 use bitcast.seq.int
 
 use taublockseq.int
 
-use seq.packed2
-
-use bitcast.seq.packed2
+use kernal
 
 use taublockseq.packed2
 
-use seq.packed3
-
-use bitcast.seq.packed3
-
 use taublockseq.packed3
-
-use seq.packed4
-
-use bitcast.seq.packed4
 
 use taublockseq.packed4
 
-use seq.packed5
-
-use bitcast.seq.packed5
-
 use taublockseq.packed5
-
-use seq.packed6
-
-use bitcast.seq.packed6
 
 use taublockseq.packed6
 
@@ -64,7 +48,7 @@ use bitcast.seq.ptr
 
 use taublockseq.ptr
 
-use real
+use bitcast.real
 
 use seq.real
 
@@ -72,9 +56,11 @@ use bitcast.seq.real
 
 use taublockseq.real
 
-use standard
-
 use word
+
+use seq.word
+
+use stateFunctions
 
 Export type:packed2
 
@@ -104,72 +90,43 @@ Export type:ptr {From ptr}
 
 Export blockseqtype:byte int {From taublockseq.byte}
 
-Export _(blockseq.int, int) int {From taublockseq.int}
+Export blockit3(seq.int) seq.int {From taublockseq.int}
 
-Export blockseqtype:int int {From taublockseq.int}
+Export _(blockseq.int, int) int {From taublockseq.int}
 
 Export _(blockseq.packed2, int) packed2 {From taublockseq.packed2}
 
+Export blockit2(seq.packed2, int) seq.packed2 {From taublockseq.packed2}
+
 Export _(blockseq.packed3, int) packed3 {From taublockseq.packed3}
+
+Export blockit2(seq.packed3, int) seq.packed3 {From taublockseq.packed3}
 
 Export _(blockseq.packed4, int) packed4 {From taublockseq.packed4}
 
+Export blockit2(seq.packed4, int) seq.packed4 {From taublockseq.packed4}
+
 Export _(blockseq.packed5, int) packed5 {From taublockseq.packed5}
+
+Export blockit2(seq.packed5, int) seq.packed5 {From taublockseq.packed5}
 
 Export _(blockseq.packed6, int) packed6 {From taublockseq.packed6}
 
+Export blockit2(seq.packed6, int) seq.packed6 {From taublockseq.packed6}
+
+Export blockit3(seq.ptr) seq.ptr {From taublockseq.ptr}
+
 Export _(blockseq.ptr, int) ptr {From taublockseq.ptr}
+
+Export blockit3(seq.real) seq.real {From taublockseq.real}
 
 Export _(blockseq.real, int) real {From taublockseq.real}
 
-type packed2 is fld1:int, fld2:int
+Builtin getseqlength(ptr) int
 
-type packed3 is fld1:int, fld2:int, fld3:int
+Builtin getseqtype(ptr) int
 
-type packed4 is fld1:int, fld2:int, fld3:int, fld4:int
-
-type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
-
-type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
-
-Builtin getseqlength(ptr) int {OPTION COMPILETIME}
-
-Builtin getseqtype(ptr) int {OPTION COMPILETIME}
-
-function set2(i:ptr, b:real) ptr set(i, representation.b)
-
-function set2(i:ptr, b:int) ptr set(i, b)
-
-function set2(i:ptr, b:ptr) ptr set(i, b)
-
-function set2(i:ptr, b:packed2) ptr set(set(i, fld1.b), fld2.b)
-
-function set2(i:ptr, b:packed3) ptr set(set(set(i, fld1.b), fld2.b), fld3.b)
-
-function set2(i:ptr, b:packed4) ptr
-set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b)
-
-function set2(i:ptr, b:packed5) ptr
-set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b)
-
-function set2(i:ptr, b:packed6) ptr
-set(set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b), fld6.b)
-
-Function blockIt(s:seq.int) seq.int blockit3.s
-
-Function blockIt(s:seq.ptr) seq.ptr blockit3.s
-
-Function blockIt(s:seq.real) seq.real blockit3.s
-
-Function blockIt(s:seq.packed2) seq.packed2 blockit2(s, 2)
-
-Function blockIt(s:seq.packed3) seq.packed3 blockit2(s, 3)
-
-Function blockIt(s:seq.packed4) seq.packed4 blockit2(s, 4)
-
-Function blockIt(s:seq.packed5) seq.packed5 blockit2(s, 5)
-
-Function blockIt(s:seq.packed6) seq.packed6 blockit2(s, 6)
+Function set(i:ptr, b:real) ptr set(i, representation.b)
 
 Function deepcopy(a:int) int a
 
@@ -183,7 +140,7 @@ Builtin abort:real(seq.word) real
 
 Builtin abort:boolean(seq.word) boolean
 
-Function outofbounds seq.word "out of bounds^(stacktrace)"
+Function outofbounds seq.word "out of bounds:(stacktrace)"
 
 function packedbytes(a:seq.byte) seq.byte
 let c = packed([bits.1, bits.n.a] + toseqbits.a)
@@ -221,17 +178,21 @@ acc
 
 -------------------------------
 
-Function cat(obj1:ptr, obj2:ptr, typ:word) ptr
-if typ ∈ "int" then toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
-else if typ ∈ "real" then toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
-else if typ ∈ "ptr" then toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
-else if typ ∈ "packed2" then toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
-else if typ ∈ "packed3" then toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
-else if typ ∈ "packed4" then toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
-else if typ ∈ "packed5" then toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
-else
- assert typ ∈ "packed6" report "packing cat not found" + typ,
- toptr(bitcast:seq.packed6(obj1) + bitcast:seq.packed6(obj2))
+Function profileUpdate(time:int, beforeSpace:int, p:ptr) int
+let p1 = set(p, fld:int(p, 0) + 1)
+let p2 = set(p1, fld:int(p1, 0) + (clock - time))
+let p3 = set(p2, fld:int(p2, 0) + (spacecount - beforeSpace)),
+0
+
+type packed2 is fld1:int, fld2:int
+
+type packed3 is fld1:int, fld2:int, fld3:int
+
+type packed4 is fld1:int, fld2:int, fld3:int, fld4:int
+
+type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
+
+type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
 Function blocktype(typ:word) int
 if typ ∈ "int" then blockseqtype:int
@@ -244,25 +205,4 @@ else if typ ∈ "packed5" then blockseqtype:packed5
 else
  assert typ ∈ "packed6" report "packing not found" + typ,
  blockseqtype:packed6
-
-Function packobject(typ:word, obj:ptr) ptr
-if typ ∈ "int" then toptr.blockIt.bitcast:seq.int(obj)
-else if typ ∈ "real" then toptr.blockIt.bitcast:seq.real(obj)
-else if typ ∈ "ptr" then toptr.blockIt.bitcast:seq.ptr(obj)
-else if typ ∈ "packed2" then toptr.blockIt.bitcast:seq.packed2(obj)
-else if typ ∈ "packed3" then toptr.blockIt.bitcast:seq.packed3(obj)
-else if typ ∈ "packed4" then toptr.blockIt.bitcast:seq.packed4(obj)
-else if typ ∈ "packed5" then toptr.blockIt.bitcast:seq.packed5(obj)
-else
- assert typ ∈ "packed6" report "packing not found" + typ,
- toptr.blockIt.bitcast:seq.packed6(obj)
-
-builtin clock int
-
-builtin spacecount int
-
-Function profileUpdate(time:int, beforeSpace:int, p:ptr) int
-let p1 = set(p, fld:int(p, 0) + 1)
-let p2 = set(p1, fld:int(p1, 0) + (clock - time))
-let p3 = set(p2, fld:int(p2, 0) + (spacecount - beforeSpace)),
-0 
+ 

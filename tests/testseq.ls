@@ -20,7 +20,7 @@ use testpackedseq.typereal
 
 use testpackedseq.typerec2
 
-use otherseq.word
+use seq1.word
 
 use testpackedseq.seq.word
 
@@ -32,8 +32,14 @@ function =(a:seedtrack, b:seedtrack) boolean key.a = key.b
 
 function hash(a:seedtrack) int key.a
 
+function pseudorandom(seed:int) int
+let ah = 16807
+let mh = 2147483647
+let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah)),
+if test > 0 then test else test + mh
+
 Function getint(size:int) int
-let p = 1^encodingdata:seedtrack
+let p = last.encodingdata:seedtrack
 let d = pseudorandom.val.p
 let c = encode.seedtrack(key.p + 1, d),
 d mod size
@@ -76,7 +82,7 @@ let all =
   + check:seq.typerec2(16, 8)
   + EOL
   + sparsecheck,
-if 1#"FAIL" ∉ all then "PASS testseq" else "FAIL testseq^(all)"
+if "FAIL" sub 1 ∉ all then "PASS testseq" else "FAIL testseq:(all)"
 
 Function sparsecheck seq.word
 let b =
@@ -86,7 +92,7 @@ let b =
 "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int
-let i = 1#r mod 30 + 1
+let i = r sub 1 mod 30 + 1
 let c = replaceS(s, i, r)
 assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, n.s)) report "FAIL 1"
 assert subseq(s, i + n.r, n.r) = subseq(c, i + n.r, n.r) report "FAIL 2"
@@ -96,6 +102,6 @@ c
 function random(s:seq.int, i:int, result:seq.seq.int) seq.seq.int
 if i > n.s then result
 else
- let len = i#s mod 5 + 2,
+ let len = s sub i mod 5 + 2,
  random(s, i + len, result + subseq(s, i, i + len - 1))
  

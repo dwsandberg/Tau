@@ -2,7 +2,7 @@ Module webProfileSupport
 
 use profile
 
-use symbol2
+use symbol1
 
 use seq.byte
 

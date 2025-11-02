@@ -18,7 +18,7 @@ use real
 
 use standard
 
-use file
+use textio
 
 Function set2zero(p:ptr, size:int) ptr
 {used in wasm2.ls}

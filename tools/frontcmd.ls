@@ -1,5 +1,7 @@
 Module frontcmd.T
 
+precedence > for >1 >2 >3 >4 >alpha
+
 use baseTypeCheck
 
 use file
@@ -12,17 +14,21 @@ use prettycompilerfront
 
 use standard
 
-use set.arc.symbol
+use arc.symbol
 
-use graph.symbol
+use drawGraph.arc.symbol
+
+use graph.arc.symbol
+
+use set.arc.symbol
 
 use set.symbol
 
-use symbol2
+use symbol1
 
 use set.symdef
 
-use set.word
+use drawGraph.arc.symloc
 
 unbound compilerFront:T(seq.word, seq.file, seq.word, seq.word) midpoint
 
@@ -81,16 +87,16 @@ let txt =
  else if out = "symdef" then
   for txt = "", sd1 ∈ selected
   do
-   let kk = getOptions.sd1,
+   let kk = options.sd1,
    txt
     + "/p"
     + %.sym.sd1
-    + (if isempty.kk then "" else "OPTIONS:^(kk)")
+    + (if kk = NOOPTIONS then "" else "OPTIONS::(kk)")
     + %.code.sd1,
   txt
  else if out = "symdefgraph" then
   for txt = "", sd1 ∈ selected
-  do txt + "/p" + %.sym.sd1 + {print} tograph.code.sd1,
+  do txt + "/p" + %.sym.sd1 + drawgraph.tograph.code.sd1,
   txt
  else if out = "baseTypeCheck" then baseTypeCheck(toseq.prg, typedict.cf)
  else if out = "resultCheck" then checkresults.toseq.prg
@@ -143,25 +149,31 @@ input:seq.file
 /br ○ /strong target overides default target directory tmp
 /br ○ /strong bind Does further processing of input to bind id's to symbols.
 /br ○ /strong reorguse Reorganizes use clauses. If /em bind is also specified unnecessary use clauses are removed.
-/br ○ /strong link
-/br ○ /strong html An html file is produced with an index of modules. This option is useful for examining source code Useful for producing documentation with imbedded Tau code.
+/br ○ /strong link A list of file names ending with /sp.html that will not be compiled but will be scanned for functions that are called by the files. Hyperlinks will be create from the location of the call to the definition in the link files. Files without a.html extenstion are ignored. 
+/br ○ /strong html An html file is produced with an index of modules. This option is useful for examining source code and contains for producing documentation with imbedded Tau code.This options contains one or more of the following. <* block • /strong Module Include modules in the table of contents. 
+/br • /strong headersOnly Only include the headers of exported functions in result.
+/br • /strong h1 include html h1 headers in table of contents
+/br • /strong h2 include html h2 headers in table of contents
+/br • /strong h3 include html h3 headers in table of contents
+/br • /strong h4 include html h4 headers in table of contents
+/br • /strong h5 include html h5 headers in table of contents
+/br • /strong h6 include html h6 headers in table of contents *>
 /br ○ /strong modrename List of modules to rename in form: oldname1 newname1 oldname2 newname2... 
 /br ○ /strong patternmods List of modules that contains patterns. 
-/br See /tag <a /sp href ="#patterns" > Example /tag </a>
+/br See /tag <a /sp href =" /tag # patterns" > Example /tag </a>
 /br ○ /strong cleanexports Remove exports for exports in module or if Export is from another module add comment to indicate where it comes from.
 /br ○ /strong moveexports Move all exports to just after use clauses.
-/p The /keyword transform command treats the function genEnum as magic and will generate code in a module for enumeration types instead of creating the code by hand. /tag <a /sp href ="#enum" > genEnum Example /tag </a>}
-let m =
- if bind ∨ not.isempty.link ∨ cleanexports ∨ moveexports then compilerFront:T("text", link + input, "", "")
- else empty:midpoint,
+/p The /keyword transform command treats the function genEnum as magic and will generate code in a module for enumeration types instead of creating the code by hand. /tag <a /sp href =" /tag # enum" > genEnum Example /tag </a>}
+let bind1 = bind ∨ not.isempty.link ∨ cleanexports ∨ moveexports
+let m = if bind1 then compilerFront:T("text", input, "", "") else empty:midpoint,
 transform2(
  m
  , output
  , target
  , modrename
- , bind ∨ not.isempty.link
+ , bind1
  , reorguse
- , html
+ , if isempty.link then html else html + "html"
  , cleanexports
  , moveexports
  , input

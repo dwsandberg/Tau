@@ -6,9 +6,11 @@ use UTF8
 
 use bits
 
-use otherseq.byte
+use seq1.byte
 
 use standard
+
+use toWords
 
 Export type:process.T
 
@@ -30,4 +32,4 @@ else "normal exit"
 
 Function result(p:process.T) T
 assert not.aborted.p report "no result of aborted process",
-1#body1.p 
+(body1.p) sub 1 

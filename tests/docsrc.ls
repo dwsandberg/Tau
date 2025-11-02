@@ -28,7 +28,7 @@ like to try out the examples below for yourself.
 /tag <h2> Basic Structure /tag </h2> 
 
 Tau is word based rather than character based. A source file for Tau is a UTF-8 encoded file. 
- View  blank lines in the file as breaking the
+   Blank lines in the file   breaking the
 file into a sequence of paragraphs.  Spaces seperate words.
 Some characters such as + form a word of a single character even when there
 is no space before or after. Paragraphs are further group into \em modules. 
@@ -38,14 +38,14 @@ is no space before or after. Paragraphs are further group into \em modules.
 Tau transforms the bytes of the UTF-8 encoded file into a sequence of paragraphs by classify the bytes into 5 groups.
 <* block
 /br The LF group is the ASCII linefeed character.
-/br The Space group is the ASCII space and the carriage return.
-  The  carriage return is added.
+/br The Space group is the ASCII space and the carriage return. 
+  The  carriage return is added 
   to handle the end of line representation in DOS.
-/br The StandAlone group is the ASCII characters ()+,-..:=[]^#{} and the double quote.
+/br The StandAlone group is the ASCII characters ()+,-..:=[]{} and the double quote.
 /br The other group which contains any byte not included in the other three groups. 
 *>
-By considering the class of each byte(the current byte) and the next byte (The Lookahead)
-the bytes can be a seqence of paragraphs with each paragraph containing a sequence of words. Each word will be a sequence of unicode code points. The table below contain the Action to take for each combination of the clas of current and lookahead. For combination not present in the table just advance to the next byte without taking any other action.
+By considering the class of each byte(the current byte) and the next byte (the Lookahead)
+the bytes can be a seqence of paragraphs with each paragraph containing a sequence of words. Each word will be a sequence of unicode code points. The table below contain the Action to take for each combination of the class of current and lookahead. For combination not present in the table just advance to the next byte without taking any other action.
   <* table
   /row /strong Current /cell /strong Lookahead /cell /strong Action
   /row  LF /cell  space /cell     Keep LF as current 
@@ -54,7 +54,7 @@ the bytes can be a seqence of paragraphs with each paragraph containing a sequen
    /row   other   /cell other    /cell part of word
    /row  other   /cell   not    other   /cell end of word
    /row Kstandalone /cell any /cell 
-     if the byte is . or : and the Lookahead is the byte 32 then
+     if current   is . or : and the Lookahead is space then
       the word of the current followed  by the space is formed.
      other the word of the current is formed. 
 *>
@@ -73,7 +73,7 @@ balance parenthesis would be represented:
 /row /cell /  ! ( ! ) any 
 *>
 The non-terminals are /em Start, /em N, /em any. The non-terminal, /em any, will
-match any termial.  The terminal explicitly used are the open and close 
+match any termial.  The terminals explicitly used are the open and close 
 paranethesis. The terminal alphabet could be much larger.
 
 /tag <h3> Structure of Tau source file /tag </h3> 
@@ -109,19 +109,19 @@ Any text matching the "/ ! Module Words " rule above is treated as a comment and
 Module module Function function use Export type Builtin builtin unbound.  This grammar does not specifiy the detailed syntax of paragraphs.
 
 Each module defines a set of functions and types.  Paragraphs beginning
-with Function, function and type declare function and types. 
- Only function and types that are exported can be used outside of a module.  The Export clause will export a function or type. 
+with Function, function and type declare functions and types. 
+ Only functions and types that are exported can be used outside of a module.  The Export clause will export a function or type. 
 A function is also exported if the first letter of the paragraph defining
 the function is capitalize. 
 
 The use clause determines which functions from other modules are available. 
 
-The module /em standard defines often used function and types. 
+The module /em standard defines often used functions and types. 
  A full list of functions is /sp
-/tag  <a /sp href ='./coredoc.html#standard'>  here /tag </a>. 
+/tag  <a /sp href ='./core.html#standard'>  here /tag </a>. 
 Many of the functions are defined in other modules and only exported from the standard module. A few note worth types and functions are list below.
 
-This document itself can be feed directly to a Tau compiler.  Modules  with names ending in a question mark like in the next paragraph  are introduced solely for the purpose of allowing this document to compile. The following paragraphs define a  module  that exports some functions and types from the module standard. 
+This document itself can be feed directly to a Tau compiler. In this document modules  with names ending in a question mark like in the next paragraph  are introduced solely for the purpose of allowing this document to compile. The following paragraphs define a  module  that exports some functions and types from the module standard. 
 
 Module standard?
 
@@ -174,7 +174,7 @@ Export %(w:word) seq.word
 A sequence of tau words must be transformed back to UTF8 format to communicate with the outside world. When a file is read the white space is striped out and must be added back in. 
 
 The basic rules for adding spaces is to add a space after each word except when:
-/br 1. If the word is /sp+-#.. :^/sp then the space before and after the word is suppressed. 
+/br 1. If the word is /sp+-.. :/sp then the space before and after the word is suppressed. 
 /br 2. If the word is /sp)]}," then the space before the word is suppressed.
 /br 3. If the word is ([{then the space after the word is suppressed. "
 
@@ -219,7 +219,7 @@ in <hr> for html output.
 Toggles whether to interpret commands.
 *>
 
-The above rules are represented by the grammar below.
+The above rules are represented by the grammar below. 
 The non-terminal /em N represents no following space the word is pending
 and /em S represents there is a space pending. 
 
@@ -234,7 +234,7 @@ and /em S represents there is a space pending.
   /row /cell ← ! BA ! A  any /cell Add pending space
     /row  A  /cell  ← ( /[ /{ /cell suppress space (A)fter 
   /row  B  /cell ←  ) /] /} / , / " /"/cell suppress space (B)efore 
-  /row  BA /cell ← + /- /#/./. / :/: /^ /cell suppress space (B) before and (A)fter
+  /row  BA /cell ← + /-  /./. / :/:   /cell suppress space (B) before and (A)fter
 *>
 
 There are a set of commands that alter these rules 
@@ -268,23 +268,22 @@ There are a set of commands that alter these rules
 Line breaks are handled by inserting formatting words. The simplest formatting rules are  /br for a
 line break and  /p for a paragraph break. 
 
-Since an opening quote mark should be treated differently than a closing quote mark and the ASCII character
-set does not distinguish between opening and closing quote marks, /em /ldq inserts a double quote suppressing
-the space after it. Adding /em /sp will force a space after a word and /em /tag will suppress the space before and after the next word. 
+An opening quote mark should be treated differently than a closing quote mark and the ASCII character
+set does not distinguish between opening and closing quote marks. Adding /em /sp will force a space after a word and /em /tag will suppress the space before and after the next word. The spacing around a open qoute mark can be expressed as /em /sp /em /tag " to get /sp /tag " firstWord without the space after the quote mark. 
+ 
 
 The format words are interpreted differently when producing plain text or HTML. For example, /keyword
 /p produces LF LF for plain text and   <p>  for HTML. Different functions are provide to do this. When creating files from seq.word for output, if file extension is html then the output is HTML otherwise plain text.
 
 /tag <h2>   Expressions /tag </h2>
 
-We would like an expression such as a+3 * b^2^-2 to evaluation to what a mathematician would expect
-where /sp^/sp is the exponent operator. Adding parenthesis specifies the order of evaluation: a+(3 * (
-b^(2^(-2))). The binary operators /sp+/sp and * are left associative and /sp^/sp is right associative
+We would like an expression such as a+3 * b sup 2 sup -2 to evaluation to what a mathematician would expect. Adding parenthesis specifies the order of evaluation: a+(3 * (
+(b sup (2 sup -2)). The binary operators /sp+/sp and * are left associative and /sp sup /sp is right associative
 .
 
 The following is a PEG grammar for simple expressions. The order of evaluation is obscured by this
 grammar since left recursion must be elimiated. The left associative of+and * are taken care of
-in further processing, but the grammar takes care of the right associative nature of^. <* table
+in further processing, but the grammar takes care of the right associative nature of sup . <* table
 /row E /cell ← Sum
 /row Sum /cell ← Product Sum'
 /row * Sum' /cell ←-Product /+Product
@@ -292,13 +291,13 @@ in further processing, but the grammar takes care of the right associative natur
 /row * Product' /cell ← * Unary
 /row Unary /cell ←-Unary / Power
 /row Power /cell ← Atom Power'
-/row * Power' /cell ←#Unary /^Unary
+/row * Power' /cell ←sub Unary / sup Unary
 /row Atom /cell ← (E) / Id
 /row Id /cell ← !, !) !:!.! dq any *>
 
-Tau has many more binary operators than the above grammar handles. Here is then full list. Operators
+Tau has many more binary operators than the above grammar handles. Below is the full list. Operators
 on the same line are of the same precedence. <* block
-/br#^
+/br sup sub
 /br unary minus
 /br * / mod ∪ ∩ \
 /br+-∈ ∉
@@ -308,9 +307,6 @@ on the same line are of the same precedence. <* block
 
 Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all
 have that same precedence.
-
-For easy entry, the operators ≤ ≥ ≠ ∧ ∨ ⊻ ∈ ∉ ∩ ∪ have ASCII equivalents <* code /le /ge /ne /and /or /xor /in
-/nin /cap /cup *> respectively.
 
 Here is the syntax for a procedure call and if expression: <* table
 /row Unary /cell ←-Unary / Id.Unary / Power
@@ -333,9 +329,9 @@ The operators ≤ ≥ ≠ are syntatical abbreviations for not /tag (a > b), not
 
 Here are exampls of two function definitions:
 
-function quadratic(a:int, b:int, c:int, x:int) int a + b * x + c * x^2
+function quadratic(a:int, b:int, c:int, x:int) int a + b * x + c * x sup 2
 
-Function quadratic(a:real, b:real, c:real, x:real) real a + b * x + c * x^2
+Function quadratic(a:real, b:real, c:real, x:real) real a + b * x + c * x sup 2
 
 The follow paragraph is need for the second function to compile:
 
@@ -361,7 +357,7 @@ A expression can always be viewed as a series of function calls. For the first f
 the values of the parameters can be viewed as the functions with no parameters with the function name
 being the parameter name and the function result type being the parameter type.
 
-The value of the integer literal 2 can be view as the function
+The value of the integer literal 2 can be view as the function 
 
 Function 2 int 2
 
@@ -371,10 +367,10 @@ Export +(int, int) int
 
 Export *(int, int) int
 
-Export ^(int, int) int
+Export sup(int, int) int
 
 Any expression has excatly one type that can be determine from the subexpression using the return type
-of the function called. 
+of the functions called. 
 
 When calling a function the types of actual arguments MUST match the types given in the definition of the function. 
 
@@ -398,23 +394,23 @@ String in Tau are defined as a sequence of words (seq.word). An example literal 
 is /sp /tag " this is a sample string of 8 words" A simple grammar for strings would be <* block
  String ←" Str2"
 /br * Str2 ← !" any *> But Tau   allows a string to include an expression of type /em seq.word. The
-example literal above could also be represented as" this is a^(" sample string") of 8 words" So
+example literal above could also be represented as" this is a:(" sample string") of 8 words" So
 the grammar becomes <* table
 /row String /cell ← /cell" String' Str2"
-/row * String' /cell ← /cell ^(E)
+/row * String' /cell ← /cell :(E)
 /row /cell / /cell Str2
-/row + Str2 /cell ← /cell !" !^any *>
+/row + Str2 /cell ← /cell !" !:any *>
 
 There are two function named /em dq in the stardard package. The first that takes no arguments and returns the sequence of words with one word consisting of single doublequote character. The second function takes a sequence of words as an argument and returns the args with a doublequote added to the begining and end. 
 
 These function allow a double quote within a string. For example:
 <* block /tag " hello world without quotes;
-^(dq) hello world^(dq) with quotes" *> is the same as writing 
+:(dq) hello world:(dq) with quotes" *> is the same as writing 
 <* block /tag " hello world without quotes;" /sp+/sp dq
-/sp+/sp /tag " hello world"+/sp dq /sp+/sp /tag "   with quotes" *> Since^(...) can receive any expression we could also write
-<* block   /tag "   hello world without quotes^(dq./tag " hello world") with quotes" *> Since  /sp /tag "^(" functions as an escape in
-strings, it can be include within a string as /sp /tag"^(/tag"^") (" Note that just the / /sp ^ /sp is escaped as
-/sp"^( /tag " ^(")" will raise an error because the escape in the inner qoute is not properly formed.
+/sp+/sp /tag " hello world"+/sp dq /sp+/sp /tag "   with quotes" *> Since:(...) can receive any expression we could also write
+<* block   /tag "   hello world without quotes:(dq./tag " hello world") with quotes" *> Since  /sp /tag ":(" functions as an escape in
+strings, it can be include within a string as /sp /tag":(/tag":") (" Note that just the / /sp : /sp is escaped as
+/sp":( /tag " :(")" will raise an error because the escape in the inner qoute is not properly formed.
 
 /tag <h2> Declarations /tag </h2>
 
@@ -427,7 +423,7 @@ let b = 444
 for sum = 0, product = 1, e ∈ "1 2 3 4 mark 5 6"
 while e ∉ "mark"
 do next(sum + toint.e, product * {comment within expression} toint.e)
-assert product = 24 ∧ b = 444 report "Problem occured. Expect 24 but got^(product)",
+assert product = 24 ∧ b = 444 report "Problem occured. Expect 24 but got:(product)",
 sum + product
 
 Here is the grammar for constructs used in this section: <* table
@@ -440,7 +436,8 @@ Here is the grammar for constructs used in this section: <* table
 /row * AccumList' cell ←, Accum
 /row Accum /cell ← any = E
 /row Comment /cell ← {N}
-/row * N /cell ← Comment / str1 *>
+/row * N /cell ← Comment / str1 
+/row comma? ←, / *>
 
 A /keyword let declaration in a function allows an name to be given to the value of an expression so the name
 references the value in the following expressions. A let statement DOES NOT define a variable that can
@@ -499,9 +496,7 @@ use seq.T
 
 Export n(seq.T) int {the length of the sequence.}
 
-Export #(i:int, a:seq.T) T {Return ith element of sequence. 1#a is the first element}
-
-Export ^(i:int, a:seq.T) T {Same as i#(n.a+1-i). 1^a is the last element}
+Export sub( a:seq.T,i:int) T {Return ith element of sequence. a sub 1 is the first element}
 
 Export empty:seq.T seq.T {Returns the sequence of type seq.T with zero elements}
 
@@ -525,17 +520,17 @@ Function testseq seq.word
 let s1 = "This is a test sequence with 9 words.",
 if
  n.s1 = 9
- ∧ 3#s1 = 1#"a"
- ∧ 2^s1 = 1#"words"
- ∧ subseq(s1, 4, 5) = "test sequence"
+ ∧  s1 sub 3 =  "a" sub 1
+ ∧  s1 sub n.s1 = 'words 
+ ∧  subseq(s1, 4, 5) = "test sequence"
  ∧ subseq(s1, 4, 3) = empty:seq.word
  ∧ subseq(s1, 1, 5) + subseq(s1, 6, n.s1) = s1
- ∧ [1#"Hello", 1#"World!"] = "Hello World!"
+ ∧ ["Hello" sub 1,  "World!" sub 1] = "Hello World!"
  ∧ empty:seq.word = ""
  ∧ subseq([11, 12, 13, 14], 1, 2) = [11, 12]
 then
 "PASS"
-else "FAIL"
+else "FAIL" 
 
 /tag <h2> User Types /tag </h2>
 
@@ -576,7 +571,7 @@ Function +(a:point2d, b:point2d) point2d point2d(x.a + x.b, y.a + y.b)
 
 Function -(a:point2d, b:point2d) point2d point2d(x.a - x.b, y.a - y.b)
 
-Function %(p:point2d) seq.word "(^(x.p),^(y.p))"
+Function %(p:point2d) seq.word "(:(x.p),:(y.p))"
 
 Function testpoint seq.word %(point2d(2, 3) + point2d(4, 5))
 
@@ -602,16 +597,15 @@ use geotest
 
 Function testdoc(input:seq.file) seq.word
 {COMMAND}
- "testseq^(testseq) point2d^(testpoint) testlistset^(testlistset) testdict^(testdict) exampleEncoding^(testExampleEncoding)
-  /p geotest^(geotest)"
+ "testseq:(testseq) point2d:(testpoint) testlistset:(testlistset) testdict:(testdict) exampleEncoding:(testExampleEncoding)
+  /p geotest:(geotest)"
 
 
 /tag <h2> Parameterized Module /tag </h2>
 
 A type can have a single type parameter named T. The T can be used anywhere a type can be used.
 
-Generic unbound functions on the type T may be included by using the word unbound as the defining expression
-. When the parameterized type is used, there must exist a function with the same signature as the unbound
+Generic unbound functions on the type T may be included by using the word unbound as the defining expression. When the parameterized type is used, there must exist a function with the same signature as the unbound
 one where T is replaced with the actual type for T.
 
 As an example the follow defines a parameterized set implemented as a sequence 
@@ -644,7 +638,7 @@ for acc = empty:listset.T, ele ∈ s do acc + ele , acc
 
   Export isempty(seq.T)boolean
 
-  Export #(int,seq.T )T
+  Export sub(  seq.T,int  )T
 
   Function lookup(s:listset.T, ele:T)seq.T lookup(toseq.s, ele) 
 
@@ -661,8 +655,8 @@ let set1 = tolistset."A A B C A C B"
 let set2 = tolistset."D B E",
 if
  toseq.set1 = "C B A"
- ∧ 1#"C" ∈ set1
- ∧ 1#"D" ∉ set1
+ ∧ "C" sub 1 ∈ set1
+ ∧ "D" sub 1 ∉ set1
  ∧ toseq(set1 ∪ set2) = "D E C B A"
 then
 "PASS"
@@ -685,7 +679,7 @@ infinite number of other possibilities. But only one representation will be used
 Looking up an entry in the dictionary is just looking up the representation used in the set.  The last
 function in the /em listset module does just that.  The A ∪ B function in the listset module is carefully crafted
 so that if an element is in both A and B  the representation of used in A is used in the result.  Thus 
- listset.[myentry(3,/sp /tag  "  X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,  /sp /tag" X") or  B /cup [myentry(3,  /sp /tag" X")] will not redefine the entry in B.  
+ listset.[myentry(3,/sp /tag  "  X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,  /sp /tag" X") or  B ∪ [myentry(3,  /sp /tag" X")] will not redefine the entry in B.  
  By convention, the result  of a binary operation on sets   uses the representation of in the left operand -- not the one on the right.
    
 Module testdict
@@ -716,7 +710,7 @@ let l1 = lookup(dict, 4) ,
 if print.dict = "(3, mult),(2, sub),(1, add)"
  ∧ print.dict2 = "(4, divide),(2, subtract)"
  ∧ isempty.lookup(dict, 4)
- ∧ data.1#lookup(dict, 2)  = "sub"
+ ∧ data.lookup(dict, 2) sub 1  = "sub"
  ∧ print(dict2 ∪ dict)
  = "(1, add),(3, mult),(4, divide),(2, subtract)"then
  "PASS testdict"
@@ -724,23 +718,35 @@ if print.dict = "(3, mult),(2, sub),(1, add)"
 
 
 
-For the type listset.word, the unbound function = in the listset module is bound to the function =(word,word) in the standard module
+For the type listset.word, the unbound function = in the listset module is bound to the function =(word,word) in the standard module.  
 For the type listset.myentry, then unbound = is bound to =(a:myentry, b:myentry)boolean
 
+/tag <h2> >>.T in parameterized module. /tag </h2>
 
-/tag <h2> Order of evaluation /tag </h2>
+When defining graphs consisting of nodes and edges  the nodes  and edges may be of different type. For example then nodes may be of type T and the edges have a seq.word label.  In this case the type of the edge would be
 
-The arguments of a function are evaluate from left to right before the function is called.
+Module edge.T 
 
-Not all arguments need to be evaluated. Consider  i > 0 ∧ 300 / i < 10 where ∧ is defined as:
-<* block 
-function ∧(a:boolean, b:boolean)boolean   if a  then b  else false
-*>
- 
+use standard 
 
-The compiler will do inline expansion and the above expression becomes <* block if i > 0 then 300 / i < 10 else false *>  If i=0 then the expression   300 / i < 10 is never evaluated.
+type edge is tail:T,head:T,label:seq.word
 
-This behavior is required for the ∧ operator on booleans.
+In parameterized graph module in the Tau release, the parameter is itself a parameterized type 
+representing the type of the graph edge.    So within the graph module, T represents the type of the edge and
+>>.T references the node type. That is, >>.T references  the parameter of the parameter of the
+graph module. 
+
+The follow function would also be needed in the edge module  to be used by the graph module
+
+Function arc(node:T) edge.T 
+{used by module graph.edge.T when looking up edges} edge(node,node,"") 
+
+Export head(node:edge.T)  T 
+{used by module graph.edge.T }  
+
+Export tail(node:edge.T)  T 
+{used by module graph.edge.T }   
+
 
 /tag <h2> Bindings /tag </h2>
 
@@ -780,6 +786,19 @@ A function call f1(<exp1>, <exp2>,...)must match exactly one visible function de
 
 The type of the expression that defines a function much match the return type of the function.
 
+/tag <h2> Order of evaluation /tag </h2>
+
+The arguments of a function are evaluate from left to right before the function is called.
+
+Not all arguments need to be evaluated. Consider  i > 0 ∧ 300 / i < 10 where ∧ is defined as:
+<* block 
+function ∧(a:boolean, b:boolean)boolean   if a  then b  else false
+*>
+ 
+
+The compiler will do inline expansion and the above expression becomes <* block if i > 0 then 300 / i < 10 else false *>  If i=0 then the expression   300 / i < 10 is never evaluated.
+
+This behavior is required for the ∧ operator on booleans.
 
 
 /tag <h2> Encodings /tag </h2>
@@ -836,7 +855,7 @@ We must define a hash function and = function of the type.
 function hash(m:myencoding) int 
  hash(op.m)
  
-function =(a:myencoding, b:myencoding) boolean  op.a=op.b /and operands.a=operands.b
+function =(a:myencoding, b:myencoding) boolean  op.a=op.b ∧ operands.a=operands.b
 
 Note that for a and b of the type myencoding, a = b implies hash (a) = hash (b). 
 This must be true for the hash to work correctly. 
@@ -849,17 +868,17 @@ Function testExampleEncoding seq.word
   {encode every subexpression of the postfix expression.  If a sub-expression is used
    more that once it will have the same encoding every time it is used. /br
      Below a stack is used.  The definition is in core.}
-  let encodingofpostfix= for  stk=empty:stack.encoding.myencoding,w /in postfix do 
-    if w /in "+*" then  
+  let encodingofpostfix= for  stk=empty:stack.encoding.myencoding,w ∈ postfix do 
+    if w ∈ "+*" then  
     push(pop.pop.stk ,encode.myencoding(w, top(stk, 2)))
     else push(stk,encode.myencoding(w,empty:seq.encoding.myencoding))
     , top.stk  
   { all the encodings are now in encodingdata:myencoding. It is now easy to print out 
   instruction that will evaluate common subexpressions only once},
-       for acc="" ,idx=1,   e /in encodingdata:myencoding do 
-       let newacc=acc+"/br"+idx#R + "=" +if op.e /in"+,*" then 
-                [(valueofencoding.1#(operands.e))#R ,op.e        
-                ,(valueofencoding.2#(operands.e))#R]
+       for acc="" ,idx=1,   e ∈ encodingdata:myencoding do 
+       let newacc=acc+"/br"+R sub idx + "=" +if op.e ∈"+,*" then 
+                [(R sub (valueofencoding.(operands.e) sub 1))  ,op.e        
+                ,(R sub (valueofencoding.(operands.e) sub 2)) ]
       else  [op.e] ,
       next(newacc,idx+1)
       , acc  
@@ -900,13 +919,13 @@ use standard
 
  function myprocess(a:int)int 
    assert a > 0   report "invalid" ,
-   3^a
+   a sup 3
 
   function useprocess(i:int)int 
 { Note that the result type of this function matches the parameter 
   in the use clause above. This provides access to 
   the  psuedo-function   process below and allows a spawned process 
-  of type process.in to be created
+  of type process.int to be created
   from the function   myprocess }
   let a = process.myprocess.i ,
   if aborted.a 
@@ -915,7 +934,7 @@ use standard
   else result.a
 
 
-The follow function interact with the spawned process and blocks to wait for the spawned process to finish.
+The follow functions interact with the spawned process and blocks to wait for the spawned process to finish.
 
 Module process?.T
 
@@ -935,7 +954,7 @@ The spawning process cannot terminate until all of it child process complete, be
 /tag <h2> Defining Sequences /tag </h2>
 
 Some times it is usefully to define a new type of sequence.  Here we defined a geometric sequence moduled after the arithmetic seq
-define in otherseq.T
+define in seq1.T
 
 
 Module geometricseq.T
@@ -948,7 +967,7 @@ We need some operations on T.
 
 unbound *(T,T) T
 
-unbound ^(T,int) T
+unbound sup(T,int) T
 
 type geometricseq is   sequence,step:T, start:T
 
@@ -962,7 +981,7 @@ instances of the module does not produce duplicate symbols.
 
 Every sequence must have a#function defined on it:
 
-Function sequenceIndex(s:geometricseq.T, i:int) T start.s *  (step.s) ^ (i-1)
+Function sequenceIndex(s:geometricseq.T, i:int) T start.s *  (step.s) sup (i-1)
 
 We need a constructor of our sequence. Note the use of a toseq function. 
 This is defined implicitly by the sequence type definition to change the type 
@@ -988,11 +1007,11 @@ Function geotest seq.word
   
 The following are needed to define %(seq.int) and  %(seq.real).
 
-use otherseq.int
+use seq1.int
 
-use otherseq.real
+use seq1.real
 
-Function  %(a:real) seq.word print(10,a)
+Function  %(a:real) seq.word %(10,a)
 
 End of module geotest.
 
@@ -1006,12 +1025,12 @@ Sometimes a recursive function can be rewritten to make it tail recursive. Consi
  use seq.int
 
   function reverse2(l:seq.int)seq.int 
-  if isempty.l    then l   else reverse2.subseq(l, 2, n.l)+ 1#l
+  if isempty.l    then l   else reverse2.subseq(l, 2, n.l)+  l sub 1
 
 The last call in this function is to +. Here is a rewritten version that is tail recursive:
 
   function reverse3(l:seq.int, accumalator:seq.int)seq.int 
- if isempty.l then accumalator   else reverse3(subseq(l, 2, n.l), accumalator + 1#l)
+ if isempty.l then accumalator   else reverse3(subseq(l, 2, n.l), accumalator + l sub 1)
 
   function reverse3(l:seq.int)seq.int reverse3(l, empty:seq.int)
 

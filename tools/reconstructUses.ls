@@ -2,7 +2,7 @@ Module reconstructUses
 
 use seq.modExports
 
-use otherseq.modref
+use seq1.modref
 
 use set.modref
 
@@ -24,7 +24,7 @@ use seq.symbol
 
 use set.symbol
 
-use symbol2
+use symbol1
 
 use set.symdef
 
@@ -36,7 +36,7 @@ Function exportedmodref(m:midpoint) set.sym/modref
 for acc = empty:set.sym/modref, md ∈ libmods.m
 do
  for acc2 = acc, sym ∈ exports.md
- do acc2 + sym/modref(fixLengthSym.sym, modname.md),
+ do acc2 + sym/modref(sym, modname.md),
  acc2,
 acc
 
@@ -64,17 +64,8 @@ do
  if m2 = modname then acc else acc + deepcopySym.t,
 acc
 
-Function fixLengthSym(sym:symbol) symbol
-if isBuiltin.sym ∧ name.sym = 1#"length" then symbol(moduleref("* seq", parameter.1#paratypes.sym), "length", paratypes.sym, typeint)
-else sym
-
-Function fixLengthSym(syms:seq.symbol) seq.symbol
-for acc = empty:seq.symbol, sym ∈ syms
-do acc + fixLengthSym.sym,
-acc
-
 function lookupModule(m:midpoint, modname:word) modExports
-for acc = 1#libmods.m, md ∈ libmods.m
+for acc = (libmods.m) sub 1, md ∈ libmods.m
 do if name.modname.md = modname then md else acc,
 acc
 
@@ -94,7 +85,7 @@ m:midpoint
 , olduses:seq.seq.word
 ) set.modref
 let md = lookupModule(m, modname)
-let exports = fixLengthSym.exports.md,
+let exports = exports.md,
 if isempty.exports then empty:set.modref
 else
  {find symbols reference in defining module including type references}
@@ -107,7 +98,7 @@ else
  {find symbols referenced in expanding templates}
  let uses6 = uses5 ∪ requires(uses5, templates.m, dict, false)
  let thismodule =
-  if isAbstract.module.1#exports then moduleref("*" + modname, typeT)
+  if isAbstract.module.exports sub 1 then moduleref("*" + modname, typeT)
   else moduleref("*" + modname)
  let include0 =
   for acc = empty:set.symbol, sym ∈ exports
@@ -121,11 +112,11 @@ else
  do
   if isconstantorspecial.symx ∨ name.module.symx ∈ "$for" ∨ module.symx = thismodule ∨ isunbound.symx then next(uses, unhandled, included + symx)
   else
-   let sym = fixLengthSym.symx,
+   let sym = symx,
    if sym ∈ included then next(uses, unhandled, included)
    else
     let inmod = inModule(exported - sym/modref(sym, thismodule), sym),
-    if n.inmod = 1 then next(uses + 1#inmod, unhandled, included ∪ asset.exports(m, 1#inmod))
+    if n.inmod = 1 then next(uses + inmod sub 1, unhandled, included ∪ asset.exports(m, inmod sub 1))
     else next(uses, unhandled + inmod, included),
  asset.chooseUses(uses, unhandled, modname, olduses, exported) - thismodule
 
@@ -147,15 +138,15 @@ let in =
 for acc = empty:set.set.modref, newuses = asset.uses, u ∈ toseq.in
 do
  if isempty.u ∨ not.isempty(u ∩ newuses) then {ignore empty sets and sets with one of the modules already in uses} next(acc, newuses)
- else if n.u = 1 then {add the single modref to uses} next(acc, newuses + 1#u)
+ else if n.u = 1 then {add the single modref to uses} next(acc, newuses + u sub 1)
  else next(acc + u, newuses)
 let tmp =
  if not.isempty.acc then
-  for acc2 = empty:seq.modref, x ∈ toseq.1#acc
+  for acc2 = empty:seq.modref, x ∈ toseq.acc sub 1
   do if %.x ∈ olduses then acc2 + x else acc2,
   acc2
  else empty:seq.modref,
-if n.tmp = 1 then chooseUses(toseq.newuses + 1#tmp, acc, modname, olduses, exported)
+if n.tmp = 1 then chooseUses(toseq.newuses + tmp sub 1, acc, modname, olduses, exported)
 else if n.newuses > n.asset.uses then chooseUses(toseq.newuses, acc, modname, olduses, exported)
 else toseq.newuses
 
@@ -168,7 +159,7 @@ let tmp =
  else
   for acc2 = t, sm ∈ toseq.exported
   do
-   if replaceTsymbol(para.module.sym, sym.sm) = sym then acc2 + sym/modref(sym, replaceT(in.sm, para.module.sym))
+   if replaceTsymbol(para.module.sym, sym.sm) = sym then acc2 + sym/modref(sym, replaceT(para.module.sym, in.sm))
    else acc2,
   acc2
 for acc = empty:set.modref, e ∈ tmp do acc + in.e,
@@ -198,7 +189,7 @@ acc
 function removeseq(t:mytype) mytype if isseq.t then removeseq.parameter.t else t
 
 Function includecomment(modtext:seq.word) int
-let i = findindex(modtext, 1#"/p"),
+let i = findindex(modtext, "/p" sub 1),
 if i > n.modtext then i
 else if subseq(modtext, i + 1, i + 1) = "*"
 ∨ subseq(modtext, i + 1, i + 2) ∈ ["/keyword uses"] then i + includecomment(modtext << i)
@@ -220,5 +211,5 @@ for acc = empty:seq.symbol, sym ∈ a
 do
  let b = replaceTsymbol(with, sym)
  let k = findelement2(dict, b),
- acc + if isempty.k then b else 1#k,
+ acc + if isempty.k then b else k sub 1,
 acc 

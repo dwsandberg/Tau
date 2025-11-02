@@ -1,6 +1,6 @@
 Module testpackedseq.T
 
-use otherseq.T
+use seq1.T
 
 use seq.T
 
@@ -48,5 +48,5 @@ Function seqstruct(a:seq.T) seq.word
 let kind = seqkind.a,
 if kind = "pseq" then
  let p = to:pseq.T(a),
- "(^(seqstruct.a.p)^(seqstruct.b.p))"
+ "(:(seqstruct.a.p):(seqstruct.b.p))"
 else kind 

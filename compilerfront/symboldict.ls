@@ -1,16 +1,16 @@
 Module symboldict
 
-use otherseq.mytype
+use seq1.mytype
 
 use seq.mytype
 
 use standard
 
-use symbol
-
-use otherseq.symbol
+use seq1.symbol
 
 use set.symbol
+
+use symbol1
 
 use set.symdef
 
@@ -23,7 +23,7 @@ Export symboldict(asset:set.symbol, requires:set.symdef) symboldict
 Function lookupbysig(dict:symboldict, sym:symbol) set.symbol findelement2(asset.dict, sym)
 
 Function lookupbysig(dict:symboldict, name:seq.word) set.symbol
-lookupbysig(dict, symbol(internalmod, name, typeint))
+lookupbysig(dict, symbol(internalmod, name, empty:seq.mytype, typeint))
 
 type symboldict is asset:set.symbol, requires:set.symdef
 
@@ -34,16 +34,16 @@ if hasrequires.sym then
  let t = getSymdef(requires.d, sym),
  if isempty.t then empty:seq.symbol
  else
-  assert not.isempty.t report "requires^(sym)",
-  code.1#t
+  assert not.isempty.t report "requires:(sym)",
+  code.t sub 1
 else empty:seq.symbol
 
 Function restorenext(dict:symboldict) symboldict
-let thisnesting = 1#lookupbysig(dict, "for")
+let thisnesting = lookupbysig(dict, "for") sub 1
 let b = getCode(requires.dict, thisnesting)
 let dict1 =
  if n.b = 2 then dict - asset(b + thisnesting)
- else dict - asset(subseq(b, 1, 2) + thisnesting) + 3#b + 4#b,
+ else dict - asset(subseq(b, 1, 2) + thisnesting) + b sub 3 + b sub 4,
 dict1
  + placeholder(".fora", resulttype.thisnesting)
  + placeholder(".forb", resulttype.thisnesting)
@@ -52,7 +52,7 @@ dict1
 function placeholder(name:seq.word, basetype:mytype) symbol
 symbol(
  moduleref("internallib $for", basetype)
- , [merge.".^(name)"]
+ , [merge.".:(name)"]
  , empty:seq.mytype
  , basetype
 )
@@ -67,7 +67,7 @@ dict:symboldict
 let nestingsym = symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
 let tmp =
  if isempty.oldnesting then [nextSym, elementSym]
- else [nextSym, elementSym, 1#oldnesting, 1#getCode(requires.dict, 1#oldnesting)]
+ else [nextSym, elementSym, oldnesting sub 1, getCode(requires.dict, oldnesting sub 1) sub 1]
 let a = asset.dict
 for acc = a \ asset(tmp << 2), n ∈ [".forxx", ".foryy"]
 while n.acc < n.a

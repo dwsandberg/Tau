@@ -179,8 +179,7 @@ function finaljsHTTP(data,nobits ){
  
  
  function pageinit(library,page) {
-
-  var importObject = { imports:{ 
+var importObject = { imports:{ 
   abortfunc:function(arg){ throw arg ; return document.getElementById("demo").innerHTML ="abort"; } 
 , randomfunc: () =>  Math.floor(Math.random()* 10000000 ) 
 , sin: arg =>  Math.sin(arg)  
@@ -195,7 +194,7 @@ function finaljsHTTP(data,nobits ){
   try { return exports.processbody(wrapper, args); } 
   catch(err){ 
     var b; 
-  console.log("catch err"+ err.message +"err"+"name:"+(err.name)); 
+  console.log("catch err"+ err.message +"err"+"name:"+(asjsstring(err.name))); 
     if(err.message ===undefined){ b = err; } 
     else if(err.message.startsWith("Division")){ b = 0; } 
     else { b = 0; } 
@@ -204,22 +203,35 @@ function finaljsHTTP(data,nobits ){
 
 , setelementvalue:function  (id ,textin ){
   let text=asjsstring(textin); 
-  console.log("SETELEMENT"+text);   
+  console.log("SETELEMENT"+(text.length < 50) ? text : text.length);   
   let  z = document.getElementById(asjsstring( id )); 
+  /* replaced with switch below. 10/21/2025
   let  kind = z.tagName; 
-  if(kind=="TEXTAREA" || kind=="SELECT" )z.value =  text.trim();
-  else if(kind=="INPUT") {
+   console.log("SETELEMENT"+text +kind);   
+  if(kind==="TEXTAREA" || kind=="SELECT" )z.value =  text.trim();
+  else if(kind==="INPUT") {
     if (z.type=="checkbox" ) 
        z.checked=   (text.trim() ==   "true"  ? "checked" : "" ); 
     else z.value=text.trim();}
-  else z.innerHTML = text;
+  else z.innerHTML = text;*/
+   switch(z.tagName) {
+   case "SELECT":
+   case "TEXTAREA": z.value =  text.trim(); break;
+   case "PRE":z.textContent =  text.trim()
+   case "INPUT": 
+   if (z.type=="checkbox" ) 
+       z.checked=   (text.trim() ==   "true"  ? "checked" : "" ); 
+    else z.value=text.trim();  
+    break;
+    default:z.innerHTML = text;
+    }
   return 0; 
 }
   
 , getelementvalue:function  (id){ 
   console.log("GETELEMENT"+asjsstring( id));   
   let  z = document.getElementById(asjsstring( id).trim()); 
-  let  kind=z.tagName ;
+  /* let  kind=z.tagName ;
   let r=""
   if (kind=="INPUT" & z.type=="radio")  
    { var ele = document.getElementsByName(z.name);
@@ -233,7 +245,25 @@ function finaljsHTTP(data,nobits ){
            ( z.type=="radio")?   r :
              z.value):
          (kind=="SELECT")? z.value:   z.innerHTML ; 
-   console.log("GETELEMENT"+asjsstring( id)+"="+r);   
+   */
+   switch(z.tagName) {
+   case "SELECT":  
+   case "TEXTAREA": r=z.value  ; break;
+   case "PRE" : r=z.textContent; break;
+   case "INPUT": 
+        switch(z.type){ 
+          case "checkbox":  r= z.checked ; break;
+            case "radio":
+                var ele = document.getElementsByName(z.name);
+               for (i = 0; i < ele.length; i++)  
+                  if (ele[i].checked) r=ele[i].value;
+                break;
+             default: r=z.value;
+             }
+    break;
+    default: r=z.innerHTML  ;
+    }
+    console.log("GETELEMENT"+asjsstring( id)+r.length);   
   return jsstring2UTF8bytes(r); 
 }
 
@@ -241,6 +271,7 @@ function finaljsHTTP(data,nobits ){
   let atts=asjsstring(attsbytes);
   let myArr = atts.trim().split(" ");
   let element=document.getElementById(asjsstring(idbytes).trim());
+     console.log("getattributes2:"+asjsstring(idbytes));
   let result="";
   let i ;
   if(element instanceof SVGElement)  
@@ -253,7 +284,6 @@ function finaljsHTTP(data,nobits ){
     for( i=0; i <  myArr.length; i++)  { 
        let t=myArr[i].trim()
        if (t=="textContent"){
-          console.log("SDF"+element.textContent);
         result+=element.textContent+" "; }
        else 
       result+=element.getAttribute( t )+" ";
@@ -281,6 +311,7 @@ console.log("SDF"+a+"EVENT"+asjsstring(event).trim());
   var doc=new DOMParser().parseFromString(
   '<svg xmlns="http://www.w3.org/2000/svg"> <g id="newnode">'+ 
   asjsstring(xml)+'</g> </svg>', 'application/xml');
+  console.log("XML"+asjsstring(xml));
   var someElement=document.getElementById(asjsstring(id ).trim());
   if (someElement == null ) return 0;
   while (someElement.firstChild) {
@@ -295,7 +326,7 @@ console.log("SDF"+a+"EVENT"+asjsstring(event).trim());
    
 
  ,jsHTTP:function (url,methodx,data,followfunc,state) {
-  // only handles one header //
+// only handles one header //
    var nobits=8;
    var responeheader="";
   let header=asjsstring(methodx);
@@ -327,6 +358,18 @@ console.log("SDF"+a+"EVENT"+asjsstring(event).trim());
       console.log("jsHTTP2"+asjsstring(followfunc))
      inprogress--; exports[asjsstring(followfunc)](state,rec ); }) 
   }
+  ,URLargs:function (){
+    var args="";
+ for (const p of new URLSearchParams(window.location.search)) {
+  args=args+ p[0]+": "+p[1]+" "}
+return  jsstring2UTF8bytes(args);}
+, openWindow2:function(name){
+let page=asjsstring(name);
+    console.log("openwindow"+page);
+window.open(page);
+ return 0;
+}
+
   
  } } ; 
   fetch("/built/"+library+".wasm")

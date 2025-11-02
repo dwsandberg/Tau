@@ -147,7 +147,7 @@ run(
 
 A PEGdebug tool is provide that will give the detail steps in the parse using the PEG module. The output of the debug tool for the parse in postfix function is provided here but no explanation of the output is provided here. 
 
-/tag <h3> Using PEGgen    /tag </h3>
+/tag <h3> Using genPEG    /tag </h3>
 
 The  transform tool can generate code for a function /em parse  that
 allows allows code to be written equivalent to the stkCode function above.
@@ -155,11 +155,11 @@ allows allows code to be written equivalent to the stkCode function above.
 Function stkCode2 seq.word 
 result.parse(input, {initail Attribute }"" )
 
-Below is a function PEGgen that the transform tool replaces any code after that procedure will auto generated code. One function that will be generated is <* block  Function    parse(input:seq.seqElementType, attributeType) runresultType *>  In this case the
+Below is a function genPEG that the transform tool replaces any code after that procedure will auto generated code. One function that will be generated is <* block  Function    parse(input:seq.seqElementType, attributeType) runresultType *>  In this case the
 seqElementType is word and the attributeType is seq.word.  
 The parse function executes that actions of the rules in the order of the post order trasversal of the parse tree.  Each action comibines the attributes matching the Non-terminals of the rule into a single attribute. 
  
-We need to supply a couple of functions before giving the PEGgen procedure. 
+We need to supply a couple of functions before giving the genPEG procedure. 
 
 function endMark word  {Specifies the seqElement that marks the end of the input. For UTF8 input we use an illegal byte in UTF8 format. } encodeword.[char.254]
 
@@ -171,7 +171,7 @@ seqElement
 
 use seq.word
 
-Since any code after the PEGgen procedure is replace with auto generated code we also give
+Since any code after the genPEG procedure is replace with auto generated code we also give
 a procedure that allows us to see the output of the examples above.
 
 Function PEGex seq.word
@@ -189,19 +189,19 @@ stkCode
 The body of the PEGprocedure is formed taking the string in the stkCode procedure and making the folowing changes:
 /br quote each rule and action,  /br change /action to = , change /em /br to a comma
 /br
-change $.1 to ^($.1) and do the same for the other $ expressions. 
+change $.1 to :($.1) and do the same for the other $ expressions. 
 
-function PEGgen(seqElementType:word, attributeType:seq.word) seq.boolean
-{wordmap: dq dq , //br /br, 1#" $" }
- ["G1 function any int E " = "  ^($.2)"
-," E Sum " = " ^($.1)"
-," Sum Atom Sum' " = " ^($.1) ^($.2)"
-," * Sum'+Atom " = " ^($.0) ^($.1) Add"
-," Atom (E) " = " ^($.1)"
-," / let any = E, E " = " ^($.2) Store ^($.1) ^($.3)"
-," / any " = " ^($.1)"]
+function genPEG(seqElementType:word, attributeType:seq.word) seq.boolean
+{wordmap: dq dq , //br /br,  " $" sub 1 }
+ ["G1 function any int E " = "  :($.2)"
+," E Sum " = " :($.1)"
+," Sum Atom Sum' " = " :($.1) :($.2)"
+," * Sum'+Atom " = " :($.0) :($.1) Add"
+," Atom (E) " = " :($.1)"
+," / let any = E, E " = " :($.2) Store :($.1) :($.3)"
+," / any " = " :($.1)"]
 
-The comment in the PEGgen procedure is significate as it sepecifies how to map a word in a rule into the attributeType. Following the = is
+The comment in the genPEG procedure is significate as it sepecifies how to map a word in a rule into the attributeType. Following the = is
 a comma seperated list. if the word of the rule matches  first word of the element in the list it will be replaced with the remainer of the words in the element.  The last element of the list is the default case and is used if word of the rule does not match any of the other elements.  In the default case the whole element is used and  the $ is replaced with the word of the rule. 
   
 
@@ -250,12 +250,12 @@ code.finalAttribute
 
 A change is needed to modify the rule " / let any = E, E " as  an action  is needed to add a  symbol to the symbol table     before the symbol is referenced.  Below this rule is replaced with   " / Declare, E " and  "Declare any=E" is added. The action of the second rule will add a value to the symbol table.  Also,  check in  action of the "/ any" rule is added to raise an error if the symbol is not define.
 
-These changes have been made to   the PEGgen  below. Calling stkCode3 will now
+These changes have been made to   the genPEG  below. Calling stkCode3 will now
 raise the error <* block Not defined b *>
 
  
-function PEGgen(seqElementType:word, attributeType:attribute) seq.boolean
-{wordmap: 1#" $"}
+function genPEG(seqElementType:word, attributeType:attribute) seq.boolean
+{wordmap: " $" sub 1}
 [
  "G1 function any int E" = $.2
  , "E Sum" = $.1
@@ -263,10 +263,10 @@ function PEGgen(seqElementType:word, attributeType:attribute) seq.boolean
  , "* Sum'+Atom" = attribute(symbols.$.0, code.$.0 + code.$.1 + "Add")
  , "Atom (E)" = $.1
  , "/ Declare E" = attribute(symbols.$.0, code.$.1 + code.$.2)
- , "/ any" = assert 1#code.$.1 /in symbols.$.1 report "Not defined^(code.$.1)"
+ , "/ any" = assert  (code.$.1) sub 1 ∈ symbols.$.1 report "Not defined:(code.$.1)"
  attribute(symbols.$.0  , code.$.0 +  code.$.1 )
  , "Declare let any = E,"
-  = attribute(symbols.$.0 + 1^code.$.1, code.$.2 + "Store" + code.$.1 )
+  = attribute(symbols.$.0 +  (code.$.1) sub n.code.$.1, code.$.2 + "Store" + code.$.1 )
 ]
 
 
@@ -385,9 +385,9 @@ Function stkCode4  seq.word
            , " function Example5 int  if 1 then 2+3 else 4"
       ," function Example6 int  if 1 then 2+3 else "
      ]
-  for acc="" , in /in data do
+  for acc="" , in ∈ data do
    let p = process.parser.in
-  acc+" ^(in)/br"+ if aborted.p then 
+  acc+" :((in)/br"+ if aborted.p then 
 message.p+"/br"
    else  result.p+"/br"  
   acc           
@@ -396,10 +396,10 @@ function parser(in:seq.word) seq.word
 let initAttribute=attribute(asset."1 2 3 4","")
 let p=parse(in,initAttribute ,true)
 let finalAttribute=result.p
-if status.p /in "Failed" /and place.p > 0 then
-"Failed"+errormessage("syntax error",recoverInfo(pop.stk.p,input.p,place.p))
+if status.p ∈ "Failed" ∧ place.p > 0 then
+"Failed"+errormessage("syntax error",recoverInfo(pop.stk.p,input.p,place.p,faili.p))
 else 
-"status:^(status.p) place:^(place.p) code:" +code.finalAttribute
+"status::(status.p) place::(place.p) code:" +code.finalAttribute
 
   
 function errormessage(message:seq.word,rinfo:recoverInfo) seq.word
@@ -409,13 +409,13 @@ let corrected = subseq(input.rinfo, 1, place.rinfo - 1) + ending
  let reparse = parse(corrected, attribute(empty:set.word,""),false),
 if status.reparse ∉ "Match" then
 "Failed reparse" + corrected
-else  "Error at^(place.rinfo) message:^(message). To finish parse,'^(subseq(input.rinfo , place.rinfo   , n.input.rinfo-1) ) 
-' was replaced with '^(ending)'"
+else  "Error at:(place.rinfo) message::(message). To finish parse,':(subseq(input.rinfo , place.rinfo   , n.input.rinfo-1) ) 
+' was replaced with ':(ending)'"
  
 
-function PEGgen(seqElementType:word, attributeType:attribute, resultType:recoverInfo, rinfo:recoverInfo,
+function genPEG(seqElementType:word, attributeType:attribute, resultType:recoverInfo, rinfo:recoverInfo,
 commonType:boolean,checkSemantics:boolean) seq.boolean
-{commonName: checkSemantics error:   wordmap : 1#" $"}
+{commonName: checkSemantics error:   wordmap :   " $" sub 1}
 [ 
  "G1 function any int E" = $.2
  , "E   if E then E  else E" = 
@@ -425,9 +425,9 @@ commonType:boolean,checkSemantics:boolean) seq.boolean
  , "* Sum'+Atom" = attribute(symbols.$.0, code.$.0 + code.$.1 + "Add")
  , "Atom (E)" = $.1
  , "/ Declare E" = attribute(symbols.$.0, code.$.1 + code.$.2)
- , "/ ! if ! let any" = assert not.checkSemantics /or  1#code.$.1 /in symbols.$.1 report errormessage("^(code.$.1) is not defined ",rinfo)
+ , "/ ! if ! let any" = assert not.checkSemantics ∨ (code.$.1) sub 1 ∈ symbols.$.1 report errormessage(":(code.$.1) is not defined ",rinfo)
  attribute(symbols.$.0  , code.$.0 +  code.$.1 )
  , "Declare let any = E,"
-  = attribute(symbols.$.0 + 1^code.$.1, code.$.2 + "Store" + code.$.1 )
+  = attribute(symbols.$.0 +  (code.$.1) sub n.code.$.1, code.$.2 + "Store" + code.$.1 )
 ]
 

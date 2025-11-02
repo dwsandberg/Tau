@@ -31,7 +31,7 @@ but only the name of the type is given.
   The local variables are represented by % followed by a number, for example   %2.  Local variables  also have name associated with 
   them that is not in the text representation. 
 
-The body of fact2 can be rewritten as a sequence of statments using explicit gotos. All the statements are wrap up in a block.   
+The body of fact2 can be rewritten as a sequence of statements using explicit gotos. All the statements are wrapped up in a block.   
 <* block Block(
   /br if  a=1 then goto(+1) else goto(+2)
    /br,Exit(result)  
@@ -39,7 +39,9 @@ The body of fact2 can be rewritten as a sequence of statments using explicit got
    /br,Exit( result)
    /br,Exit( fact2(a-1,result * a))
   ) *>
-/strong goto(+n) means do not execute the next n-1 statements and continue with the following statement.
+
+???? /em  /strong  at beginning of line causes problem
+ /strong goto(+n) means do not execute the next n-1 statements and continue with the following statement. 
 /strong Exit means skip executing all the follow statements in the block. 
 
 

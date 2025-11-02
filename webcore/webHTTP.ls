@@ -16,7 +16,7 @@ use seq.byte
 
 use file
 
-use otherseq.file
+use seq1.file
 
 use real
 
@@ -77,7 +77,7 @@ let newfiles =
  if between(idx.s, 1, n.files.s) then
   {update file with result ???? need to handle errors}
   let tmp = fromJS.h,
-  replace(files.s, idx.s, file(fn.(idx.s)#files.s, [result.tmp], header.tmp))
+  replace(files.s, idx.s, file(fn.(files.s) sub idx.s, [result.tmp], header.tmp))
  else files.s
 let newstate = HTTPstate(newfiles, args.s, idx.s + 1, finalcall.s, method.s, funcname.s),
 if idx.s = n.files.s then
@@ -87,7 +87,7 @@ if idx.s = n.files.s then
  0.0
 else
  let nameprefix = if method.s = "GET" then "/" else "../cgi-bin/putfile.cgi?"
- let this = (idx.newstate)#files.s
+ let this = (files.s) sub idx.newstate
  let t = HTTP(nameprefix + fullname.fn.this, method.s, data.this, funcname.s, newstate),
  {never gets here}
  0.0

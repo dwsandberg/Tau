@@ -19,8 +19,8 @@ The second example uses an existing data type byte.
 
 function genEnum seq.seq.word 
 [
- "newType: numbers values: ? two0 two1 ? two2 ? ? ? two3"
- , "existingType: byte decodeName: twodecode values: Two0 1 Two1 2 Two2 4 Two3 0x08"
+ "newType: numbers names: ? two0 two1 ? two2 ? ? ? two3"
+ , "existingType: byte decodeName: twodecode valueName: Two0 1 Two1 2 Two2 4 Two3 0x08"
 ]
 
 <<<< Below is auto generated code >>>>
@@ -41,13 +41,13 @@ Function two1 numbers numbers.2
 
 Function two2 numbers numbers.4
 
-Function two3 numbers numbers.8
+Function two3 numbers numbers.8  
 
 Function decode(code:numbers) seq.word
 let discard = [two0, two1, two2, two3]
 let i = toint.code,
 if between(i + 1, 1, 9) then
- let r = [(i + 1)_"? two0 two1 ? two2 ? ? ? two3"],
+ let r = ["? two0 two1 ? two2 ? ? ? two3"] sub (i+1),
  if r ≠ "?" then r else "numbers." + toword.i
 else "numbers." + toword.i
 
@@ -63,6 +63,6 @@ Function twodecode(code:byte) seq.word
 let discard = [Two0, Two1, Two2, Two3]
 let i = toint.code,
 if between(i + 1, 1, 9) then
- let r = [(i + 1)_"? Two0 Two1 ? Two2 ? ? ? Two3"],
+ let r = ["? Two0 Two1 ? Two2 ? ? ? Two3" sub (i + 1)],
  if r ≠ "?" then r else "byte." + toword.i
 else "byte." + toword.i 

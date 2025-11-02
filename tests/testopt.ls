@@ -14,7 +14,7 @@ use llvmcode
 
 use standard
 
-use symbol2
+use symbol1
 
 use set.symdef
 
@@ -61,16 +61,11 @@ let cl =
   /br EndBlock
   /br"
   , "25"
-  , {test 26}
-  "3 %1 seq.int:#(int, seq.int) int Define 2 Start (int)
-  /br %2 3333 Jump (int, int) boolean Br2 (6, 1)
-  /br 5 Br2 (5, 1)
-  /br 7 Br2 (4, 1)
-  /br 8 Br2 (3, 1)
-  /br 9 Br2 (2, 1)
-  /br 10 Br2 (1, 2)
+  , {test 26} "%1 3 seq.int:sub"
+   + "(seq.int, int) int Define 2 Start (int)
+  /br %2 JmpB 15 4:1 5:1 7:1 8:1 9:1 3333:1:2 Jmp 15
   /br 25 Exit
-  /br 2 Exit
+  /br 20 Exit
   /br EndBlock
   /br"
   , "%1 %2 Loop:3 (int, int) int
@@ -103,48 +98,32 @@ let cl =
   , "31"
   , "%1"
   , {test 33} "33"
-  , "%2 %1 seq.int:#(int, seq.int) int Define 3 Start (int)
-  /br %3 1 Jump (int, int) boolean Br2 (7, 1)
-  /br 9 Br2 (6, 1)
-  /br 5 Br2 (5, 1)
-  /br 2 Br2 (4, 1)
-  /br 12 Br2 (3, 1)
-  /br 3 Br2 (2, 1)
-  /br 4 Br2 (1, 2)
+  , "%1 %2 seq.int:sub (seq.int, int) int Define 3 Start (int)
+  /br %3 JmpB 17 1:1 9:1 5:1 2:1 12:1 3:1 4:1:2 Jmp 17
   /br 10 Exit
   /br 11 Exit
   /br EndBlock
   /br"
   , {test 35}
   "Start (int)
-  /br %2 %1 seq.word:#(int, seq.word) word Define 3 %3 WORD e = (int, int) boolean Br2 (6, 1)
-  /br %3 WORD d = (int, int) boolean Br2 (5, 1)
-  /br %3 WORD c = (int, int) boolean Br2 (4, 1)
-  /br %3 WORD b = (int, int) boolean Br2 (3, 1)
-  /br %3 WORD a = (int, int) boolean Br2 (2, 1)
-  /br %2 %1 seq.word:#(int, seq.word) word WORD x = (int, int) boolean Br2 (1, 2)
+  /br %1 %2 seq.word:sub"
+   + "(seq.word, int) word Define 3 %3 JmpB 15 WORD e:1 WORD d:1 WORD c:1 WORD b:1 WORD a:1 WORD x:1:2 Jmp 15
   /br 10 Exit
   /br 11 Exit
   /br EndBlock
   /br"
   , {optest36}
   "Start (int)
-  /br %1 WORD a = (int, int) boolean Br2 (3, 1)
-  /br %1 WORD b = (int, int) boolean Br2 (2, 1)
-  /br %1 WORD c = (int, int) boolean Br2 (1, 2)
+  /br %1 JmpB 9 WORD a:1 WORD b:1 WORD c:1:2 Jmp 9
   /br 26 Exit
   /br 0 Exit
   /br EndBlock
   /br"
   , {test 37}
   "Start (int)
-  /br %2 %1 seq.word:#(int, seq.word) word WORD xxx = (int, int) boolean Br2 (1, 2)
+  /br %1 %2 seq.word:sub"
+   + "(seq.word, int) word Define 3 %3 JmpB 15 WORD xxx:1 WORD a:2 WORD b:2 WORD c:2 WORD d:2 WORD z:2:3 Jmp 15
   /br 3 Exit
-  /br %2 %1 seq.word:#(int, seq.word) word Define 3 %3 WORD a = (int, int) boolean Br2 (5, 1)
-  /br %3 WORD b = (int, int) boolean Br2 (4, 1)
-  /br %2 %1 seq.word:#(int, seq.word) word Define 4 %4 WORD c = (int, int) boolean Br2 (3, 1)
-  /br %4 WORD d = (int, int) boolean Br2 (2, 1)
-  /br %4 WORD z = (int, int) boolean Br2 (1, 2)
   /br 4 Exit
   /br 5 Exit
   /br EndBlock
@@ -159,9 +138,7 @@ let cl =
   , {40} dq."this for loop should be a noop"
   , "true boolean"
   , "Start (int)
-  /br %1 1 Jump (int, int) boolean Br2 (3, 1)
-  /br 3 Br2 (3, 1)
-  /br 7 Br2 (3, 4)
+  /br %1 JmpB 9 1:1 3:2 7:3:4 Jmp 9
   /br 10 Exit
   /br 30 Exit
   /br 70 Exit
@@ -170,25 +147,13 @@ let cl =
   /br"
   , {43}
   "Start (int)
-  /br %1 4 = (int, int) boolean Br2 (1, 7)
-  /br %2 10 = (int, int) boolean Br2 (1, 6)
-  /br %1-3 Jump (int, int) boolean Br2 (17, 1)
-  /br-4 Br2 (17, 1)
-  /br-5 Br2 (17, 1)
-  /br-10 Br2 (16, 1)
-  /br-12 Br2 (16, 17)
-  /br %1 7 Jump (int, int) boolean Br2 (9, 1)
-  /br 2 Br2 (9, 1)
-  /br 5 Br2 (10, 1)
-  /br 1 Br2 (8, 1)
-  /br-3 Br2 (8, 1)
-  /br-4 Br2 (8, 1)
-  /br-5 Br2 (8, 1)
-  /br-10 Br2 (7, 1)
-  /br-12 Br2 (7, 8)
+  /br %1 4 = (int, int) boolean Br2 (1, 2)
+  /br %2 10 = (int, int) boolean Br2 (5, 1)
+  /br %1 JmpB 11 7:1 2:2 5:5 1:3:4 Jmp 11
   /br 70 Exit
   /br 20 Exit
   /br 10 Exit
+  /br %1 JmpB 13-3:1-4:2-5:3-10:3-12:4:5 Jmp 13
   /br 30 Exit
   /br 40 Exit
   /br 50 Exit
@@ -197,25 +162,13 @@ let cl =
   /br EndBlock
   /br"
   , "Start (int)
-  /br %1 4 = (int, int) boolean Br2 (1, 7)
-  /br %2 10 = (int, int) boolean Br2 (1, 6)
-  /br %1-3 Jump (int, int) boolean Br2 (17, 1)
-  /br-4 Br2 (17, 1)
-  /br-5 Br2 (17, 1)
-  /br-10 Br2 (16, 1)
-  /br-12 Br2 (16, 17)
-  /br %1 7 Jump (int, int) boolean Br2 (9, 1)
-  /br 2 Br2 (9, 1)
-  /br 5 Br2 (10, 1)
-  /br 1 Br2 (8, 1)
-  /br-3 Br2 (8, 1)
-  /br-4 Br2 (8, 1)
-  /br-5 Br2 (8, 1)
-  /br-10 Br2 (7, 1)
-  /br-12 Br2 (7, 8)
+  /br %1 4 = (int, int) boolean Br2 (1, 2)
+  /br %2 10 = (int, int) boolean Br2 (5, 1)
+  /br %1 JmpB 11 7:1 2:2 5:5 1:3:4 Jmp 11
   /br 70 Exit
   /br 20 Exit
   /br 10 Exit
+  /br %1 JmpB 13-3:1-4:2-5:3-10:3-12:4:5 Jmp 13
   /br 30 Exit
   /br 40 Exit
   /br 50 Exit
@@ -228,23 +181,18 @@ let cl =
   , "0 0 %1 getseqlength (ptr) int Define 2 0 Loop:3 (int, int, int) int
   /br %5 %2 = (int, int) boolean Br2 (1, 2)
   /br 0 Exit
-  /br %5 1+(int, int) int Define 6 %1 getseqtype (ptr) int Define 7 Start (int)
-  /br %7 1 > (int, int) boolean Br2 (1, 2)
-  /br %1 %6 callidx (seq.int, int) int Exit
-  /br %1 %6 idxseq (seq.int, int) int Exit
-  /br EndBlock
-  /br Define 10 %4 64 = (int, int) boolean Br2 (1, 2)
+  /br %5 1+(int, int) int Define 6 %1 %6 idxNB (seq.int, int) int Define 7 %4 64 = (int, int) boolean Br2 (1, 2)
   /br %3 8 %6 Continue 3
   /br %3 9 %6 Continue 3
   /br EndBlock
-  /br Define 11 3"
+  /br Define 8 3"
   , {46} "2"
   , {47}
   "%1 %2 %3 Loop:4 (int, int, int) int
   /br Start (seq.int)
   /br %5 0 = (int, int) boolean Br2 (1, 2)
-  /br^(dq."C") Exit
-  /br^(dq."B") Exit
+  /br:(dq."C") Exit
+  /br:(dq."B") Exit
   /br EndBlock
   /br Define 7 %4 %5+(int, int) int Define 8 %5 0 = (int, int) boolean Br2 (1, 2)
   /br %6 Exit
@@ -255,15 +203,41 @@ let cl =
    + "%1 getseqlength (ptr) int Define 2 %2 1+(int, int) int Loop:3 (seq.int, int) int
   /br %4 1 = (int, int) boolean Br2 (1, 2)
   /br 0 Exit
-  /br %4-1+(int, int) int Define 5 %1 getseqtype (ptr) int Define 6 Start (int)
-  /br %6 1 > (int, int) boolean Br2 (1, 2)
-  /br %1 %5 callidx (seq.int, int) int Exit
-  /br %1 %5 idxseq (seq.int, int) int Exit
+  /br %4-1+(int, int) int Define 5 %1 %5 idxNB (seq.int, int) int Define 6 %3 %6 seq (1) seq.int seq.word:+(seq.word, seq.word) seq.word %5 Continue 2
   /br EndBlock
-  /br Define 7 %3 %7 seq (1) seq.int seq.word:+(seq.word, seq.word) seq.word %5 Continue 2
-  /br EndBlock
-  /br Define 8 %3"
+  /br Define 7 %3"
   , {49} "WORD test"
+  , "Start (int)
+  /br %1 3+(int, int) int 9 = (int, int) boolean Br2 (1, 2)
+  /br 90 Exit
+  /br %1 JmpB 11 7:1 3:2 1:3 0:4:5 Jmp 11
+  /br 70 Exit
+  /br 30 Exit
+  /br 20 Exit
+  /br 0 Exit
+  /br 55 Exit
+  /br EndBlock
+  /br"
+  , {51}
+  "Start (seq.int)
+  /br %1 JmpB 19 2:4 8:1 9:1 10:2 11:4 14:4 16:4 15:1:1 Jmp 19
+  /br:(dq."R") Exit
+  /br %1 1 = (int, int) boolean Br2 (1, 2)
+  /br:(dq."~ENTRY") Exit
+  /br:(dq."") Exit
+  /br EndBlock
+  /br"
+  , {52}
+  "Start (int)
+  /br %1 JmpB 11 40:1 41:1 42:1 43:1:2 Jmp 11
+  /br 33 Exit
+  /br 34 Exit
+  /br EndBlock
+  /br"
+  , ""
+  , {54} "6 0 / (int, int) int Define 1 14"
+  , {55} ""
+  , {56} ""
  ]
 {, {50}" Start (int)
 /br %1 5555 = (int, int) boolean Br2 (1, 2)
@@ -293,15 +267,15 @@ let r =
   , multitarget(2, false, false)
  ] then ""
  else "fail multitarget",
-analtests:callconfig + if isempty.r then "PASS testopt" else "testopt^(r)"
+analtests:callconfig + if isempty.r then "PASS testopt" else "testopt:(r)"
 
 function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int) seq.word
-let name = merge."optest^(no)"
+let name = merge."optest:(no)"
 for code = "", p ∈ p2 do if name = name.sym.p then %.code.p else code,
-if no#codelist = code ∨ no = 260 ∧ shuffletest.sameto(code, no#codelist, 1, "") then ""
+if codelist sub no = code ∨ no = 260 ∧ shuffletest.sameto(code, codelist sub no, 1, "") then ""
 else
- "/br <* literal FAILED *> test^(no) in optest. Got: 
- /br^(code) /p Expected:^(no#codelist)"
+ "/br <* literal FAILED *> test:(no) in optest. Got: 
+ /br:(code) /p Expected::(codelist sub no)"
 
 function shuffletest(s:seq.word) boolean
 s
@@ -314,5 +288,5 @@ s
 
 function sameto(a:seq.word, b:seq.word, i:int, diffs:seq.word) seq.word
 if i > n.a ∨ i > n.b then diffs
-else if i#a = i#b then sameto(a, b, i + 1, diffs)
-else sameto(a, b, i + 1, diffs + [toword.i, i#a, i#b]) 
+else if a sub i = b sub i then sameto(a, b, i + 1, diffs)
+else sameto(a, b, i + 1, diffs + [toword.i, a sub i, b sub i]) 

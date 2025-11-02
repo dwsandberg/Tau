@@ -127,7 +127,7 @@ let flds =
  do acc + asi64.slot.@e,
  acc
 let t = encodingdata:const3
-let place = if n.t = 0 then 0 else place.1^t + n.flds.1^t
+let place = if n.t = 0 then 0 else place.t sub n.t + n.flds.t sub n.t
 let x = decode.encode.const3(place, flds)
 let idx = if place.x ≠ place then place.x else place,
 toint.CGEP(modulerecord("list", [0]), idx)

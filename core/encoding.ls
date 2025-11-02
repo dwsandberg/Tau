@@ -2,7 +2,7 @@ Module encoding.T
 
 use seq.encodingpair.T
 
-use otherseq.seq.encodingpair.T
+use seq1.seq.encodingpair.T
 
 use indirect.encodingstate.T
 
@@ -10,9 +10,13 @@ use seq.T
 
 use bits
 
+use kernal
+
 use ptr
 
-use standard
+use word
+
+use seq.word
 
 Export type:encoding.T
 
@@ -22,7 +26,7 @@ Export type:encodingstate.T
 
 Export length(encodingstate.T) int
 
-builtin set2(ptr, encodingstate.T) ptr
+builtin set(ptr, encodingstate.T) ptr
 
 type encoding is valueofencoding:int
 
@@ -44,8 +48,8 @@ else
 builtin finishStart:T(eno:int) einfo.T
 
 Function empty:encodingstate.T encodingstate.T
-let x = constantseq(4, empty:seq.encodingpair.T),
-encodingstate(empty:seq.encodingpair.T, 0, x, to:encoding.T(0))
+let e = empty:seq.encodingpair.T,
+encodingstate(e, 0, [e, e, e, e], to:encoding.T(0))
 
 type encodingpair is data:T, code:encoding.T, hash:int
 
@@ -56,7 +60,7 @@ unbound hash(T) int
 
 unbound =(T, T) boolean
 
-Function lastadded(h:encodingstate.T) encoding.T code.1^all.h
+Function lastadded(h:encodingstate.T) encoding.T code.(all.h) sub n.all.h
 
 function notsamehash:T(a:int, b:int, mask:bits) boolean (bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
@@ -67,22 +71,24 @@ Function addencoding(h:encodingstate.T, data:T) encodingstate.T
 let datav = deepcopy.data
 let hashv = hash.datav
 let tablesize = n.encodetable.h
-let mask = bits.-1 >> (65 - floorlog2.tablesize)
+let mask = bits.-1 >> (64 - floorLog2.tablesize)
 let dataindex = toint(tobits.hashv ∧ mask) + 1
-let existingcode = lookuprep2(datav, dataindex#encodetable.h),
+let existingcode = lookuprep2(datav, (encodetable.h) sub dataindex),
 if not.isempty.existingcode then
  {already present}
- let c = code.1#existingcode,
+ let c = code.existingcode sub 1,
  if lastadd.h = c then h else encodingstate(all.h, length.h, encodetable.h, c)
 else
  let code = to:encoding.T(n.all.h + 1)
  let p = encodingpair(datav, code, hashv)
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
- for listencode = [p], e ∈ dataindex#encodetable.h
+ for listencode = [p], e ∈ (encodetable.h) sub dataindex
  do
   if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask) then listencode
-  else listencode + e,
+  else listencode + e
+ let etable = encodetable.h
  let newencode = replace(encodetable.h, dataindex, listencode),
+ {subseq (etable, 1, dataindex-1)+listencode+subseq (etable, dataindex+1, n.etable)}
  if 3 * length.h > 2 * tablesize then encodingstate(all.h + p, length.h + 1, newencode + newencode + newencode + newencode, code.p)
  else encodingstate(all.h + p, length.h + 1, newencode, code.p)
 
@@ -95,7 +101,7 @@ do primitiveadd(inst, @e),
 Function decode(t:encoding.T) T
 let h = encodingstate.getinstance3:T
 assert between(valueofencoding.t, 1, n.all.h) report "no such encoding" + toword.valueofencoding.t + stacktrace,
-data.(valueofencoding.t)#all.h
+data.(all.h) sub valueofencoding.t
 
 type einfo is state:indirect.encodingstate.T, encodingnumber:int, allocatein:ptr
 
@@ -104,9 +110,9 @@ function encodingstate(e:einfo.T) encodingstate.T fromindirect.state.e
 builtin getinstance3:T einfo.T
 
 Function add1encoding(p:ptr, data:T) encoding.T
-{???? ptr is used instead of einfo since einfo is also defined in encodingsupport}
+{ptr is used instead of einfo since einfo is also defined in encodingsupport}
 let t = addencoding(fromindirect.state.bitcast2:einfo.T(p), data)
-let discard = set2(p, t),
+let discard = set(p, t),
 lastadd.t
 
 builtin bitcast2:einfo.T(ptr) einfo.T
@@ -115,7 +121,7 @@ builtin primitiveadd(e:einfo.T, s:T) encoding.T
 
 type e3 is sequence, data:seq.encodingpair.T
 
-function sequenceIndex(a:e3.T, i:int) T data.i#data.a
+function sequenceIndex(a:e3.T, i:int) T data.(data.a) sub i
 
 Function encodingdata:T seq.T
 let t = all.encodingstate.getinstance3:T,
@@ -124,7 +130,7 @@ toseq.e3(n.t, t)
 Function encode(t:T) encoding.T
 let instance = getinstance3:T
 let r = lookuprep(t, encodingstate.instance),
-if isempty.r then primitiveadd(instance, t) else code.1#r
+if isempty.r then primitiveadd(instance, t) else code.r sub 1
 
 Function =(a:encoding.T, b:encoding.T) boolean valueofencoding.a = valueofencoding.b
 
@@ -133,9 +139,9 @@ Function >1(a:encoding.T, b:encoding.T) ordering valueofencoding.a >1 valueofenc
 Function hash(a:encoding.T) int valueofencoding.a
 
 function lookuprep(t:T, inst:encodingstate.T) seq.encodingpair.T
-let mask = bits.-1 >> (65 - floorlog2.n.encodetable.inst)
+let mask = bits.-1 >> (64 - floorLog2.n.encodetable.inst)
 let dataindex = toint(tobits.hash.t ∧ mask) + 1,
-lookuprep2(t, dataindex#encodetable.inst)
+lookuprep2(t, (encodetable.inst) sub dataindex)
 
 function lookuprep2(t:T, s:seq.encodingpair.T) seq.encodingpair.T
 for acc = empty:seq.encodingpair.T, e ∈ s
@@ -144,7 +150,7 @@ acc
 
 Function findencode(t:T) seq.T
 let r = lookuprep(t, encodingstate.getinstance3:T),
-if isempty.r then empty:seq.T else [data.1#r]
+if isempty.r then empty:seq.T else [data.r sub 1]
 
 Function addorder(t:T) int valueofencoding.encode.t
 
@@ -157,7 +163,7 @@ if i > n.s then
  do acc + toword.@e,
  acc
 else
- let t = n.i#s,
+ let t = n.s sub i,
  if t = 0 then counts(s, i + 1, one, two, big)
  else if t = 1 then counts(s, i + 1, one + 1, two, big)
  else if t = 2 then counts(s, i + 1, one, two + 1, big)

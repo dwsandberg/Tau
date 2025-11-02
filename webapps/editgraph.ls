@@ -8,17 +8,19 @@ use webIO
 
 use bits
 
-use otherseq.char
+use seq1.char
 
 use UTF8
 
-use graph.int
+use arc.int
+
+use graph.arc.int
 
 use seq.arc.int
 
 use set.int
 
-use otherseq.int
+use seq1.int
 
 Each nodes of the graph are numbered uniquely. A graph named n will be represented as <* block n 2 1, 3 1, 4 3 2, 5 *> which represents the arcs <* block (1 2) (1 3) (2 4) (2 4) *> with node 5 having no arcs to it. The follow PEG Grammar defines the representation <* table
 /row Graph GraphName Node Nodes'
@@ -32,18 +34,20 @@ The object in the html page can be manipulated with function to retrive and set 
 
 When the html page is loaded the below function is called
 
+use seq.word
+
 Function editgraph real
 {Note that this function name match the html page name.
 /br Changes the path to reflect current location of nodes. It is call when the page is initialized and when a node is being dragged to another location. It can be found in the editgraph.html source code in a java script code snippet. }
 let graph = getElementValue."graph"
-let name = 1#graph
-let discard = setElementValue("debug", "X" + graph)
+let name = graph sub 1
+let discard = setElementValue("debug", "X:(graph)")
 for path = "", headxy = "", nodeid ∈ graph << 1 + ","
 do
  if nodeid ∈ "," then next(path, "")
- else if headxy = "" then next(path, getattributes([name, 1#".", nodeid], "x y"))
+ else if headxy = "" then next(path, getattributes([name, "." sub 1, nodeid], "x y"))
  else
-  let tail = getattributes([name, 1#".", nodeid], "x y"),
+  let tail = getattributes([name, "." sub 1, nodeid], "x y"),
   next(path + line(tail, headxy), headxy),
 setAttribute("lines", "d", path)
 
@@ -69,23 +73,23 @@ while isempty.nodeid
 do
  let new = toword.newnumber,
  if new ∈ z then next(newnumber + 1, nodeid)
- else next(newnumber, [1#graph, 1#".", new])
+ else next(newnumber, [graph sub 1, "." sub 1, new])
 {build new node}
 let nodetxt0 = getElementValue."nodeText"
 let newnode = text("draggable", nodeid, 5, 5, if isempty.nodetxt0 then nodeid else nodetxt0)
 {update the graph description and add the newnode to the SVG code to draw nodes}
 replaceSVG("nodes", getElementValue."nodes" + newnode)
- + setElementValue("graph", graph + ",^(newnumber)")
+ + setElementValue("graph", graph + ",:(newnumber)")
 
 Function addarc real
 {Adds an arc between the selected nodes. Called addArc button is pressed. }
 let newarc = getElementValue."nodesSelected",
 if n.newarc < 2 then 0.0
 else
- let newhead = 6#newarc
- let newtail = 3#newarc
+ let newhead = newarc sub 6
+ let newtail = newarc sub 3
  let graph = getElementValue."graph",
- for new = [1#graph], head = "", nodeno ∈ graph << 1 + ","
+ for new = [graph sub 1], head = "", nodeno ∈ graph << 1 + ","
  do
   if nodeno ∈ "," then
    {starting a new node}
@@ -107,7 +111,7 @@ let tail = point2d.wtail
 let head = point2d.whead
 let b = tail - head
 let c = 2.0 / length.b * b,
-"M^(wtail) L^(whead) l^(rotatez.-30.0 * c) L^(whead) l^(rotatez.30.0 * c)"
+"M:(wtail) L:(whead) l:(rotatez.-30.0 * c) L:(whead) l:(rotatez.30.0 * c)"
 
 use set.word
 
@@ -115,16 +119,16 @@ use seq.char
 
 Function text(class:seq.word, id:seq.word, x:int, y:int, w:seq.word) seq.word
 {???? had to remove /tag}
-"<text /sp class =^(dq.class)^(if id = "" then id else "id =^(dq.id)") x =^(dq.%.x) y =^(dq.%.y) >^(w) </text>"
+"<text /sp class =:(dq.class):(if id = "" then id else "id =:(dq.id)") x =:(dq.%.x) y =:(dq.%.y) >:(w) </text>"
 
 function asreals(s:seq.word) seq.real
 if isempty.s then empty:seq.real
-else if n.s = 1 then [toreal.toint.1#s]
+else if n.s = 1 then [toreal.toint.s sub 1]
 else
- for acc = empty:seq.real, sign = "", intpart = 1#"0", last = 1#"?", w ∈ s + "0"
+ for acc = empty:seq.real, sign = "", intpart = "0" sub 1, last = "?" sub 1, w ∈ s + "0"
  do
   if w ∈ "." then next(acc, sign, intpart, w)
-  else if last ∈ "." then next(acc + makereal(sign + [intpart, last, w]), "", 1#"0", 1#"?")
+  else if last ∈ "." then next(acc + makereal(sign + [intpart, last, w]), "", "0" sub 1, "?" sub 1)
   else
    let newacc = if last ∈ "?-+" then acc else acc + makereal(sign + last),
    if w ∈ "-" then next(newacc, "-", intpart, w)
@@ -132,15 +136,15 @@ else
    else next(newacc, sign, if last ∈ "+-" then intpart else w, w),
  acc
 
-use otherseq.real
+use seq1.real
 
 function point2d(s:seq.word) point2d
 let k = asreals.s,
-point2d(1#k, 2#k)
+point2d(k sub 1, k sub 2)
 
 function %(p:point2d) seq.word
-let x = print(3, x.p)
-let y = print(3, y.p),
+let x = %(3, x.p)
+let y = %(3, y.p),
 (if x << 1 = ".000" then x << 1 else x) + if y << 1 = ".000" then y << 1 else y
 
 use point2d 

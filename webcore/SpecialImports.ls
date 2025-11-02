@@ -24,9 +24,13 @@ Builtin getattributes2(name:jsbytes, text:jsbytes) jsbytes
 
 Builtin setattribute2(name:jsbytes, att:jsbytes, value:jsbytes) real
 
+Builtin openWindow2(name:jsbytes) real
+
 Builtin callevent2(name:jsbytes, text:jsbytes) real
 
 Builtin replacesvg(id:jsbytes, xml:jsbytes) real
+
+Builtin URLargs jsbytes
 
 Builtin jsHTTP(
 url:jsbytes

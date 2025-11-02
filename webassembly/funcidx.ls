@@ -28,23 +28,23 @@ use standard
 
 use seq.symbol
 
-use symbol2
+use symbol1
 
 use wasm
 
 use encoding.wfunc
 
-use otherseq.wfunc
+use seq1.wfunc
+
+use sort.wfunc
+
+use word
 
 use process.seq.word
-
-use seq.seq.word
 
 use encoding.word5
 
 use seq.word5
-
-use word
 
 use encoding.wtype
 
@@ -62,7 +62,7 @@ type wtype is val:seq.byte
 
 Function asbytes(a:wtype) seq.byte val.a
 
-Function asset(a:wtype) set.int asset.[toint.1#val.a]
+Function asset(a:wtype) set.int asset.[toint.(val.a) sub 1]
 
 Function wtype(b:byte) wtype wtype.[b]
 
@@ -81,15 +81,17 @@ if w = void then "void"
 else if w = i64 then "i64"
 else if w = f64 then "f64"
 else if w = i32 then "i32"
-else if n.val.w = 1 then %.1#val.w
+else if n.val.w = 1 then %.(val.w) sub 1
 else
- let nopara = toint.2#val.w
+ let nopara = toint.(val.w) sub 2
  for acc = "func (", e ∈ subseq(val.w, 3, nopara + 2)
  do acc + %.wtype.e,
- acc + ")" + if (nopara + 3)#val.w = tobyte.1 then %.wtype.1^val.w else "void"
+ acc
+  + ")"
+  + if (val.w) sub (nopara + 3) = tobyte.1 then %.wtype.last.val.w else "void"
 
 Function printtypeidx(i:int) seq.word
-%.decode.to:encoding.wtype(i + 1) + "(idx:^(i))"
+%.decode.to:encoding.wtype(i + 1) + "(idx::(i))"
 
 Function typeindex(paras:seq.wtype, rt:wtype) int
 addorder.wtype(
@@ -102,8 +104,8 @@ addorder.wtype(
 
 Function towtypelist(i:int) seq.wtype
 let val = val.decode.to:encoding.wtype(i + 1)
-assert 1#val = tobyte.0x60 report "type problem"
-for acc = empty:seq.wtype, b ∈ subseq(val, 3, n.val - 2) + 1^val
+assert val sub 1 = tobyte.0x60 report "type problem"
+for acc = empty:seq.wtype, b ∈ subseq(val, 3, n.val - 2) + last.val
 do acc + wtype.b,
 acc
 
@@ -134,7 +136,7 @@ let importfuncs = subseq(tmp1, 1, n.imports)
 let funcswithcode = tmp1 << n.imports
 for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode
 do next(code + code.p, funcs + LEBu.typeidx.p)
-let initmemorysize = (n.data + 2^13 - 1) / 2^13
+let initmemorysize = (n.data + 2 sup 13 - 1) / 2 sup 13
 let magic = [tobyte.0x00, tobyte.0x61, tobyte.0x73, tobyte.0x6D, tobyte.1, tobyte.0, tobyte.0, tobyte.0]
 let te = encodingdata:wtype
 let types =
@@ -178,14 +180,14 @@ let forlater =
   txt
   , for txt = "", cnt = 2, f ∈ eledata
   do next(txt + (%.cnt + ":" + %.f), cnt + 1),
-  "tableelements^(txt) /p"
+  "tableelements:(txt) /p"
   , for txt = "", offset = n.beforecode + n.LEBu.n.codevector + 1, p2 ∈ funcswithcode
   do
    next(
     txt
      + %.tobits.offset
      + %.sym.p2
-     + "funcidx =^(funcidx.p2) typidx =^(printtypeidx.typeidx.p2) /p"
+     + "funcidx =:(funcidx.p2) typidx =:(printtypeidx.typeidx.p2) /p"
      + %.p2
      + "/p"
     , offset + n.LEBu.n.code.p2 + n.code.p2
@@ -214,8 +216,8 @@ if info then
  [
   file(fn, total)
   , file(
-   filename("+^(dirpath.fn)" + merge([name.fn] + "info") + ".html")
-   , 1#forlater + 2#forlater + 3#forlater
+   filename("+:(dirpath.fn)" + merge([name.fn] + "info") + ".html")
+   , forlater sub 1 + forlater sub 2 + forlater sub 3
   )
  ]
 else [file(fn, total)]
@@ -224,7 +226,12 @@ Function funcbody(localtypes:seq.wtype, code:seq.byte) seq.byte
 let b =
  if isempty.localtypes then LEBu.0
  else
-  for result = empty:seq.byte, count = 1, segcount = 1, last = 1#localtypes, t ∈ localtypes << 1
+  for
+   result = empty:seq.byte
+   , count = 1
+   , segcount = 1
+   , last = localtypes sub 1
+   , t ∈ localtypes << 1
   do
    if last = t then next(result, count + 1, segcount, t)
    else next(result + LEBu.count + val.last, 1, segcount + 1, t),
@@ -277,7 +284,7 @@ let t =
  do if a = e then found + e else found,
  found
 assert name.sym.a ∉ "intpart" ∨ not.isempty.t report
- "KKK^(sym.a)^(for txt = ">>>", b ∈ s do txt + %.sym.b + "/br",
+ "KKK:(sym.a):(for txt = ">>>", b ∈ s do txt + %.sym.b + "/br",
  txt)",
 t
 
@@ -286,14 +293,12 @@ wfunc(
  sym
  , code
  , funcidx
- , if inmodule(sym, "core32") then typeidx32(alltypes, sym)
+ , if name.module.sym ∈ "core32" then typeidx32(alltypes, sym)
  else typeidx64(alltypes, sym)
 )
 
-Function inmodule(sym:symbol, modname:seq.word) boolean name.module.sym ∈ modname
-
 function typeidx32(alltypes:typedict, sym:symbol) int
-if wordname.sym = 1#"initwords3" then typeindex.empty:seq.wtype
+if wordname.sym = "initwords3" sub 1 then typeindex.empty:seq.wtype
 else
  typeindex(
   for acc = empty:seq.wtype, @e ∈ paratypes.sym
@@ -303,7 +308,7 @@ else
  )
 
 Function typeidx64(alltypes:typedict, sym:symbol) int
-if wordname.sym = 1#"initwords3" then typeindex.empty:seq.wtype
+if wordname.sym = "initwords3" sub 1 then typeindex.empty:seq.wtype
 else
  typeindex(
   for acc = empty:seq.wtype, @e ∈ paratypes.sym
@@ -329,7 +334,7 @@ while acc = ""
 do
  if funcidx.p = arg then
   let xx = printtypeidx.typeidx.p >> 5
-  assert not.isempty.xx report "KLJ^(printtypeidx.typeidx.p)",
+  assert not.isempty.xx report "KLJ:(printtypeidx.typeidx.p)",
   xx
  else acc,
 acc
@@ -416,17 +421,18 @@ getoffset(Constant2(libname, acc + Sequence(seqof.typeint, n.acc)), libname)
 
 Function getoffset(const:symbol, libname:word) int
 let code1 = fullconstantcode.const
-let start = if isSequence.1^code1 then [0, nopara.1^code1] else empty:seq.int
+let start = if kind.last.code1 = ksequence then [0, nopara.last.code1] else empty:seq.int
 for elements = start, sym ∈ code1 >> 1
 do
+ let kind = kind.sym,
  elements
-  + if inmodule(sym, "$real") ∨ inmodule(sym, "$int") ∨ inmodule(sym, "$boolean") then value.sym
- else if sym = Littrue then 1
- else if sym = Litfalse then 0
- else if isFref.sym then tableindex.basesym.sym
- else if iswordseq.sym then getoffset(worddata.sym, libname)
- else if isword.sym then value.wordconst.wordname.sym
+  + if kind ∈ [kreal, kint] then value.sym
+ else if kind = ktrue then 1
+ else if kind = kfalse then 0
+ else if kind = kfref then tableindex.basesym.sym
+ else if kind = kwords then getoffset(worddata.sym, libname)
+ else if kind = kword then value.wordconst.wordname.sym
  else
-  assert isrecordconstant.sym report "problem getoffset^(sym)",
+  assert kind = kconstantrecord report "problem getoffset:(sym)",
   getoffset(sym, libname),
-allocateconstspace(1#".", elements) 
+allocateconstspace("." sub 1, elements) 

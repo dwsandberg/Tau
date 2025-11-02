@@ -14,7 +14,7 @@ use process.midpoint
 
 use standard
 
-use symbol2
+use symbol1
 
 use set.symdef
 
@@ -32,12 +32,15 @@ let z =
   , compare(in, "a+b * c", "a+(b * c)")
   , compare(in, "-a+b", "(-a)+b")
   , compare(in, "a+-b", "a+(-b)")
-  , compare(in, "a^2+b", "(a^2)+b")
+  , compare(in, "a sup 2+b", "(a sup 2)+b")
   , compare(in, "n.[1, 2]", "n ([1, 2])")
-  , testerror(in, "<* literal syntax error *>", "function f1 (a:int) boolean (a")
-  , testerror(in, "<* literal syntax error *>", "function f1 (a:int) boolean [a")
-  , testerror(in, "<* literal syntax error *>", "function f1 (a:int) boolean [a+")
   , testerror(
+   in
+   , "<* literal In module testit name of field is missing in: *>"
+   , "type testtype is a:int, int"
+  )
+  , {???? testerror (in," <* literal syntax error *>"," function f1 (a:int) boolean (a"), testerror (in," <* literal syntax error *>"," function f1 (a:int) boolean [a"), testerror (in," <* literal syntax error *>"," function f1 (a:int) boolean [a+"),}
+  testerror(
    in
    , "Function f1 is defined twice in module testit"
    , "function f1 (a:int) int 3
@@ -73,7 +76,7 @@ let z =
    , "function f1 (z:int) xxx 3 <* literal cannot resolve type xxx *>"
    , "function f1 (z:int) xxx 3"
   )
-  , testerror(in, "recursive type problem:", "type testtype is fld1:testtype")
+  , testerror(in, "recursive type problem:", "type testtype is fld1:testtype, fld2:int")
   , testerror(
    in
    , "module testit contains unresolved exports:testit:f1 (int, int) int"
@@ -100,11 +103,13 @@ let z =
  ],
 check(z, "test11a") + checkprec
 
+use seq1.boolean
+
 function testcomp2(in:seq.file, s:seq.word) seq.word
 let txt =
  "/p module testit
  /p use standard
- /p^(s)"
+ /p:(s)"
 let p =
  process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in, "testit", ""),
 if aborted.p then message.p
@@ -119,15 +124,15 @@ else
  acc
 
 function compare(in:seq.file, exp1:seq.word, exp2:seq.word) boolean
-testcomp2(in, "Function f1 (a:int, b:int, c:int) int^(exp1)")
-= testcomp2(in, "Function f1 (a:int, b:int, c:int) int^(exp2)")
+testcomp2(in, "Function f1 (a:int, b:int, c:int) int:(exp1)")
+= testcomp2(in, "Function f1 (a:int, b:int, c:int) int:(exp2)")
 
 function isprefix(p:seq.word, s:seq.word) boolean subseq(s, 1, n.p) = p
 
 function testerror(in:seq.file, m:seq.word, code:seq.word) boolean
 let r = testcomp2(in, code)
 let a = isprefix(m, r)
-assert isprefix(m, r) report "Fail test11a expected:^(m) /br got:^(subseq(r, 1, n.m)) /p^(code)",
+assert a report "Fail test11a expected::(m) /br got::(r) /p:(code)",
 a
 
 type checkprec is toseq:seq.word
@@ -139,13 +144,13 @@ let a =
   x.1 + {commet should not change assocativity} x.2 + x.3
   , x.1 + x.2 + x.3
   , x.1 * x.2 * x.3
-  , (x.1)^((x.2)^x.3)
-  , (x.1)#((x.2)#x.3)
-  ,-x.1 * (x.2)^x.3
+  , (x.1) sup ((x.2) sup x.3)
+  , (x.1) sub ((x.2) sub x.3)
+  ,-x.1 * (x.2) sup x.3
   , x.1 * x.2 + x.3
   , x.1 + x.2 * x.3
   , uni.x.1 * x.2
-  , uni.(x.1)^x.2
+  , uni.(x.1) sup x.2
   , x.1 + x.2 = x.3
   , x.1 = x.2 + x.3
   , x.1 > x.2 = x.3
@@ -161,13 +166,13 @@ let b =
   "((1+2)+3)"
   , "((1+2)+3)"
   , "((1 * 2) * 3)"
-  , "(1^" + "(2^3))"
-  , "(1#(2#3))"
-  , "((-1) * (2^3))"
+  , "(1 sup (2 sup 3))"
+  , "(1 sub (2 sub 3))"
+  , "((-1) * (2 sup 3))"
   , "((1 * 2)+3)"
   , "(1+(2 * 3))"
   , "((uni 1) * 2)"
-  , "(uni (1^2))"
+  , "(uni (1 sup 2))"
   , "((1+2) = 3)"
   , "(1 = (2+3))"
   , "((1 > 2) = 3)"
@@ -184,29 +189,31 @@ check(acc, b, "precedence test")
 function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word) seq.word
 let x =
  for acc = "", i ∈ arithseq(n.y, 1, 1)
- do if i#y = i#b then acc else acc + toword.i,
+ do if y sub i = b sub i then acc else acc + toword.i,
  acc,
-if x = "" then "PASS^(testname)"
-else "<* literal FAILED *> test^(x) in^(testname)"
+if x = "" then "PASS:(testname)"
+else "<* literal FAILED *> test:(x) in:(testname)"
 
 function x(a:int) checkprec checkprec.[toword.a]
 
-function -(a:checkprec) checkprec checkprec."(-^(toseq.a))"
+function -(a:checkprec) checkprec checkprec."(-:(toseq.a))"
 
-function uni(a:checkprec) checkprec checkprec."(uni^(toseq.a))"
+function uni(a:checkprec) checkprec checkprec."(uni:(toseq.a))"
 
-function ^(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a)^^(toseq.b))"
+function sup(a:checkprec, b:checkprec) checkprec
+checkprec."(:(toseq.a) sup:(toseq.b))"
 
-function #(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a)#^(toseq.b))"
+function sub(a:checkprec, b:checkprec) checkprec
+checkprec."(:(toseq.a) sub:(toseq.b))"
 
-function *(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) *^(toseq.b))"
+function *(a:checkprec, b:checkprec) checkprec checkprec."(:(toseq.a) *:(toseq.b))"
 
-function +(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a)+^(toseq.b))"
+function +(a:checkprec, b:checkprec) checkprec checkprec."(:(toseq.a)+:(toseq.b))"
 
-function =(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) =^(toseq.b))"
+function =(a:checkprec, b:checkprec) checkprec checkprec."(:(toseq.a) =:(toseq.b))"
 
-function >(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) >^(toseq.b))"
+function >(a:checkprec, b:checkprec) checkprec checkprec."(:(toseq.a) >:(toseq.b))"
 
-function ∧(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) ∧^(toseq.b))"
+function ∧(a:checkprec, b:checkprec) checkprec checkprec."(:(toseq.a) ∧:(toseq.b))"
 
-function ∨(a:checkprec, b:checkprec) checkprec checkprec."(^(toseq.a) ∨^(toseq.b))" 
+function ∨(a:checkprec, b:checkprec) checkprec checkprec."(:(toseq.a) ∨:(toseq.b))" 

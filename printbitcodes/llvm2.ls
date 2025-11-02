@@ -33,7 +33,7 @@ Export block(SBIT, int, int, int, int) block
 Export blockid(block) int
 
 function sbitindex(a:SBIT, i:int) int
-toint(tobits.toint.((i - 1) / 8 + 1)#sbit.a >> ((i - 1) mod 8) ∧ 0x1)
+toint(tobits.toint.(sbit.a) sub ((i - 1) / 8 + 1) >> ((i - 1) mod 8) ∧ 0x1)
 
 type SBIT is sbit:seq.byte
 
@@ -65,7 +65,7 @@ pp(idx + size, toint.getbits(a, idx, size))
 Function getbits(a:SBIT, idx:int, size:int) bits
 let bidx = (idx - 1) / 8 + 1
 let mask = tobits.-1 << size ⊻ tobits.-1,
-1#toseqbits.subseq(sbit.a, bidx, bidx + (size + 15) / 8) >> ((idx - 1) mod 8) ∧ mask
+(toseqbits.subseq(sbit.a, bidx, bidx + (size + 15) / 8)) sub 1 >> ((idx - 1) mod 8) ∧ mask
 
 Function getvbr(a:SBIT, idx:int, size:int) pp getvbr(a, size, bits.0, 0, idx, 0)
 
@@ -132,7 +132,7 @@ if n.r > 0 then
  if noargs = 0 then getinfo(b, 0, empty:seq.int, idx, recs + r, blocks, abbrvlen, blockid, abbrdef)
  else
   let next =
-   if blockid = toint.CONSTANTS ∧ 1#r = toint.CINTEGER then getvbrsigned(b, idx, 6)
+   if blockid = toint.CONSTANTS ∧ r sub 1 = toint.CINTEGER then getvbrsigned(b, idx, 6)
    else getvbr(b, idx, 6),
   getinfo(b, noargs - 1, r + val.next, idx.next, recs, blocks, abbrvlen, blockid, abbrdef)
 else
@@ -170,14 +170,14 @@ else
   let len = getvbr(b, idx.t, 5)
   let ops = getop(b, idx.len, val.len, empty:seq.int),
   let rec = [-2] + postfix(ops,-1),
-  getinfo(b, 0, empty:seq.int, 1#ops, recs + rec, blocks, abbrvlen, blockid, abbrdef + rec)
+  getinfo(b, 0, empty:seq.int, ops sub 1, recs + rec, blocks, abbrvlen, blockid, abbrdef + rec)
  else
-  let rec = readabbrrecord((val.t - 3)#abbrdef, 2, empty:seq.int, b, idx.t),
+  let rec = readabbrrecord(abbrdef sub (val.t - 3), 2, empty:seq.int, b, idx.t),
   getinfo(
    b
    , 0
    , empty:seq.int
-   , 1#rec
+   , rec sub 1
    , recs + subseq(rec, 2, n.rec)
    , blocks
    , abbrvlen
@@ -192,28 +192,28 @@ if len > 0 then subseq(s, n.s - len + 1, n.s) else subseq(s,-len + 1, n.s)
 function readabbrrecord(def:seq.int, i:int, result:seq.int, b:SBIT, idx:int) seq.int
 if i > n.def then [idx] + result
 else
- let code = i#def,
+ let code = def sub i,
  if code = ABBROPFixed then
-  let arg = getfixed(b, idx, (i + 1)#def),
+  let arg = getfixed(b, idx, def sub (i + 1)),
   readabbrrecord(def, i + 2, result + val.arg, b, idx.arg)
- else if code = 0 then readabbrrecord(def, i + 2, result + (i + 1)#def, b, idx)
- else if code = ABBROPArray ∧ (i + 1)#def = ABBROPChar6 then
+ else if code = 0 then readabbrrecord(def, i + 2, result + def sub (i + 1), b, idx)
+ else if code = ABBROPArray ∧ def sub (i + 1) = ABBROPChar6 then
   let len = getvbr(b, idx, 6)
   let rec = readarrayfixed(6, b, idx.len, val.len, empty:seq.int),
-  readabbrrecord(def, i + 2, result + subseq(rec, 2, n.rec), b, 1#rec)
- else if code = ABBROPArray ∧ (i + 1)#def = ABBROPFixed then
+  readabbrrecord(def, i + 2, result + subseq(rec, 2, n.rec), b, rec sub 1)
+ else if code = ABBROPArray ∧ def sub (i + 1) = ABBROPFixed then
   let len = getvbr(b, idx, 6)
-  let rec = readarrayfixed((i + 2)#def, b, idx.len, val.len, empty:seq.int),
-  readabbrrecord(def, i + 3, result + subseq(rec, 2, n.rec), b, 1#rec)
+  let rec = readarrayfixed(def sub (i + 2), b, idx.len, val.len, empty:seq.int),
+  readabbrrecord(def, i + 3, result + subseq(rec, 2, n.rec), b, rec sub 1)
  else
   assert code = ABBROPVBR report
    "not imp abbr"
     + toword.code
-    + toword.(i + 1)#def
+    + toword.def sub (i + 1)
     + "idx"
     + toword.idx
     + printabbr.def
-  let arg = getvbr(b, idx, (i + 1)#def),
+  let arg = getvbr(b, idx, def sub (i + 1)),
   readabbrrecord(def, i + 2, result + val.arg, b, idx.arg)
 
 function readarrayfixed(size:int, b:SBIT, idx:int, len:int, result:seq.int) seq.int

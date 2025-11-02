@@ -28,9 +28,9 @@ use pretty
 
 use standard
 
-use otherseq.word
+use seq1.word
 
-use otherseq.seq.word
+use seq1.seq.word
 
 use seq.seq.word
 
@@ -53,10 +53,10 @@ input:seq.file
 let options =
  (if info then "info: " else "")
   + (if profile then "profile: " else "")
-  + (if not.isempty.showllvm then "showllvm: ^(showllvm)" else "")
+  + (if not.isempty.showllvm then "showllvm: :(showllvm)" else "")
 let outfn = tofilenames.output
 let p = process.subcompile(input, outfn, options, exports, entryUses),
-if aborted.p then [file("error.html", "COMPILATION ERROR in libray:^(name.1#outfn) /br^(message.p)")]
+if aborted.p then [file("error.html", "COMPILATION ERROR in libray::(name.outfn sub 1) /br:(message.p)")]
 else result.p
 
 function subcompile(
@@ -71,13 +71,13 @@ for uses = "", e ∈ input
 do if ext.fn.e ∈ "libinfo" then uses + name.fn.e else uses
 let m =
  compilerFront:callconfig(
-  "bitcode uses: ^(uses)^(options) Library:^(name.1#outfn)"
+  "bitcode uses: :(uses):(options) Library::(name.outfn sub 1)"
   , input
   , exports
   , entryUses
  )
-let p = process.compilerback(m, changeext(1#outfn, "bc"), options, uses)
+let p = process.compilerback(m, changeext(outfn sub 1, "bc"), options, uses)
 assert not.aborted.p report message.p,
 result.p
- + file(changeext(1#outfn, "libinfo"), outbytes:midpoint([outlib.m]))
+ + file(changeext(outfn sub 1, "libinfo"), outbytes:midpoint([outlib.m]))
  + libsrc(m, outfn) 

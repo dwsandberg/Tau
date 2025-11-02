@@ -6,9 +6,9 @@ use standard
 
 use file
 
-use otherseq.seq.word
+use seq1.seq.word
 
-use otherseq.word
+use seq1.word
 
 Function testPEG seq.word
 {COMMAND}
@@ -87,11 +87,11 @@ let result =
   /br
   /br Unparsed Input: A a"
  ),
-if isempty.result then "Pass PEG" else "Fail PEG^(result)"
+if isempty.result then "Pass PEG" else "Fail PEG:(result)"
 
 function checkerror(input:seq.word, expect:seq.word) seq.word
 let got = message.process.checkgrammar.input,
-if got = expect then "" else "Fail got:^(got) expected:^(expect)"
+if got = expect then "" else "Fail got::(got) expected::(expect)"
 
 function checkgrammar(gin:seq.word) PEGtable maketable.gin
 
@@ -99,4 +99,4 @@ use process.PEGtable
 
 function check(tbl:PEGtable, input:seq.word, expect:seq.word) seq.word
 let got = run(tbl, input),
-if got = expect then "" else "Fail^(input) got:^(got) expected:^(expect) /p" 
+if got = expect then "" else "Fail:(input) got::(got) expected::(expect) /p" 

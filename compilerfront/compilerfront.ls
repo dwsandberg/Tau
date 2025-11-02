@@ -2,6 +2,8 @@ Module compilerfront
 
 use seq.modExports
 
+use seq1.modref
+
 use set.modref
 
 use mytype
@@ -11,6 +13,8 @@ use seq.mytype
 use seq.seq.mytype
 
 use set.mytype
+
+use orderModules
 
 use passparse
 
@@ -24,9 +28,7 @@ use postbind
 
 use standard
 
-use symbol
-
-use otherseq.symbol
+use seq1.symbol
 
 use seq.symbol
 
@@ -34,13 +36,7 @@ use seq.seq.symbol
 
 use set.symbol
 
-use symbol2
-
-use symbolconstant
-
-use symboldict
-
-use otherseq.symdef
+use symbol1
 
 use seq.symdef
 
@@ -52,19 +48,19 @@ use seq.seq.word
 
 use set.word
 
-Export type:midpoint {From symbol2}
+Export type:midpoint {From symbol1}
 
-Export libmods(m:midpoint) seq.modExports {From symbol2}
+Export libmods(m:midpoint) seq.modExports {From symbol1}
 
-Export option(midpoint) seq.word {From symbol2}
+Export option(midpoint) seq.word {From symbol1}
 
-Export prg(midpoint) set.symdef {From symbol2}
+Export prg(midpoint) set.symdef {From symbol1}
 
-Export src(midpoint) seq.seq.word {From symbol2}
+Export src(midpoint) seq.seq.word {From symbol1}
 
-Export templates(midpoint) set.symdef {From symbol2}
+Export templates(midpoint) set.symdef {From symbol1}
 
-Export typedict(midpoint) typedict {From symbol2}
+Export typedict(midpoint) typedict {From symbol1}
 
 Export midpoint(
 option:seq.word
@@ -73,18 +69,18 @@ option:seq.word
 , libmods:seq.modExports
 , src:seq.seq.word
 ) midpoint
-{From symbol2}
+{From symbol1}
 
-Export type:modExports {From symbol2}
+Export type:modExports {From symbol1}
 
-Export exports(modExports) seq.symbol {From symbol2}
+Export exports(modExports) seq.symbol {From symbol1}
 
-Export modname(modExports) modref {From symbol2}
+Export modname(modExports) modref {From symbol1}
 
-Export types(modExports) seq.seq.mytype {From symbol2}
+Export types(modExports) seq.seq.mytype {From symbol1}
 
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
-{From symbol2}
+{From symbol1}
 
 Export type:typedict {From typedict}
 
@@ -106,7 +102,7 @@ passsymbols(
  , asset.exports.a
  , empty:set.symbol
  , for types = empty:set.mytype, sym ∈ exports.a
- do if name.sym = 1#"type" then types + resulttype.sym else types,
+ do if name.sym = "type" sub 1 then types + resulttype.sym else types,
  types
  , empty:seq.symdef
 )
@@ -114,16 +110,18 @@ passsymbols(
 function %(s:symdef) seq.word %.sym.s
 
 Function extractExports(allsrc:seq.seq.word, exportlist:seq.word) seq.word
-let idx = findindex(exportlist, 1#"/"),
+let idx = findindex(exportlist, "/" sub 1),
 if idx > n.exportlist then exportlist
 else
  for inexport = false, exports2 = "", p ∈ allsrc
  do
   if isempty.p then next(inexport, exports2)
-  else if 1#p ∈ "Module module" then next(2#p ∈ exportlist << idx, exports2)
-  else if inexport ∧ 1#p ∈ "use" then next(inexport, exports2 + 2#p)
+  else if p sub 1 ∈ "Module module" then next(p sub 2 ∈ exportlist << idx, exports2)
+  else if inexport ∧ p sub 1 ∈ "use" then next(inexport, exports2 + p sub 2)
   else next(inexport, exports2),
  exportlist >> (n.exportlist - idx + 1) + exports2
+
+use token
 
 Function compilerfront3(
 option:seq.word
@@ -132,23 +130,22 @@ option:seq.word
 , exports:seq.word
 , libinfo:midpoint
 ) midpoint
-{OPTION PROFILE}
+{OPTION PROFILEX}
 let lib = libname,
 if option = "library" then midpoint(option, prg.libinfo, emptytypedict, empty:seq.modExports, empty:seq.seq.word)
 else
- let libpasstypes =
-  for acc = empty:set.passtypes, m ∈ mods.libinfo
-  do
-   let tmp =
-    for tmp = empty:set.mytype, t ∈ types.libinfo
-    do
-     let mt = abstractModref.1#t
-     let mt2 = if isAbstract.mt then replaceT(parameter.1#t, mt) else mt,
-     if mt2 = modname.m then tmp + 1#t else tmp,
-    tmp,
-   acc + passtypes(modname.m, tmp, typedict.m),
-  acc
+ for libpasstypes = empty:set.passtypes, m ∈ mods.libinfo
+ do
+  let tmp =
+   for tmp = empty:set.mytype, t ∈ types.libinfo
+   do
+    let mt = abstractModref.t sub 1
+    let mt2 = if isAbstract.mt then replaceT(parameter.t sub 1, mt) else mt,
+    if mt2 = modname.m then tmp + t sub 1 else tmp,
+   tmp,
+  libpasstypes + passtypes(modname.m, tmp, typedict.m)
  {figure out how to interpret text form of type}
+ let discard = tknencoding
  let modsx = resolvetypes(libpasstypes, allsrc, lib)
  {figure out how to interpret text form of symbol}
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
@@ -170,7 +167,11 @@ else
   ),
  if option = "text" then
   for acc = empty:set.symdef, sd ∈ toseq.prg10
-  do if library.module.sym.sd = lib then acc + sd else acc
+  do
+   if library.module.sym.sd ∈ "internallib:(lib)" ∧ paragraphno.sd > 0 then
+    if (allsrc sub paragraphno.sd) sub 1 ∈ "Function function Builtin builtin" then acc + sd
+    else acc
+   else acc
   let libmods =
    for acc5 = empty:seq.modExports, m2 ∈ toseq.modules.t5
    do acc5 + modExports(module.m2, toseq.exports.m2, empty:seq.seq.mytype),
@@ -186,19 +187,20 @@ else
   )
  else
   let mtmp = postbind(exports, modules.t5, prg10, typedict)
-  let libmods = toModules(typedict, toseq.modules.t5, exports),
+  let libmods = toModules(typedict, toseq.modules.t5, exports)
   let simple = asset.simple.t5,
+  let prg12 = addExportOptions(simple, prg.mtmp, allsrc) + makeOrderSym(prg.mtmp, allmods, libname),
   midpoint5(
    option
-   , addExportOptions(simple, prg.mtmp, allsrc)
+   , prg12
    , addExportOptions(simple, templates.mtmp, allsrc)
    , typedict
    , libmods
-   , [1#allsrc]
+   , [allsrc sub 1]
   )
 
 Function toModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word) seq.modExports
-let all = 1#"*" ∈ exports
+let all = "*" sub 1 ∈ exports
 for acc = empty:seq.modExports, m2 ∈ t5
 do
  if not.all ∧ name.module.m2 ∉ exports then acc
@@ -216,7 +218,7 @@ do
      else
       let c =
        for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s)
-       do c + if isencoding.t ∨ t = typechar then typeint else t,
+       do c + if isencoding.t then typeint else t,
        c,
       acc5 + ([resulttype.s] + c)
     else acc5,
@@ -246,11 +248,11 @@ do
   else
    for acc = new, sym2 ∈ code
    do
-    if isrecordconstant.sym2 then acc + sym2
-    else if isFref.sym2 then acc + basesym.sym2
+    let kind = kind.sym2,
+    if kind ∈ [kconstantrecord, kstacktrace] then acc + sym2
+    else if kind = kfref then acc + basesym.sym2
     else if isconstantorspecial.sym2 then acc
-    else if name.module.sym2 ∈ "internal" then if name.sym2 ∈ "stacktrace" then acc + sym2 else acc
-    else if name.module.sym2 ∈ "builtin $for" then acc
+    else if isInternal.sym2 then acc
     else acc + sym2,
    acc,
  if isempty.toexport then next(toprocess, processed, false)
@@ -268,11 +270,11 @@ let initprofile0 =
   else next(acc, tausupport),
  tausupport + acc
 let baselib =
- if isempty.initprofile0 ∨ name.modname.1#initprofile0 ∉ "tausupport" then libname
- else library.modname.1#initprofile0
+ if isempty.initprofile0 ∨ name.modname.initprofile0 sub 1 ∉ "tausupport" then libname
+ else library.modname.initprofile0 sub 1
 let initprofile =
  if isempty.initprofile0 then initprofile0
- else if name.modname.1#initprofile0 ∉ "tausupport" then initprofile0 << 1
+ else if name.modname.initprofile0 sub 1 ∉ "tausupport" then initprofile0 << 1
  else initprofile0
 let prg10 =
  for acc = prg.midin ∪ templates.midin, e ∈ initprofile
@@ -296,15 +298,15 @@ let discard =
  Constant2(libname, acc + Sequence(typeint, n.acc))
 let maybereferenced0 = close(prg10, roots.libmods, empty:set.symbol, 0)
 let stacktrace0 =
- if not.isempty.libextnames0 ∧ name.sym.1#libextnames0 ∈ "stackTraceImp" then asset.[starmap(baselib, 1#libextnames0)]
+ if not.isempty.libextnames0 ∧ name.sym.libextnames0 sub 1 ∈ "stackTraceImp" then asset.[starmap(baselib, libextnames0 sub 1)]
  else empty:set.symdef
 for stackTrace = stacktrace0, prgX = stacktrace0, idx = 1, sym ∈ toseq.maybereferenced0
 do
- if not.isrecordconstant.sym ∧ isconstantorspecial.sym then next(stackTrace, prgX, idx)
+ if kind.sym ≠ kconstantrecord ∧ isconstantorspecial.sym then next(stackTrace, prgX, idx)
  else
   let abstract = isAbstract.module.sym
   let new =
-   if isGlobal.sym then [symdef(sym, empty:seq.symbol, idx)]
+   if kind.sym = kglobal then [symdef(sym, empty:seq.symbol, idx)]
    else
     let sd = toseq.getSymdef(prg10, sym),
     if isInternal.sym then
@@ -313,43 +315,44 @@ do
        sym
        , empty:seq.symbol
        , idx
-       , if isempty.sd ∨ 1#"COMPILETIME" ∉ getOptions.1#sd then "ThisLibrary"
-       else "ThisLibrary COMPILETIME"
+       , if isempty.sd ∨ COMPILETIME ∉ options.sd sub 1 then ThisLibrary
+       else ThisLibrary + COMPILETIME
       )
      ]
     else if isempty.sd then empty:seq.symdef
     else
      let code =
-      for acc = empty:seq.symbol, sym2 ∈ code.1#sd
+      for acc = empty:seq.symbol, sym2 ∈ code.sd sub 1
       do
        acc
         + if library.module.sym2 ∈ "*" then
         let basesym = basesym.sym2
         let b = getSymdef(libextnames, basesym),
-        if not.isempty.b then if isFref.sym2 then Fref.sym.1#b else sym.1#b else sym2
+        if not.isempty.b then if kind.sym2 = kfref then Fref.sym.b sub 1 else sym.b sub 1
+        else sym2
        else sym2,
       acc,
      [
-      if isrecordconstant.sym ∨ libname = library.module.sym ∨ abstract then symdef4(sym, code, idx, getOptionsBits.1#sd)
+      if kind.sym = kconstantrecord ∨ libname = library.module.sym ∨ abstract then symdef4(sym, code, idx, options.sd sub 1)
       else
        let b = getSymdef(libextnames, sym),
-       if not.isempty.b then symdef(sym.1#b, empty:seq.symbol, paragraphno.1#b)
-       else symdef4(sym, code, idx, "ThisLibrary^(getOptions.1#sd)")
+       if not.isempty.b then symdef(sym.b sub 1, empty:seq.symbol, paragraphno.b sub 1)
+       else symdef4(sym, code, idx, ThisLibrary + options.sd sub 1)
      ],
   if isempty.new then next(stackTrace, prgX, if abstract then idx else idx + 1)
-  else if abstract then next(stackTrace, prgX + 1#new, idx)
+  else if abstract then next(stackTrace, prgX + new sub 1, idx)
   else
-   let tmp = if name.sym.1#new ∈ "stackTraceImp" then asset.[1#new] else stackTrace,
-   next(tmp, prgX + starmap(baselib, 1#new), idx + 1)
+   let tmp = if name.sym.new sub 1 ∈ "stackTraceImp" then asset.[new sub 1] else stackTrace,
+   next(tmp, prgX + starmap(baselib, new sub 1), idx + 1)
 let stacktrace2 =
  if isempty.stackTrace then ""
- else "stacktrace:^([library.module.sym.1#stackTrace, name.module.sym.1#stackTrace, name.sym.1#stackTrace])",
+ else "stacktrace::([library.module.sym.stackTrace sub 1, name.module.sym.stackTrace sub 1, name.sym.stackTrace sub 1])",
 midpoint(
  option.midin
  , prgX
  , typedict.midin
  , libmods.midin + initprofile
- , ["uses:^(uses) baselib:^(baselib)^(stacktrace2)"]
+ , ["uses::(uses) baselib::(baselib):(stacktrace2)"]
 )
 
 Function outlib(m:midpoint) midpoint
@@ -357,7 +360,7 @@ for
  roots = asset.[
   Getfld.typeptr
   , Getfld.typeint
-  , symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
+  , symbol(internalmod, "GEP", [seqof.typeptr, typeint], typeptr)
  ]
  , md ∈ mods.m
 do
@@ -368,15 +371,15 @@ do
  else roots ∪ exports.md
 for acc = empty:seq.symdef, rc = empty:seq.symbol, root ∈ toseq.roots
 do
- if isconstantorspecial.root then if isrecordconstant.root then next(acc, rc + root) else next(acc, rc)
+ if isconstantorspecial.root then if kind.root = kconstantrecord then next(acc, rc + root) else next(acc, rc)
  else
   let tmp = getSymdef(prg.m, root),
   if isempty.tmp then next(acc, rc)
   else
-   let sd = 1#tmp,
-   if isAbstract.module.sym.sd then next(acc + symdef4(sym.sd, code.sd, 0, getOptionsBits.sd), rc)
+   let sd = tmp sub 1,
+   if isAbstract.module.sym.sd then next(acc + symdef4(sym.sd, code.sd, 0, options.sd), rc)
    else
-    let newoptions = toseq(asset.getOptions.sd ∩ asset."STATE COMPILETIME NOINLINE")
+    let newoptions = options.sd ∩ (STATE + COMPILETIME + NOINLINE)
     for includecode = n.code.sd ≤ 30, sy ∈ code.sd
     while includecode
     do isconstantorspecial.sy ∨ sy ∈ roots,
@@ -389,7 +392,7 @@ let libname = libname.m
 let exportedTypeDefs =
  for exportedTypeDefs = empty:seq.mytype, x ∈ libmods.m
  do
-  for acc5 = exportedTypeDefs, t ∈ types.x do acc5 + 1#t,
+  for acc5 = exportedTypeDefs, t ∈ types.x do acc5 + t sub 1,
   acc5,
  asset.exportedTypeDefs
 for typeused = empty:seq.mytype, sd0 ∈ acc
@@ -400,14 +403,14 @@ for moretypes = empty:seq.seq.mytype, t4 ∈ toseq(asset.acc5 \ exportedTypeDefs
 do
  if library.abstractModref.t4 = libname then
   let flds = flatflds(typedict.m, t4)
-  assert not.isempty.flds report "outlib problem^(t4)",
+  assert not.isempty.flds report "outlib problem:(t4)",
   moretypes + ([t4] + flds)
  else moretypes,
 midpoint(
  "X"
  , asset(acc + f45(empty:set.symbol, asset.rc, empty:seq.symdef))
  , emptytypedict
- , libmods.m + modExports(moduleref.[libname, 1#"?"], empty:seq.symbol, moretypes)
+ , libmods.m + modExports(moduleref.[libname, "?" sub 1], empty:seq.symbol, moretypes)
  , empty:seq.seq.word
 )
 
@@ -417,7 +420,7 @@ if a = t then [t] else reduce.parameter.t + a
 
 function getrecordconst(s:seq.symbol) seq.symbol
 for code = empty:seq.symbol, sym ∈ s
-do if not.isrecordconstant.sym then code else code + sym,
+do if kind.sym ≠ kconstantrecord then code else code + sym,
 code
 
 function f45(have:set.symbol, toprocess:set.symbol, symdefs:seq.symdef) seq.symdef
@@ -432,5 +435,5 @@ function starmap(baselib:word, sd:symdef) symdef
 for acc2 = empty:seq.symbol, sy ∈ code.sd
 do acc2 + clearrequiresbit.replacestar(sy, baselib)
 let newsym = replacestar(sym.sd, baselib),
-if isInternal.sym.sd then symdef4(newsym, acc2, 2, "ThisLibrary^(getOptions.sd)")
-else symdef4(newsym, acc2, paragraphno.sd, getOptionsBits.sd) 
+if isInternal.sym.sd then symdef4(newsym, acc2, 2, ThisLibrary + options.sd)
+else symdef4(newsym, acc2, paragraphno.sd, options.sd) 

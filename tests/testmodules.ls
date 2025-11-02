@@ -6,21 +6,23 @@ use bits
 
 use checking
 
-use seq.arc.int
+use arc.int
+
+use graph.arc.int
+
+use seq1.arc.int
 
 use set.arc.int
 
-use graph.int
-
 use myseq.int
 
-use otherseq.int
+use seq1.int
 
 use set.int
 
 use tree.int
 
-use otherseq.tree.int
+use seq1.tree.int
 
 use seq.ordering
 
@@ -50,7 +52,7 @@ let y =
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int) seq.word
-"[^(for acc = "", @e ∈ a do acc + toword.@e + ",",
+"[:(for acc = "", @e ∈ a do acc + toword.@e + ",",
 acc >> 1)]"
 
 ---
@@ -61,19 +63,20 @@ function tr1 tree.int tree(56, [tree.200, tree.1, tree(5, [tree.4])])
 
 function tr2 tree.int tree(37, [tr1, tr1])
 
-function t501 boolean [56, 200, 3] = [label.tr1, label.1#tr1, nosons.tr1]
+function t501 boolean [56, 200, 3] = [label.tr1, label.tr1 sub 1, nosons.tr1]
 
 function >1(a:tree.int, b:tree.int) ordering
 subx(a, b, 1, label.a >1 label.b ∧ nosons.a >1 nosons.b)
 
 function subx(a:tree.int, b:tree.int, i:int, o:ordering) ordering
-if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, i#a >1 i#b) else o
+if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a sub i >1 b sub i) else o
 
-function t502 boolean [GT, EQ, EQ] = [1#tr2 >1 tr2, 1#tr2 >1 2#tr2, 2#tr1 >1 tree.1]
+function t502 boolean
+[GT, EQ, EQ] = [tr2 sub 1 >1 tr2, tr2 sub 1 >1 tr2 sub 2, tr1 sub 2 >1 tree.1]
 
-function t503 boolean "a" = %.tree.1#"a"
+function t503 boolean "a" = %.tree."a" sub 1
 
-function t504 boolean "a.b" = %.tree(1#"a", [tree.1#"b"])
+function t504 boolean "a.b" = %.tree("a" sub 1, [tree."b" sub 1])
 
 function n1 int 1
 
@@ -104,60 +107,44 @@ let g =
   , arc(n6, n8)
   , arc(n5, n1)
  ]
-let r =
- print.g
-  + "transversal"
-  + print.sinksfirst.g
-  + "Suc"
-  + print.toseq.successors(g, n2)
-  + "sinks"
-  + print.sinks(g, asset.[n5]),
+{assert false report" K"+%.sources (g)}
+let r = "GRAPH::(toseq.arcs.g) Succ:(toseq.successors(g, n2)) Pred:(toseq.predecessors(g, n4)) sinks:(sinks(g, asset.[n5])) sources:(sources.g)",
 r
-= "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8, 2, 1, 3] Suc [4] sinks [4, 7, 8]"
+= "GRAPH:"
+ + "(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) Succ 4 Pred 1 2 sinks 4 7 8 sources 3"
 
 function t506 boolean
 let g = newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4)]
 let closure = [arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)],
 closure = toseq.arcs.transitiveClosure.g
 
-function print(g:graph.int) seq.word
-"GRAPH:^(for acc = "", @e ∈ toseq.arcs.g do acc + print.@e,
-acc)"
+function =(a:arc.int, b:arc.int) boolean head.a = head.b ∧ tail.a = tail.b
 
-function print(a:arc.int) seq.word "(" + toword.tail.a + toword.head.a + ")"
+function %(a:arc.int) seq.word "(:(tail.a):(head.a))"
 
 function t508 boolean
-let s =
- for
-  acc = constantseq(100, 0)
-  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001)
-  do acc + (e mod 100 + 1),
-  acc
- do replace(acc, i, i#acc + 1),
+for
+ s = constantseq(100, 0)
+ , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001)
+ do acc + (abs.e mod 100 + 1),
  acc
-let totalcounts =
- for acc = 0, @e ∈ s do acc + @e,
- acc,
+do replace(s, i, s sub i + 1)
+for totalcounts = 0, e ∈ s do totalcounts + e,
 n.s = 100 ∧ totalcounts = 100001
 
 -------------------------------
 
 Randomphrase
 
-function testrandomphrase boolean "The umber ant ambles the opal nurse" = getphrase.20
+function testrandomphrase boolean "The short tomato adds the ghastly year" = getphrase.20
 
 function t044 boolean
 let s = UTF8.[tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
-let z =
- myseq(
-  for acc = empty:seq.int, @e ∈ toseqbyte.s
-  do acc + toint.@e,
-  acc
- )
-for acc = "", @e ∈ z do acc + toword.@e,
-acc = "40 50 335 50 336"
-∧ n.toseq.to:myseq.int(z) ≠ 0
-∧ n.toseq.to:myseq.int([1, 2, 3]) = 0
+for acc = empty:seq.int, @e ∈ toseqbyte.s
+do acc + toint.@e
+let z = tomyseq.acc
+for acc2 = "", @e ∈ toseq.z do acc2 + toword.@e,
+acc2 = "40 50 335 50 336" ∧ n.z = 5 ∧ z sub 4 = 50 ∧ n.tomyseq.[1, 2, 3] = 3
 
 -------------------------------
 

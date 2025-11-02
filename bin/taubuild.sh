@@ -35,9 +35,11 @@ function startfresh {
  cc bin/putfile.c -o bin/putfile.cgi
  #now get the default llvm layout for machine
  cc -S -emit-llvm bin/putfile.c 
- awk '/^target/{print "\nFunction",$2, "seq.word",$4}' putfile.ll \
+ awk '/^target d/{print "\nFunction",$2, "seq.word",$4}\
+ /^target t/{print "\nFunction",$2, "seq.word",$4,""}
+ ' putfile.ll \
  | cat bin/tauconfig.ls -  >tau2bc/tauconfig.ls
- rm putfile.ll
+ #rm putfile.ll
  echo " " > $build/start.ls
  echo "finish start"
 } 
@@ -61,7 +63,7 @@ scriptname=$build/build_$partname
 oldscript=${scriptname}old.sh
 sharoot=$build/sharoot.txt
 tarname=~/taubackups/${partname}/$(date +%Y%m%d%H%M)
- 
+
 rm -f  $sharoot; touch  $sharoot # make sure file exists but is empty
 
 if [[ -f $oldscript ]] ;then
@@ -100,4 +102,5 @@ source $scriptname.sh
 mv  ${scriptname}.sh $oldscript 
 mkdir -p $(dirname   $tarname)
 tar -zcf $tarname.tar.gz --exclude="$build/*" $unchangelist  $changelist 
+echo "tarname= $tarname"
 echo "finish tar"

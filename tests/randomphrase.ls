@@ -2,20 +2,22 @@ Module randomphrase
 
 use standard
 
+use stateFunctions
+
 Function randomphrase seq.word
 let a = randomint.1
-let seed = if 1#a < 0 then-1#a + 1 else 1#a,
+let seed = if a sub 1 < 0 then-a sub 1 + 1 else a sub 1,
 getphrase.seed
 
 Function getphrase(seed:int) seq.word
 let a = randomseq(seed, 6),
 "The"
- + (1#a mod 140 + 1)#adjectives
- + (2#a mod 140 + 1)#nouns
- + (3#a mod 140 + 1)#verbs
+ + adjectives sub (a sub 1 mod 140 + 1)
+ + nouns sub (a sub 2 mod 140 + 1)
+ + verbs sub (a sub 3 mod 140 + 1)
  + "the"
- + (4#a mod 140 + 1)#adjectives
- + (5#a mod 140 + 1)#nouns
+ + adjectives sub (a sub 4 mod 140 + 1)
+ + nouns sub (a sub 5 mod 140 + 1)
 
 Function verbs seq.word
 "adds binds calls destroys eats fences golfs hates illustrates jumps kisses odorizes mangles nets owes plays quits registers sails takes undresses votes walks xeroxes yanks zeros ambles blows bends bombs battles brushes bubbles empties agitates aids censors circles chews dangles combs climbs dumps cycles dwindles cracks eclipses edges cuts effaces enriches zones ejects elects dips drinks dyes fights frees foils flies grows heats hobbles fails ignores aligns infects idles guards fuels imagines gains generates gives gleans issues irons knocks jilts jerks jacks jogs keeps lathers lugs lynches offers obeys meets mills occupies mocks nips mutes nags levels nurses lives notes loves pries posts pitches rolls rules phones sets rhymes races push scrapes skips sings slithers rigs snips shows splashes sows tests squirts stacks smells throws touches summons appoints swims ties travels vacums tumbles weeps wraps arouses ascends winds works whips yells"

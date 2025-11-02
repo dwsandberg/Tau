@@ -2,7 +2,7 @@ Module xxhash
 
 use bits
 
-use standard
+use kernal
 
 Function rotateleft(x:bits, n:int) bits x << n ∨ x >> (64 - n)
 
@@ -49,4 +49,6 @@ abs.toint((h32d ⊻ h32d >> 16) ∧ 0xFFFF FFFF)
 
 Function hashstart32(seed:int) bits
 let PRIME5 = 374761393,
-bits(seed + PRIME5) 
+bits(seed + PRIME5)
+
+Function hash(i:int) int finalmix.hash(hashstart, i) 

@@ -12,7 +12,7 @@ use process.seq.byte
 
 use object01
 
-use symbol2
+use symbol1
 
 Builtin typestructure:T seq.seq.mytype
 

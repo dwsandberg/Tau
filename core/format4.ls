@@ -6,7 +6,7 @@ use bits
 
 use stack.blkstk
 
-use otherseq.byte
+use seq1.byte
 
 use seq.byte
 
@@ -28,14 +28,14 @@ else
   , cmd = true
   , result = emptyUTF8
   , Space = false
-  , this = 1#s
+  , this = s sub 1
   , w ∈ s << 1 + "?"
  do
   let chars = decodeword.this,
   if n.chars = 1 then
-   let ch = 1#chars,
-   if ch ∈ (decodeword.merge."+-.:^#" + char.10 + char.32) then {no Space before or after} next(prefix, stk, cmd, result + chars, false, w)
-   else if ch ∈ decodeword.merge.",]})^(dq)" then {no Space before but Space after} next(prefix, stk, cmd, result + chars, true, w)
+   let ch = chars sub 1,
+   if ch ∈ (decodeword.merge."+-.:" + char.10 + char.32) then {no Space before or after} next(prefix, stk, cmd, result + chars, false, w)
+   else if ch ∈ decodeword.merge.",]}):(dq)" then {no Space before but Space after} next(prefix, stk, cmd, result + chars, true, w)
    else if ch ∈ decodeword.merge."([{" then
     {Space before but no Space after}
     next(
@@ -74,7 +74,7 @@ else
       , cmd
       , new
       , false
-      , 1#"/cell"
+      , "/cell" sub 1
      )
     else
      next(
@@ -83,7 +83,7 @@ else
       , cmd
       , if Space then result + char.32 else result
       , false
-      , 1#"/cell"
+      , "/cell" sub 1
      )
    else
     let chars2 = if not.Space then result + chars else result + char.32 + chars,
@@ -94,7 +94,7 @@ else
    next(prefix, stk, cmd, chars2, true, w)
   else if this ∈ "/keyword /em /strong /cell" then next(prefix, stk, cmd, result, Space, w)
   else if this ∈ "/sp" then
-   if not.isempty.toseqbyte.result ∧ 1^toseqbyte.result = tobyte.32 then next(prefix, stk, cmd, result, false, w)
+   if not.isempty.toseqbyte.result ∧ last.toseqbyte.result = tobyte.32 then next(prefix, stk, cmd, result, false, w)
    else next(prefix, stk, cmd, result + char.32, false, w)
   else if this ∈ "/br" then
    if newway then
@@ -105,14 +105,14 @@ else
    else
     let z = UTF8.linebreak.toseqbyte.result,
     next(prefix, stk, cmd, z, false, w)
-  else if this ∈ "/tag" then next(prefix, stk, cmd, result + decodeword.w, false, 1#"/cell")
+  else if this ∈ "/tag" then next(prefix, stk, cmd, result + decodeword.w, false, "/cell" sub 1)
   else
    let chars2 = if not.Space then result + chars else result + char.32 + chars,
    next(prefix, stk, cmd, chars2, true, w),
  result + char.32
 
 function block(R0:seq.byte, R1:seq.byte) UTF8
-let body = if 1^R1 = tobyte.10 then R1 >> 1 else R1
+let body = if last.R1 = tobyte.10 then R1 >> 1 else R1
 let init =
  linebreak.R0
   + (if subseq(body, 1, 1) = [tobyte.32] then empty:seq.byte else [tobyte.32])
