@@ -1,0 +1,79 @@
+
+
+The Tau Enviorment /h1
+
+// x /strong. k
+
+Installing Tau /h2
+
+Make sure clang is installed. On macOS, Clang is available if the command-line tools are installed.
+
+Download the zip file from GitHub (Repository is dwsandberg/Tau)
+
+Unzip to a directory which we will call <Tau>. This directory will serve as tau's working directory. You are free to choose another name. 
+
+Modify < PATH > environment variable to include the absolute path to <Tau>/bin. 
+
+Open a terminal and change to the <Tau> directory.
+
+Run" bash bin/taubuild.sh release.bld". This is likely to generate a warning message about the llvm spec. 
+
+HelloWorld /h2
+
+Here are the basics for creating a program that prints" Hello World!".
+
+Make sure you are in the <Tau> directory. First, create a subdirectory of the <Tau> directory and name it // hello /em. The hello directory will contain the program's components.
+
+In the hello directory, create a text file named text.ls containing the following five lines, two of which are blank:// Module hello /rmbr /rmbr use standard /rmbr /rmbr Function hello seq.word {COMMAND}" Hello World!" /block This is the source for the program. By convention, the name of the Module is the same as the name of the file. 
+
+Next, create a file named hello.bld with the following lines:// define makelib taubc makebitcode /rmbr /rmbr makelib taubc.libinfo+hello hello.ls /rmbr output:hello.lib /rmbr /rmbr define hello hello /rmbr /rmbr hello output: hello.html /rmbr /rmbr define open shell open input:/rmbr /rmbr open input: hello.html output: hello.txt /block This file tells how to build and run the program. 
+
+Now run the following command in the <Tau> directory // bash taubuild.sh hello/hello.bld /block
+
+Running the above command does the following // /rmbr 1. Create an executable with the name of <Tau>/built/hello.lib from the source code.(Paragraphs one and two of the build file.) /rmbr 2. The program is executed and the output is placed in <Tau>/built/hello.html. (Paragraphs three and four of the build file.) /rmbr 3. A web browser is opened on the file <Tau>/built/hello.html.(Last two paragraph of the build file.) /rmbr 4. An tar archive of the source files is created in the directory ~/taubackups/hello/. (An archive is created on successful completion of the build file.) /block
+
+With additional steps typing hello at the command prompt will run the program.One of the commands need to do this is buildhelp which is supplied in the release. To gain access to all the commands in the release, type: // source built/taucommands.sh /block
+
+Now type // buildhelp hello.libsrc shellscript: /block which will bring up a shell function definition for hello in a web browser.Copy this command and run as a shell command. Now typing // hello /em at the command prompt will run the program.
+
+Commands /h2
+
+The following assumes that" source built/taucommands.sh" has been executed in the command shell. 
+
+In langauges such as C a function main provides the single entry point into a program. In Tau there can be many entry points and are specified by including the word // COMMAND /em in a comment of a function that meets the following conditions:// Is a valid function /rmbr Define with Function /rmbr Has parameter types of seq.word, seq.file, or boolean. /rmbr Has a return type of seq.word, seq.byte, seq.UTF8, or seq.file./rmbr the word COMMAND is in comment immediately following the return type./block
+
+Command Syntax /h3
+
+Tau documentation of the commands provided in the release is given by the command tau?. This command was defined with // Function tau? (cmd:seq.word, %:seq.word) seq.word {COMMAND... }... /block Removing from the definition the paraenthesis and commas, and replacing the types of the arguments actual values will give the syntax for calling the function on the command line.// tau? cmd: %:full /block Run the command gives // //../documentation/cmddoc.html /href this result /a
+
+The order the parameters are specified does not matter. An omitted parameter of type seq.word is given an empty value. So the following will all give the same result: // /rmbr tau? cmd: %:full /rmbr tau? %:full cmd: /rmbr tau? %:full /block
+
+If a value is supplied for cmd, only documentation for that command is given. Since cmd is both the first argument given and the first argument in the defining procedure, the cmd can be omitted. Hence the following will give the same result: // /rmbr tau? cmd: usegraph %: full /rmbr tau? usegraph %: full /block
+
+For boolean parameters, the value is false if the parameter is omitted or if the value is // false /em. All other values for a boolean parameter are interpreted as // true /em. 
+
+For parameters of type seq.file in the defining procedure, The string in the command is processed as filenames and the file from the filing system is fetched. Multiple formats are allowed for file names. For example the usegraph command takes multiple file names as the argument. // usegraph core/standard.ls core/word.ls core/sort.ls /block The directory does not need to be specified for every file://+core standard.ls word.ls sort.ls /block The file extension also does not need to be repeated://+core standard.ls word sort /block The file extension can be before the first file://+directory.ls standard word sort /block If There is no directory use://+.ls standard word sort /block The following three string all represent the same file // directory/directory/file1.ls /rmbr+directory directory/file1.ls /rmbr+directory/directory file1.ls /block
+
+Below is documentation for commands in the Tau release. 
+
+taubuild.sh /h2
+
+The // taubuild /em determines how to build a program from the instructions in.bld files. The.bld file contains commands. Every command relates a set of input files to output files.The input files must be distinct from the output files. 
+
+The first output forms a node in a graph. Additional output files are predecessors and input files are successors. The command is define in some library file. This library file is also a successor. 
+
+This forms a DAG. All the source files can be construct one by one starting with the sources of the graph and working toward the sinks. Thus a bash script is constructed that will build all the output files. This bash script also contains a list of shasum of the sources in the DAG. The script used in the last successful run of the build is retained. By comparing this shasum between the current shasums with the previous shasums the files that need to be rebuilt can be determined.
+
+The last successful run of the hello.bld will produce a file <Tau>/built/build_helloold.sh. A new bash script is created named <Tau>/built/build_hello.sh.This file contains shasum of all the source files used to build the program. The new script is run. If there are no errors the build_hello.sh file is renamed to build_helloold.sh and a tar archive is created. 
+
+The.bld file is sequence of paragraphs of words. 
+
+The first word of the paragraph is a command.There are two predefined commands: #, define.The # command treats the paragraph as a comment.
+
+The define introduces a user defined command. The second word in the paragraph is the name of the command. The third word is the name of the executable where the command is defined and the fourth word is the name of the command in the executable. The command to reference the command to invoke the Tau complier that produces an executable would be // define makelib taubc makebitcode /block
+
+The definition of user defined command must occur before it's use. The paragraphs can be reordered as long as this constraint is maintained. 
+
+An alternate form for the makelib command in the hello.bld file is // makelib output: +built hello.lib input: +built taubc.libinfo+hello hello.ls /block The order of paramters does not matter so this command is equivalent:// makelib input: +built taubc.libinfo+hello hello.ls output: +built hello.lib /block If input: follows the command it can be omitted. A"+built" is always added to the input and output so it can also be omitted to get // makelib tau.libinfo+hello hello.ls output: hello.lib /block
+
+if // shell /em is the third word of a define the remainder of the paragraph will be included as a command in the bash script with the input: and output: replaced by the corresponding file names specified in the use of the file. For example, the lines from the hello.bld file // define open shell open input:/rmbr /rmbr open input: hello.html output: hello.txt /block will produce the bash script line // open hello.html /block 

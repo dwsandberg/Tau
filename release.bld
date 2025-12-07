@@ -1,0 +1,276 @@
+define transform tools transform input link
+
+define usegraph tools
+
+define front tools
+
+define prettyScript tools
+
+define testall testcore
+
+define makelib taubc makebitcode
+
+define makelib1 taubc1 makebitcode
+
+define makelib2 taubc2 makebitcode
+
+define makelib0 taubc0 makebitcode
+
+define startfresh shell  
+
+define open shell
+
+
+startfresh +bin taubuild.sh taubc.bc putfile.c tauconfig.ls
++tau2bc tau.c tauthreads.c tau.h
++.release.bld
+output: taubc0.lib
+
+makelib0 +core bits.ls encoding  classinfo.ls markup.ls format1   format1a format4 graph arc process real seq set sparseseq stack standard towords
+UTF8 word xxhash seq1 sort textio file ptr indirect PEGrules  kernal 
+brandeskopf uniqueids layernode orderNodes 
+   timestamp drawGraph svg stateFunctions
++symbols symbol1.ls typedict mytype symbolconstant symbol
++compilerfront compilerfrontT.ls compilerfront pass2 hashset localmap2 passparse passsymbol
+postbind symboldict compileTimeT object01 objectio LEBencoding addprofile entrypoint PEG.ls
+pretty   prettyR  autolink prettySupport orderModules     
+PEGmachine PEGparse    functionHeader symbolMode parser backparse token
++tau2bc persistant.ls bitstream codetemplates2 codegen codetemplates internalbc llvm llvmcode
+makescript.ls main2 llvm_exports.ls tauconfig.ls idxNBtemplate.ls
++tausupport taublockseq bitcast tausupport encodingsupport  
+exports: / llvm_exports
+output: taubc1.lib compilerfront.libsrc core tausupport symbols tau2bc
+
+makelib1 +built core.libsrc symbols compilerfront tau2bc tausupport
+exports: markup / llvm_exports
+output: taubc2.lib
+
+makelib2 +built core.libsrc symbols tau2bc tausupport compilerfront
+exports: markup / llvm_exports
+info: 
+profile: 
+output: taubc.lib taubc.libsrc taubc.libinfo
+
+makelib taubc.libinfo
++tools baseTypeCheck.ls   prettycompilerfront reconstructUses frontcmd graphcode cleanExports
+genPEG genEnumeration totext PEGdebug usegraph tau? PEGgenNoTable prettyScript
+   backparse3  
+entryUses: frontcmd.callconfig compilerfrontT.callconfig llvmcode
+output: tools.lib tools.libsrc
+
+makelib taubc.libinfo
++tests bug7.ls checking myseq testPoint randomphrase test11 test20 testencoding testmodules
+testprocess testseq tree wordfreq testopt test11a testcore seq8 testpackedseq testPEG testDifferentTypes
+testDifferentTypesB testanal
+output: testcore.lib testcore.libsrc
+
+testall +tests opttests.ls
++$build taubc.libinfo
+output: testall.html
+
+makelib taubc.libinfo
++webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile  
+output: webassembly.lib webassembly.libsrc
+
+define wasm webassembly
+
+# ###documentation
+
+
+define buildhelp tools
+
+buildhelp tools.libsrc taubc
+doc: 
+output: +documentation cmddoc.html
+
+transform taubc.libinfo +tests docsrc.ls
+html: h1 h2 h3 h4 h5 h6 
+output: +documentation taudoc.html
+
+makelib taubc.libinfo
++tmp PEGex.ls PEGex2 PEGex3
++tests docsrc.ls
++tests docpatterns
++enumexample.ls
+output: doccomp.lib
+
+
+
+
+transform +tests docPEGsrc.ls
+output: xxx1.html
++tmp PEGex.ls PEGex2 PEGex3
+
+transform +tests docinstall.txt
++tests docPEGsrc.ls docpatterns docprofileExampleSrc enumexample docinstall2.txt
+html: h1 h2 h3 h4 h5 h6
+output: +documentation installdoc.html
+
+  
+
+usegraph +$build core.libsrc
+output: +documentation Ex1usegraph.html
+
+usegraph +$build core.libsrc
+exclude: seq standard
+output: +documentation Ex2usegraph.html
+
+usegraph +$build core.libsrc
+include: UTF8 word standard textio xxhash
+exclude: seq standard
+output: +documentation Ex3usegraph.html
+
+transform+tests docprofileExampleSrc.ls html: Module output:+documentation profileExampleSrc.html
+
+ # transform       core.libsrc   bind:  html: Module h1 link:  core.libsrc
+output: +documentation core.html
+
+# transform    webcore.libsrc  tausupport 
+link:   +documentation core.html html: h1
+output: +documentation webcore.html
+
+ 
+
+# needs work transform webcore.libsrc tausupport core symbols compilerfront tools 
++webapps webcallconfig.ls  webcmd.html
++tau2bc makescript.ls     link:  +webapps webcmd.ls +documentation core.html  webcore
+html: h1 h2 h3
+output: +documentation webcmd.html
+
+# define tau? tools
+
+# tau? %:full output: +documentation cmddoc.html
+
+# ###
+
+front taubc.libsrc
+%: baseTypeCheck
+output: baseTypeCheck.html
+
+wasm +webcore webIOtypes.ls webIO SpecialExports JS webHTTP SpecialImports
++tausupport taublockseq bitcast tausupport encodingsupport
++core bits.ls encoding format1 format4 format1a graph arc process real seq set sparseseq stack standard
+UTF8 word xxhash seq1 sort textio file ptr indirect PEGrules kernal towords timestamp stateFunctions
+Library: webcore
+output: webcore.wasm webcore.libsrc
+
+wasm webcore.libsrc  symbols  
++core svg.ls drawGraph.ls
+layernode
+uniqueids
+ orderNodes 
+ brandeskopf
++webapps wbeizer.ls Bcubic.html Bquadratic.html
++webcore webProfileSupport.ls
++compilerfront object01.ls objectio LEBencoding token
++tests profile profileMeasure
++tools graphcode  
+exports: wbeizer
+Library: wbeizer
+info: 
+profile: 
+output: wbeizer.wasm
+
+wasm webcore.libsrc   symbols compilerfront tools  
++core svg.ls drawGraph.ls
+layernode
+uniqueids
+ orderNodes 
+ brandeskopf
++webapps webcallconfig.ls webcmd.ls webcmd.html
++tau2bc makescript.ls
++core markup  classinfo  
+Library: webcmd
+exports: webcmd
+output: webcmd.wasm
+
+makelib taubc.libinfo
++tests docProfileExampleSrc.ls profile profileMeasure
+profile: 
+info: 
+output: profileExample.lib profileExample.bc
+
+define profileExample profileExample profileExample
+
+profileExample output: +documentation profileExample.html
+
+makelib taubc.libinfo
++printbitcodes printbitcodes.ls bitcodesupport.ls slotdesc llvm2 runcode
+output: printbitcodes.lib printbitcodes.libsrc
+
+define printbitcodes printbitcodes printbitcodes
+
+printbitcodes profileExample.bc profileExample.lib
+bitcode: 
+output: ppp.ls
+
+makelib taubc.libinfo ppp.ls
++printbitcodes runcode bitcodesupport
+options: bitcode
+output: ppp.lib
+
+define regen ppp test2
+
+regen output: regen.bc
+
+# transform  core.libsrc tausupport bind:  output: hhh.html
+
+transform +built taubc.libsrc tools webassembly testcore printbitcodes
++tests opttests.ls profile profileMeasure profileCompile
++webcore JS.ls SpecialExports SpecialImports webHTTP webIO webIOtypes webProfileSupport
++webapps wbeizer  
+output: transform1info.html
+
+# code for profileCompiler
+
+define makelibP taubcP makebitcode
+
+define profileCompile profileCompile
+
+makelib +built core.libsrc symbols tau2bc tausupport compilerfront
+exports: / llvm_exports
+info: 
+profile: 
+output: taubcP.lib taubcP.libinfo
+
+makelibP taubcP.libinfo
++tests profileCompile.ls profile.ls profileMeasure
+exports: profileCompile
+profile: 
+output: profileCompile.lib
+
+profileCompile +built core.libsrc symbols tau2bc tausupport compilerfront
+exports: / llvm_exports
+library: taubc5
+output: profileCompile.html
+
+buildhelp tools.libsrc taubc webassembly transform1info.html
+target: +tools tau?.ls
+output: +tmp/tools tau?.ls
+
+
+# tau? %:shellscript output: taucommands.sh
+
+prettyScript +.release.bld output: +tmp release.bld
+
+# ### editgraph #####
+
+makelib  taubc.libinfo  +tools genPointModule.ls 
+output: genPointModule .lib
+
+define genPointModule genPointModule
+
+genPointModule  typenames:  point2d matrix2 elements:x y   output:  point2d.ls
+
+transform point2d.ls  target: common output: gen2.txt +common point2d.ls  
+
+
+genPointModule  typenames:  point3d matrix elements:x y z   output: point3d.ls
+
+wasm webcore.libsrc  
++webapps editgraph.ls editgraph.html 
++common point2d.ls 
+exports: editgraph
+Library: weditgraph
+output: weditgraph.wasm
+ 

@@ -1,0 +1,46 @@
+<!doctype html>
+<title> Edit Graph </title>
+<meta charset="UTF-8">
+<h1>  Edit Graph   </h1>  
+<p > 
+Click on a node will select it. Dragging node will move node. 
+<br> <button onclick=addarc() >Add Arc</button> between selected nodes.  
+<br> <button onclick=addNode() >Add Node</button> 
+    <input type="text" name="nodeText" id="nodeText" value="enter node text"
+    />
+<p id=debug> 
+</p>
+ <svg   id=svg10 xmlns="http://www.w3.org/2000/svg"
+ width="800" height="800%"
+     viewBox="0 0 100 50"
+    onmouseenter="makeDraggable(evt,editgraph)"
+    onmouseup="select(evt,nodeSelect)"
+     >
+    <style>
+      .static {     cursor: not-allowed; }
+      .draggable {     cursor: move; fill:blue; font:  4px sans-serif  ;  }
+      .selected { fill:black; font:  4px sans-serif ;}
+      </style>
+    <g id=grp1>
+      <rect width="100" height="50" fill="none" stroke="gray" stroke-width=".5" 
+        />
+      <path id=lines fill="none" stroke="gray" stroke-width=".5" />  
+       </g>  
+     <g id ="nodes">
+     <text id="n.1" class="draggable"     x="30" y="30"   >   n1</text> 
+  <text id="n.2" class="draggable"    x="30" y="15"    >  n2</text> 
+  <text id="n.3" class="draggable"   x="15" y="30"  >  n3</text> 
+  <text id="n.4" class="draggable"  x="35" y="30" > text n4</text> 
+   <text id="n.5" class="draggable"  x="10" y="10" > text n5</text>    </g>
+  </svg> 
+  
+<dl>
+  <dt>Nodes Selected</dt>
+  <dd id=nodesSelected></dd>
+
+  <dt>graph</dt>
+  <dd id =graph >n  2 1, 3 1,4 3 2,5 </dd>
+
+</dl>
+
+ 

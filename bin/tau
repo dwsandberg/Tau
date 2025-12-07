@@ -1,48 +1,29 @@
-#!/bin/bash  
+#!/bin/sh 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # set up working directory
 
 cd $SCRIPT_DIR
 cd ..
-pwd
 
-#parse options
+build=built
+export tauopen=open 
 
-while getopts ":f:w:" opt; do
-  case ${opt} in
-    f )
-      target=$OPTARG
-      ;;
-   w )
-     webprefix=$OPTARG ;;
-    \? )
-      echo "Invalid option: $OPTARG" 1>&2
-      ;;
-    : )
-      echo "Invalid option: $OPTARG requires an argument" 1>&2
-      ;;
-  esac
-done
-shift $((OPTIND -1))
 
-p1=$1
-libname=$1
-shift 1
-otherpara=$@
+libtype="bc" 
 
-if [ -n "$target" ]; then 
-$SCRIPT_DIR/tauexe $p1 "$otherpara" > $target
-else
-  $SCRIPT_DIR/tauexe $p1 "$otherpara" > "tmp/$libname.html"
-  if [ "<" == "$(head -c 1 tmp/$libname.html)" ] ;
-  then 
-    open ${webprefix}tmp/$libname.html 
-  else
-  cat tmp/$libname.html
+
+function libexe {
+ rm -f error.html
+ allargs="$@"
+ [[ "${allargs#*output:}" != $allargs ]] && rm  -f built/${allargs#*output:}
+ restargs="${allargs#*\ }"
+$build/${tauDylib}$1.lib $restargs > /dev/null
+ if  [ -e error.html ] ; then
+  $tauopen error.html  
+  exit 1
  fi
+}
 
- fi
-
-#echo $SCRIPT_DIR/tau2 $p1 $@
-exit
+rm -f tmp/output.html
+libexe $@ output:+tmp output.html && $tauopen "tmp/output.html"

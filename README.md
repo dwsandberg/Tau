@@ -5,6 +5,6 @@ This makes the state of a program easier to figure out
 
 Runs on Mac OS X and Linux
 
-A [link](./install.html)
+[Install Documentation](./documentation/installdoc.html)
 
-A [link](./taudoc.html)
+[Language Documentation ](./documentation/taudoc.html)

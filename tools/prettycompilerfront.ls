@@ -1,255 +1,495 @@
 Module prettycompilerfront
 
-use UTF8
-
-use bits
-
-use format
-
-use libraryModule
-
-use pretty
-
-use standard
-
-use symbol2
-
-use textio
-
-use seq.byte
-
-use otherseq.char
+use PEG
 
 use seq.char
 
+use cleanExports
+
+use file
+
+use seq.file
+
+use genEnumeration
+
+use genPEG
+
+use seq1.int
+
+use set.int
+
+use set.modref
+
+use set.myExport
+
 use seq.mytype
 
-use seq.rename
+use seq1.patternType
+
+use pretty
+
+use reconstructUses
+
+use standard
+
+use set.sym/modref
+
+use arc.symbol
+
+use graph.arc.symbol
+
+use set.arc.symbol
 
 use seq.symbol
 
-use seq.symbolref
+use set.symbol
 
-use seq.seq.symbolref
+use symbol1
 
-use otherseq.seq.word
+use seq.symdef
 
-use stack.seq.word
+use set.symdef
 
-type rename is symtext:seq.word, newname:seq.word, paraorder:seq.int, sym:symbol
+use sort.symdef
 
-Export type:rename
-
-Function rename(symtext:seq.word, newname:seq.word, paraorder:seq.int)rename rename(symtext, newname, paraorder, Lit.0)
-
-function =(a:rename, b:rename)boolean sym.a = sym.b
-
-rename("typepass:change(int, int)int", "change2", [2, 1])
-
-function lookup(a:seq.rename, sym:symbol)seq.rename lookup(a, rename("", "", empty:seq.int, sym))
-
-function rename(renames:seq.word, name:word)word
-let i = findindex(name, renames)
-if i > length.renames then name else renames_(i + 2)
-
-use otherseq.word
-
-Function transform(cinfo:compileinfo, library:seq.word, newlib:seq.word, modrename0:seq.word)seq.word
-let result1 = totext.cinfo
-let modrename = if isempty.modrename0 then library + ">" + newlib else modrename0
-for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 do
- if subseq(c, 1, 1) = "use"then
-  let newname = rename(modrename, c_2)
-  next(txt + replace(c, 2, newname), modlist, libloc, idx + 1)
- else if subseq(c, 1, 1) = "Module" ∨ subseq(c, 1, 1) = "module"then
-  let newname = rename(modrename, c_2)
-  next(txt + replace(c, 2, newname), modlist + newname, libloc, idx + 1)
- else if libloc = 1 ∧ subseq(c, 1, 1) = "Library"then next(txt + c, modlist, idx, idx + 1)
- else next(txt + c, modlist, libloc, idx + 1)
-/for(let txt2 = replace(txt, libloc, fixlibclause(txt_libloc, modlist, modrename))
-writeModule(txt2, newlib))
-
-function fixlibclause(p:seq.word, modlist:seq.word, modrename:seq.word)seq.word
-let b = break(p, "uses exports", true)
-assert first.last.b ∈ "exports"report"Library clause format"
-for txt = "Library" + modlist + " /br" + b_2 + " /br exports"
-, e ∈ last.b << 1
-do
- txt + rename(modrename, e)
-/for(txt)
-
-use seq.seq.word
+use set.autolink
 
 use textio
 
-function writeModule(modtexts:seq.seq.word, directory:seq.word)seq.word
-{OPTION INLINE}
-for txt = "", modtext = "", p ∈ modtexts << 1 + "Module"do
- if not.isempty.p ∧ first.p ∈ "Module module"then
-  let discard2 = if isempty.modtext then 0 else 
-   createfile([merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext)
-   next(txt+modtext, p)
- else  next( txt,modtext+"/p"+p)
-/for(txt)
- 
-Function totext(result1:compileinfo) seq.seq.word
-let renames = empty:seq.rename
-let symdecode = symbolrefdecode.result1
-let src = src.result1
-let acc4 = 
- for acc4 = src, c ∈ code.result1 do
-  let paragraphno = value.symdecode_(toint.c_2)
-  if paragraphno = 0 then acc4
-  else
-   let tmp = if Optionsym = symdecode_(toint.last.c)then c >> 2 else c
-   let newtext = 
-    getheader.src_paragraphno >> 1
-    + for acc = "", stk = empty:stack.seq.word, last = symdecode_(toint.c_3), r ∈ tmp << 3 do
-     let sym = symdecode_(toint.r)
-     if sym = NotOp ∧ nopara.last = 2 then
-      let paratypes = paratypes.last
-      let newname = 
-       if name.last = "="_1 then"≠"
-       else if name.last = "∈"_1 then"∉"
-       else if name.last = "<"_1 then"≥"
-       else if name.last = ">"_1 then"≤"else[name.last]
-      if name.last ≠ newname_1 then
-       next(acc, stk, symbol(internalmod, newname, paratypes_1, paratypes_2, typeboolean))
-      else next(acc, newstk(last, stk, renames), sym)
-     else next(acc, newstk(last, stk, renames), sym)
-    /for(top.newstk(last, stk, renames))
-   replace(acc4, paragraphno, pretty.newtext)
- /for(acc4)
-for acc = empty:seq.seq.word
-, modtext = empty:seq.seq.word
-, beforeModule = true
-, p ∈ acc4 + "Module"
+use token
+
+use totext
+
+use word
+
+use seq1.seq.word
+
+use sort.seq.word
+
+use seq1.word
+
+use set.word
+
+use sort.word
+
+function finishmodule(
+modtext:seq.word
+, reorguse:boolean
+, moveexports:boolean
+, bind:boolean
+, m:midpoint
+, exportinfo:set.myExport
+, modrenames:seq.word
+, exported:set.sym/modref
+, dict:set.symbol
+, uses:seq.seq.word
+) seq.word
+let modname = modtext sub 2,
+if not.reorguse ∧ not.moveexports then modtext
+else
+ let uselist0 =
+  if bind ∧ reorguse then
+   for
+    uselist = empty:seq.seq.word
+    , ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)
+   do uselist + %.ref4,
+   uselist
+  else uses
+ for uselist1 = empty:seq.seq.word, u ∈ uselist0
+ do
+  assert not.isempty.u report "SDF"
+  {only first word of u is a module name}
+  uselist1 + ([rename(modrenames, u sub 1)] + u << 1)
+ let uselist = sortuse(uselist1, ""),
+ let idx = includecomment.modtext,
+ "Module"
+ + rename(modrenames, modname)
+ + subseq(modtext, 3, idx - 1)
+ + for newuses = "", e ∈ uselist do newuses + "/p use" + e,
+ newuses
+ + (if moveexports then newtext(exportinfo, modname) else "")
+ + modtext << (idx - 1)
+
+function levelchange(levelchange:int) seq.word
+if levelchange = 0 then "/br"
+else if levelchange > 0 then patternseq(levelchange * 2, "//")
+else patternseq(-levelchange, "/block")
+
+function TOC(input:seq.seq.word, html:seq.word) seq.seq.word
+let h = "<h1> <h2> <h3> <h4> <h5> <h6>"
+let Module = -1
+for kinds = empty:set.int, e ∈ html
 do
- if subseq(p, 1, 1) ∈ ["Module", "module", [encodeword.[char.28]]]then
-  next(acc + modtext, [p],false)
- else if subseq(p, 1, 2) = "file("then next(acc + modtext, empty:seq.seq.word, true)
-  else 
-  let t = 
-   if subseq(p, 1, 1)
-   ∈ [" /keyword", "use", "builtin", "Export"]then
-    p
-   else if subseq(p, 1, 1) ∈ ["type", "Function", "function"]then pretty.p
-   else escapeformat.p
-  next(acc, modtext + t,beforeModule)
-/for(acc)
- 
+ let a = findindex("h1 h2 h3 h4 h5 h6", e),
+ if a > n.h then if e ∈ "Module" then kinds + Module else kinds else kinds + a,
+if isempty.kinds then input
+else
+ for acc = empty:seq.seq.word, toc = "", count = 1, lasth = 1, lastmod = 0, p ∈ input
+ do
+  let kind =
+   if n.p < 2 then n.h + 2
+   else if p sub 1 ∈ "Module" then Module
+   else if p sub 1 ∈ "/tag" then findindex(h, p sub 2)
+   else n.h + 2,
+  if kind > n.h ∨ kind ∉ kinds then next(acc + p, toc, count, lasth, lastmod)
+  else
+   let tagname = if kind = Module then p sub 2 else toword.count
+   let href = "//:(merge("#" + tagname))/href",
+   if kind = Module then
+    let newacc = acc + p,
+    if lastmod = 1 then next(newacc, toc + "//" + href + (p << 1 + "/a"), count + 1, lasth, 1)
+    else next(newacc, toc + "//:(href):(p)/a", count + 1, lasth, 1)
+   else
+    next(
+     acc + "// // tagname /id:(p)/p"
+     , toc
+     + levelchange(kind - (lastmod + lasth))
+     + "//:(href):(subseq(p, 3, n.p - 2))/a"
+     , count + 1
+     , kind
+     , 0
+    ),
+ [toc + levelchange(1 - (lastmod + lasth))] + acc
 
-Function Optionsym symbol symbol(internalmod, "option", typeint, seqof.typeword, typeint)
+function functionId(p:seq.word) seq.word
+{???? need to get type when no parameters}
+if p sub 1 ∈ "Function function Builtin builtin" then
+ for j = 3 while p sub j ∈ ".:" do j + 2
+ let z =
+  (if j = 3 then subseq(p, 2, 2)
+  else subseq(p, 2, {2)+":"+subseq(p, 3,}j - 1))
+  + if p sub j ∉ "(" then
+   for k = j + 1 while p sub k ∈ "." do k + 2,
+   subseq(p, j + 1, k - 1)
+  else
+   for k = findindex(p, ")" sub 1) + 2 while p sub k ∈ "." do k + 2
+   for acc = ":", last = p sub (j + 1), e ∈ subseq(p, j + 2, k - 1) + ","
+   do
+    if e ∈ ":" ∨ last ∈ ",:)" then next(acc, e)
+    else if e ∈ ",)" then next(acc + last + ":", e)
+    else next(acc + last, e),
+   acc >> 1,
+ z
+else ""
 
+function >4(a:symdef, b:symdef) ordering paragraphno.a >1 paragraphno.b
 
+use token
 
-use seq.seq.word
+use seq1.autolink
 
-function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename)stack.seq.word
-if isstart.sym ∨ isexit.sym ∨ isbr.sym then stk
-else if name.module.sym ∈ "$int"then push(stk, [name.sym])
-else if name.sym = first."let" ∧ length.toseq.stk ≥ 2 then
- let args = top(stk, 2)
- push(pop(stk, 2), args_1 + "(" + args_2 + ")")
-else if isdefine.sym ∧ not.isempty.stk then
- push(pop.stk, "let" + [name.sym] + "=(" + top.stk + ")")
-else if iswords.sym then 
-  let wd=worddata.sym
- if first.wd = first."'" ∧ dq_1 ∉ wd then push(stk, dq + subseq(wd, 2, length.wd - 1) + dq)
- else if first.wd ∈ "'" ∧ length.wd = 3 then push(stk, "dq")
- else if first.wd = first."'" ∧ dq_1 /in wd then
-  let a=break(subseq(wd,2,length.wd-1),dq,false)
-     push(stk,for txt=dq+first.a,   b /in  a << 1 do
-       txt+dq+"+dq+"+dq+b
-     /for( "("+txt+dq+")") ) 
-     else push(stk, wd)
-else if name.sym ∈ "{" ∧ length.toseq.stk ≥ 2 then
- {comment}
- let args = top(stk, 2)
- push(pop(stk, 2), args_1 + args_2)
-else if isblock.sym ∧ length.toseq.stk ≥ 3 then
- let args = top(stk, 3)
- push(pop(stk, 3)
- , "if" + args_1 + "then" + args_2 + "else" + args_3 + "/if"
- )
-else if name.sym ∈ "assert"then stk
-else if name.sym ∈ "makereal" ∧ (top.stk)_2 = "."_1 then stk
-else if name.sym = "report"_1 ∧ length.toseq.stk ≥ 3 then
- let args = top(stk, 3)
- push(pop(stk, 3)
- , "assert" + args_1 + "report" + "(" + args_3 + ")(" + args_2
- + ")"
- )
-else if nopara.sym = 2 ∧ name.sym ∈ "=+_^∩ ∪ \-* / << >> > < ? ∈ mod ∧ ∨ ≠ ∉ ≥ ≤" ∧ length.toseq.stk ≥ 2 then
- let args = top(stk, 2)
- push(pop(stk, 2), "(" + args_1 + name.sym + args_2 + ")")
-else if name.sym = "forexp"_1 ∧ length.toseq.stk ≥ nopara.sym then
- let args = top(stk, nopara.sym)
- let k = (nopara.sym - 3) / 2
- push(pop(stk, nopara.sym)
- , for acc6 = "for", i ∈ arithseq(k, 1, 1)do
-  acc6 + args_(i + k) + if i = k then"∈"else"="/if + args_i
-  + ", "
- /for(acc6 >> 1
- + if args_(-2) = "true"then""else"while" + args_(-2)/if
- + "do"
- + args_(-3)
- + "/for("
- + args_(-1)
- + ")")
- )
-else if length.toseq.stk ≥ nopara.sym then
- if isSequence.sym then
-  push(pop(stk, nopara.sym), "[" + addcommas.top(stk, nopara.sym) + "]")
+function print(s:set.autolink) seq.word
+for acc = "", e ∈ toseq.s do acc + id.e + file.e + "/br",
+acc
+
+Function transform2(
+m:midpoint
+, output:seq.word
+, target:seq.word
+, modrenames:seq.word
+, bind:boolean
+, reorguse:boolean
+, html:seq.word
+, cleanexports:boolean
+, moveexports:boolean
+, input2:seq.file
+, link:seq.file
+, patternmods:seq.word
+) seq.file
+let exportinfo = manageExports.m
+let patterns =
+ if not.bind ∨ isempty.patternmods then empty:seq.patternType
+ else getpatterns(m, patternmods)
+let srctext0 =
+ if bind then
+  let changed = changes(m, patterns)
+  let prg = if isempty.changed then toseq.prg.m else toseq(asset.changed ∪ prg.m)
+  let src = src.m
+  let autolinks = if not.isempty.link then getautolinks(m, link) else empty:set.autolink
+  {assert name.fn(input2 sub 1)∉"core"report"XX"+print.autolinks}
+  for lastno = 0, acc5 = empty:seq.seq.word, sd ∈ sort>4.prg
+  do
+   if paragraphno.sd = 0 then next(lastno, acc5)
+   else
+    let header = getheader.src sub paragraphno.sd
+    let newwords = pretty(header, code.sd, autolinks, true)
+    let tmp =
+     if not.isempty.html ∧ not.isempty.link then
+      let rest = if newwords sub 1 ∈ "Function function" then 2 else 1,
+      ":(newwords sub 1)//:(id.sym.sd)/id // # /nsp:(name.module.sym.sd)/href /a:(newwords << rest)"
+     else newwords,
+    {assert isempty.link ∨"tobits"sub 1 ∉ newwords report"here4"+showZ.newwords+"/p"+showZ.tmp}
+    next(paragraphno.sd, acc5 + subseq(src, lastno + 1, paragraphno.sd - 1) + tmp),
+  acc5 + subseq(src, lastno + 1, n.src)
  else
-  let xx = lookup(renames, sym)
-  if not.isempty.xx then
-   push(pop(stk, nopara.sym)
-   , if nopara.sym = 0 then newname.xx_1
+  let discard = tknencoding
+  for acc = empty:seq.seq.word, i ∈ input2
+  do
+   if ext.fn.i ∈ "libinfo" then acc
    else
-    let args = top(stk, nopara.sym)
-    for acc = newname.xx_1 + "(", i ∈ paraorder.xx_1 do acc + args_i + ", "/for(acc >> 1 + ")")
-   )
-  else
-   push(pop(stk, nopara.sym)
-   , if nopara.sym = 0 then fullname.sym
-   else fullname.sym + "(" + addcommas.top(stk, nopara.sym) + ")"
-   )
-else stk
-
-function addcommas(s:seq.seq.word)seq.word
-for acc2 = "", t ∈ s do acc2 + t + ", "/for(acc2 >> 1)
-
-
-
-Function prettybyfile(libname:seq.word, targetdir:seq.word)seq.word
-{OPTION INLINE}
-let z = getlibrarysrc.libname + "file(dummy)"
-for txt = "", last = 0, idx = 1, k ∈ z do
- if subseq(k, 1, 2) = "file("then
-  if last = 0 then next(txt, idx, idx + 1)
-  else
-   let zz = prettyfile(true, "", subseq(z, last + 1, idx - 1)) << 1
-   let filename = extractfilename.z_last
-   if isempty.filename then next(txt, idx, idx + 1)
+    let prgrph = breakparagraph.data.i
+    for discardresult = "", e ∈ prgrph
+    do
+     if n.e > 3 ∧ e sub 1 ∈ "precedence" ∧ e sub 3 ∈ "for" then addprec(e, false)
+     else discardresult,
+    acc + prgrph,
+  acc
+let srctext = {create table of content}TOC(srctext0, html)
+{dict and exported are only used to reconstruct use clauses}
+for
+ dict = empty:set.symbol
+ , sd ∈ if bind ∧ reorguse then toseq.prg.m else empty:seq.symdef
+do dict + sym.sd
+let exported = exportedmodref.m
+let directory = if isempty.target then "tmp" else target
+{Reorder the paragraphs in the output that has been prettied.}
+for
+ txt = empty:seq.seq.word
+ , modtext = ""
+ , uses = empty:seq.seq.word
+ , pno = 1
+ , p ∈ srctext + "Module ?"
+do
+ if isempty.p then next(txt, modtext, uses, pno + 1)
+ else
+  let key = p sub 1,
+  if subseq(p, 1, 2) = "# File" then next(txt, modtext, uses, pno + 1)
+  else if key ∈ "use" then
+   if reorguse then next(txt, modtext, uses + p << 1, pno + 1)
+   else next(txt, modtext + "/p" + p, uses, pno + 1)
+  else if key ∈ "Function function" then
+   if not.bind
+   ∧ isempty.html
+   ∧ subseq(p, 1, 2) ∈ ["function genPEG", "function genEnum"]
+   ∧ n.modtext > 1 then
+    for
+     generatedtext = ""
+     , e ∈ [p, "<<<< Below is auto generated code >>>>"]
+     + if p sub 2 ∈ "genEnum" then generateEnum.p else generatePEG.p
+    do
+     if e sub 1 ∈ "Function function type Export" then generatedtext + removeMarkup.pretty.e + "/p"
+     else generatedtext + escapeformat.e + "/p"
+    let formatedModuleText =
+     finishmodule(
+      modtext + "/p" + generatedtext >> 1
+      , reorguse
+      , moveexports
+      , bind
+      , m
+      , exportinfo
+      , modrenames
+      , exported
+      , dict
+      , uses
+     ),
+    next(txt + formatedModuleText, "", empty:seq.seq.word, pno + 1)
    else
-    let discard = 
-     createfile(if isempty.targetdir then"tmp"else targetdir /if + "/"
-     + filename
-     , toseqbyte.textformat.zz
-     )
-    next(txt + zz, idx, idx + 1)
- else next(txt, last, idx + 1)
-/for(txt)
+    let tmp =
+     if isempty.html then if bind then removeMarkup.p else removeMarkup.pretty.p
+     else if bind then p
+     else "//:(functionId.p)/id:(merge."#:(subseq(modtext, 2, 2))")/href:(key)/a:(pretty.p << 2)",
+    next(txt, modtext + "/p" + tmp, uses, pno + 1)
+  else if key ∈ "unbound Builtin builtin type" then
+   assert "//" sub 1 ∉ p ∨ not.isempty.link report "NM:(html):(isempty.link)" + esc.p
+   let pretty = pretty.p,
+   next(
+    txt
+    , modtext
+    + "/p"
+    + (if isempty.html then removeMarkup.pretty
+    else if key ∉ "type unbound" then
+     assert true report
+      "KL"
+      + esc."//:(functionId.p)/id:(merge."#:(subseq(modtext, 2, 2))")/href:(key)/a:(pretty.p << 2)"
+      + "/p"
+      + esc.p
+      + "/p"
+      + esc.pretty,
+     pretty
+    else pretty)
+    , uses
+    , pno + 1
+   )
+  else if key ∈ "Module module" then
+   if isempty.modtext ∨ modtext sub 1 ∉ "Module module" then next(txt + modtext, p, empty:seq.seq.word, pno + 1)
+   else
+    let formatedModuleText =
+     finishmodule(modtext, reorguse, moveexports, bind, m, exportinfo, modrenames, exported, dict, uses)
+    {assert isempty.link report showZ.formatedModuleText}
+    next(txt + formatedModuleText, p, empty:seq.seq.word, pno + 1)
+  else
+   let newmodtext =
+    if key ∈ "Export" then
+     if cleanexports ∨ moveexports then
+      let p2 = newtext(exportinfo, pno, modtext sub 2),
+      if isempty.p2 ∨ moveexports then modtext else modtext + "/p" + pretty.p2
+     else modtext + "/p" + if isempty.html then removeMarkup.pretty.p else pretty.p
+    else modtext + "/p" + if isempty.html then escapeformat.p else p,
+   next(txt, newmodtext, uses, pno + 1)
+{Create the output files. One file is created if producing HTML output.Otherwise, A file for each module is created for each Module}
+if not.isempty.html then
+ for maintxt = "", M ∈ txt
+ do
+  if isempty.M then maintxt
+  else
+   maintxt
+   + ((if M sub 1 ∈ "Module" then "// //:(subseq(M, 2, 2))/id Module /keyword:(M << 1)"
+   else M)
+   + "/p")
+ assert last.output ∈ "html" report "Expecting html file:(output)"
+ let link2 = "//../daws/codeExample.css /link"
+ {assert isempty.link report"here1:(isempty.link):(isempty.maintxt)"+maintxt}
+ {assert name.fn(input2 sub 1)∉"docsrc"report"XX"+esc.maintxt}
+ [file(filename.output, toseqbyte.processTXT([link2 + maintxt], stdCSS, false, "en"))]
+else
+ let modtodir =
+  for modtodir = "", lib = directory sub 1, p1 ∈ if bind then src.m else srctext
+  do
+   if isempty.p1 then next(modtodir, lib)
+   else if p1 sub 1 ∈ "Module module" then next(modtodir + "/br" + rename(modrenames, p1 sub 2) + lib, lib)
+   else if subseq(p1, 1, 2) = "# File" ∧ n.p1 > 5 then next(modtodir, merge(directory + "/" + p1 sub 5))
+   else next(modtodir, lib),
+  modtodir
+ let bindpara =
+  if not.bind then ""
+  else "bind:(if isempty.patterns then "" else "patterns applied::(patterns)")"
+ let para =
+  (if reorguse then "reorguse" else "")
+  + bindpara
+  + (if cleanexports then "cleanexports" else "")
+  + (if moveexports then "moveexports" else "")
+  + for txt2 = "", x ∈ input2 do txt2 + "/br" + fullname.fn.x,
+  txt2,
+ for files = empty:seq.file, summary = "inputs:(para)/p files created", M ∈ txt
+ do
+  if subseq(M, 1, 1) ∉ ["Module", "module"]
+  ∨ char1."$" ∈ decodeword.M sub 2
+  ∨ n.M < 2 then next(files, summary)
+  else
+   let modname = M sub 2
+   let idx = findindex(modtodir, modname),
+   let fn = filename("+" + modtodir sub (idx + 1) + modname + ".ls"),
+   next(files + file(fn, toseqbyte.textFormat1a.M), summary + "/br" + fullname.fn),
+ files + file(output, summary)
 
-function extractfilename(s:seq.word)seq.word
-let k = findindex(first.")", s)
-if subseq(s, 1, 2) = "file(" ∧ k ≤ length.s then subseq(s, 3, k - 1)
-else""
+use UTF8
 
-function outname(file:word, targetdir:seq.word)seq.word
-let chars = decodeword.file
-if chars_1 = char1."/"then
- targetdir + "/" + encodeword(chars << (findindex(char1."/", chars << 1) + 1))
- + ".ls"
-else targetdir + "/" + file + ".ls" 
+use markup
+
+use seq1.word
+
+function getautolinks(m:midpoint, link:seq.file) set.autolink
+{this looks at the html files in link and creates autolink entries}
+for autolinks0 = empty:set.autolink, sd ∈ toseq.prg.m
+do if paragraphno.sd = 0 then autolinks0 else autolinks0 + autolink(id.sym.sd, "")
+for autolinks = autolinks0, f ∈ link
+do
+ if ext.fn.f ∉ "html" then autolinks
+ else
+  for autolink1 = autolinks, p1 ∈ breakparagraph.[f]
+  do
+   if isempty.p1 then autolink1
+   else
+    for autolink2 = autolink1, p ∈ break(p1, "<p>", false)
+    do
+     {assert">Function</a>"sub 1 ∉ p report":(esc.subseq(p, 1, 4))hereyX:(esc.p)"}
+     if subseq(p, 1, 4) ≠ "<a id =" + dq ∨ ">Function</a>" sub 1 ∉ p then autolink2
+     else
+      let i = findindex(p << 4, dq sub 1)
+      let linkvalue = subseq(p, 4, i + 4)
+      let tmp = asset.[autolink(linkvalue, "../ /nsp" + fullname.fn.f)] ∪ autolink2,
+      {assert isempty.find(autolink2, linkvalue)report":(linkvalue)herey:(esc.p)/p
+      "+print.find(autolink2, linkvalue)+"/p
+      "+print.find(tmp, linkvalue),}
+      tmp,
+    autolink2,
+  autolink1,
+autolinks
+
+use autolink
+
+Function unusedsymbols2(
+m:midpoint
+, all:boolean
+, generated0:boolean
+, excessExports:boolean
+, ignore0:seq.word
+) seq.word
+let ignore = if isempty.ignore0 then "genEnum genPEG" else ignore0
+let dict =
+ for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd,
+ uses
+let templates =
+ for acc = templates.m, sym ∈ toseq.dict
+ do
+  if isAbstract.module.sym ∧ isempty.getCode(templates.m, sym) then acc + symdef(sym, empty:seq.symbol, 0)
+  else acc,
+ acc
+let roots =
+ for acc = empty:set.symbol, sd ∈ toseq.prg.m
+ do if COMMAND ∈ options.sd then acc + sym.sd else acc,
+ acc
+let a2 = closeuse(empty:set.symbol, roots, prg.m, templates, dict)
+let a3 =
+ for acc = empty:set.symbol, prg = empty:seq.symdef, sym ∈ toseq(dict \ a2)
+ do
+  let b = getSymdef(prg.m, sym),
+  if not.isempty.b ∧ paragraphno.b sub 1 ≠ 0 ⊻ generated0 then next(acc + sym, prg + b sub 1)
+  else next(acc, prg),
+ if all then acc
+ else
+  acc
+  \ for arcs = empty:set.arc.symbol, sd ∈ prg
+  do
+   for arcs2 = arcs, sy ∈ toseq(asset.code.sd ∩ acc - sym.sd) do arcs2 + arc(sym.sd, sy),
+   arcs2
+  let g = newgraph.toseq.arcs,
+  nodes.g \ asset.sources.g
+let outsyms =
+ if excessExports then
+  {symbols exported from a module and only used internally to that module}
+  let exportedSymbols =
+   for acc = empty:seq.symbol, alibmod ∈ libmods.m do acc + exports.alibmod,
+   acc
+  for
+   internaluse = empty:set.symbol
+   , externaluse = empty:set.symbol
+   , sd ∈ toseq.prg.m + toseq.templates.m
+  do
+   for internal0 = internaluse, external0 = externaluse, sy ∈ code.sd
+   do
+    if module.sy = module.sym.sd then next(internal0 + sy, external0)
+    else next(internal0, external0 + sy),
+   next(internal0, external0),
+  internaluse ∩ asset.exportedSymbols \ externaluse \ a3
+ else a3
+for acc = empty:seq.seq.word, sym ∈ toseq.outsyms
+do if name.sym ∈ ignore then acc else acc + %.sym,
+ "Unused symbols for roots:(toseq.roots)/p:(%n.sort>alpha.acc)"
+
+function rename(renames:seq.word, name:word) word
+let i = findindex(renames, name),
+if i > n.renames then name else renames sub (i + 1)
+
+function closeuse(
+done:set.symbol
+, toprocess:set.symbol
+, prg:set.symdef
+, templates:set.symdef
+, dict:set.symbol
+) set.symbol
+let new0 =
+ for acc = empty:seq.symbol, sym ∈ toseq.toprocess do acc + getCode(prg, sym),
+ acc
+let new1 =
+ for acc = empty:seq.symbol, sym ∈ toseq.asset.new0
+ do
+  let kind = kind.sym,
+  if kind.sym ∈ isOrdinary ∨ kind.sym ∈ [kfref] then acc + sym else acc,
+ asset.acc \ done
+let new2 = requires(new1, templates, dict, true) \ done ∪ new1,
+if isempty.new2 then done else closeuse(done ∪ toprocess, new2, prg, templates, dict)
+
+function ⊻(a:boolean, b:boolean) boolean if a then not.b else b
+
+function %(a:arc.symbol) seq.word %.tail.a + %.head.a 

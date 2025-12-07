@@ -1,0 +1,243 @@
+Module PEG
+
+use PEGmachine
+
+use PEGparse
+
+use UTF8
+
+use seq1.int
+
+use seq.int
+
+use seq.seq.int
+
+use seq.pegrule
+
+use standard
+
+use seq1.tableEntry
+
+use seq.seq.tableEntry
+
+use textio
+
+use seq1.word
+
+use seq.word
+
+use seq1.seq.word
+
+use seq.seq.word
+
+use seq.seq.seq.word
+
+use set.word
+
+Export type:PEGtable {From PEGmachine}
+
+Export entries(PEGtable) seq.tableEntry {From PEGmachine}
+
+Export maketable(gin:seq.pegrule, subs:seq.word, addrecover:boolean) PEGtable
+{From PEGmachine}
+
+Export runMachine(int, PEGtable, seq.seq.word, seq.word) seq.word {From PEGmachine}
+
+Function %(t:PEGtable) seq.word %table.entries.t
+
+Function maketable(s:seq.word) PEGtable
+let gin = PEGparse.s,
+maketable(
+ gin
+ , "dq:(dq), // /, //action /action, //br
+ /br"
+ , false
+)
+
+function toAttribute(b:seq.word, a:seq.word) seq.word a
+
+Function run(tab:PEGtable, input:seq.word) seq.word
+{First word of result will be status word of Match, MatchPrefix or Failed}
+let r = parse(input, entries.tab, "", tab),
+[status.r]
+ + if status.r ∈ "Failed" then subseq(input, 1, i.top.stk.r - 1) else result.r
+
+function action(partno:int, R:seq.seq.word, common:PEGtable, rinfo:runresult) seq.word
+runMachine(partno, common, R, "")
+
+function endMark word encodeword.[char.254]
+
+function genPEG(
+error:boolean
+, seqElementType:word
+, attributeType:seq.word
+, resultType:runresult
+, common:PEGtable
+, commonType:PEGtable
+, nogrammar:boolean
+) int
+{commonName: common}
+0
+
+<<<< Below is auto generated code >>>>
+
+function $(int) seq.word empty:seq.seq.word sub 1
+
+use standard
+
+use seq.tableEntry
+
+use seq1.frame
+
+use stack.frame
+
+use seq1.seq.word
+
+use PEGrules
+
+function recoveryEnding(rinfo:runresult, mytable:seq.tableEntry) seq.word
+for acc = "", frame ∈ reverse.toseq.stk.rinfo
+do
+ if action.Sstate.frame ∈ [T, T', NT] then acc + recover.mytable sub index.Sstate.frame
+ else acc,
+acc
+
+type frame is
+Sstate:state
+, Fstate:state
+, i:int
+, result:seq.seq.word
+, faili:int
+, failresult:seq.seq.word
+
+type runresult is stk:stack.frame, input:seq.word, place:int, faili:int
+
+Function status(a:runresult) word
+if Sstate.top.stk.a ≠ Match then 'Failed
+else if place.a = {length of input} faili.top.stk.a then 'Match
+else 'MatchPrefix
+
+Function result(a:runresult) seq.word
+let t = result.top.stk.a,
+t sub n.t
+
+function parse(
+myinput0:seq.word
+, table:seq.tableEntry
+, initAttr:seq.word
+, common:PEGtable
+) runresult
+let myinput = packed(myinput0 + endMark)
+let packedTable = packed.table
+for
+ rinfo = runresult(empty:stack.frame, myinput, 0, 1)
+ , stk = empty:stack.frame
+ , state = startstate
+ , i = 1
+ , inputi = myinput sub 1
+ , result = [initAttr]
+ , faili = 1
+ , failresult = [initAttr]
+while toint.state > toint.Match
+do
+ let actionState = action.state,
+ if actionState = Fail then
+  {goto Fstate.top.stk, i = faili.top, pop.stk, discard result}
+  let top = top.stk,
+  if toint.action.Fstate.top ≥ toint.S' then
+   let newi = i.top,
+   next(
+    rinfo
+    , pop.stk
+    , nextState.Fstate.top
+    , newi
+    , idxNB(myinput, newi)
+    , result.top
+    , faili.top
+    , failresult.top
+   )
+  else
+   next(
+    rinfo
+    , pop.stk
+    , Fstate.top
+    , faili.top
+    , idxNB(myinput, faili.top)
+    , failresult.top
+    , faili.top
+    , failresult.top
+   )
+ else if actionState = Success* then
+  {goto Sstate.top.stk, pop.stk, keep result}
+  let top = top.stk,
+  next(rinfo, pop.stk, Sstate.top, i, inputi, result.top + result, faili.top, failresult.top)
+ else if actionState = Discard* then
+  let top = top.stk
+  let newrinfo = if i > place.rinfo then runresult(stk, myinput, i, faili) else rinfo,
+  next(newrinfo, stk, nextState.state, i, inputi, result.top, i, result.top)
+ else if actionState = All then
+  let top = top.stk
+  let att = [toAttribute(result sub n.result, subseq(myinput, i.top, i - 1))],
+  next(rinfo, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+ else if actionState = Lambda then
+  let newrinfo = if i > place.rinfo then runresult(stk, myinput, i, faili) else rinfo
+  let att = [action(reduceNo.state, result, common, newrinfo)],
+  next(newrinfo, stk, nextState2.state, i, inputi, result + att, faili, failresult)
+ else if actionState = Reduce then
+  let top = top.stk
+  let newrinfo =
+   if i > place.rinfo ∨ faili ≠ faili.rinfo then runresult(stk, myinput, i, faili)
+   else rinfo,
+  let att = [action(reduceNo.state, result, common, newrinfo)],
+  next(newrinfo, pop.stk, Sstate.top, i, inputi, result.top + att, faili.top, failresult.top)
+ else if actionState = Reduce* then
+  let newrinfo =
+   if i > place.rinfo ∨ faili ≠ faili.rinfo then runresult(stk, myinput, i, faili)
+   else rinfo
+  let att = [action(reduceNo.state, result, common, newrinfo)],
+  let top = top.stk,
+  next(newrinfo, stk, nextState.state, i, inputi, att, i, att)
+ else if actionState = !Reduce then
+  let top = top.stk
+  let ini = idxNB(myinput, faili.top),
+  next(rinfo, pop.stk, Fstate.top, faili.top, ini, failresult.top, faili.top, failresult.top)
+ else if actionState = !Fail then
+  let top = top.stk
+  let ini = idxNB(myinput, i.top),
+  next(rinfo, pop.stk, Sstate.top, i.top, ini, result.top, faili.top, failresult.top)
+ else if actionState = T then
+  let te = idxNB(packedTable, index.state),
+  if inputi ≠ match.te then
+   {fail}
+   next(rinfo, stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+  else next(rinfo, stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
+ else if actionState = !T then
+  let te = idxNB(packedTable, index.state),
+  if inputi = match.te then
+   {fail}
+   next(rinfo, stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+  else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+ else if actionState = MatchAny then
+  let te = idxNB(packedTable, index.state),
+  if inputi = endMark then {fail} next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  else
+   let reslt = result + toAttribute(result sub n.result, [inputi])
+   let ini = idxNB(myinput, i + 1),
+   next(rinfo, stk, Sstate.te, i + 1, ini, reslt, faili, failresult)
+ else if actionState = T' then
+  let te = idxNB(packedTable, index.state),
+  if inputi = match.te then next(rinfo, stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
+  else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+ else
+  {match non Terminal}
+  let te = idxNB(packedTable, index.state)
+  assert action.action.te ∈ [NT, NT*] report "PROBLEM PEG:(state)"
+  let newstk = push(stk, frame(Sstate.te, Fstate.te, i, result, faili, failresult)),
+  let tmp = [toAttribute(result sub n.result, empty:seq.word)],
+  next(rinfo, newstk, nextState.action.te, i, inputi, tmp, i, tmp),
+runresult(
+ push(stk.rinfo, frame(state, state, place.rinfo, result, n.myinput, result))
+ , input.rinfo
+ , place.rinfo
+ , faili.rinfo
+) 

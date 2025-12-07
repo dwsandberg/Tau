@@ -1,671 +1,766 @@
-#!/usr/local/bin/tau ; use wasm; wasmbytes
-
 Module wasm
+
+use LEBencoding
 
 use UTF8
 
 use bits
 
-use standard
-
 use seq.byte
-
-use seq.char
-
-use seq.decoderesult
-
-use set.int
 
 use seq.seq.byte
 
+use standard
+
 Export type:byte
 
-/Function test7 seq.word let b=[call]+LEB.2567+[call]+LEB.245+i32const+LEBsigned.-400+i64const+LEBsigned.
--4 for text="", op=tobyte.0, result=0x0, shift=0, state="startop", byte ∈ b do if state="startop"then next(text, byte 
-, result, shift, "startLEBarg")else let c=tobits.byte ∧ 0x7F if c=tobits.byte then let arg=if state="startLEBarg"then 
-toint.if(tobits.byte ∧ 0x40)=0x0 then tobits.byte else c ∨ tobits.-1 << 7 else if op ∈[i32const, i64const]then if(tobits 
-.byte ∧ 0x40)=0x0 then toint(result ∨ c << shift)else toint(result ∨ c << shift ∨ tobits.-1 <<(shift+7))else toint(result 
-∨ c << shift)next(text+decodeop.op+toword.arg, op, 0x0, 0, "startop")else if state="startLEBarg"then next(text, 
-op, c, 7, "inLEB")else let newresult=result ∨ c << shift next(text, op, newresult, shift+7, state)/for("P"+text)
+Export LEBu(i:int) seq.byte
 
-/function decodeLEB(a:seq.byte, i:int, result:bits, shift:int)decoderesult let byte=tobits.a_i let c=byte ∧ 0x7F 
-let newresult=result ∨ c << shift if c=byte then decoderesult(toint.newresult, i+1)else decodeLEB(a, i+1, newresult 
-, shift+7)
+Export LEBs(i:int) seq.byte
 
-Function testLEB seq.word
-let r = 
- [tobyte.127, tobyte.128, tobyte.1, tobyte.128, tobyte.128
- , tobyte.4, tobyte.229, tobyte.142, tobyte.38, tobyte.255
- , tobyte.0, tobyte.192, tobyte.187, tobyte.120]
-let d1 = decodeLEB(r, 1)
-let d2 = decodeLEB(r, next.d1)
-let d3 = decodeLEB(r, next.d2)
-let d4 = decodeLEB(r, next.d3)
-let d5 = decodeLEBsigned(r, next.d4)
-let d6 = decodeLEBsigned(r, next.d5)
-if LEB.127 + LEB.128 + LEB.2^16 + LEB.624485 + LEBsigned.127 + LEBsigned.-123456 = r
-∧ for acc = empty:seq.int, @e ∈[d1, d2, d3, d4, d5, d6]do acc + value.@e /for(acc)
-= [127, 128, 65536, 624485, 127, -123456]then
- "PASS"
-else"FAIL"
+Export decodeLEBu(a:seq.byte, i:int) decoderesult
 
-Function decodeLEB(a:seq.byte, i:int)decoderesult decodeLEB(a, i, 0x0, 0)
-
-Function decodeLEBsigned(a:seq.byte, i:int)decoderesult
-let r = decodeLEB(a, i, 0x0, 0)
-let byte = tobits.a_(next.r - 1)
-if(byte ∧ 0x40) = 0x0 then r
-else decoderesult(toint(bits.value.r ∨ tobits.-1 << ((next.r - i) * 7)), next.r)
-
-type decoderesult is value:int, next:int
+Export decodeLEBs(a:seq.byte, i:int) decoderesult
 
 Export type:decoderesult
 
-Export value(decoderesult)int
-
-Export next(decoderesult)int
-
-function decodeLEB(a:seq.byte, i:int, result:bits, shift:int)decoderesult
-let byte = tobits.a_i
-let c = byte ∧ 0x7F
-let newresult = result ∨ c << shift
-if c = byte then decoderesult(toint.newresult, i + 1)
-else decodeLEB(a, i + 1, newresult, shift + 7)
-
-Function LEB(i:int)seq.byte LEB(bits.0, bits.i, empty:seq.byte)
-
-Function LEBsigned(i:int)seq.byte LEB(bits.64, bits.i, empty:seq.byte)
-
-function LEB(signbit:bits, value:bits, result:seq.byte)seq.byte
-let byte = value ∧ bits.127
-let value1 = if toint.value < 0 then bits.-1 << (64 - 7) ∨ value >> 7 else value >> 7
-if toint.value1 = 0 ∧ toint(byte ∧ signbit) = 0 then result + tobyte.byte
-else if toint.value1 = -1 ∧ toint.byte ≥ toint.signbit then result + tobyte.byte
-else LEB(signbit, value1, result + tobyte(byte ∨ bits.128))
-
-Function exportfunc(idx:int, name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEB.idx
-
-Function exportmemory(name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
-
-Function importfunc(idx:int, modname:word, name:word)seq.byte
-vector.toseqbyte(emptyUTF8 + decodeword.modname) + vector.toseqbyte(emptyUTF8 + decodeword.name)
-+ [tobyte.0]
-+ LEB.idx
-
-Function vector(a:seq.byte)seq.byte
-assert length.a < 2^32 report"vector problem" + stacktrace
-LEB.length.a + a
-
-Function vector(a:seq.seq.byte)seq.byte
-assert length.a < 2^32 report"vector problem"
-for acc = LEB.length.a, @e ∈ a do acc + @e /for(acc)
-
-function tobytea(a:seq.char)seq.byte
-{handles ascii only}
-for acc = empty:seq.byte, @e ∈ a do acc + tobyte.toint.@e /for(acc)
-
-Function tobyte(b:bits)byte tobyte.toint.b
-
-Function wasmbytes seq.word
-{used to generate code that follows this function in this package}
-let data = 
- "00 unreachable 02 block 03 loop 0B END 0C br 0D brif 0F return 10 call 11 callindirect 1A drop 1B select 20 localget 21 localset 
-22 localtee 23 globalget 24 globalset 28 i32load 29 i64load 2A f32load 2B f64load 2C i32load8s 2D i32load8u 2E i32load16s 
-2F i32load16u 30 i64load8s 31 i64load8u 32 i64load16s 33 i64load16u 34 i64load32s 35 i64load32u 36 i32store 37 i64store 
-38 f32store 39 f64store 3A i32store8 3B i32store16 3C i64store8 3D i64store16 3E i64store32 3F memorysize 40 memorygrow 
-41 i32const 42 i64const 43 f32const 44 f64const 45 i32eqz 46 i32eq 47 i32ne 48 i32lts 49 i32ltu 4A i32gts 4B i32gtu 4C i32les 
-4D i32leu 4E i32ges 4F i32geu 50 i64eqz 51 i64eq 52 i64ne 53 i64lts 54 i64ltu 55 i64gts 56 i64gtu 57 i64les 58 i64leu 59 i64ges 
-5A i64geu 5B f32eq 5C f32ne 5D f32lt 5E f32gt 5F f32le 60 f32ge 61 f64eq 62 f64ne 63 f64lt 64 f64gt 65 f64le 66 f64ge 67 i32clz 68 
-i32ctz 69 i32popcnt 6A i32add 6B i32sub 6C i32mul 6D i32divs 6E i32divu 6F i32rems 70 i32remu 71 i32and 72 i32or 73 i32xor 74 
-i32shl 75 i32shrs 76 i32shru 77 i32rotl 78 i32rotr 79 i64clz 7A i64ctz 7B i64popcnt 7C i64add 7D i64sub 7E i64mul 7F i64divs 
-80 i64divu 81 i64rems 82 i64remu 83 i64and 84 i64or 85 i64xor 86 i64shl 87 i64shrs 88 i64shru 89 i64rotl 8A i64rotr 8B f32abs 
-8C f32neg 8D f32ceil 8E f32floor 8F f32trunc 90 f32nearest 91 f32sqrt 92 f32add 93 f32sub 94 f32mul 95 f32div 96 f32min 97 f32max 
-98 f32copysign 99 f64abs 9A f64neg 9B f64ceil 9C f64floor 9D f64trunc 9E f64nearest 9F f64sqrt A0 f64add A1 f64sub A2 f64mul 
-A3 f64div A4 f64min A5 f64max A6 f64copysign A7 i32wrapi64 A8 i32truncf32s A9 i32truncf32u AA i32truncf64s AB i32truncf64u 
-AC i64extendi32s AD i64extendi32u AE i64truncf32s AF i64truncf32u B0 i64truncf64s B1 i64truncf64u B2 f32converti32s 
-B3 f32converti32u B4 f32converti64s B5 f32converti64u B6 f32demotef64 B7 f64converti32s B8 f64converti32u B9 f64converti64s 
-BA f64converti64u BB f64promotef32 BC i32reinterpretf32 BD i64reinterpretf64 BE f32reinterpreti32 BF f64reinterpreti64 
-C0 i32extend8s C1 i32extend16s C2 i64extend8s C3 i64extend16s C4 i64extend32s"
-let z = 
- for acc = "", @i = 1, @e ∈ data do
-  next(acc
-  + if @i mod 2 = 1 then
-   " /br else if c=" + merge("0x" + @e) + "then first.'" + data_(@i + 1)
-   + "'"
-  else""
-  , @i + 1
-  )
- /for(acc)
-" /p Function decodeop(cc:byte)word  /br let c=tobits.cc  /br" + z << 2
-+ "else first.' ? '"
-+ for acc = "", @i = 1, @e ∈ data do
- next(acc
- + if @i mod 2 = 1 then
-  " /p Function" + data_(@i + 1) + "byte tobyte." + merge("0x" + @e)
- else""
- , @i + 1
- )
-/for(acc)
-
-Function decodeop(cc:byte)word
-let c = tobits.cc
-if c = 0x00 then first."unreachable"
-else if c = 0x02 then first."block"
-else if c = 0x03 then first."loop"
-else if c = 0x0B then first."END"
-else if c = 0x0C then first."br"
-else if c = 0x0D then first."brif"
-else if c = 0x0F then first."return"
-else if c = 0x10 then first."call"
-else if c = 0x11 then first."callindirect"
-else if c = 0x1A then first."drop"
-else if c = 0x1B then first."select"
-else if c = 0x20 then first."localget"
-else if c = 0x21 then first."localset"
-else if c = 0x22 then first."localtee"
-else if c = 0x23 then first."globalget"
-else if c = 0x24 then first."globalset"
-else if c = 0x28 then first."i32load"
-else if c = 0x29 then first."i64load"
-else if c = 0x2A then first."f32load"
-else if c = 0x2B then first."f64load"
-else if c = 0x2C then first."i32load8s"
-else if c = 0x2D then first."i32load8u"
-else if c = 0x2E then first."i32load16s"
-else if c = 0x2F then first."i32load16u"
-else if c = 0x30 then first."i64load8s"
-else if c = 0x31 then first."i64load8u"
-else if c = 0x32 then first."i64load16s"
-else if c = 0x33 then first."i64load16u"
-else if c = 0x34 then first."i64load32s"
-else if c = 0x35 then first."i64load32u"
-else if c = 0x36 then first."i32store"
-else if c = 0x37 then first."i64store"
-else if c = 0x38 then first."f32store"
-else if c = 0x39 then first."f64store"
-else if c = 0x3A then first."i32store8"
-else if c = 0x3B then first."i32store16"
-else if c = 0x3C then first."i64store8"
-else if c = 0x3D then first."i64store16"
-else if c = 0x3E then first."i64store32"
-else if c = 0x3F then first."memorysize"
-else if c = 0x40 then first."memorygrow"
-else if c = 0x41 then first."i32const"
-else if c = 0x42 then first."i64const"
-else if c = 0x43 then first."f32const"
-else if c = 0x44 then first."f64const"
-else if c = 0x45 then first."i32eqz"
-else if c = 0x46 then first."i32eq"
-else if c = 0x47 then first."i32ne"
-else if c = 0x48 then first."i32lts"
-else if c = 0x49 then first."i32ltu"
-else if c = 0x4A then first."i32gts"
-else if c = 0x4B then first."i32gtu"
-else if c = 0x4C then first."i32les"
-else if c = 0x4D then first."i32leu"
-else if c = 0x4E then first."i32ges"
-else if c = 0x4F then first."i32geu"
-else if c = 0x50 then first."i64eqz"
-else if c = 0x51 then first."i64eq"
-else if c = 0x52 then first."i64ne"
-else if c = 0x53 then first."i64lts"
-else if c = 0x54 then first."i64ltu"
-else if c = 0x55 then first."i64gts"
-else if c = 0x56 then first."i64gtu"
-else if c = 0x57 then first."i64les"
-else if c = 0x58 then first."i64leu"
-else if c = 0x59 then first."i64ges"
-else if c = 0x5A then first."i64geu"
-else if c = 0x5B then first."f32eq"
-else if c = 0x5C then first."f32ne"
-else if c = 0x5D then first."f32lt"
-else if c = 0x5E then first."f32gt"
-else if c = 0x5F then first."f32le"
-else if c = 0x60 then first."f32ge"
-else if c = 0x61 then first."f64eq"
-else if c = 0x62 then first."f64ne"
-else if c = 0x63 then first."f64lt"
-else if c = 0x64 then first."f64gt"
-else if c = 0x65 then first."f64le"
-else if c = 0x66 then first."f64ge"
-else if c = 0x67 then first."i32clz"
-else if c = 0x68 then first."i32ctz"
-else if c = 0x69 then first."i32popcnt"
-else if c = 0x6A then first."i32add"
-else if c = 0x6B then first."i32sub"
-else if c = 0x6C then first."i32mul"
-else if c = 0x6D then first."i32divs"
-else if c = 0x6E then first."i32divu"
-else if c = 0x6F then first."i32rems"
-else if c = 0x70 then first."i32remu"
-else if c = 0x71 then first."i32and"
-else if c = 0x72 then first."i32or"
-else if c = 0x73 then first."i32xor"
-else if c = 0x74 then first."i32shl"
-else if c = 0x75 then first."i32shrs"
-else if c = 0x76 then first."i32shru"
-else if c = 0x77 then first."i32rotl"
-else if c = 0x78 then first."i32rotr"
-else if c = 0x79 then first."i64clz"
-else if c = 0x7A then first."i64ctz"
-else if c = 0x7B then first."i64popcnt"
-else if c = 0x7C then first."i64add"
-else if c = 0x7D then first."i64sub"
-else if c = 0x7E then first."i64mul"
-else if c = 0x7F then first."i64divs"
-else if c = 0x80 then first."i64divu"
-else if c = 0x81 then first."i64rems"
-else if c = 0x82 then first."i64remu"
-else if c = 0x83 then first."i64and"
-else if c = 0x84 then first."i64or"
-else if c = 0x85 then first."i64xor"
-else if c = 0x86 then first."i64shl"
-else if c = 0x87 then first."i64shrs"
-else if c = 0x88 then first."i64shru"
-else if c = 0x89 then first."i64rotl"
-else if c = 0x8A then first."i64rotr"
-else if c = 0x8B then first."f32abs"
-else if c = 0x8C then first."f32neg"
-else if c = 0x8D then first."f32ceil"
-else if c = 0x8E then first."f32floor"
-else if c = 0x8F then first."f32trunc"
-else if c = 0x90 then first."f32nearest"
-else if c = 0x91 then first."f32sqrt"
-else if c = 0x92 then first."f32add"
-else if c = 0x93 then first."f32sub"
-else if c = 0x94 then first."f32mul"
-else if c = 0x95 then first."f32div"
-else if c = 0x96 then first."f32min"
-else if c = 0x97 then first."f32max"
-else if c = 0x98 then first."f32copysign"
-else if c = 0x99 then first."f64abs"
-else if c = 0x9A then first."f64neg"
-else if c = 0x9B then first."f64ceil"
-else if c = 0x9C then first."f64floor"
-else if c = 0x9D then first."f64trunc"
-else if c = 0x9E then first."f64nearest"
-else if c = 0x9F then first."f64sqrt"
-else if c = 0xA0 then first."f64add"
-else if c = 0xA1 then first."f64sub"
-else if c = 0xA2 then first."f64mul"
-else if c = 0xA3 then first."f64div"
-else if c = 0xA4 then first."f64min"
-else if c = 0xA5 then first."f64max"
-else if c = 0xA6 then first."f64copysign"
-else if c = 0xA7 then first."i32wrapi64"
-else if c = 0xA8 then first."i32truncf32s"
-else if c = 0xA9 then first."i32truncf32u"
-else if c = 0xAA then first."i32truncf64s"
-else if c = 0xAB then first."i32truncf64u"
-else if c = 0xAC then first."i64extendi32s"
-else if c = 0xAD then first."i64extendi32u"
-else if c = 0xAE then first."i64truncf32s"
-else if c = 0xAF then first."i64truncf32u"
-else if c = 0xB0 then first."i64truncf64s"
-else if c = 0xB1 then first."i64truncf64u"
-else if c = 0xB2 then first."f32converti32s"
-else if c = 0xB3 then first."f32converti32u"
-else if c = 0xB4 then first."f32converti64s"
-else if c = 0xB5 then first."f32converti64u"
-else if c = 0xB6 then first."f32demotef64"
-else if c = 0xB7 then first."f64converti32s"
-else if c = 0xB8 then first."f64converti32u"
-else if c = 0xB9 then first."f64converti64s"
-else if c = 0xBA then first."f64converti64u"
-else if c = 0xBB then first."f64promotef32"
-else if c = 0xBC then first."i32reinterpretf32"
-else if c = 0xBD then first."i64reinterpretf64"
-else if c = 0xBE then first."f32reinterpreti32"
-else if c = 0xBF then first."f64reinterpreti64"
-else if c = 0xC0 then first."i32extend8s"
-else if c = 0xC1 then first."i32extend16s"
-else if c = 0xC2 then first."i64extend8s"
-else if c = 0xC3 then first."i64extend16s"
-else if c = 0xC4 then first."i64extend32s"
-else{first.' ? '}merge("?" + toword.toint.c)
-
-Function unreachable byte tobyte.0x00
-
-Function block byte tobyte.0x02
-
-Function loop byte tobyte.0x03
-
-Function END byte tobyte.0x0B
-
-Function br byte tobyte.0x0C
-
-Function brif byte tobyte.0x0D
-
-Function return byte tobyte.0x0F
-
-Function call byte tobyte.0x10
-
-Function callindirect byte tobyte.0x11
-
-Function drop byte tobyte.0x1A
-
-Function select byte tobyte.0x1B
-
-Function localget byte tobyte.0x20
-
-Function localset byte tobyte.0x21
-
-Function localtee byte tobyte.0x22
-
-Function globalget byte tobyte.0x23
-
-Function globalset byte tobyte.0x24
-
-Function i32load byte tobyte.0x28
-
-Function i64load byte tobyte.0x29
-
-Function f32load byte tobyte.0x2A
-
-Function f64load byte tobyte.0x2B
-
-Function i32load8s byte tobyte.0x2C
-
-Function i32load8u byte tobyte.0x2D
-
-Function i32load16s byte tobyte.0x2E
-
-Function i32load16u byte tobyte.0x2F
-
-Function i64load8s byte tobyte.0x30
-
-Function i64load8u byte tobyte.0x31
-
-Function i64load16s byte tobyte.0x32
-
-Function i64load16u byte tobyte.0x33
-
-Function i64load32s byte tobyte.0x34
-
-Function i64load32u byte tobyte.0x35
-
-Function i32store byte tobyte.0x36
+Export value(decoderesult) int
 
-Function i64store byte tobyte.0x37
+Export next(decoderesult) int
 
-Function f32store byte tobyte.0x38
+Function exportfunc(idx:int, name:word) seq.byte
+vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEBu.idx
 
-Function f64store byte tobyte.0x39
+Function exportmemory(name:word) seq.byte
+vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
 
-Function i32store8 byte tobyte.0x3A
+Function importfunc(idx:int, modname:word, name:word) seq.byte
+vector.toseqbyte(emptyUTF8 + decodeword.modname)
+ + vector.toseqbyte(emptyUTF8 + decodeword.name)
+ + [tobyte.0]
+ + LEBu.idx
 
-Function i32store16 byte tobyte.0x3B
+Function vector(a:seq.byte) seq.byte
+assert n.a < 2 sup 32 report "vector problem:(stacktrace)",
+LEBu.n.a + a
 
-Function i64store8 byte tobyte.0x3C
+Function vector(a:seq.seq.byte) seq.byte
+assert n.a < 2 sup 32 report "vector problem"
+for acc = LEBu.n.a, @e ∈ a do acc + @e,
+acc
 
-Function i64store16 byte tobyte.0x3D
+Export tobyte(b:bits) byte
 
-Function i64store32 byte tobyte.0x3E
+Function byte(i:int) byte tobyte.i
 
-Function memorysize byte tobyte.0x3F
+function genEnum seq.seq.word
+["existingType: byte decodeName: decodeop nameValue: unreachable 0x00 block 0x02 loop 0x03 IF 0x04 ELSE 0x05 END 0x0B br 0x0C brif 0x0D return 0x0F call 0x10 callindirect 0x11 drop 0x1A select 0x1B localget 0x20 localset 0x21 localtee 0x22 globalget 0x23 globalset 0x24 i32load 0x28 i64load 0x29 f32load 0x2A f64load 0x2B i32load8s 0x2C i32load8u 0x2D i32load16s 0x2E i32load16u 0x2F i64load8s 0x30 i64load8u 0x31 i64load16s 0x32 i64load16u 0x33 i64load32s 0x34 i64load32u 0x35 i32store 0x36 i64store 0x37 f32store 0x38 f64store 0x39 i32store8 0x3A i32store16 0x3B i64store8 0x3C i64store16 0x3D i64store32 0x3E memorysize 0x3F memorygrow 0x40 i32const 0x41 i64const 0x42 f32const 0x43 f64const 0x44 i32eqz 0x45 i32eq 0x46 i32ne 0x47 i32lts 0x48 i32ltu 0x49 i32gts 0x4A i32gtu 0x4B i32les 0x4C i32leu 0x4D i32ges 0x4E i32geu 0x4F i64eqz 0x50 i64eq 0x51 i64ne 0x52 i64lts 0x53 i64ltu 0x54 i64gts 0x55 i64gtu 0x56 i64les 0x57 i64leu 0x58 i64ges 0x59 i64geu 0x5A f32eq 0x5B f32ne 0x5C f32lt 0x5D f32gt 0x5E f32le 0x5F f32ge 0x60 f64eq 0x61 f64ne 0x62 f64lt 0x63 f64gt 0x64 f64le 0x65 f64ge 0x66 i32clz 0x67 i32ctz 0x68 i32popcnt 0x69 i32add 0x6A i32sub 0x6B i32mul 0x6C i32divs 0x6D i32divu 0x6E i32rems 0x6F i32remu 0x70 i32and 0x71 i32or 0x72 i32xor 0x73 i32shl 0x74 i32shrs 0x75 i32shru 0x76 i32rotl 0x77 i32rotr 0x78 i64clz 0x79 i64ctz 0x7A i64popcnt 0x7B i64add 0x7C i64sub 0x7D i64mul 0x7E i64divs 0x7F i64divu 0x80 i64rems 0x81 i64remu 0x82 i64and 0x83 i64or 0x84 i64xor 0x85 i64shl 0x86 i64shrs 0x87 i64shru 0x88 i64rotl 0x89 i64rotr 0x8A f32abs 0x8B f32neg 0x8C f32ceil 0x8D f32floor 0x8E f32trunc 0x8F f32nearest 0x90 f32sqrt 0x91 f32add 0x92 f32sub 0x93 f32mul 0x94 f32div 0x95 f32min 0x96 f32max 0x97 f32copysign 0x98 f64abs 0x99 f64neg 0x9A f64ceil 0x9B f64floor 0x9C f64trunc 0x9D f64nearest 0x9E f64sqrt 0x9F f64add 0xA0 f64sub 0xA1 f64mul 0xA2 f64div 0xA3 f64min 0xA4 f64max 0xA5 f64copysign 0xA6 i32wrapi64 0xA7 i32truncf32s 0xA8 i32truncf32u 0xA9 i32truncf64s 0xAA i32truncf64u 0xAB i64extendi32s 0xAC i64extendi32u 0xAD i64truncf32s 0xAE i64truncf32u 0xAF i64truncf64s 0xB0 i64truncf64u 0xB1 f32converti32s 0xB2 f32converti32u 0xB3 f32converti64s 0xB4 f32converti64u 0xB5 f32demotef64 0xB6 f64converti32s 0xB7 f64converti32u 0xB8 f64converti64s 0xB9 f64converti64u 0xBA f64promotef32 0xBB i32reinterpretf32 0xBC i64reinterpretf64 0xBD f32reinterpreti32 0xBE f64reinterpreti64 0xBF i32extend8s 0xC0 i32extend16s 0xC1 i64extend8s 0xC2 i64extend16s 0xC3 i64extend32s 0xC4"]
 
-Function memorygrow byte tobyte.0x40
+<<<< Below is auto generated code >>>>
 
-Function i32const byte tobyte.0x41
+Function unreachable byte tobyte.0
 
-Function i64const byte tobyte.0x42
+Function block byte tobyte.2
 
-Function f32const byte tobyte.0x43
+Function loop byte tobyte.3
 
-Function f64const byte tobyte.0x44
+Function IF byte tobyte.4
 
-Function i32eqz byte tobyte.0x45
+Function ELSE byte tobyte.5
 
-Function i32eq byte tobyte.0x46
+Function END byte tobyte.11
 
-Function i32ne byte tobyte.0x47
+Function br byte tobyte.12
 
-Function i32lts byte tobyte.0x48
+Function brif byte tobyte.13
 
-Function i32ltu byte tobyte.0x49
+Function return byte tobyte.15
 
-Function i32gts byte tobyte.0x4A
+Function call byte tobyte.16
 
-Function i32gtu byte tobyte.0x4B
+Function callindirect byte tobyte.17
 
-Function i32les byte tobyte.0x4C
+Function drop byte tobyte.26
 
-Function i32leu byte tobyte.0x4D
+Function select byte tobyte.27
 
-Function i32ges byte tobyte.0x4E
+Function localget byte tobyte.32
 
-Function i32geu byte tobyte.0x4F
+Function localset byte tobyte.33
 
-Function i64eqz byte tobyte.0x50
+Function localtee byte tobyte.34
 
-Function i64eq byte tobyte.0x51
+Function globalget byte tobyte.35
 
-Function i64ne byte tobyte.0x52
+Function globalset byte tobyte.36
 
-Function i64lts byte tobyte.0x53
+Function i32load byte tobyte.40
 
-Function i64ltu byte tobyte.0x54
+Function i64load byte tobyte.41
 
-Function i64gts byte tobyte.0x55
+Function f32load byte tobyte.42
 
-Function i64gtu byte tobyte.0x56
+Function f64load byte tobyte.43
 
-Function i64les byte tobyte.0x57
+Function i32load8s byte tobyte.44
 
-Function i64leu byte tobyte.0x58
+Function i32load8u byte tobyte.45
 
-Function i64ges byte tobyte.0x59
+Function i32load16s byte tobyte.46
 
-Function i64geu byte tobyte.0x5A
+Function i32load16u byte tobyte.47
 
-Function f32eq byte tobyte.0x5B
+Function i64load8s byte tobyte.48
 
-Function f32ne byte tobyte.0x5C
+Function i64load8u byte tobyte.49
 
-Function f32lt byte tobyte.0x5D
+Function i64load16s byte tobyte.50
 
-Function f32gt byte tobyte.0x5E
+Function i64load16u byte tobyte.51
 
-Function f32le byte tobyte.0x5F
+Function i64load32s byte tobyte.52
 
-Function f32ge byte tobyte.0x60
+Function i64load32u byte tobyte.53
 
-Function f64eq byte tobyte.0x61
+Function i32store byte tobyte.54
 
-Function f64ne byte tobyte.0x62
+Function i64store byte tobyte.55
 
-Function f64lt byte tobyte.0x63
+Function f32store byte tobyte.56
 
-Function f64gt byte tobyte.0x64
+Function f64store byte tobyte.57
 
-Function f64le byte tobyte.0x65
+Function i32store8 byte tobyte.58
 
-Function f64ge byte tobyte.0x66
+Function i32store16 byte tobyte.59
 
-Function i32clz byte tobyte.0x67
+Function i64store8 byte tobyte.60
 
-Function i32ctz byte tobyte.0x68
+Function i64store16 byte tobyte.61
 
-Function i32popcnt byte tobyte.0x69
+Function i64store32 byte tobyte.62
 
-Function i32add byte tobyte.0x6A
+Function memorysize byte tobyte.63
 
-Function i32sub byte tobyte.0x6B
+Function memorygrow byte tobyte.64
 
-Function i32mul byte tobyte.0x6C
+Function i32const byte tobyte.65
 
-Function i32divs byte tobyte.0x6D
+Function i64const byte tobyte.66
 
-Function i32divu byte tobyte.0x6E
+Function f32const byte tobyte.67
 
-Function i32rems byte tobyte.0x6F
+Function f64const byte tobyte.68
 
-Function i32remu byte tobyte.0x70
+Function i32eqz byte tobyte.69
 
-Function i32and byte tobyte.0x71
+Function i32eq byte tobyte.70
 
-Function i32or byte tobyte.0x72
+Function i32ne byte tobyte.71
 
-Function i32xor byte tobyte.0x73
+Function i32lts byte tobyte.72
 
-Function i32shl byte tobyte.0x74
+Function i32ltu byte tobyte.73
 
-Function i32shrs byte tobyte.0x75
+Function i32gts byte tobyte.74
 
-Function i32shru byte tobyte.0x76
+Function i32gtu byte tobyte.75
 
-Function i32rotl byte tobyte.0x77
+Function i32les byte tobyte.76
 
-Function i32rotr byte tobyte.0x78
+Function i32leu byte tobyte.77
 
-Function i64clz byte tobyte.0x79
+Function i32ges byte tobyte.78
 
-Function i64ctz byte tobyte.0x7A
+Function i32geu byte tobyte.79
 
-Function i64popcnt byte tobyte.0x7B
+Function i64eqz byte tobyte.80
 
-Function i64add byte tobyte.0x7C
+Function i64eq byte tobyte.81
 
-Function i64sub byte tobyte.0x7D
+Function i64ne byte tobyte.82
 
-Function i64mul byte tobyte.0x7E
+Function i64lts byte tobyte.83
 
-Function i64divs byte tobyte.0x7F
+Function i64ltu byte tobyte.84
 
-Function i64divu byte tobyte.0x80
+Function i64gts byte tobyte.85
 
-Function i64rems byte tobyte.0x81
+Function i64gtu byte tobyte.86
 
-Function i64remu byte tobyte.0x82
+Function i64les byte tobyte.87
 
-Function i64and byte tobyte.0x83
+Function i64leu byte tobyte.88
 
-Function i64or byte tobyte.0x84
+Function i64ges byte tobyte.89
 
-Function i64xor byte tobyte.0x85
+Function i64geu byte tobyte.90
 
-Function i64shl byte tobyte.0x86
+Function f32eq byte tobyte.91
 
-Function i64shrs byte tobyte.0x87
+Function f32ne byte tobyte.92
 
-Function i64shru byte tobyte.0x88
+Function f32lt byte tobyte.93
 
-Function i64rotl byte tobyte.0x89
+Function f32gt byte tobyte.94
 
-Function i64rotr byte tobyte.0x8A
+Function f32le byte tobyte.95
 
-Function f32abs byte tobyte.0x8B
+Function f32ge byte tobyte.96
 
-Function f32neg byte tobyte.0x8C
+Function f64eq byte tobyte.97
 
-Function f32ceil byte tobyte.0x8D
+Function f64ne byte tobyte.98
 
-Function f32floor byte tobyte.0x8E
+Function f64lt byte tobyte.99
 
-Function f32trunc byte tobyte.0x8F
+Function f64gt byte tobyte.100
 
-Function f32nearest byte tobyte.0x90
+Function f64le byte tobyte.101
 
-Function f32sqrt byte tobyte.0x91
+Function f64ge byte tobyte.102
 
-Function f32add byte tobyte.0x92
+Function i32clz byte tobyte.103
 
-Function f32sub byte tobyte.0x93
+Function i32ctz byte tobyte.104
 
-Function f32mul byte tobyte.0x94
+Function i32popcnt byte tobyte.105
 
-Function f32div byte tobyte.0x95
+Function i32add byte tobyte.106
 
-Function f32min byte tobyte.0x96
+Function i32sub byte tobyte.107
 
-Function f32max byte tobyte.0x97
+Function i32mul byte tobyte.108
 
-Function f32copysign byte tobyte.0x98
+Function i32divs byte tobyte.109
 
-Function f64abs byte tobyte.0x99
+Function i32divu byte tobyte.110
 
-Function f64neg byte tobyte.0x9A
+Function i32rems byte tobyte.111
 
-Function f64ceil byte tobyte.0x9B
+Function i32remu byte tobyte.112
 
-Function f64floor byte tobyte.0x9C
+Function i32and byte tobyte.113
 
-Function f64trunc byte tobyte.0x9D
+Function i32or byte tobyte.114
 
-Function f64nearest byte tobyte.0x9E
+Function i32xor byte tobyte.115
 
-Function f64sqrt byte tobyte.0x9F
+Function i32shl byte tobyte.116
 
-Function f64add byte tobyte.0xA0
+Function i32shrs byte tobyte.117
 
-Function f64sub byte tobyte.0xA1
+Function i32shru byte tobyte.118
 
-Function f64mul byte tobyte.0xA2
+Function i32rotl byte tobyte.119
 
-Function f64div byte tobyte.0xA3
+Function i32rotr byte tobyte.120
 
-Function f64min byte tobyte.0xA4
+Function i64clz byte tobyte.121
 
-Function f64max byte tobyte.0xA5
+Function i64ctz byte tobyte.122
 
-Function f64copysign byte tobyte.0xA6
+Function i64popcnt byte tobyte.123
 
-Function i32wrapi64 byte tobyte.0xA7
+Function i64add byte tobyte.124
 
-Function i32truncf32s byte tobyte.0xA8
+Function i64sub byte tobyte.125
 
-Function i32truncf32u byte tobyte.0xA9
+Function i64mul byte tobyte.126
 
-Function i32truncf64s byte tobyte.0xAA
+Function i64divs byte tobyte.127
 
-Function i32truncf64u byte tobyte.0xAB
+Function i64divu byte tobyte.128
 
-Function i64extendi32s byte tobyte.0xAC
+Function i64rems byte tobyte.129
 
-Function i64extendi32u byte tobyte.0xAD
+Function i64remu byte tobyte.130
 
-Function i64truncf32s byte tobyte.0xAE
+Function i64and byte tobyte.131
 
-Function i64truncf32u byte tobyte.0xAF
+Function i64or byte tobyte.132
 
-Function i64truncf64s byte tobyte.0xB0
+Function i64xor byte tobyte.133
 
-Function i64truncf64u byte tobyte.0xB1
+Function i64shl byte tobyte.134
 
-Function f32converti32s byte tobyte.0xB2
+Function i64shrs byte tobyte.135
 
-Function f32converti32u byte tobyte.0xB3
+Function i64shru byte tobyte.136
 
-Function f32converti64s byte tobyte.0xB4
+Function i64rotl byte tobyte.137
 
-Function f32converti64u byte tobyte.0xB5
+Function i64rotr byte tobyte.138
 
-Function f32demotef64 byte tobyte.0xB6
+Function f32abs byte tobyte.139
 
-Function f64converti32s byte tobyte.0xB7
+Function f32neg byte tobyte.140
 
-Function f64converti32u byte tobyte.0xB8
+Function f32ceil byte tobyte.141
 
-Function f64converti64s byte tobyte.0xB9
+Function f32floor byte tobyte.142
 
-Function f64converti64u byte tobyte.0xBA
+Function f32trunc byte tobyte.143
 
-Function f64promotef32 byte tobyte.0xBB
+Function f32nearest byte tobyte.144
 
-Function i32reinterpretf32 byte tobyte.0xBC
+Function f32sqrt byte tobyte.145
 
-Function i64reinterpretf64 byte tobyte.0xBD
+Function f32add byte tobyte.146
 
-Function f32reinterpreti32 byte tobyte.0xBE
+Function f32sub byte tobyte.147
 
-Function f64reinterpreti64 byte tobyte.0xBF
+Function f32mul byte tobyte.148
 
-Function i32extend8s byte tobyte.0xC0
+Function f32div byte tobyte.149
 
-Function i32extend16s byte tobyte.0xC1
+Function f32min byte tobyte.150
 
-Function i64extend8s byte tobyte.0xC2
+Function f32max byte tobyte.151
 
-Function i64extend16s byte tobyte.0xC3
+Function f32copysign byte tobyte.152
 
-Function i64extend32s byte tobyte.0xC4 
+Function f64abs byte tobyte.153
+
+Function f64neg byte tobyte.154
+
+Function f64ceil byte tobyte.155
+
+Function f64floor byte tobyte.156
+
+Function f64trunc byte tobyte.157
+
+Function f64nearest byte tobyte.158
+
+Function f64sqrt byte tobyte.159
+
+Function f64add byte tobyte.160
+
+Function f64sub byte tobyte.161
+
+Function f64mul byte tobyte.162
+
+Function f64div byte tobyte.163
+
+Function f64min byte tobyte.164
+
+Function f64max byte tobyte.165
+
+Function f64copysign byte tobyte.166
+
+Function i32wrapi64 byte tobyte.167
+
+Function i32truncf32s byte tobyte.168
+
+Function i32truncf32u byte tobyte.169
+
+Function i32truncf64s byte tobyte.170
+
+Function i32truncf64u byte tobyte.171
+
+Function i64extendi32s byte tobyte.172
+
+Function i64extendi32u byte tobyte.173
+
+Function i64truncf32s byte tobyte.174
+
+Function i64truncf32u byte tobyte.175
+
+Function i64truncf64s byte tobyte.176
+
+Function i64truncf64u byte tobyte.177
+
+Function f32converti32s byte tobyte.178
+
+Function f32converti32u byte tobyte.179
+
+Function f32converti64s byte tobyte.180
+
+Function f32converti64u byte tobyte.181
+
+Function f32demotef64 byte tobyte.182
+
+Function f64converti32s byte tobyte.183
+
+Function f64converti32u byte tobyte.184
+
+Function f64converti64s byte tobyte.185
+
+Function f64converti64u byte tobyte.186
+
+Function f64promotef32 byte tobyte.187
+
+Function i32reinterpretf32 byte tobyte.188
+
+Function i64reinterpretf64 byte tobyte.189
+
+Function f32reinterpreti32 byte tobyte.190
+
+Function f64reinterpreti64 byte tobyte.191
+
+Function i32extend8s byte tobyte.192
+
+Function i32extend16s byte tobyte.193
+
+Function i64extend8s byte tobyte.194
+
+Function i64extend16s byte tobyte.195
+
+Function i64extend32s byte tobyte.196
+
+Function decodeop(code:byte) seq.word
+let discard =
+ [
+  unreachable
+  , block
+  , loop
+  , IF
+  , ELSE
+  , END
+  , br
+  , brif
+  , return
+  , call
+  , callindirect
+  , drop
+  , select
+  , localget
+  , localset
+  , localtee
+  , globalget
+  , globalset
+  , i32load
+  , i64load
+  , f32load
+  , f64load
+  , i32load8s
+  , i32load8u
+  , i32load16s
+  , i32load16u
+  , i64load8s
+  , i64load8u
+  , i64load16s
+  , i64load16u
+  , i64load32s
+  , i64load32u
+  , i32store
+  , i64store
+  , f32store
+  , f64store
+  , i32store8
+  , i32store16
+  , i64store8
+  , i64store16
+  , i64store32
+  , memorysize
+  , memorygrow
+  , i32const
+  , i64const
+  , f32const
+  , f64const
+  , i32eqz
+  , i32eq
+  , i32ne
+  , i32lts
+  , i32ltu
+  , i32gts
+  , i32gtu
+  , i32les
+  , i32leu
+  , i32ges
+  , i32geu
+  , i64eqz
+  , i64eq
+  , i64ne
+  , i64lts
+  , i64ltu
+  , i64gts
+  , i64gtu
+  , i64les
+  , i64leu
+  , i64ges
+  , i64geu
+  , f32eq
+  , f32ne
+  , f32lt
+  , f32gt
+  , f32le
+  , f32ge
+  , f64eq
+  , f64ne
+  , f64lt
+  , f64gt
+  , f64le
+  , f64ge
+  , i32clz
+  , i32ctz
+  , i32popcnt
+  , i32add
+  , i32sub
+  , i32mul
+  , i32divs
+  , i32divu
+  , i32rems
+  , i32remu
+  , i32and
+  , i32or
+  , i32xor
+  , i32shl
+  , i32shrs
+  , i32shru
+  , i32rotl
+  , i32rotr
+  , i64clz
+  , i64ctz
+  , i64popcnt
+  , i64add
+  , i64sub
+  , i64mul
+  , i64divs
+  , i64divu
+  , i64rems
+  , i64remu
+  , i64and
+  , i64or
+  , i64xor
+  , i64shl
+  , i64shrs
+  , i64shru
+  , i64rotl
+  , i64rotr
+  , f32abs
+  , f32neg
+  , f32ceil
+  , f32floor
+  , f32trunc
+  , f32nearest
+  , f32sqrt
+  , f32add
+  , f32sub
+  , f32mul
+  , f32div
+  , f32min
+  , f32max
+  , f32copysign
+  , f64abs
+  , f64neg
+  , f64ceil
+  , f64floor
+  , f64trunc
+  , f64nearest
+  , f64sqrt
+  , f64add
+  , f64sub
+  , f64mul
+  , f64div
+  , f64min
+  , f64max
+  , f64copysign
+  , i32wrapi64
+  , i32truncf32s
+  , i32truncf32u
+  , i32truncf64s
+  , i32truncf64u
+  , i64extendi32s
+  , i64extendi32u
+  , i64truncf32s
+  , i64truncf32u
+  , i64truncf64s
+  , i64truncf64u
+  , f32converti32s
+  , f32converti32u
+  , f32converti64s
+  , f32converti64u
+  , f32demotef64
+  , f64converti32s
+  , f64converti32u
+  , f64converti64s
+  , f64converti64u
+  , f64promotef32
+  , i32reinterpretf32
+  , i64reinterpretf64
+  , f32reinterpreti32
+  , f64reinterpreti64
+  , i32extend8s
+  , i32extend16s
+  , i64extend8s
+  , i64extend16s
+  , i64extend32s
+ ]
+let i = toint.code,
+if i = 0 then "unreachable"
+else if i = 2 then "block"
+else if i = 3 then "loop"
+else if i = 4 then "IF"
+else if i = 5 then "ELSE"
+else if i = 11 then "END"
+else if i = 12 then "br"
+else if i = 13 then "brif"
+else if i = 15 then "return"
+else if i = 16 then "call"
+else if i = 17 then "callindirect"
+else if i = 26 then "drop"
+else if i = 27 then "select"
+else if i = 32 then "localget"
+else if i = 33 then "localset"
+else if i = 34 then "localtee"
+else if i = 35 then "globalget"
+else if i = 36 then "globalset"
+else if i = 40 then "i32load"
+else if i = 41 then "i64load"
+else if i = 42 then "f32load"
+else if i = 43 then "f64load"
+else if i = 44 then "i32load8s"
+else if i = 45 then "i32load8u"
+else if i = 46 then "i32load16s"
+else if i = 47 then "i32load16u"
+else if i = 48 then "i64load8s"
+else if i = 49 then "i64load8u"
+else if i = 50 then "i64load16s"
+else if i = 51 then "i64load16u"
+else if i = 52 then "i64load32s"
+else if i = 53 then "i64load32u"
+else if i = 54 then "i32store"
+else if i = 55 then "i64store"
+else if i = 56 then "f32store"
+else if i = 57 then "f64store"
+else if i = 58 then "i32store8"
+else if i = 59 then "i32store16"
+else if i = 60 then "i64store8"
+else if i = 61 then "i64store16"
+else if i = 62 then "i64store32"
+else if i = 63 then "memorysize"
+else if i = 64 then "memorygrow"
+else if i = 65 then "i32const"
+else if i = 66 then "i64const"
+else if i = 67 then "f32const"
+else if i = 68 then "f64const"
+else if i = 69 then "i32eqz"
+else if i = 70 then "i32eq"
+else if i = 71 then "i32ne"
+else if i = 72 then "i32lts"
+else if i = 73 then "i32ltu"
+else if i = 74 then "i32gts"
+else if i = 75 then "i32gtu"
+else if i = 76 then "i32les"
+else if i = 77 then "i32leu"
+else if i = 78 then "i32ges"
+else if i = 79 then "i32geu"
+else if i = 80 then "i64eqz"
+else if i = 81 then "i64eq"
+else if i = 82 then "i64ne"
+else if i = 83 then "i64lts"
+else if i = 84 then "i64ltu"
+else if i = 85 then "i64gts"
+else if i = 86 then "i64gtu"
+else if i = 87 then "i64les"
+else if i = 88 then "i64leu"
+else if i = 89 then "i64ges"
+else if i = 90 then "i64geu"
+else if i = 91 then "f32eq"
+else if i = 92 then "f32ne"
+else if i = 93 then "f32lt"
+else if i = 94 then "f32gt"
+else if i = 95 then "f32le"
+else if i = 96 then "f32ge"
+else if i = 97 then "f64eq"
+else if i = 98 then "f64ne"
+else if i = 99 then "f64lt"
+else if i = 100 then "f64gt"
+else if i = 101 then "f64le"
+else if i = 102 then "f64ge"
+else if i = 103 then "i32clz"
+else if i = 104 then "i32ctz"
+else if i = 105 then "i32popcnt"
+else if i = 106 then "i32add"
+else if i = 107 then "i32sub"
+else if i = 108 then "i32mul"
+else if i = 109 then "i32divs"
+else if i = 110 then "i32divu"
+else if i = 111 then "i32rems"
+else if i = 112 then "i32remu"
+else if i = 113 then "i32and"
+else if i = 114 then "i32or"
+else if i = 115 then "i32xor"
+else if i = 116 then "i32shl"
+else if i = 117 then "i32shrs"
+else if i = 118 then "i32shru"
+else if i = 119 then "i32rotl"
+else if i = 120 then "i32rotr"
+else if i = 121 then "i64clz"
+else if i = 122 then "i64ctz"
+else if i = 123 then "i64popcnt"
+else if i = 124 then "i64add"
+else if i = 125 then "i64sub"
+else if i = 126 then "i64mul"
+else if i = 127 then "i64divs"
+else if i = 128 then "i64divu"
+else if i = 129 then "i64rems"
+else if i = 130 then "i64remu"
+else if i = 131 then "i64and"
+else if i = 132 then "i64or"
+else if i = 133 then "i64xor"
+else if i = 134 then "i64shl"
+else if i = 135 then "i64shrs"
+else if i = 136 then "i64shru"
+else if i = 137 then "i64rotl"
+else if i = 138 then "i64rotr"
+else if i = 139 then "f32abs"
+else if i = 140 then "f32neg"
+else if i = 141 then "f32ceil"
+else if i = 142 then "f32floor"
+else if i = 143 then "f32trunc"
+else if i = 144 then "f32nearest"
+else if i = 145 then "f32sqrt"
+else if i = 146 then "f32add"
+else if i = 147 then "f32sub"
+else if i = 148 then "f32mul"
+else if i = 149 then "f32div"
+else if i = 150 then "f32min"
+else if i = 151 then "f32max"
+else if i = 152 then "f32copysign"
+else if i = 153 then "f64abs"
+else if i = 154 then "f64neg"
+else if i = 155 then "f64ceil"
+else if i = 156 then "f64floor"
+else if i = 157 then "f64trunc"
+else if i = 158 then "f64nearest"
+else if i = 159 then "f64sqrt"
+else if i = 160 then "f64add"
+else if i = 161 then "f64sub"
+else if i = 162 then "f64mul"
+else if i = 163 then "f64div"
+else if i = 164 then "f64min"
+else if i = 165 then "f64max"
+else if i = 166 then "f64copysign"
+else if i = 167 then "i32wrapi64"
+else if i = 168 then "i32truncf32s"
+else if i = 169 then "i32truncf32u"
+else if i = 170 then "i32truncf64s"
+else if i = 171 then "i32truncf64u"
+else if i = 172 then "i64extendi32s"
+else if i = 173 then "i64extendi32u"
+else if i = 174 then "i64truncf32s"
+else if i = 175 then "i64truncf32u"
+else if i = 176 then "i64truncf64s"
+else if i = 177 then "i64truncf64u"
+else if i = 178 then "f32converti32s"
+else if i = 179 then "f32converti32u"
+else if i = 180 then "f32converti64s"
+else if i = 181 then "f32converti64u"
+else if i = 182 then "f32demotef64"
+else if i = 183 then "f64converti32s"
+else if i = 184 then "f64converti32u"
+else if i = 185 then "f64converti64s"
+else if i = 186 then "f64converti64u"
+else if i = 187 then "f64promotef32"
+else if i = 188 then "i32reinterpretf32"
+else if i = 189 then "i64reinterpretf64"
+else if i = 190 then "f32reinterpreti32"
+else if i = 191 then "f64reinterpreti64"
+else if i = 192 then "i32extend8s"
+else if i = 193 then "i32extend16s"
+else if i = 194 then "i64extend8s"
+else if i = 195 then "i64extend16s"
+else if i = 196 then "i64extend32s"
+else "byte." + toword.i 
