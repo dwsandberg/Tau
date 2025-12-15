@@ -95,12 +95,11 @@ do
  let label = arcLabel(arcs.g33, (nodes.g33) sub (a sub 1), (nodes.g33) sub (a sub n.a)),
  let arclabel =
   if isempty.label then ""
-  else 
- {  "/tag <text /sp class = /tag:(dq."nodes")> /tag <textPath /sp href = /tag:(dq.[merge("#" + toword.id)])startOffset = /tag:(dq."100%")text-anchor = /tag:(dq."end")> /tag <tspan /sp = /tag:(dq."-0.1")>:(label sub 2)/tag </tspan></textPath></text>"}
-   atts("/tag <text =class=nodes /br 
-   /tag ><textPath  = href =  # /nsp :(toword.id) = startOffset =  100% = text-anchor =  end /br  
-   /tag  ><tspan>:(label sub 2)/tag </tspan></textPath></text>
-   ")
+  else
+   {"/tag <text /sp class = /tag:(dq."nodes")> /tag <textPath /sp href = /tag:(dq.[merge("#"+toword.id)])startOffset = /tag:(dq."100%")text-anchor = /tag:(dq."end")> /tag <tspan /sp = /tag:(dq."-0.1")>:(label sub 2)/tag </tspan></textPath></text>"}
+   atts."/tag <text = class = nodes /br
+   /tag ><textPath = href = # /nsp:(toword.id)= startOffset = 100% = text-anchor = end /br
+   /tag ><tspan>:(label sub 2)/tag </tspan></textPath></text>"
    + encodeword.[char.10],
  next(
   out + pth + encodeword.[char.10] + arclabel

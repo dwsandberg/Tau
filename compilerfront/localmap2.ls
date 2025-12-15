@@ -22,25 +22,25 @@ Export value(localmap2) seq.symbol
 
 Export localmap2(key:int, value:seq.symbol) localmap2
 
-Export type:hashset.localmap2 {From hashset.localmap2}
+Export type:hashset.localmap2{From hashset.localmap2}
 
-Export +(hashset.localmap2, localmap2) hashset.localmap2 {From hashset.localmap2}
+Export +(hashset.localmap2, localmap2) hashset.localmap2{From hashset.localmap2}
 
-Export empty:hashset.localmap2 hashset.localmap2 {From hashset.localmap2}
+Export empty:hashset.localmap2 hashset.localmap2{From hashset.localmap2}
 
-Export ∪(localmap2, hashset.localmap2) hashset.localmap2 {From hashset.localmap2}
+Export ∪(localmap2, hashset.localmap2) hashset.localmap2{From hashset.localmap2}
 
-Export isempty(seq.localmap2) boolean {From seq.localmap2}
+Export isempty(seq.localmap2) boolean{From seq.localmap2}
 
-Export isempty(set.localmap2) boolean {From set.localmap2}
+Export isempty(set.localmap2) boolean{From set.localmap2}
 
-Export sub(set.localmap2, int) localmap2 {From set.localmap2}
+Export sub(set.localmap2, int) localmap2{From set.localmap2}
 
-Export +(set.localmap2, localmap2) set.localmap2 {From set.localmap2}
+Export +(set.localmap2, localmap2) set.localmap2{From set.localmap2}
 
-Export empty:set.localmap2 set.localmap2 {From set.localmap2}
+Export empty:set.localmap2 set.localmap2{From set.localmap2}
 
-Export ∪(localmap2, set.localmap2) set.localmap2 {From set.localmap2}
+Export ∪(localmap2, set.localmap2) set.localmap2{From set.localmap2}
 
 type localmap2 is key:int, value:seq.symbol
 

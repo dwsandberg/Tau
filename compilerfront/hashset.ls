@@ -16,7 +16,7 @@ Export type:hashset.T
 
 Export cardinality(hashset.T) int
 
-Export type:seq.seq.hashelement.T {From seq.seq.hashelement.T}
+Export type:seq.seq.hashelement.T{From seq.seq.hashelement.T}
 
 type hashelement is data:T, hash:int
 
@@ -63,7 +63,8 @@ do
  if data.e = ele then next(acc + e, true)
  else if notsamehash2(ele, hash, hash.e, mask) then next(acc, found)
  else next(acc + e, found)
-let t = replace(table.h, dataindex, if found then acc else [hashelement(ele, hash)] + acc),
+let t =
+ replace(table.h, dataindex, if found then acc else [hashelement(ele, hash)] + acc),
 hashset(
  if found then cardinality.h else cardinality.h + 1
  , if 3 * cardinality.h > 2 * tablesize then t + t + t + t else t

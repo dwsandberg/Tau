@@ -158,7 +158,7 @@ if [
  ∧ textformat."2023-7-5.10:8:7" = textformat.print.ts
  ∧ dayofyear.ts = 186
  ∧ seconds.timestamp.212555268487 = 212555268487 then "PASS timestamp"
-else "FAIL timestamp"
+else ":(red."FAIL")timestamp"
 
 use UTF8
 

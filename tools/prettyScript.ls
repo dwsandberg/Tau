@@ -33,16 +33,16 @@ input:seq.file
 , roots:seq.word
 , %:seq.word
 ) seq.word
-{COMMAND /strong prettyScript pretty prints /sp.bld script./br
-/strong % format of output. <* block /br
-/strong pretty ? /br
-/strong full Graph of dependences between files./br
-/strong outdated like full but only include outdated files in graph /br
-/strong script shell script for updating without the file hashes. *> /p
+{COMMAND prettyScript /strong pretty prints /sp.bld script./br
+% /strong format of output. // /br
+pretty /strong ? /br
+full /strong Graph of dependences between files./br
+outdated /strong like full but only include outdated files in graph /br
+script /strong shell script for updating without the file hashes. /block /p
 options used for formats other than pretty./br
-/strong roots only include the filenames list and their descendants in graph. /br
-/strong hashes ? /br
-/strong builddir build target directory. Defaults to"+built"}
+roots /strong only include the filenames list and their descendants in graph. /br
+hashes /strong ? /br
+builddir /strong build target directory. Defaults to"+built"}
 let format = (if isempty.% then "pretty" else %) sub 1,
 if format ∈ "pretty" then pretty.input
 else

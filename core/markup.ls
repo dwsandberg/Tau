@@ -16,28 +16,38 @@ use UTF8
 
 use seq1.char
 
-se stack.seq.word
+use stack.seq.word
 
 use seq1.seq.word
 
 use seq1.word
 
-use stack.seq.word
+use format1a
+
+/Export txt2html(z:seq.seq.word, replacements:set.classinfo, xhtml:boolean)seq.word
+
+Export textFormat1a(myinput:seq.word) UTF8
+
+Export HTMLformat1a(myinput:seq.word) UTF8
+
+Export type:classinfo
+
+Export esc(z:seq.word) seq.word
 
 Function dawsextensions(op:word, argstk:stack.seq.word) stack.seq.word
 {???? show paramaterized markup so this function can be changed}
 {return empty:stack.seq.word if not defined}
-empty:stack.seq.word 
+{if op ∈"/pretty"then push(pop.argstk, pretty.top.argstk)else}
+empty:stack.seq.word
 
-Function stdCSS set.classinfo
+Function stdCSS seq.classinfo
 let data =
- "span.avoidwrap{display:inline-block ;}span.keyword{/* daws totxt: content */ color:blue ;}span.literal{/* daws totxt: content */ color:red ; transform: }span.comment{/* daws totxt: content */ color:green ;}span.block{/* daws totxt: = content /indent = */ padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}a.funcid{/* daws totxt: content */}br.rmbr{/* daws totxt: content /br
- */}p.code{/* daws totxt: = content /pretty = */ margin-left: 0px; background-color:yellow;}p{color: black;}",
-asset.processCSS([data], defaults)
+ "span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.literal{color:red ; transform: }span.comment{color:green ;}span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}",
+processCSS([data], defaults)
 
 Function processTXT(
 z:seq.seq.word
-, replacements:set.classinfo
+, replacements:seq.classinfo
 , xhtml:boolean
 , lang:seq.word
 ) UTF8
@@ -46,7 +56,7 @@ for header = 0, idx = 1, w ∈ p1
 do next(if w ∈ "/base /link /title" then idx else header, idx + 1)
 let newz = [subseq(p1, 1, header) + "/head", p1 << header] + z << 1
 let final = textFormat1a(if xhtml then "/tag </body></html>" else ""),
-header1(xhtml, lang) + HTMLformat1a.txt2html(newz, replacements, xhtml) + final
+header1(xhtml, lang) + HTMLformat1a.txt2html(newz, asset.replacements, xhtml) + final
 
 function header1(xhtml:boolean, lang:seq.word) UTF8
 textFormat1a(
@@ -221,16 +231,4 @@ else if name ∈ "colon" then ": "
 else extractdef(defs, name)
 
 Function attribute(val:seq.word, att:word) seq.word
-if isempty.val then "" else "/sp:(att)/nsp =:(dq + "/nsp" + val + dq)"
-
-use format1a
-
-/Export txt2html(z:seq.seq.word, replacements:set.classinfo, xhtml:boolean)seq.word
-
-Export textFormat1a(myinput:seq.word) UTF8
-
-Export HTMLformat1a(myinput:seq.word) UTF8
-
-Export type:classinfo
-
-Export esc(z:seq.word) seq.word 
+if isempty.val then "" else "/sp:(att)/nsp =:(dq + "/nsp" + val + dq)" 

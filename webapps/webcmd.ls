@@ -1,4 +1,4 @@
-/tag <h2> Building a Simple Web App /tag </h2>
+ Building a Simple Web App /h2
 
 Module webcmd
 
@@ -22,9 +22,9 @@ use seq.seq.filename
 
 use real
 
-use standard
+use standard 
 
-use tau?
+use tauhelp
 
 use webIO
 
@@ -36,27 +36,27 @@ use webHTTP.seq.word
 
 This example shows how a command history can be implement and outlines how to construct a web application. The history will be kept in a history file. 
 
-The file webcmd.html contains a small html fragment for this example. The lines of the body are:<* block <p id = status> loading<p>
+The file webcmd.html contains a small html fragment for this example. The lines of the body are:// <p id = status> loading<p>
 /br <input id = cmdline value =" usegraph+built core.libsrc include: UTF8 words standard textio toWords" >
 /br <button onclick =" runcmd ()" > run</button>
 /br <table id = history
 /br </table>
-/br <p id = cmdno> 1 </p> *>
+/br <p id = cmdno> 1 </p>  /block
 
 The first p element will be for a status line, the input element will be to enter a command, and the table element will be a history of the commands ran with links to the results. The final p element will be used to form the name of the next cmd output results. These compoents of the HTML file will be referenced by id from the file webcmd.ls which contains the Tau code. 
 
-The line in the build file specifies the pieces needed for this example:<* block wasm webcore.libsrc tausupport core symbols compilerfront tools
+The line in the build file specifies the pieces needed for this example:\ wasm webcore.libsrc tausupport core symbols compilerfront tools
 /br+webapps webcallconfig.ls webcmd.ls webcmd.html
 /br+tau2bc makescript.ls
 /br Library: webcmd
 /br exports: webcmd
-/br output: webcmd.wasm *>
+/br output: webcmd.wasm \block
 
-Web browser are constructed so control is giving back to the browser for reading and writing of files. A callback function is supplied to specify which procedure to execute when the operation is complete. User interaction in a web browser is captured as events. A callback for each event to be acted upon also needs a callback. This example uses the following callbacks:<* block /em webcmd is called when the page is loaded. The name of the callback (webcmd) matches the name of the page (webcmd). 
-/br /em AddHistory is called after reading the history file when the page is loaded.
-/br /em runcmd is called when the run button is pressed. The link between runcmd is specified with onclick =" runcmd ()" in webcmd.html
-/br /em ExecuteCmd is called after reading the input files to the cmd.
-/br /em createOutputFiles is called after write the output files of the cmd. *>
+Web browser are constructed so control is giving back to the browser for reading and writing of files. A callback function is supplied to specify which procedure to execute when the operation is complete. User interaction in a web browser is captured as events. A callback for each event to be acted upon also needs a callback. This example uses the following callbacks:\ webcmd /em is called when the page is loaded. The name of the callback (webcmd) matches the name of the page (webcmd). 
+/br AddHistory /em is called after reading the history file when the page is loaded.
+/br runcmd /em is called when the run button is pressed. The link between runcmd is specified with onclick =" runcmd ()" in webcmd.html
+/br ExecuteCmd /em is called after reading the input files to the cmd.
+/br createOutputFiles /em is called after write the output files of the cmd. \block
 
 type cmdstate is
 cmdline:seq.word
@@ -173,7 +173,7 @@ do
 table0
 
 function filegroups(c:cmdstate, flat:seq.file) seq.seq.file
-{Change format of input files to match that required by /em runthecmd function below}
+{Change format of input files to match that required by runthecmd /em function below}
 for files = empty:seq.seq.file, last = 0, e ∈ filegroups.c
 do next(files + subseq(flat, last, e), e),
 files
@@ -186,7 +186,7 @@ use usegraph
 
 use PEGdebug
 
-use tau?
+use tauhelp
 
 use prettyScript
 
@@ -200,7 +200,7 @@ function cmdDesc seq.seq.word
  , "PEGdebug input input"
  , "usegraph input input"
  , "buildhelp input input target"
- , "tau? cmd"
+ , "tauhlp cmd"
  , "prettyScript input input hashes"
 ]
 
@@ -276,11 +276,11 @@ else if cmd ∈ "buildhelp" then
    )
   )
  ]
-else if cmd ∈ "tau?" then
+else if cmd ∈ "tauhelp" then
  [
   file(
    extractValue(cmdline, "output o")
-   , tau?(extractValue(cmdline, "cmd"), extractValue(cmdline, "%"))
+   , tauhelp(extractValue(cmdline, "cmd"), extractValue(cmdline, "%"))
   )
  ]
 else if cmd ∈ "prettyScript" then

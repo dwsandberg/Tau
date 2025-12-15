@@ -43,8 +43,7 @@ function =(a:word3, b:word3) boolean chars.a = chars.b
 function hash(a:word3) int hash.chars.a
 
 Function constdata seq.slot
-for acc = empty:seq.slot, @e ∈ encodingdata:const3
-do acc + flds.@e,
+for acc = empty:seq.slot, @e ∈ encodingdata:const3 do acc + flds.@e,
 acc
 
 type const3 is place:int, flds:seq.slot
@@ -66,26 +65,21 @@ slotX.w3
 Function addint(i:int) int toint.C64.i
 
 Function initwordref(baselibwords:seq.seq.char, bcwords:seq.char) int
-for acc = 0, @e ∈ baselibwords
-do max(acc, valueofencoding.asencoding.encodeword.@e)
-for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc)
-do valueofencoding.encode.word3.k,
+for acc = 0, @e ∈ baselibwords do max(acc, valueofencoding.asencoding.encodeword.@e)
+for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc) do valueofencoding.encode.word3.k,
 loadbcwords.bcwords
 
 Function wordstoadd(baselibwords:seq.seq.char) seq.encoding.word3
 let have =
- for acc = empty:set.encoding.word3, @e ∈ baselibwords
- do acc + encode.word3.@e,
+ for acc = empty:set.encoding.word3, @e ∈ baselibwords do acc + encode.word3.@e,
  acc
 let used =
- for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3
- do acc + encode.@e,
+ for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e,
  acc,
 toseq(used \ have)
 
 Function commonwords(wordstoadd:seq.encoding.word3) seq.byte
-for out = emptyUTF8, w ∈ wordstoadd
-do out + chars.decode.w + bcwordsep,
+for out = emptyUTF8, w ∈ wordstoadd do out + chars.decode.w + bcwordsep,
 toseqbyte.out
 
 Function bytes(i:int) seq.byte
@@ -108,8 +102,7 @@ Function wordreps2(wordstoadd:seq.encoding.word3) int
 for acc = [toint.C64.0, toint.C64.n.wordstoadd], w ∈ wordstoadd
 do
  let s = tointseq.chars.decode.w
- for acc2 = [toint.C64.0, toint.C64.n.s], ch ∈ s
- do acc2 + toint.C64.ch,
+ for acc2 = [toint.C64.0, toint.C64.n.s], ch ∈ s do acc2 + toint.C64.ch,
  acc + addobject.acc2,
 addobject.acc
 
@@ -123,8 +116,7 @@ toint.modulerecord(name, [toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint
 
 Function addobject(fldsin:seq.int) int
 let flds =
- for acc = empty:seq.slot, @e ∈ fldsin
- do acc + asi64.slot.@e,
+ for acc = empty:seq.slot, @e ∈ fldsin do acc + asi64.slot.@e,
  acc
 let t = encodingdata:const3
 let place = if n.t = 0 then 0 else place.t sub n.t + n.flds.t sub n.t
@@ -133,6 +125,5 @@ let idx = if place.x ≠ place then place.x else place,
 toint.CGEP(modulerecord("list", [0]), idx)
 
 Function addwordseq(a:seq.word) int
-for acc = [toint.C64.0, toint.C64.n.a], @e ∈ a
-do acc + wordref.@e,
+for acc = [toint.C64.0, toint.C64.n.a], @e ∈ a do acc + wordref.@e,
 addobject.acc 

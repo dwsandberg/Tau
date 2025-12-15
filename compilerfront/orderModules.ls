@@ -90,13 +90,15 @@ else
  for accM = empty:seq.modref, e ∈ toseq.findelement2(nodes, moduleref."* encoding")
  while isempty.accM
  do if %.para.e = "seq.char" then [e] else accM
- let backarcs1 = if isempty.accM ∨ isempty.f1 then backarcs else backarcs + arc(accM sub 1, f1 sub 1)
+ let backarcs1 =
+  if isempty.accM ∨ isempty.f1 then backarcs
+  else backarcs + arc(accM sub 1, f1 sub 1)
  for blockList = toseq.f2, arcs = backarcs1, e ∈ toseq.findelement2(nodes, moduleref."* seq")
  while not.isempty.blockList
  do
   if para.e = para.blockList sub 1 then next(blockList << 1, arcs + arc(e, blockList sub 1))
   else next(blockList, arcs),
- {assert isempty.f1 report":(toseq (arcs \ backarcs))"}
+ {assert isempty.f1 report":(toseq(arcs \ backarcs))"}
  arcs
 
 function orderModules(prg0:set.symdef, allmods:set.passsymbols) seq.symbol
@@ -106,8 +108,7 @@ do
  if isempty.code.sd ∨ between(kind.sym.sd, kfref, kendblock) ∨ this ∈ modulesUsed then next(modulesUsed, map)
  else next(modulesUsed + this, map + sym.sd)
 let backarcs = expand(toseq.modulesUsed, allmods, false)
-for nodes = empty:set.modref, e ∈ toseq.backarcs
-do nodes + tail.e + head.e
+for nodes = empty:set.modref, e ∈ toseq.backarcs do nodes + tail.e + head.e
 let backarcs2 = additionalarcs(nodes, backarcs)
 let before = orderNodes(nodes, backarcs2)
 for map2 = map, e ∈ map
@@ -126,7 +127,7 @@ E
 
 function addscc(order:seq.modref, scc:seq.modref) seq.modref
 if n.scc = 1 then order + scc
-else order + moduleref."internal)" + scc + moduleref."internal ("
+else order + moduleref."internal)" + scc + moduleref."internal("
 
 Export orderNodes(set.modref, set.arc.modref) seq.modref
 
@@ -174,7 +175,7 @@ function >1(a:seg, b:seg) ordering no.b >1 no.a
 Function %(s:seg) seq.word
 for txt = "/p", i = 1, sd ∈ part.s
 do
- {assert name.sym.sd /nin" LT" report %.sym.sd+%.code.sd}
+ {assert name.sym.sd /nin"LT"report %.sym.sd+%.code.sd}
  next(txt + "/br:(no.s):(library.module.sym.sd):(options.sd):(sym.sd)", i + 1),
 txt
 
@@ -185,14 +186,13 @@ type segmap is modref:modref, segno:int
 function >1(a:segmap, b:segmap) ordering modref.a >1 modref.b
 
 Function tosegs(prg:set.symdef, modorder:seq.symbol) seq.seg
-for map0 = empty:seq.modref, e ∈ modorder
-do map0 + module.e
+for map0 = empty:seq.modref, e ∈ modorder do map0 + module.e
 for map = empty:set.segmap, no = 1, ingroup = false, e ∈ map0
 do
  if name.e ∈ "()" then next(map, no + 1, not.ingroup)
  else if ingroup then next(map + segmap(e, no), no, ingroup)
  else next(map + segmap(e, no), no + 1, ingroup)
-let prg2 = {sort by module} sort>3.toseq.prg
+let prg2 = {sort by module}sort>3.toseq.prg
 for
  acc = empty:seq.seg
  , part = empty:seq.symdef
@@ -236,7 +236,7 @@ do
     else if kind.sym = kprefref then next(txt2, true)
     else if kind.sym ∉ isOrdinary then next(txt2, false)
     else
-     assert name.sym ∉ "PreFref" ∨ name.sym.sd ∈ "postbind handleBuiltin" report ":(no.s) XXX preFref:(sym):(kind.sym) IN:(sym.sd) /p:(code.sd)",
+     assert name.sym ∉ "PreFref" ∨ name.sym.sd ∈ "postbind handleBuiltin" report ":(no.s)XXX preFref:(sym):(kind.sym)IN:(sym.sd)/p:(code.sd)",
      if thismod = module.sym then next(txt2, false)
      else
       let find = getSymdef(acc3, sym),
@@ -246,10 +246,10 @@ do
        let find2 = getSymdef(prgx, sym),
        if isempty.find2 ∨ NOINLINE ∈ options.find2 sub 1 then next(txt2, false)
        else
-        assert %.sym ≠ "seq.word:sub (int, seq.word) word" report
+        assert %.sym ≠ "seq.word:sub(int, seq.word)word" report
          for txt22 = "", sd22 ∈ toseq.acc3 do txt22 + "/br:(sym.sd22)",
-         "/br:(no.s):(sym) IN:(sym.sd) /p:(segs)",
-        next(txt2 + "/br:(no.s):(sym) IN:(sym.sd)", false),
+         "/br:(no.s):(sym)IN:(sym.sd)/p:(segs)",
+        next(txt2 + "/br:(no.s):(sym)IN:(sym.sd)", false),
    next(txt2, acc3 + sd),
   next(txt1, acc3),
 txt
@@ -260,6 +260,6 @@ function %%(a:seq.symdef) seq.word
 for txt = "", e ∈ a do txt + "/br:(sym.e)",
 txt
 
-function open modref moduleref."internal ("
+function open modref moduleref."internal("
 
 function close modref moduleref."internal)" 

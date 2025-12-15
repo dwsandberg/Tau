@@ -274,7 +274,7 @@ for code = "", p ∈ p2 do if name = name.sym.p then %.code.p else code,
 if codelist sub no = code
  ∨ no = 260 ∧ shuffletest.sameto(code, codelist sub no, 1, "") then ""
 else
- "/br <* literal FAILED *> test:(no)in optest. Got: /br
+ "/br:(red."FAILED")test:(no)in optest. Got: /br
  :(code)/p Expected::(codelist sub no)"
 
 function shuffletest(s:seq.word) boolean

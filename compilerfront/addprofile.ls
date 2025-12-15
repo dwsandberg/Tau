@@ -25,14 +25,14 @@ use set.symdef
 function %(a:arc.symbol) seq.word %.tail.a + %.head.a
 
 function subaddprofile(sd:symdef, recursive:set.symbol) seq.symbol
-{assert name.sym.sd /nin" testprofile" report" KL"+%.sym.sd+%.code.sd,}
+{assert name.sym.sd /nin"testprofile"report"KL"+%.sym.sd+%.code.sd,}
 for acc2 = empty:seq.symbol, sym ∈ code.sd
 do
  if kind.sym = kcreatethreadZ ∧ not.isempty.acc2 ∧ kind.acc2 sub (n.acc2 - 1) = kfref then
   let functocall = acc2 sub (n.acc2 - 1)
   let offset = valueofencoding.encode.parc2(sym.sd, basesym.functocall) * 6 + (2 - 6),
   acc2 >> 3
-   + [
+  + [
    profiledata
    , Lit.0
    , Getfld.seqof.typeptr
@@ -87,11 +87,11 @@ let after =
  ],
 if recursive then
  adjust(offset, nextvar, 1)
-  + before
-  + adjust(offset, nextvar,-1)
-  + [Start.typeint, Local.nextvar, Lit.0, EqOp, Br2(2, 1), Lit.0, Exit]
-  + after
-  + [Exit, EndBlock, Define.nextvar]
+ + before
+ + adjust(offset, nextvar, -1)
+ + [Start.typeint, Local.nextvar, Lit.0, EqOp, Br2(2, 1), Lit.0, Exit]
+ + after
+ + [Exit, EndBlock, Define.nextvar]
 else before + after + Define.nextvar
 
 function adjust(offset:int, nextvar:int, litvalue:int) seq.symbol
@@ -100,14 +100,14 @@ function adjust(offset:int, nextvar:int, litvalue:int) seq.symbol
  + symbol(internalmod, "GEP", [seqof.typeptr, typeint], typeptr)
  + Define(nextvar + 3)
  + [
- {get value and increment} Local(nextvar + 3)
+ {get value and increment}Local(nextvar + 3)
  , Lit.0
  , Getfld.typeint
  , Lit.litvalue
  , PlusOp
  , Define.nextvar
 ]
- + [{store} Local(nextvar + 3), Local.nextvar, setSym.typeint, Define(nextvar + 3)]
+ + [{store}Local(nextvar + 3), Local.nextvar, setSym.typeint, Define(nextvar + 3)]
 
 type parc2 is caller:symbol, callee:symbol
 
@@ -123,17 +123,17 @@ let data =
  for acc = empty:seq.symbol, p ∈ v
  do acc + Fref.caller.p + Fref.callee.p + [Lit.0, Lit.0, Lit.0, Lit.0],
  acc
-  + Sequence(typeint, n.acc)
-  + Define.1
-  + Local.1
-  + Lit.1
-  + setSym.typeint
-  + Lit.n.v
-  + setSym.typeint
-  + Define.2
-  + [profiledata]
-  + Local.1
-  + setSym.typeptr,
+ + Sequence(typeint, n.acc)
+ + Define.1
+ + Local.1
+ + Lit.1
+ + setSym.typeint
+ + Lit.n.v
+ + setSym.typeint
+ + Define.2
+ + [profiledata]
+ + Local.1
+ + setSym.typeptr,
 asset.[
  symdef(symbol(moduleref.[libname, "initialize" sub 1], "initProfile", typeptr), data, 0)
  , symdef(

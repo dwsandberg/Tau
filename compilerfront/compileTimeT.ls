@@ -79,8 +79,7 @@ if typ = typeword then [Word.wordencodingtoword.r]
 else if typ = typeint ∨ typ = typebits then [Lit.r]
 else if typ = typeboolean then [if r = 1 then Littrue else Litfalse]
 else if typ = seqof.typeword then
- for acc = "", @e ∈ bitcast:seq.int(r)
- do acc + wordencodingtoword.@e,
+ for acc = "", @e ∈ bitcast:seq.int(r) do acc + wordencodingtoword.@e,
  [Words.acc]
 else if typ = typereal then [Reallit.r]
 else if %.typ = "char" then [Lit.r]
@@ -88,11 +87,11 @@ else if isseq.typ then
  let s = bitcast:seq.int(r)
  let seqtype = getseqtype.s
  let pb = parameter.basetype(typ, typedict)
- let maybepacked = pb ∈ [typebyte, typepacked2, typepacked3, typepacked4, typepacked5, typepacked6],
+ let maybepacked =
+  pb ∈ [typebyte, typepacked2, typepacked3, typepacked4, typepacked5, typepacked6],
  let cc1 = not.maybepacked ∨ seqtype = 0,
  if not.maybepacked ∨ seqtype = 0 then
-  for acc = empty:seq.symbol, e ∈ s
-  do acc + tocode:T(e, parameter.typ, typedict),
+  for acc = empty:seq.symbol, e ∈ s do acc + tocode:T(e, parameter.typ, typedict),
   acc + Sequence(parameter.typ, n.s)
  else if seqtype ≠ 1 then empty:seq.symbol
  else
@@ -123,8 +122,7 @@ else
   let kind = kind.sym,
   if kind = kwords then
    let a =
-    for acc = empty:seq.int, @e ∈ worddata.sym
-    do acc + hash.@e,
+    for acc = empty:seq.int, @e ∈ worddata.sym do acc + hash.@e,
     acc,
    next(ok, push(stk, bitcast:int(toptr.a)))
   else if kind = kword then next(ok, push(stk, hash.wordname.sym))

@@ -70,22 +70,21 @@ let pp = prettyNoChange(towords.subseq(input, 1, place - 1) + ending)
 for idx = n.pp, remove = ending, addback = "", go = not.isempty.ending, e ∈ reverse.pp
 while go
 do
- if e ∈ "*>:(escapeformat)" then next(idx - 1, remove, [e] + addback, go)
- else if e = last.remove then next(idx - 1, remove >> 1, addback, n.remove > 1)
- else if e
- ∈ "/keyword
- /br," then next(idx - 1, remove, addback, go)
- else next(idx - 1, remove, addback, false)
-let t =
- " :(red.message) 
- /br:(subseq(pp, 1, idx))"
+ if e = last.remove then next(idx - 1, remove >> 1, addback, n.remove > 1)
+ else
+  assert true report "ERR DEBUG" + showZ.remove + "/p" + showZ.pp,
+  if e ∈ "/literal:(escapeformat)" then next(idx - 1, remove, [e] + addback, go)
+  else if e
+  ∈ "/keyword /br
+  ," then next(idx - 1, remove, addback, go)
+  else next(idx - 1, remove, addback, false)
+let t = ":(red.message)/br:(subseq(pp, 1, idx))"
 for unprocessed = "", e ∈ subseq(input, place, min(place + 10, n.input - 1))
 do unprocessed + toword.e,
 (if not.isempty.t ∧ last.t ∈ "/keyword" then t >> 1 + addback else t + addback)
- + "/br  :(red.message)  
-/br"
+ + "/br:(red.message)/br"
  + if isempty.unprocessed then "at end but expecting::(ending)"
-else "Replaced:(dq(if place + 11 < n.input then unprocessed + "…" else unprocessed)) with:(ending) to parse."
+else "Replaced:(dq(if place + 11 < n.input then unprocessed + "…" else unprocessed))with:(ending)to parse."
 
 Function binary(R0:bindinfo, firsttoken:token, R1:bindinfo) bindinfo
 let op = toword.firsttoken,
@@ -149,7 +148,7 @@ else
   if exptype = t then expcode
   else
    let cvt = lookupbysig(static, dict.R0, "%", [exptype], rinfo)
-   assert resulttype.cvt = seqof.typeword report errormessage("Expected function:(cvt) to have return type of seq.word", rinfo),
+   assert resulttype.cvt = seqof.typeword report errormessage("Expected function:(cvt)to have return type of seq.word", rinfo),
    expcode + cvt,
  if isempty.code.R0 ∧ isempty.text.R0 ∧ not.outText.static then bindinfo(dict.R0, codeexp, [t], "")
  else
@@ -163,7 +162,7 @@ static:commonType
 , thenpart:bindinfo
 , rinfo:recoverInfo
 ) bindinfo
-assert (types.cond) sub 1 = typeboolean report errormessage("cond of if must be boolean but is:((types.cond) sub 1)", rinfo)
+assert(types.cond) sub 1 = typeboolean report errormessage("cond of if must be boolean but is:((types.cond) sub 1)", rinfo)
 assert isempty.types.R0 ∨ types.R0 = types.thenpart report errormessage("then and else types are different", rinfo),
 bindinfo(dict.R0, code.R0 + code.cond + Br2(1, 2) + code.thenpart + Exit, types.thenpart, "")
 
@@ -176,20 +175,20 @@ static:commonType
 , rinfo:recoverInfo
 ) bindinfo
 let t = ifExp(static, toAttribute(cond, ""), cond, thenpart, rinfo)
-assert types.thenpart = types.elsepart ∧ (isempty.types.elseifpart ∨ types.elseifpart = types.thenpart) report errormessage("then and else types are different", rinfo),
+assert types.thenpart = types.elsepart
+ ∧ (isempty.types.elseifpart ∨ types.elseifpart = types.thenpart) report errormessage("then and else types are different", rinfo),
 bindinfo(
  dict.cond
  , [Start.(types.thenpart) sub 1]
-  + code.t
-  + code.elseifpart
-  + (if outText.static then code.elsepart + EndBlock else code.elsepart + Exit + EndBlock)
+ + code.t
+ + code.elseifpart
+ + (if outText.static then code.elsepart + EndBlock else code.elsepart + Exit + EndBlock)
  , types.elsepart
  , ""
 )
 
 function declarePara(d:symboldict, names:seq.word, types:seq.mytype) bindinfo
-for dict = d, no = 1, t ∈ types
-do next(dict + Local(names sub no, t, no), no + 1),
+for dict = d, no = 1, t ∈ types do next(dict + Local(names sub no, t, no), no + 1),
 bindinfo(dict, empty:seq.symbol, empty:seq.mytype, "")
 
 function lookupbysig(
@@ -208,13 +207,13 @@ let f =
  else
   for bound = empty:set.symbol, unbound = empty:set.symbol, sy ∈ toseq.f0
   do if isunbound.sy then next(bound, unbound + sy) else next(bound + sy, unbound),
-  if isempty.bound ∧ not.isempty.unbound then {Allow multiple unbound with same signature} subseq(unbound, 1, 1)
+  if isempty.bound ∧ not.isempty.unbound then{Allow multiple unbound with same signature}subseq(unbound, 1, 1)
   else bound
 assert not.isempty.f report
  if n.name = 1 ∧ name sub 1 ∈ "if else then for" then errormessage("Syntax error", rinfo)
  else
   errormessage(
-   "cannot find 1:(if n.name = 1 then name else [name sub 1, ":" sub 1] + name << 1) (:(for acc = "", @e ∈ paratypes do acc + %.@e + ",",
+   "cannot find 1:(if n.name = 1 then name else [name sub 1, ":" sub 1] + name << 1)(:(for acc = "", @e ∈ paratypes do acc + %.@e + ",",
    acc >> 1))"
    , rinfo
   )
@@ -228,7 +227,7 @@ let discard =
  for acc = 0, sym2 ∈ requires(dict, f sub 1)
  do
   let xxx = lookupbysig(dict, sym2)
-  assert not.isempty.xxx ∨ isAbstract.module.f sub 1 report errormessage("using symbol:(f sub 1) requires unbound:(sym2)", rinfo),
+  assert not.isempty.xxx ∨ isAbstract.module.f sub 1 report errormessage("using symbol:(f sub 1)requires unbound:(sym2)", rinfo),
   0,
  0,
 f sub 1
@@ -305,10 +304,10 @@ if op sub 1 = "process" sub 1 ∧ n.types.exp = 1 then
  let dcws = deepcopyseqword,
  let newcode =
   [Fref.deepcopySym.rt, Fref.dcws, Fref.last.code.exp]
-   + subseq(code.exp, 1, n.code.exp - 1)
-   + [Lit.0, Fref.last.code.exp]
-   + Record([typeint, typeint, typeint] + paratypes.last.code.exp + typeint + typeint)
-   + symbol(builtinmod.rt, "createthreadZ", [typeptr], processtype),
+  + subseq(code.exp, 1, n.code.exp - 1)
+  + [Lit.0, Fref.last.code.exp]
+  + Record([typeint, typeint, typeint] + paratypes.last.code.exp + typeint + typeint)
+  + symbol(builtinmod.rt, "createthreadZ", [typeptr], processtype),
  bindinfo(
   dict
   , if outText.static then code.exp + symbol(internalmod, "process", [rt], rt)
@@ -341,7 +340,7 @@ static:commonType
 , rinfo:recoverInfo
 ) bindinfo
 let returntype = resolvetype(static, text.functype, rinfo)
-assert returntype = (types.exp) sub 1 report errormessage("function type of:(returntype) does not match expression type:((types.exp) sub 1)", rinfo),
+assert returntype = (types.exp) sub 1 report errormessage("function type of:(returntype)does not match expression type:((types.exp) sub 1)", rinfo),
 bindinfo(dict.exp, mergeText(static, code.Declare, code.exp), empty:seq.mytype, "")
 
 Function forSeqExp(
@@ -372,13 +371,14 @@ let lastaccum = cardinality.accdict - 1
 let elementSym = Local(elename sub 1, parameter.seqtype, lastaccum + 2)
 let dict2 =
  accdict
-  + Local(toword(lastaccum + 1), seqtype, lastaccum + 1)
-  + elementSym
-  + Local(toword(lastaccum + 3), typeint, lastaccum + 3)
-  + Local(toword(lastaccum + 4), typeint, lastaccum + 4)
-  + Local(toword(lastaccum + 2), typeint, lastaccum + 5)
-let nextSym = symbol(moduleref("internallib $for", basetype), "next", types.accum0, basetype)
-{assert not.noseq report % (types.accum0+parameter.seqtype)+" KLJ:"+text.accum0+elename}
+ + Local(toword(lastaccum + 1), seqtype, lastaccum + 1)
+ + elementSym
+ + Local(toword(lastaccum + 3), typeint, lastaccum + 3)
+ + Local(toword(lastaccum + 4), typeint, lastaccum + 4)
+ + Local(toword(lastaccum + 2), typeint, lastaccum + 5)
+let nextSym =
+ symbol(moduleref("internallib $for", basetype), "next", types.accum0, basetype)
+{assert not.noseq report %(types.accum0+parameter.seqtype)+"KLJ:"+text.accum0+elename}
 bindinfo(
  addAccum(dict2, nextSym, basetype, oldnesting, elementSym)
  , if noseq then code.accum0 else code.accum0 + code.theseq
@@ -392,14 +392,14 @@ static:commonType
 , exp:bindinfo
 , rinfo:recoverInfo
 ) bindinfo
-assert (types.cond) sub 1 = typeboolean report errormessage("condition in assert must be boolean in:", rinfo)
-assert (types.exp) sub 1 = seqof.typeword report errormessage("report in assert must be seq of word in:", rinfo),
+assert(types.cond) sub 1 = typeboolean report errormessage("condition in assert must be boolean in:", rinfo)
+assert(types.exp) sub 1 = seqof.typeword report errormessage("report in assert must be seq of word in:", rinfo),
 if outText.static then
  bindinfo(
   dict.cond
   , code.cond
-   + code.exp
-   + symbol(internalmod, "$assert", [typeboolean, seqof.typeword], typeint)
+  + code.exp
+  + symbol(internalmod, "$assert", [typeboolean, seqof.typeword], typeint)
   , [typeint]
   , ""
  )
@@ -408,15 +408,15 @@ else
  bindinfo(
   dict.cond
   , [Start.typeint]
-   + code.cond
-   + Br2(1, 2)
-   + Lit.0
-   + Exit
-   + code.exp
-   + assertsym
-   + Exit
-   + EndBlock
-   + Define("assert" sub 1, cardinality.dict.cond)
+  + code.cond
+  + Br2(1, 2)
+  + Lit.0
+  + Exit
+  + code.exp
+  + assertsym
+  + Exit
+  + EndBlock
+  + Define("assert" sub 1, cardinality.dict.cond)
   , empty:seq.mytype
   , ""
  )
@@ -450,23 +450,23 @@ let checktypes =
    {body type is OK, now check to see if while clause is required}
    if noseq ∧ code.exitexp = [Littrue] then "While clause must be present and not equal to true when no sequence is specified."
    else ""
-  else "Type of body expression:(actualbodytype) must match accumulator type:(accumTypes sub 1)"
+  else "Type of body expression:(actualbodytype)must match accumulator type:(accumTypes sub 1)"
  else "while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, rinfo)
 let newcode =
  if outText.static then
   codevars
-   + code.exitexp
-   + code.forbodyin
-   + Words.text.vars
-   + symbol(
+  + code.exitexp
+  + code.forbodyin
+  + Words.text.vars
+  + symbol(
    internalmod
    , "$fortext"
    , accumTypes
-    + (if noseq then empty:seq.mytype else [theseqtype])
-    + typeboolean
-    + (types.forbody) sub 1
-    + seqof.typeword
+   + (if noseq then empty:seq.mytype else [theseqtype])
+   + typeboolean
+   + (types.forbody) sub 1
+   + seqof.typeword
    , typeint
   )
  else
@@ -476,15 +476,15 @@ let newcode =
   let totallength = Local(value.lastidx + 3),
   if noseq then
    codevars
-    + Loopblock(accumTypes, firstvar, typeint)
-    + code.exitexp
-    + Br2(2, 1)
-    + Lit.0
-    + Exit
-    + code.forbody
-    + (if n.accumTypes = 1 then [continue.1] else [Exit])
-    + EndBlock
-    + Define.value.totallength
+   + Loopblock(accumTypes, firstvar, typeint)
+   + code.exitexp
+   + Br2(2, 1)
+   + Lit.0
+   + Exit
+   + code.forbody
+   + (if n.accumTypes = 1 then [continue.1] else [Exit])
+   + EndBlock
+   + Define.value.totallength
   else
    let masterindex = Local(value.lastidx + 4)
    let reverse = name.module.last.codevars ∈ "seq1" ∧ name.last.codevars ∈ "reverse"
@@ -503,46 +503,46 @@ let newcode =
    let part1 =
     if reverse then
      codevars >> 1
-      + Define.value.theseq
-      + theseq
-      + GetSeqLength
-      + Define.value.totallength
-      + totallength
-      + Lit.1
-      + PlusOp
-      + Loopblock(accumTypes + typeint, firstvar, typeint)
-      + [lastidx, Lit.1, EqOp]
+     + Define.value.theseq
+     + theseq
+     + GetSeqLength
+     + Define.value.totallength
+     + totallength
+     + Lit.1
+     + PlusOp
+     + Loopblock(accumTypes + typeint, firstvar, typeint)
+     + [lastidx, Lit.1, EqOp]
     else
      codevars
-      + Define.value.theseq
-      + theseq
-      + GetSeqLength
-      + Define.value.totallength
-      + Lit.0
-      + Loopblock(accumTypes + typeint, firstvar, typeint)
-      + [lastidx, totallength, EqOp],
+     + Define.value.theseq
+     + theseq
+     + GetSeqLength
+     + Define.value.totallength
+     + Lit.0
+     + Loopblock(accumTypes + typeint, firstvar, typeint)
+     + [lastidx, totallength, EqOp],
    part1
-    + if nowhile then
+   + if nowhile then
     let seq? = last.code.forbody,
     [Br2(1, 2)]
-     + Lit.0
-     + Exit
-     + setElement
-     + code.forbody
-     + continue
-     + EndBlock
-     + Define.value.totallength
+    + Lit.0
+    + Exit
+    + setElement
+    + code.forbody
+    + continue
+    + EndBlock
+    + Define.value.totallength
    else
     [Br2(2, 1)]
-     + setElement
-     + code.exitexp
-     + Br2(2, 1)
-     + Lit.0
-     + Exit
-     + code.forbody
-     + continue
-     + EndBlock
-     + Define.value.totallength,
+    + setElement
+    + code.exitexp
+    + Br2(2, 1)
+    + Lit.0
+    + Exit
+    + code.forbody
+    + continue
+    + EndBlock
+    + Define.value.totallength,
 bindinfo(restorenext.dict.vars, newcode, [typeint], "")
 
 function mergeText(static:commonType, a:seq.symbol, b:seq.symbol) seq.symbol
@@ -563,13 +563,12 @@ seqElementType:token
 , common:commonType
 , rinfo:recoverInfo
 ) seq.boolean
-{commonName: common wordmap: colon totoken.colon sub 1, dq totoken.dq sub 1, totoken." $" sub 1}
+{commonName: common wordmap: colon totoken.colon sub 1, dq totoken.dq sub 1, totoken."$"sub 1}
 [
- "Parser function Name (FPL) Type Declare' E" = checktype(common, $.3, $.4, $.5, rinfo)
+ "Parser function Name(FPL)Type Declare' E" = checktype(common, $.3, $.4, $.5, rinfo)
  , "/ function Name Type Declare' E" = checktype(common, $.2, $.3, $.4, rinfo)
- , "String dq String' dq"
- = strExp(common, $.1, "", true, empty:seq.symbol, typeint, rinfo)
- , "* String' colon (E)"
+ , "String dq String' dq" = strExp(common, $.1, "", true, empty:seq.symbol, typeint, rinfo)
+ , "* String' colon(E)"
  = strExp(common, $.0, "", true, code.$.1, (types.$.1) sub 1, rinfo)
  , "/ colon"
  = strExp(common, $.0, [toword.firsttoken.rinfo], false, empty:seq.symbol, typeint, rinfo)
@@ -588,14 +587,14 @@ seqElementType:token
  , "Product Unary Product'" = binaryops(common, $.1, $.2, rinfo)
  , "* Product' * Unary" = binary($.0, firsttoken.rinfo, $.1)
  , "Unary-Unary" = unaryop(common, dict.$.1, rinfo, [toword.firsttoken.rinfo], $.1)
- , "/ Id.Unary" = unaryop(common, dict.$.1, {place-1?} rinfo, text.$.1, $.2)
- , "/ {N} Unary"
+ , "/ Id.Unary" = unaryop(common, dict.$.1, {place-1?}rinfo, text.$.1, $.2)
+ , "/{N}Unary"
  = (if outText.common then
   bindinfo(
    dict.$.2
    , [Words.text.$.1]
-    + code.$.2
-    + symbol(internalmod, "{", [seqof.typeword, (types.$.2) sub 1], (types.$.2) sub 1)
+   + code.$.2
+   + symbol(internalmod, "{", [seqof.typeword, (types.$.2) sub 1], (types.$.2) sub 1)
    , types.$.2
    , ""
   )
@@ -603,10 +602,10 @@ seqElementType:token
  , "/ Power" = $.1
  , "Power Atom Power'" = binaryops(common, $.1, $.2, rinfo)
  , "* Power' sup Unary" = binary($.0, firsttoken.rinfo, $.1)
- , "Atom (E)"
+ , "Atom(E)"
  = (if outText.common then bindinfo(dict.$.1, code.$.1 + symbol(internalmod, "(", [typeint], typeint), types.$.1, "")
  else $.1)
- , "/ [E EL']"
+ , "/[E EL']"
  = seqExp(common, bindinfo(dict.$.1, code.$.1 + code.$.2, types.$.1 + types.$.2, ""), rinfo)
  , "/ String" = $.1
  , "/ Declare Declare' E"
@@ -617,7 +616,7 @@ seqElementType:token
   , ""
  )
  , "/ if E then E IF else E" = ifExp(common, $.1, $.2, $.3, $.4, rinfo)
- , "/ Name (E EL')"
+ , "/ Name(E EL')"
  = unaryop(
   common
   , dict.$.1
@@ -638,7 +637,7 @@ seqElementType:token
  , "/ Id" = $.1
  , "Declare let any = E comma?" = letExp(common, $.1, $.2, rinfo)
  , "/ assert E report E comma?" = assertExp(common, $.1, $.2, rinfo)
- , "/ {N} comma?"
+ , "/{N}comma?"
  = (if outText.common then
   bindinfo(
    dict.$.0
@@ -663,48 +662,48 @@ seqElementType:token
  = bindinfo(dict.$.0, empty:seq.symbol, types.$.0 + types.$.1, text.$.0 + text.$.1)
  , "FP any colon Type" = addpara(common, text.$.1, $.2, rinfo)
  , "/ Type" = addpara(common, $.0, ":", $.1, rinfo)
- , "* N {N}" = /All
- , "/ !} any" = /All
+ , "* N{N}" = /All
+ , "/ !}any" = /All
 ]
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:AccumList AccumList' And And' Atom Compare Compare' Declare Declare' E EL' FP FPL FPL' ForDeclare IF Id N Name Or Or' Parser Power Power' Product Product' String String' Sum Sum' Type Unary comma? str2
-/br Terminals:() *+,-.= > [] any assert colon do dq else for function if let report sup then while {} ∈ ∧ ∨
-/br Parser ← function Name (FPL) Type Declare' E / function Name Type Declare' E
-/br String ← dq String' dq
-/br * String' ← colon (E) / colon / str2
-/br+str2 ← ! dq ! colon any
-/br E ← Or
-/br * EL' ←, E
-/br Or ← And Or'
-/br * Or' ← ∨ And
-/br And ← Compare And'
-/br * And' ← ∧ Compare
-/br Compare ← Sum Compare'
-/br * Compare' ← > Sum
-/br Sum ← Product Sum'
-/br * Sum' ←+Product
-/br Product ← Unary Product'
-/br * Product' ← * Unary
-/br Unary ←-Unary / Id.Unary / {N} Unary / Power
-/br Power ← Atom Power'
-/br * Power' ← sup Unary
-/br Atom ← (E) / [E EL'] / String / Declare Declare' E / if E then E IF else E / Name (E EL') / Name
-/br Name ← Id colon Type / Id
-/br Id ← ! dq any
-/br comma? ←, /
-/br * IF ← else if E then E
-/br Type ← Id.Type / Id
-/br Declare ← let any = E comma? / assert E report E comma? / {N} comma? / for ForDeclare do E comma? / for ForDeclare while E do E comma?
-/br ForDeclare ← AccumList, any ∈ E / AccumList
-/br AccumList ← ! while any = E AccumList'
-/br * AccumList' ←, any = E
-/br * Declare' ← Declare
-/br FPL ← FP FPL'
-/br * FPL' ←, FP
-/br FP ← any colon Type / Type
-/br * N ← {N} / !} any
+/br Non-terminals:AccumList AccumList' And And' Atom Compare Compare' Declare Declare' E EL' FP FPL FPL' ForDeclare IF Id N Name Or Or' Parser Power Power' Product Product' String String' Sum Sum' Type Unary comma? str2 /br
+Terminals:()*+,-.= >[]any assert colon do dq else for function if let report sup then while{}∈ ∧ ∨ /br
+Parser ← function Name(FPL)Type Declare' E / function Name Type Declare' E /br
+String ← dq String' dq /br
+* String' ← colon(E)/ colon / str2 /br
++str2 ← ! dq ! colon any /br
+E ← Or /br
+* EL' ←, E /br
+Or ← And Or' /br
+* Or' ← ∨ And /br
+And ← Compare And' /br
+* And' ← ∧ Compare /br
+Compare ← Sum Compare' /br
+* Compare' ← > Sum /br
+Sum ← Product Sum' /br
+* Sum' ←+Product /br
+Product ← Unary Product' /br
+* Product' ← * Unary /br
+Unary ←-Unary / Id.Unary /{N}Unary / Power /br
+Power ← Atom Power' /br
+* Power' ← sup Unary /br
+Atom ←(E)/[E EL']/ String / Declare Declare' E / if E then E IF else E / Name(E EL')/ Name /br
+Name ← Id colon Type / Id /br
+Id ← ! dq any /br
+comma? ←, / /br
+* IF ← else if E then E /br
+Type ← Id.Type / Id /br
+Declare ← let any = E comma? / assert E report E comma? /{N}comma? / for ForDeclare do E comma? / for ForDeclare while E do E comma? /br
+ForDeclare ← AccumList, any ∈ E / AccumList /br
+AccumList ← ! while any = E AccumList' /br
+* AccumList' ←, any = E /br
+* Declare' ← Declare /br
+FPL ← FP FPL' /br
+* FPL' ←, FP /br
+FP ← any colon Type / Type /br
+* N ←{N}/ !}any
 
 function action(
 partno:int
@@ -737,14 +736,14 @@ else if partno = 18 then binary(R sub (n.R - 1), firsttoken.rinfo, R sub n.R)
 else if partno = 19 then binaryops(common, R sub (n.R - 1), R sub n.R, rinfo)
 else if partno = 20 then binary(R sub (n.R - 1), firsttoken.rinfo, R sub n.R)
 else if partno = 21 then unaryop(common, dict.R sub n.R, rinfo, [toword.firsttoken.rinfo], R sub n.R)
-else if partno = 22 then unaryop(common, dict.R sub (n.R - 1), {place-1?} rinfo, text.R sub (n.R - 1), R sub n.R)
+else if partno = 22 then unaryop(common, dict.R sub (n.R - 1), {place-1?}rinfo, text.R sub (n.R - 1), R sub n.R)
 else if partno = 23 then
  if outText.common then
   bindinfo(
    dict.R sub n.R
    , [Words.text.R sub (n.R - 1)]
-    + code.R sub n.R
-    + symbol(internalmod, "{", [seqof.typeword, (types.R sub n.R) sub 1], (types.R sub n.R) sub 1)
+   + code.R sub n.R
+   + symbol(internalmod, "{", [seqof.typeword, (types.R sub n.R) sub 1], (types.R sub n.R) sub 1)
    , types.R sub n.R
    , ""
   )
@@ -776,7 +775,11 @@ else if partno = 29 then R sub n.R
 else if partno = 30 then
  bindinfo(
   dict.R sub (n.R - 3)
-  , mergeText(common, mergeText(common, code.R sub (n.R - 2), code.R sub (n.R - 1)), code.R sub n.R)
+  , mergeText(
+   common
+   , mergeText(common, code.R sub (n.R - 2), code.R sub (n.R - 1))
+   , code.R sub n.R
+  )
   , types.R sub n.R
   , ""
  )
@@ -822,8 +825,8 @@ else if partno = 44 then
   bindinfo(
    dict.R sub (n.R - 2)
    , code.R sub (n.R - 2)
-    + Words.text.R sub (n.R - 1)
-    + symbol(internalmod, "{", [seqof.typeword], typeint)
+   + Words.text.R sub (n.R - 1)
+   + symbol(internalmod, "{", [seqof.typeword], typeint)
    , empty:seq.mytype
    , ""
   )
@@ -879,168 +882,168 @@ else R sub 1
 
 function mytable seq.tblEle
 [
- {1} tblEle(NT.T'.2, totoken."?" sub 1, Match, Failure, "")
- , {2} tblEle(T', totoken."function" sub 1, NT.3, Fail, "function Name (FPL) Type E")
- , {3} tblEle(NT.88, totoken."Name" sub 1, T'.4, Fail, "Name (FPL) Type E")
- , {4} tblEle(T', totoken."(" sub 1, NT.5, NT.12, "(FPL) Type E")
- , {5} tblEle(NT.146, totoken."FPL" sub 1, T.6, T.10, "FPL) Type E")
- , {6} tblEle(T, totoken.")" sub 1, NT.7, T.10, ") Type E")
- , {7} tblEle(NT.100, totoken."Type" sub 1, NT.8, T.10, "Type E")
- , {8} tblEle(NT.145, totoken."Declare'" sub 1, NT.9, T.10, "E")
- , {9} tblEle(NT.27, totoken."E" sub 1, Reduce.2, T.10, "E")
- , {10} tblEle(T, totoken."function" sub 1, NT.11, Fail, "function Name Type E")
- , {11} tblEle(NT.88, totoken."Name" sub 1, NT.12, Fail, "Name Type E")
- , {12} tblEle(NT.100, totoken."Type" sub 1, NT.13, Fail, "Type E")
- , {13} tblEle(NT.145, totoken."Declare'" sub 1, NT.14, Fail, "E")
- , {14} tblEle(NT.27, totoken."E" sub 1, Reduce.3, Fail, "E")
- , {15} tblEle(T, totoken.dq sub 1, NT.16, Fail, "dq dq")
- , {16} tblEle(NT.T'.18, totoken."String'" sub 1, T.17, Fail, "dq")
- , {17} tblEle(T, totoken.dq sub 1, Reduce.4, Fail, "dq")
- , {18} tblEle(T', totoken.colon sub 1, T.19, NT.23, "colon (E)")
- , {19} tblEle(T, totoken."(" sub 1, NT.20, T'.22, "(E)")
- , {20} tblEle(NT.27, totoken."E" sub 1, T.21, T'.22, "E)")
- , {21} tblEle(T, totoken.")" sub 1, Reduce*(5, T'.18), T'.22, ")")
- , {22} tblEle(T', totoken.colon sub 1, Reduce*(6, T'.18), NT.23, "colon")
- , {23} tblEle(NT.!T.24, totoken."str2" sub 1, Reduce*(7, T'.18), Success*, "str2")
- , {24} tblEle(!T, totoken.dq sub 1, Fail, !T.25, "dq any")
- , {25} tblEle(!T, totoken.colon sub 1, Fail, MatchAny.26, "colon any")
- , {26} tblEle(MatchAny, totoken."?" sub 1, Discard*.!T.159, Fail, "any")
- , {27} tblEle(NT.30, totoken."Or" sub 1, Reduce.9, Fail, "Or")
- , {28} tblEle(T, totoken."," sub 1, NT.29, Success*, ", E")
- , {29} tblEle(NT.27, totoken."E" sub 1, Reduce*(10, T.28), Success*, "E")
- , {30} tblEle(NT.34, totoken."And" sub 1, NT.31, Fail, "And")
- , {31} tblEle(NT.T.32, totoken."Or'" sub 1, Reduce.11, Fail, "")
- , {32} tblEle(T, totoken."∨" sub 1, NT.33, Success*, "∨ And")
- , {33} tblEle(NT.34, totoken."And" sub 1, Reduce*(12, T.32), Success*, "And")
- , {34} tblEle(NT.38, totoken."Compare" sub 1, NT.35, Fail, "Compare")
- , {35} tblEle(NT.T.36, totoken."And'" sub 1, Reduce.13, Fail, "")
- , {36} tblEle(T, totoken."∧" sub 1, NT.37, Success*, "∧ Compare")
- , {37} tblEle(NT.38, totoken."Compare" sub 1, Reduce*(14, T.36), Success*, "Compare")
- , {38} tblEle(NT.42, totoken."Sum" sub 1, NT.39, Fail, "Sum")
- , {39} tblEle(NT.T.40, totoken."Compare'" sub 1, Reduce.15, Fail, "")
- , {40} tblEle(T, totoken.">" sub 1, NT.41, Success*, "> Sum")
- , {41} tblEle(NT.42, totoken."Sum" sub 1, Reduce*(16, T.40), Success*, "Sum")
- , {42} tblEle(NT.46, totoken."Product" sub 1, NT.43, Fail, "Product")
- , {43} tblEle(NT.T.44, totoken."Sum'" sub 1, Reduce.17, Fail, "")
- , {44} tblEle(T, totoken."+" sub 1, NT.45, Success*, "+Product")
- , {45} tblEle(NT.46, totoken."Product" sub 1, Reduce*(18, T.44), Success*, "Product")
- , {46} tblEle(NT.T'.50, totoken."Unary" sub 1, NT.47, Fail, "Unary")
- , {47} tblEle(NT.T.48, totoken."Product'" sub 1, Reduce.19, Fail, "")
- , {48} tblEle(T, totoken."*" sub 1, NT.49, Success*, "* Unary")
- , {49} tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce*(20, T.48), Success*, "Unary")
- , {50} tblEle(T', totoken."-" sub 1, NT.51, NT.52, "-Unary")
- , {51} tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce.21, NT.52, "Unary")
- , {52} tblEle(NT.!T.92, totoken."Id" sub 1, T.53, T'.55, "Id.Unary")
- , {53} tblEle(T, totoken."." sub 1, NT.54, T'.55, ".Unary")
- , {54} tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce.22, T'.55, "Unary")
- , {55} tblEle(T', totoken."{" sub 1, NT.56, NT.59, "{} Unary")
- , {56} tblEle(NT.T.154, totoken."N" sub 1, T.57, NT.59, "} Unary")
- , {57} tblEle(T, totoken."}" sub 1, NT.58, NT.59, "} Unary")
- , {58} tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce.23, NT.59, "Unary")
- , {59} tblEle(NT.60, totoken."Power" sub 1, Reduce.24, Fail, "Power")
- , {60} tblEle(NT.T'.64, totoken."Atom" sub 1, NT.61, Fail, "Atom")
- , {61} tblEle(NT.T.62, totoken."Power'" sub 1, Reduce.25, Fail, "")
- , {62} tblEle(T, totoken."sup" sub 1, NT.63, Success*, "sup Unary")
- , {63} tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce*(26, T.62), Success*, "Unary")
- , {64} tblEle(T', totoken."(" sub 1, NT.65, T'.67, "(E)")
- , {65} tblEle(NT.27, totoken."E" sub 1, T.66, T'.67, "E)")
- , {66} tblEle(T, totoken.")" sub 1, Reduce.27, T'.67, ")")
- , {67} tblEle(T', totoken."[" sub 1, NT.68, NT.71, "[E]")
- , {68} tblEle(NT.27, totoken."E" sub 1, NT.69, NT.71, "E]")
- , {69} tblEle(NT.T.28, totoken."EL'" sub 1, T.70, NT.71, "]")
- , {70} tblEle(T, totoken."]" sub 1, Reduce.28, NT.71, "]")
- , {71} tblEle(NT.T.15, totoken."String" sub 1, Reduce.29, NT.72, "String")
- , {72} tblEle(NT.T'.104, totoken."Declare" sub 1, NT.73, T'.75, "Declare E")
- , {73} tblEle(NT.145, totoken."Declare'" sub 1, NT.74, T'.75, "E")
- , {74} tblEle(NT.27, totoken."E" sub 1, Reduce.30, T'.75, "E")
- , {75} tblEle(T', totoken."if" sub 1, NT.76, NT.82, "if E then E else E")
- , {76} tblEle(NT.27, totoken."E" sub 1, T.77, NT.82, "E then E else E")
- , {77} tblEle(T, totoken."then" sub 1, NT.78, NT.82, "then E else E")
- , {78} tblEle(NT.27, totoken."E" sub 1, NT.79, NT.82, "E else E")
- , {79} tblEle(NT.T.95, totoken."IF" sub 1, T.80, NT.82, "else E")
- , {80} tblEle(T, totoken."else" sub 1, NT.81, NT.82, "else E")
- , {81} tblEle(NT.27, totoken."E" sub 1, Reduce.31, NT.82, "E")
- , {82} tblEle(NT.88, totoken."Name" sub 1, T.83, Fail, "Name (E)")
- , {83} tblEle(T, totoken."(" sub 1, NT.84, NT.87, "(E)")
- , {84} tblEle(NT.27, totoken."E" sub 1, NT.85, NT.87, "E)")
- , {85} tblEle(NT.T.28, totoken."EL'" sub 1, T.86, NT.87, ")")
- , {86} tblEle(T, totoken.")" sub 1, Reduce.32, NT.87, ")")
- , {87} tblEle(NT.88, totoken."Name" sub 1, Reduce.33, Fail, "Name")
- , {88} tblEle(NT.!T.92, totoken."Id" sub 1, T.89, Fail, "Id colon Type")
- , {89} tblEle(T, totoken.colon sub 1, NT.90, NT.91, "colon Type")
- , {90} tblEle(NT.100, totoken."Type" sub 1, Reduce.34, NT.91, "Type")
- , {91} tblEle(NT.!T.92, totoken."Id" sub 1, Reduce.35, Fail, "Id")
- , {92} tblEle(!T, totoken.dq sub 1, Fail, MatchAny.93, "dq any")
- , {93} tblEle(MatchAny, totoken."?" sub 1, Reduce.36, Fail, "any")
- , {94} tblEle(T, totoken."," sub 1, Reduce.37, Reduce.38, ",")
- , {95} tblEle(T, totoken."else" sub 1, T.96, Success*, "else if E then E")
- , {96} tblEle(T, totoken."if" sub 1, NT.97, Success*, "if E then E")
- , {97} tblEle(NT.27, totoken."E" sub 1, T.98, Success*, "E then E")
- , {98} tblEle(T, totoken."then" sub 1, NT.99, Success*, "then E")
- , {99} tblEle(NT.27, totoken."E" sub 1, Reduce*(39, T.95), Success*, "E")
- , {100} tblEle(NT.!T.92, totoken."Id" sub 1, T.101, Fail, "Id.Type")
- , {101} tblEle(T, totoken."." sub 1, NT.102, NT.103, ".Type")
- , {102} tblEle(NT.100, totoken."Type" sub 1, Reduce.40, NT.103, "Type")
- , {103} tblEle(NT.!T.92, totoken."Id" sub 1, Reduce.41, Fail, "Id")
- , {104} tblEle(T', totoken."let" sub 1, MatchAny.105, T'.109, "let any = E")
- , {105} tblEle(MatchAny, totoken."?" sub 1, T.106, T'.109, "any = E")
- , {106} tblEle(T, totoken."=" sub 1, NT.107, T'.109, "= E")
- , {107} tblEle(NT.27, totoken."E" sub 1, NT.108, T'.109, "E")
- , {108} tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.42, T'.109, "")
- , {109} tblEle(T', totoken."assert" sub 1, NT.110, T'.114, "assert E report E")
- , {110} tblEle(NT.27, totoken."E" sub 1, T.111, T'.114, "E report E")
- , {111} tblEle(T, totoken."report" sub 1, NT.112, T'.114, "report E")
- , {112} tblEle(NT.27, totoken."E" sub 1, NT.113, T'.114, "E")
- , {113} tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.43, T'.114, "")
- , {114} tblEle(T', totoken."{" sub 1, NT.115, T'.118, "{}")
- , {115} tblEle(NT.T.154, totoken."N" sub 1, T.116, T'.118, "}")
- , {116} tblEle(T, totoken."}" sub 1, NT.117, T'.118, "}")
- , {117} tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.44, T'.118, "")
- , {118} tblEle(T', totoken."for" sub 1, NT.119, Fail, "for ForDeclare do E")
- , {119} tblEle(NT.130, totoken."ForDeclare" sub 1, T'.120, Fail, "ForDeclare do E")
- , {120} tblEle(T', totoken."do" sub 1, NT.121, T.125, "do E")
- , {121} tblEle(NT.27, totoken."E" sub 1, NT.122, T.123, "E")
- , {122} tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.45, T.123, "")
- , {123} tblEle(T, totoken."for" sub 1, NT.124, Fail, "for ForDeclare while E do E")
- , {124} tblEle(NT.130, totoken."ForDeclare" sub 1, T.125, Fail, "ForDeclare while E do E")
- , {125} tblEle(T, totoken."while" sub 1, NT.126, Fail, "while E do E")
- , {126} tblEle(NT.27, totoken."E" sub 1, T.127, Fail, "E do E")
- , {127} tblEle(T, totoken."do" sub 1, NT.128, Fail, "do E")
- , {128} tblEle(NT.27, totoken."E" sub 1, NT.129, Fail, "E")
- , {129} tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.46, Fail, "")
- , {130} tblEle(NT.!T.136, totoken."AccumList" sub 1, T.131, Fail, "AccumList, any ∈ E")
- , {131} tblEle(T, totoken."," sub 1, MatchAny.132, NT.135, ", any ∈ E")
- , {132} tblEle(MatchAny, totoken."?" sub 1, T.133, NT.135, "any ∈ E")
- , {133} tblEle(T, totoken."∈" sub 1, NT.134, NT.135, "∈ E")
- , {134} tblEle(NT.27, totoken."E" sub 1, Reduce.47, NT.135, "E")
- , {135} tblEle(NT.!T.136, totoken."AccumList" sub 1, Reduce.48, Fail, "AccumList")
- , {136} tblEle(!T, totoken."while" sub 1, Fail, MatchAny.137, "while any = E")
- , {137} tblEle(MatchAny, totoken."?" sub 1, T.138, Fail, "any = E")
- , {138} tblEle(T, totoken."=" sub 1, NT.139, Fail, "= E")
- , {139} tblEle(NT.27, totoken."E" sub 1, NT.140, Fail, "E")
- , {140} tblEle(NT.T.141, totoken."AccumList'" sub 1, Reduce.49, Fail, "")
- , {141} tblEle(T, totoken."," sub 1, MatchAny.142, Success*, ", any = E")
- , {142} tblEle(MatchAny, totoken."?" sub 1, T.143, Success*, "any = E")
- , {143} tblEle(T, totoken."=" sub 1, NT.144, Success*, "= E")
- , {144} tblEle(NT.27, totoken."E" sub 1, Reduce*(50, T.141), Success*, "E")
+ {1}tblEle(NT.T'.2, totoken."?" sub 1, Match, Failure, "")
+ , {2}tblEle(T', totoken."function" sub 1, NT.3, Fail, "function Name(FPL)Type E")
+ , {3}tblEle(NT.88, totoken."Name" sub 1, T'.4, Fail, "Name(FPL)Type E")
+ , {4}tblEle(T', totoken."(" sub 1, NT.5, NT.12, "(FPL)Type E")
+ , {5}tblEle(NT.146, totoken."FPL" sub 1, T.6, T.10, "FPL)Type E")
+ , {6}tblEle(T, totoken.")" sub 1, NT.7, T.10, ")Type E")
+ , {7}tblEle(NT.100, totoken."Type" sub 1, NT.8, T.10, "Type E")
+ , {8}tblEle(NT.145, totoken."Declare'" sub 1, NT.9, T.10, "E")
+ , {9}tblEle(NT.27, totoken."E" sub 1, Reduce.2, T.10, "E")
+ , {10}tblEle(T, totoken."function" sub 1, NT.11, Fail, "function Name Type E")
+ , {11}tblEle(NT.88, totoken."Name" sub 1, NT.12, Fail, "Name Type E")
+ , {12}tblEle(NT.100, totoken."Type" sub 1, NT.13, Fail, "Type E")
+ , {13}tblEle(NT.145, totoken."Declare'" sub 1, NT.14, Fail, "E")
+ , {14}tblEle(NT.27, totoken."E" sub 1, Reduce.3, Fail, "E")
+ , {15}tblEle(T, totoken.dq sub 1, NT.16, Fail, "dq dq")
+ , {16}tblEle(NT.T'.18, totoken."String'" sub 1, T.17, Fail, "dq")
+ , {17}tblEle(T, totoken.dq sub 1, Reduce.4, Fail, "dq")
+ , {18}tblEle(T', totoken.colon sub 1, T.19, NT.23, "colon(E)")
+ , {19}tblEle(T, totoken."(" sub 1, NT.20, T'.22, "(E)")
+ , {20}tblEle(NT.27, totoken."E" sub 1, T.21, T'.22, "E)")
+ , {21}tblEle(T, totoken.")" sub 1, Reduce*(5, T'.18), T'.22, ")")
+ , {22}tblEle(T', totoken.colon sub 1, Reduce*(6, T'.18), NT.23, "colon")
+ , {23}tblEle(NT.!T.24, totoken."str2" sub 1, Reduce*(7, T'.18), Success*, "str2")
+ , {24}tblEle(!T, totoken.dq sub 1, Fail, !T.25, "dq any")
+ , {25}tblEle(!T, totoken.colon sub 1, Fail, MatchAny.26, "colon any")
+ , {26}tblEle(MatchAny, totoken."?" sub 1, Discard*.!T.159, Fail, "any")
+ , {27}tblEle(NT.30, totoken."Or" sub 1, Reduce.9, Fail, "Or")
+ , {28}tblEle(T, totoken."," sub 1, NT.29, Success*, ", E")
+ , {29}tblEle(NT.27, totoken."E" sub 1, Reduce*(10, T.28), Success*, "E")
+ , {30}tblEle(NT.34, totoken."And" sub 1, NT.31, Fail, "And")
+ , {31}tblEle(NT.T.32, totoken."Or'" sub 1, Reduce.11, Fail, "")
+ , {32}tblEle(T, totoken."∨" sub 1, NT.33, Success*, "∨ And")
+ , {33}tblEle(NT.34, totoken."And" sub 1, Reduce*(12, T.32), Success*, "And")
+ , {34}tblEle(NT.38, totoken."Compare" sub 1, NT.35, Fail, "Compare")
+ , {35}tblEle(NT.T.36, totoken."And'" sub 1, Reduce.13, Fail, "")
+ , {36}tblEle(T, totoken."∧" sub 1, NT.37, Success*, "∧ Compare")
+ , {37}tblEle(NT.38, totoken."Compare" sub 1, Reduce*(14, T.36), Success*, "Compare")
+ , {38}tblEle(NT.42, totoken."Sum" sub 1, NT.39, Fail, "Sum")
+ , {39}tblEle(NT.T.40, totoken."Compare'" sub 1, Reduce.15, Fail, "")
+ , {40}tblEle(T, totoken.">" sub 1, NT.41, Success*, "> Sum")
+ , {41}tblEle(NT.42, totoken."Sum" sub 1, Reduce*(16, T.40), Success*, "Sum")
+ , {42}tblEle(NT.46, totoken."Product" sub 1, NT.43, Fail, "Product")
+ , {43}tblEle(NT.T.44, totoken."Sum'" sub 1, Reduce.17, Fail, "")
+ , {44}tblEle(T, totoken."+" sub 1, NT.45, Success*, "+Product")
+ , {45}tblEle(NT.46, totoken."Product" sub 1, Reduce*(18, T.44), Success*, "Product")
+ , {46}tblEle(NT.T'.50, totoken."Unary" sub 1, NT.47, Fail, "Unary")
+ , {47}tblEle(NT.T.48, totoken."Product'" sub 1, Reduce.19, Fail, "")
+ , {48}tblEle(T, totoken."*" sub 1, NT.49, Success*, "* Unary")
+ , {49}tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce*(20, T.48), Success*, "Unary")
+ , {50}tblEle(T', totoken."-" sub 1, NT.51, NT.52, "-Unary")
+ , {51}tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce.21, NT.52, "Unary")
+ , {52}tblEle(NT.!T.92, totoken."Id" sub 1, T.53, T'.55, "Id.Unary")
+ , {53}tblEle(T, totoken."." sub 1, NT.54, T'.55, ".Unary")
+ , {54}tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce.22, T'.55, "Unary")
+ , {55}tblEle(T', totoken."{" sub 1, NT.56, NT.59, "{}Unary")
+ , {56}tblEle(NT.T.154, totoken."N" sub 1, T.57, NT.59, "}Unary")
+ , {57}tblEle(T, totoken."}" sub 1, NT.58, NT.59, "}Unary")
+ , {58}tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce.23, NT.59, "Unary")
+ , {59}tblEle(NT.60, totoken."Power" sub 1, Reduce.24, Fail, "Power")
+ , {60}tblEle(NT.T'.64, totoken."Atom" sub 1, NT.61, Fail, "Atom")
+ , {61}tblEle(NT.T.62, totoken."Power'" sub 1, Reduce.25, Fail, "")
+ , {62}tblEle(T, totoken."sup" sub 1, NT.63, Success*, "sup Unary")
+ , {63}tblEle(NT.T'.50, totoken."Unary" sub 1, Reduce*(26, T.62), Success*, "Unary")
+ , {64}tblEle(T', totoken."(" sub 1, NT.65, T'.67, "(E)")
+ , {65}tblEle(NT.27, totoken."E" sub 1, T.66, T'.67, "E)")
+ , {66}tblEle(T, totoken.")" sub 1, Reduce.27, T'.67, ")")
+ , {67}tblEle(T', totoken."[" sub 1, NT.68, NT.71, "[E]")
+ , {68}tblEle(NT.27, totoken."E" sub 1, NT.69, NT.71, "E]")
+ , {69}tblEle(NT.T.28, totoken."EL'" sub 1, T.70, NT.71, "]")
+ , {70}tblEle(T, totoken."]" sub 1, Reduce.28, NT.71, "]")
+ , {71}tblEle(NT.T.15, totoken."String" sub 1, Reduce.29, NT.72, "String")
+ , {72}tblEle(NT.T'.104, totoken."Declare" sub 1, NT.73, T'.75, "Declare E")
+ , {73}tblEle(NT.145, totoken."Declare'" sub 1, NT.74, T'.75, "E")
+ , {74}tblEle(NT.27, totoken."E" sub 1, Reduce.30, T'.75, "E")
+ , {75}tblEle(T', totoken."if" sub 1, NT.76, NT.82, "if E then E else E")
+ , {76}tblEle(NT.27, totoken."E" sub 1, T.77, NT.82, "E then E else E")
+ , {77}tblEle(T, totoken."then" sub 1, NT.78, NT.82, "then E else E")
+ , {78}tblEle(NT.27, totoken."E" sub 1, NT.79, NT.82, "E else E")
+ , {79}tblEle(NT.T.95, totoken."IF" sub 1, T.80, NT.82, "else E")
+ , {80}tblEle(T, totoken."else" sub 1, NT.81, NT.82, "else E")
+ , {81}tblEle(NT.27, totoken."E" sub 1, Reduce.31, NT.82, "E")
+ , {82}tblEle(NT.88, totoken."Name" sub 1, T.83, Fail, "Name(E)")
+ , {83}tblEle(T, totoken."(" sub 1, NT.84, NT.87, "(E)")
+ , {84}tblEle(NT.27, totoken."E" sub 1, NT.85, NT.87, "E)")
+ , {85}tblEle(NT.T.28, totoken."EL'" sub 1, T.86, NT.87, ")")
+ , {86}tblEle(T, totoken.")" sub 1, Reduce.32, NT.87, ")")
+ , {87}tblEle(NT.88, totoken."Name" sub 1, Reduce.33, Fail, "Name")
+ , {88}tblEle(NT.!T.92, totoken."Id" sub 1, T.89, Fail, "Id colon Type")
+ , {89}tblEle(T, totoken.colon sub 1, NT.90, NT.91, "colon Type")
+ , {90}tblEle(NT.100, totoken."Type" sub 1, Reduce.34, NT.91, "Type")
+ , {91}tblEle(NT.!T.92, totoken."Id" sub 1, Reduce.35, Fail, "Id")
+ , {92}tblEle(!T, totoken.dq sub 1, Fail, MatchAny.93, "dq any")
+ , {93}tblEle(MatchAny, totoken."?" sub 1, Reduce.36, Fail, "any")
+ , {94}tblEle(T, totoken."," sub 1, Reduce.37, Reduce.38, ",")
+ , {95}tblEle(T, totoken."else" sub 1, T.96, Success*, "else if E then E")
+ , {96}tblEle(T, totoken."if" sub 1, NT.97, Success*, "if E then E")
+ , {97}tblEle(NT.27, totoken."E" sub 1, T.98, Success*, "E then E")
+ , {98}tblEle(T, totoken."then" sub 1, NT.99, Success*, "then E")
+ , {99}tblEle(NT.27, totoken."E" sub 1, Reduce*(39, T.95), Success*, "E")
+ , {100}tblEle(NT.!T.92, totoken."Id" sub 1, T.101, Fail, "Id.Type")
+ , {101}tblEle(T, totoken."." sub 1, NT.102, NT.103, ".Type")
+ , {102}tblEle(NT.100, totoken."Type" sub 1, Reduce.40, NT.103, "Type")
+ , {103}tblEle(NT.!T.92, totoken."Id" sub 1, Reduce.41, Fail, "Id")
+ , {104}tblEle(T', totoken."let" sub 1, MatchAny.105, T'.109, "let any = E")
+ , {105}tblEle(MatchAny, totoken."?" sub 1, T.106, T'.109, "any = E")
+ , {106}tblEle(T, totoken."=" sub 1, NT.107, T'.109, "= E")
+ , {107}tblEle(NT.27, totoken."E" sub 1, NT.108, T'.109, "E")
+ , {108}tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.42, T'.109, "")
+ , {109}tblEle(T', totoken."assert" sub 1, NT.110, T'.114, "assert E report E")
+ , {110}tblEle(NT.27, totoken."E" sub 1, T.111, T'.114, "E report E")
+ , {111}tblEle(T, totoken."report" sub 1, NT.112, T'.114, "report E")
+ , {112}tblEle(NT.27, totoken."E" sub 1, NT.113, T'.114, "E")
+ , {113}tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.43, T'.114, "")
+ , {114}tblEle(T', totoken."{" sub 1, NT.115, T'.118, "{}")
+ , {115}tblEle(NT.T.154, totoken."N" sub 1, T.116, T'.118, "}")
+ , {116}tblEle(T, totoken."}" sub 1, NT.117, T'.118, "}")
+ , {117}tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.44, T'.118, "")
+ , {118}tblEle(T', totoken."for" sub 1, NT.119, Fail, "for ForDeclare do E")
+ , {119}tblEle(NT.130, totoken."ForDeclare" sub 1, T'.120, Fail, "ForDeclare do E")
+ , {120}tblEle(T', totoken."do" sub 1, NT.121, T.125, "do E")
+ , {121}tblEle(NT.27, totoken."E" sub 1, NT.122, T.123, "E")
+ , {122}tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.45, T.123, "")
+ , {123}tblEle(T, totoken."for" sub 1, NT.124, Fail, "for ForDeclare while E do E")
+ , {124}tblEle(NT.130, totoken."ForDeclare" sub 1, T.125, Fail, "ForDeclare while E do E")
+ , {125}tblEle(T, totoken."while" sub 1, NT.126, Fail, "while E do E")
+ , {126}tblEle(NT.27, totoken."E" sub 1, T.127, Fail, "E do E")
+ , {127}tblEle(T, totoken."do" sub 1, NT.128, Fail, "do E")
+ , {128}tblEle(NT.27, totoken."E" sub 1, NT.129, Fail, "E")
+ , {129}tblEle(NT.T.94, totoken."comma?" sub 1, Reduce.46, Fail, "")
+ , {130}tblEle(NT.!T.136, totoken."AccumList" sub 1, T.131, Fail, "AccumList, any ∈ E")
+ , {131}tblEle(T, totoken."," sub 1, MatchAny.132, NT.135, ", any ∈ E")
+ , {132}tblEle(MatchAny, totoken."?" sub 1, T.133, NT.135, "any ∈ E")
+ , {133}tblEle(T, totoken."∈" sub 1, NT.134, NT.135, "∈ E")
+ , {134}tblEle(NT.27, totoken."E" sub 1, Reduce.47, NT.135, "E")
+ , {135}tblEle(NT.!T.136, totoken."AccumList" sub 1, Reduce.48, Fail, "AccumList")
+ , {136}tblEle(!T, totoken."while" sub 1, Fail, MatchAny.137, "while any = E")
+ , {137}tblEle(MatchAny, totoken."?" sub 1, T.138, Fail, "any = E")
+ , {138}tblEle(T, totoken."=" sub 1, NT.139, Fail, "= E")
+ , {139}tblEle(NT.27, totoken."E" sub 1, NT.140, Fail, "E")
+ , {140}tblEle(NT.T.141, totoken."AccumList'" sub 1, Reduce.49, Fail, "")
+ , {141}tblEle(T, totoken."," sub 1, MatchAny.142, Success*, ", any = E")
+ , {142}tblEle(MatchAny, totoken."?" sub 1, T.143, Success*, "any = E")
+ , {143}tblEle(T, totoken."=" sub 1, NT.144, Success*, "= E")
+ , {144}tblEle(NT.27, totoken."E" sub 1, Reduce*(50, T.141), Success*, "E")
  , {145}
  tblEle(NT.T'.104, totoken."Declare" sub 1, Reduce*(51, NT.145), Success*, "Declare")
- , {146} tblEle(NT.MatchAny.150, totoken."FP" sub 1, NT.147, Fail, "FP")
- , {147} tblEle(NT.T.148, totoken."FPL'" sub 1, Reduce.52, Fail, "")
- , {148} tblEle(T, totoken."," sub 1, NT.149, Success*, ", FP")
- , {149} tblEle(NT.MatchAny.150, totoken."FP" sub 1, Reduce*(53, T.148), Success*, "FP")
- , {150} tblEle(MatchAny, totoken."?" sub 1, T.151, NT.153, "any colon Type")
- , {151} tblEle(T, totoken.colon sub 1, NT.152, NT.153, "colon Type")
- , {152} tblEle(NT.100, totoken."Type" sub 1, Reduce.54, NT.153, "Type")
- , {153} tblEle(NT.100, totoken."Type" sub 1, Reduce.55, Fail, "Type")
- , {154} tblEle(T, totoken."{" sub 1, NT.155, !T.157, "{}")
- , {155} tblEle(NT.T.154, totoken."N" sub 1, T.156, !T.157, "}")
- , {156} tblEle(T, totoken."}" sub 1, Discard*.T.154, !T.157, "}")
- , {157} tblEle(!T, totoken."}" sub 1, All, MatchAny.158, "} any")
- , {158} tblEle(MatchAny, totoken."?" sub 1, Discard*.T.154, All, "any")
- , {159} tblEle(!T, totoken.dq sub 1, All, !T.160, "dq any")
- , {160} tblEle(!T, totoken.colon sub 1, All, MatchAny.161, "colon any")
- , {161} tblEle(MatchAny, totoken."?" sub 1, Discard*.!T.159, All, "any")
+ , {146}tblEle(NT.MatchAny.150, totoken."FP" sub 1, NT.147, Fail, "FP")
+ , {147}tblEle(NT.T.148, totoken."FPL'" sub 1, Reduce.52, Fail, "")
+ , {148}tblEle(T, totoken."," sub 1, NT.149, Success*, ", FP")
+ , {149}tblEle(NT.MatchAny.150, totoken."FP" sub 1, Reduce*(53, T.148), Success*, "FP")
+ , {150}tblEle(MatchAny, totoken."?" sub 1, T.151, NT.153, "any colon Type")
+ , {151}tblEle(T, totoken.colon sub 1, NT.152, NT.153, "colon Type")
+ , {152}tblEle(NT.100, totoken."Type" sub 1, Reduce.54, NT.153, "Type")
+ , {153}tblEle(NT.100, totoken."Type" sub 1, Reduce.55, Fail, "Type")
+ , {154}tblEle(T, totoken."{" sub 1, NT.155, !T.157, "{}")
+ , {155}tblEle(NT.T.154, totoken."N" sub 1, T.156, !T.157, "}")
+ , {156}tblEle(T, totoken."}" sub 1, Discard*.T.154, !T.157, "}")
+ , {157}tblEle(!T, totoken."}" sub 1, All, MatchAny.158, "}any")
+ , {158}tblEle(MatchAny, totoken."?" sub 1, Discard*.T.154, All, "any")
+ , {159}tblEle(!T, totoken.dq sub 1, All, !T.160, "dq any")
+ , {160}tblEle(!T, totoken.colon sub 1, All, MatchAny.161, "colon any")
+ , {161}tblEle(MatchAny, totoken."?" sub 1, Discard*.!T.159, All, "any")
 ]
 
 function =(seq.word, bindinfo) boolean true
@@ -1080,7 +1083,7 @@ type recoverInfo is stk:stack.frame, input:seq.token, place:int, faili:int
 
 Function status(a:recoverInfo) word
 if Sstate.top.stk.a ≠ Match then 'Failed
-else if place.a = {length of input} faili.top.stk.a then 'Match
+else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
 Function result(a:recoverInfo) bindinfo
@@ -1180,7 +1183,7 @@ do
   else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),
-  if inputi = endMark then {fail} next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  if inputi = endMark then{fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),

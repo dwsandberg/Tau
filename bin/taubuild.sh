@@ -101,6 +101,6 @@ source $scriptname.sh
 
 mv  ${scriptname}.sh $oldscript 
 mkdir -p $(dirname   $tarname)
-tar -zcf $tarname.tar.gz --exclude="$build/*" $unchangelist  $changelist 
+tar -zcf $tarname.tar.gz --exclude="$build/*" $unchangelist  $changelist $1
 echo "tarname= $tarname"
 echo "finish tar"

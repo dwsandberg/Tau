@@ -86,6 +86,8 @@ use orderModules
 
 use orderNodes.T
 
+use classinfo
+
 use pretty
 
 use format1a
@@ -112,6 +114,6 @@ use uniqueids
 
 use word
 
-use xxhash 
+use xxhash
 
-use markup
+use markup 

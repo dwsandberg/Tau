@@ -34,14 +34,14 @@ use seq.seq.seq.word
 
 use set.word
 
-Export type:PEGtable {From PEGmachine}
+Export type:PEGtable{From PEGmachine}
 
-Export entries(PEGtable) seq.tableEntry {From PEGmachine}
+Export entries(PEGtable) seq.tableEntry{From PEGmachine}
 
 Export maketable(gin:seq.pegrule, subs:seq.word, addrecover:boolean) PEGtable
 {From PEGmachine}
 
-Export runMachine(int, PEGtable, seq.seq.word, seq.word) seq.word {From PEGmachine}
+Export runMachine(int, PEGtable, seq.seq.word, seq.word) seq.word{From PEGmachine}
 
 Function %(t:PEGtable) seq.word %table.entries.t
 
@@ -49,8 +49,8 @@ Function maketable(s:seq.word) PEGtable
 let gin = PEGparse.s,
 maketable(
  gin
- , "dq:(dq), // /, //action /action, //br
- /br"
+ , "dq:(dq), // /, //action /action, //br /br
+ "
  , false
 )
 
@@ -114,7 +114,7 @@ type runresult is stk:stack.frame, input:seq.word, place:int, faili:int
 
 Function status(a:runresult) word
 if Sstate.top.stk.a ≠ Match then 'Failed
-else if place.a = {length of input} faili.top.stk.a then 'Match
+else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
 Function result(a:runresult) seq.word
@@ -219,7 +219,7 @@ do
   else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),
-  if inputi = endMark then {fail} next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  if inputi = endMark then{fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),

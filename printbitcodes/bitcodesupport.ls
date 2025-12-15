@@ -35,11 +35,11 @@ Function SETBID int 1
 Function printtype(s:seq.seq.int, i:int, llvm:boolean) seq.word
 if i = 1 then "conststype"
 else
- {if i = 2 then" profiletype" else}
+ {if i = 2 then"profiletype"else}
  let a = s sub (i + 2)
  let tp = typeop.a sub 1,
  if tp = INTEGER then [merge("i" + toword.a sub 2)]
- else if tp = ARRAY then "array (" + toword.a sub 2 + "," + printtype(s, a sub 3, llvm) + ")"
+ else if tp = ARRAY then "array(" + toword.a sub 2 + "," + printtype(s, a sub 3, llvm) + ")"
  else if tp = POINTER then
   if llvm then printtype(s, a sub 2, llvm) + "*"
   else "ptr.:(printtype(s, a sub 2, llvm))"
@@ -69,8 +69,8 @@ txt >> 2
 
 Function printrecord(id:blockop, a:seq.int) seq.word
 if id = VALUESYMTABLE then "function" + encodeword.tocharseq.subseq(a, 3, n.a) + "int" + toword.a sub 2
-else if a sub 1 =-1 then "[-1,:(decode.blockop.a sub 2),:(%(",", subseq(a, 2, n.a)) >> 1)]"
-else if a sub 1 =-2 then printabbr.a
+else if a sub 1 = -1 then "[-1,:(decode.blockop.a sub 2),:(%(",", subseq(a, 2, n.a)) >> 1)]"
+else if a sub 1 = -2 then printabbr.a
 else if id = INFOBLOCK ∧ n.a = 2 ∧ a sub 1 = SETBID then "[SETBID,:(decode.blockop.a sub 2)]"
 else
  let code = a sub 1

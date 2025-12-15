@@ -22,7 +22,7 @@ Function testbug7 seq.word
 let discard0 = [i64, i32]
 let z = c32.0,
 if [i64, i32] = [1, 2] ∧ 128 = (newseq8.[1, 128]) sub 2 then "PASS bug7"
-else "<* literal FAILED bug7 *>"
+else "// FAILED bug7 /literal"
 
 type llvmtypeele2 is toseq:seq.int
 

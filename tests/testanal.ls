@@ -188,7 +188,7 @@ do
    , if name.self.test ∉ "loopisnoop" then "tailrecursion" else ""
   ),
  acc
- + if a ≠ out.test then "/p <* literal Fail *>:(self.test)Input::(tosymbols:T(in.test, self.test))Expected::(out.test)got::(a)"
+ + if a ≠ out.test then "/p:(red."Fail"):(self.test)Input::(tosymbols:T(in.test, self.test))Expected::(out.test)got::(a)"
  else "Pass:(self.test)",
 acc
 

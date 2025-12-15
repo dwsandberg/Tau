@@ -58,16 +58,16 @@ input:seq.file
 , hashes:seq.file
 , output:seq.word
 ) seq.byte
-{COMMAND /strong makeScript creates shell script for building code.
-/br The commands' primary is is in the shell script taubuild.
-/br /strong input build files
-/br /strong builddir build directory, usually"+built".
-/br /strong hashes two files with one containing lines from the unix command shasum. The two files are compared looking for identical lines which is used to determine which files have not be changed since the last build.}
+{COMMAND makeScript /strong creates shell script for building code./br
+The commands' primary is is in the shell script taubuild./br
+input /strong build files /br
+builddir /strong build directory, usually"+built"./br
+hashes /strong two files with one containing lines from the unix command shasum. The two files are compared looking for identical lines which is used to determine which files have not be changed since the last build.}
 let txtbytes =
- toseqbyte.textformat."if [[/sp-n true /sp]] ; then
- /br:(makeScriptCore(input, builddir, "script" sub 1, hashes)) /br else
- /br shahash of source files
- /br"
+ toseqbyte.textformat."if /sp[[/sp-n true /sp]]; then /br
+ :(makeScriptCore(input, builddir, "script" sub 1, hashes))/br else /br
+ shahash of source files /br
+ "
 let databytes = if isempty.hashes then empty:seq.byte else data.hashes sub 1,
 txtbytes + tobyte.10 + databytes + toseqbyte.textformat."/br fi"
 
@@ -93,23 +93,26 @@ do
   if not.invalue then next(outfn, infn, acc + w, value, newstate, w)
   else
    let name = acc sub (n.acc - 1)
-   let filenames = if n.value < 2 then empty:seq.filename else tofilenames(builddir + value >> 1),
+   let filenames =
+    if n.value < 2 then empty:seq.filename else tofilenames(builddir + value >> 1),
    let newacc = acc + fullnames.filenames + [last, w],
    if name ∈ "output" then next(filenames, infn, newacc, "", newstate, w)
    else next(outfn, infn + filenames, newacc, "", newstate, w)
 assert not.isempty.outfn report "must specify /em output in:/sp:(line)",
 if ext.outfn sub 1 ∈ "lib" ∧ (toseq.cmddef) sub 3 ∉ "shell" then
- for dependlibs = "/br dependlibs /tag _:(name.outfn sub 1) /tag =:(dq)", fn ∈ infn
- do if ext.fn ∈ "libinfo" then dependlibs + "built /tag /:(name.fn).bc" else dependlibs,
+ for dependlibs = "/br dependlibs /nsp _ /nsp:(name.outfn sub 1)/nsp =:(dq)", fn ∈ infn
+ do
+  if ext.fn ∈ "libinfo" then dependlibs + "built /nsp / /nsp:(name.fn).bc"
+  else dependlibs,
  lineinfo(
   outfn
   , infn
   , acc >> 3
-   + dependlibs
-   + dq
-   + "/br linklibrary:(name.outfn sub 1)"
-   + "output:"
-   + fullnames.outfn
+  + dependlibs
+  + dq
+  + "/br linklibrary:(name.outfn sub 1)"
+  + "output:"
+  + fullnames.outfn
   , cmddef
  )
 else lineinfo(outfn, infn, acc >> 3, cmddef)
@@ -135,8 +138,8 @@ else
    let t =
     towords.UTF8(
      subseq(toseqbyte.line, i + 1, j - 1)
-      + tobyte.32
-      + subseq(toseqbyte.line, j + 1, n.toseqbyte.line)
+     + tobyte.32
+     + subseq(toseqbyte.line, j + 1, n.toseqbyte.line)
     ),
    if n.t = 4 then unchanged + filename."+:(t)"
    else if n.t = 1 then unchanged + filename.t
@@ -168,32 +171,29 @@ do
   if aa sub 1 ∈ "define" then next(allfile, defs + cmddef(if n.aa = 3 then aa + aa sub 2 else aa))
   else
    let find = lookup(defs, cmddef("define" + aa sub 1))
-   assert not.isempty.find report "command /em:(aa sub 1) is not defined. ",
+   assert not.isempty.find report "command /em:(aa sub 1)is not defined. ",
    next(allfile + tolineinfo(aa, builddir, find sub 1), defs)
 {build graph}
 for arcs1 = empty:seq.arc.filename, line ∈ toseq.allfile
 do
  let tail = (output.line) sub 1
- for more = arcs1, fn ∈ output.line << 1
- do more + arc(fn, tail),
+ for more = arcs1, fn ∈ output.line << 1 do more + arc(fn, tail),
  for arcs2 = more, fn ∈ input.line do arcs2 + arc(tail, fn),
  arcs2
 let g = newgraph.arcs1
 let unchanged = asset.unchanged.hashes
 let changed = asset.sinks.g \ unchanged \ asset.[filename(builddir + "shell.lib")]
 let outdated = reachable(complement.g, toseq.changed) \ changed
-for changelist = "", n ∈ toseq.changed
-do changelist + fullname.n
-for unchangelist = "", n ∈ toseq.unchanged
-do unchangelist + fullname.n
+for changelist = "", n ∈ toseq.changed do changelist + fullname.n
+for unchangelist = "", n ∈ toseq.unchanged do unchangelist + fullname.n
 let acc2 =
- "set /sp-e
- /br changelist /tag =:(dq.changelist) /br unchangelist /tag =:(dq.unchangelist) /br for f in $changelist $unchangedlist ; do
- /br if ! [/sp-f $f /sp] ; then
- /br echo:(dq."File $f does not exist.") ; exit 1
- /br fi
- /br done
- /br if [[/sp-z $makehash /sp]] ; then"
+ "set /sp-e /br
+ changelist /tag =:(dq.changelist)/br unchangelist /tag =:(dq.unchangelist)/br for f in $changelist $unchangedlist ; do /br
+ if /sp ! /sp[/sp-f $f /sp]/sp ; then /br
+ echo:(dq."File $f does not exist."); exit 1 /br
+ fi /br
+ done /br
+ if /sp[[/sp-z $makehash /sp]]; then"
 for acc = acc2 + "/br # remove outdated files", dated ∈ toseq.outdated
 do acc + "/br rm /sp-f" + fullname.dated
 let subg = subgraph(g, outdated),
@@ -210,12 +210,12 @@ else
    let exe = cmdlib.d,
    let rest = if n.toseq.d < 4 then [cmd] else [(toseq.d) sub 4],
    cmds
-    + "/br function:(cmd) {
-   /br /tag built/:(exe).lib:(rest) $@
-   /br if [/sp-e error.html /sp] ; then
-   /br $tauopen error.html ; exit 1
-   /br fi
-   /br}",
+   + "/br function:(cmd)/sp{/br
+   built/ /nsp:(exe).lib:(rest)$@ /br
+   if /sp[/sp-e error.html /sp]/sp ; then /br
+   $tauopen error.html ; exit 1 /br
+   fi /br
+   }",
  createorder(subg, allfile, acc + cmds) + "/br fi"
 
 Function fullnames(s:seq.filename) seq.word
@@ -235,11 +235,17 @@ else
   else
    let l = line.b sub 1,
    txt
-    + if l sub 1 ∈ "define" then ""
-   else if cmdlib.def.b sub 1 ∈ "shell" then "/br:(shellparameters(toseq.def.b sub 1 << 3, fullnames.input.b sub 1, fullnames.output.b sub 1, line.b sub 1))"
+   + if l sub 1 ∈ "define" then ""
+   else if cmdlib.def.b sub 1 ∈ "shell" then
+    "/br:(shellparameters(
+     toseq.def.b sub 1 << 3
+     , fullnames.input.b sub 1
+     , fullnames.output.b sub 1
+     , line.b sub 1
+    ))"
    else
     let l1 = if subseq(l, 2, 3) = "input: " then [l sub 1] + l << 3 else l,
-    "/br echo making:((output.b sub 1) sub 1) /br:(l1)",
+    "/br echo making:((output.b sub 1) sub 1)/br:(l1)",
  createorder(
   subgraph(g, nodes.g \ asset.sinks)
   , defs
@@ -259,7 +265,7 @@ else
   if w ∈ ":" then
    next(
     out >> 1
-     + (if last ∈ "input" then input
+    + (if last ∈ "input" then input
     else if last ∈ "output" then output
     else extractValue(other, [last]))
     , w

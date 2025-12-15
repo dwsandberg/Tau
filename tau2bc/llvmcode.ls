@@ -83,19 +83,19 @@ Function bcwordsep char char.255
 
 builtin callstack(n:int) seq.int
 
-Function getbcwords3(fn:filename) seq.char decodeUTF8.UTF8(getfile.tocstr.fullname.fn << 16)
+Function getbcwords3(fn:filename) seq.char
+decodeUTF8.UTF8(getfile.tocstr.fullname.fn << 16)
 
 Function stackTraceImp seq.word
-for acc = empty:seq.addrsym, e ∈ addresssymbols
-do acc + e
+for acc = empty:seq.addrsym, e ∈ addresssymbols do acc + e
 let t = sort.acc
 for txt = "/p", r ∈ callstack.30 << 2
 do
  let i = binarysearch(t, addrsym(r, Lit.1)),
  txt
-  + %.r
-  + (if between(-i - 1, 1, n.t) then %.sym.t sub (-i - 1) else "")
-  + "/br",
+ + %.r
+ + (if between(-i - 1, 1, n.t) then %.sym.t sub (-i - 1) else "")
+ + "/br",
 txt
 
 -------------------------------
@@ -104,7 +104,7 @@ Function tocstr(w:word) seq.byte
 {returns 16 bytes of header followed by UTF8 bytes ending with 0 byte.}
 packed(toseqbyte(emptyUTF8 + decodeword.w) + tobyte.0)
 
-builtin getbytefile2(seq.byte) process.seq.byte {OPTION STATE}
+builtin getbytefile2(seq.byte) process.seq.byte{OPTION STATE}
 
 Function getfiles(b:seq.seq.filename) seq.seq.file
 for acc = empty:seq.seq.file, fileNames ∈ b
@@ -113,9 +113,8 @@ do
  do
   let a = getbytefile2.tocstr.fullname.fn,
   acc1
-   + if aborted.a then
-   for UTF8msg = emptyUTF8, w ∈ "500 Error opening file"
-   do UTF8msg + decodeword.w + char.32,
+  + if aborted.a then
+   for UTF8msg = emptyUTF8, w ∈ "500 Error opening file" do UTF8msg + decodeword.w + char.32,
    file(fn, empty:seq.seq.byte, UTF8msg)
   else file(fn, [result.a + body2.a], emptyUTF8 + decodeword."200" sub 1),
  acc + acc1
@@ -151,7 +150,8 @@ if v3 = 0 then empty:seq.int
 else
  let v1 = lookup.deepcopySym.resulttype.ctsym
  let v2 = lookup.deepcopySym.seqof.typeword
- let p = createthread(c.bitcast:dummyrec2(toptr.packed([v1, v2, v3] + stk)), buildargcode(ctsym, typedict)),
+ let p =
+  createthread(c.bitcast:dummyrec2(toptr.packed([v1, v2, v3] + stk)), buildargcode(ctsym, typedict)),
  assert not.aborted.p report message.p,
  [result.p]
 

@@ -288,4 +288,4 @@ use seq.int
 
 Function seqseg2(s:seq.int, i:int) pseq.int seqseg(s, i)
 
-Function red(s:seq.word) seq.word "<* literal:(s)*>" 
+Function red(s:seq.word) seq.word "//:(s)/literal" 

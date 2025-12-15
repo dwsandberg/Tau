@@ -14,7 +14,7 @@ use seq.filename
 
 use format1a
 
-use format4
+use markup
 
 use standard
 
@@ -46,7 +46,7 @@ Function textFormat1(myinput:seq.word) UTF8 textFormat1a.myinput
 
 Function HTMLformat(s:seq.word) UTF8 HTMLformat1.s
 
-Function textformat(s:seq.word) UTF8 textFormat4.s
+Function textformat(s:seq.word) UTF8 textFormat1.s
 
 type filename is dirpath:word, name:word, ext:word
 
@@ -75,10 +75,12 @@ file(getname.name, bytes)
 
 Function file(name:seq.word, bytes:seq.byte) file file(getname.name, bytes)
 
+use markup
+
 Function file(fn:filename, out:seq.word) file
 {OPTION NOINLINE}
 let bytes =
- if ext.fn ∈ "html" then toseqbyte(HTMLheader + HTMLformat.out)
+ if ext.fn ∈ "html" then toseqbyte.processTXT(["//../tau.css /link" + out], stdCSS, false, "en")
  else toseqbyte.textformat.out
 let bytes1 =
  if isempty.bytes ∨ bytes sub n.bytes = tobyte.10 then bytes else bytes + tobyte.10,

@@ -50,12 +50,7 @@ dict1
  + placeholder(".forc", resulttype.thisnesting)
 
 function placeholder(name:seq.word, basetype:mytype) symbol
-symbol(
- moduleref("internallib $for", basetype)
- , [merge.".:(name)"]
- , empty:seq.mytype
- , basetype
-)
+symbol(moduleref("internallib $for", basetype), [merge.".:(name)"], empty:seq.mytype, basetype)
 
 Function addAccum(
 dict:symboldict
@@ -64,7 +59,8 @@ dict:symboldict
 , oldnesting:set.symbol
 , elementSym:symbol
 ) symboldict
-let nestingsym = symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
+let nestingsym =
+ symbol(moduleref("internallib $for", basetype), "for", empty:seq.mytype, basetype)
 let tmp =
  if isempty.oldnesting then [nextSym, elementSym]
  else [nextSym, elementSym, oldnesting sub 1, getCode(requires.dict, oldnesting sub 1) sub 1]

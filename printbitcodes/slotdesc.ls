@@ -82,7 +82,7 @@ do
     + %.findtype(slots, rec sub 8))
     + "=:(rec sub 7)"
   else if rec sub 1 = toint.CCAST then
-   if(rec sub 2 = 9 ∧ typ.k = 0
+   if (rec sub 2 = 9 ∧ typ.k = 0
    ∨ rec sub 2 = 11 ∧ types sub (typ.k + 1) = "double")
    ∧ findtype(slots, rec sub 4) ∈ [rec sub 3, -1] then result + z
    else
@@ -90,7 +90,7 @@ do
     + (z
     + "ERROR"
     + (types sub (typ.k + 1) + %.findtype(slots, rec sub 4) + %.rec sub 3))
-  else if(rec.k) sub 1 = toint.CINTEGER then
+  else if (rec.k) sub 1 = toint.CINTEGER then
    if types sub (typ.k + 1) ∈ ["i64", "i32"] then result + z
    else result + (z + "ERROR" + types sub (typ.k + 1))
   else result + z,
@@ -121,23 +121,23 @@ do
  if typ.sd = -1 then
   let typ = types sub (a sub 2 + 1)
   let name1 = names sub (n.result + 1)
-  let name = if name1 = "undefinedname" sub 1 then "" else[name1]
+  let name = if name1 = "undefinedname" sub 1 then "" else [name1]
   let kk = n.result,
   let new =
    if a sub 1 = toint.GLOBALVAR then
     assert n.a > 5 report "Bad format"
     let init =
      if a sub 4 = 0 then "0,"
-     else if a sub 4 - 1 > n.result then "toint.slot (" + toword(a sub 4 - 1) + ")+1,"
+     else if a sub 4 - 1 > n.result then "toint.slot(" + toword(a sub 4 - 1) + ")+1,"
      else "toint.:(result sub (a sub 4))+1,",
-    "modulerecord (:(dq):(name):(dq + ", [toint.GLOBALVAR, typ."):(typ),"
-     + toword.a sub 3
-     + ","
-     + init
-     + %(",", subseq(a, 5, n.a)) >> 1
-     + "]"
-   else "modulerecord (:(dq):(name):(dq + ", [toint.FUNCTIONDEC, typ."):(typ),:(%(",", subseq(a, 3, n.a)) >> 1)]",
-  result + (if check then new + "," + printrecord(MODULE, a) + ")" else new + ")")
+    "modulerecord(:(dq):(name):(dq + ",[toint.GLOBALVAR, typ."):(typ),"
+    + toword.a sub 3
+    + ","
+    + init
+    + %(",", subseq(a, 5, n.a)) >> 1
+    + "]"
+   else "modulerecord(:(dq):(name):(dq + ",[toint.FUNCTIONDEC, typ."):(typ),:(%(",", subseq(a, 3, n.a)) >> 1)]",
+  result + if check then new + "," + printrecord(MODULE, a) + ")" else new + ")"
  else
   let currenttype = types sub (typ.sd + 1)
   let b =
@@ -146,34 +146,34 @@ do
     else if currenttype = "i32" then "C32." + toword.a sub 2
     else currenttype + [toword.a sub 2]
    else
-    {if a # 1 = AGGREGATE then let eletype = subseq (currenttype, 4, n.currenttype-1)" ["+@ (seperator.",", lookupconst.result,"", subseq (a, 2, n.a))+"]" else}
+    {if a # 1 = AGGREGATE then let eletype = subseq(currenttype, 4, n.currenttype-1)"["+@(seperator.",", lookupconst.result,"", subseq(a, 2, n.a))+"]"else}
     if a sub 1 = toint.CCAST ∧ castop.a sub 2 = ptrtoint then
      let objno = checkobjref(s, types, sd),
      if objno ≥ 0 ∧ objects then "obj.:(objno)"
      else
       assert currenttype = "i64" report "not expecting type in prttoint:(currenttype):(types sub (a sub 3 + 1))",
-      "ptrtoint (:(lookupconst(result, a sub 4)),:(types sub (a sub 3 + 1)):(if check then ",:(printrecord(CONSTANTS, a)))" else ")")"
+      "ptrtoint(:(lookupconst(result, a sub 4)),:(types sub (a sub 3 + 1)):(if check then ",:(printrecord(CONSTANTS, a)))" else ")")"
     else if a sub 1 = toint.CGEP ∧ n.a = 8 ∧ check then
-     "CGEP (:(if a sub 2 = 1 then "conststype" else types sub (a sub 3 + 1)),:(lookupconst(result, a sub 4)
-      + ","
-      + lookupconst(result, a sub 6)
-      + ","
-      + lookupconst(result, a sub 8)
-      + ","
-      + printrecord(CONSTANTS, a)
-      + ")")"
+     "CGEP(:(if a sub 2 = 1 then "conststype" else types sub (a sub 3 + 1)),:(lookupconst(result, a sub 4)
+     + ","
+     + lookupconst(result, a sub 6)
+     + ","
+     + lookupconst(result, a sub 8)
+     + ","
+     + printrecord(CONSTANTS, a)
+     + ")")"
     else if a sub 1 = toint.CGEP ∧ n.a = 8 then
      let a8 = lookupconst(result, a sub 8)
      let a6 = lookupconst(result, a sub 6),
-     (if currenttype = "ptr.i8" then "CGEPi8 (" else "CGEP (")
-      + lookupconst(result, a sub 4)
-      + ","
+     (if currenttype = "ptr.i8" then "CGEPi8(" else "CGEP(")
+     + lookupconst(result, a sub 4)
+     + ","
      + (if a6 = "C32.0" ∧ subseq(a8, 1, 2) = "C64." then [a8 sub 3]
      else a6 + "," + a8)
-      + (if check then ",:(printrecord(CONSTANTS, a)))" else ")")
+     + if check then ",:(printrecord(CONSTANTS, a)))" else ")"
     else
      assert constop.a sub 1 ∈ [CAGGREGATE, CNULL, CDATA, CCAST] report "KL:(decode.constop.a sub 1)" + toword.a sub 1,
-     "C (:(currenttype),:(printrecord(CONSTANTS, a)))",
+     "C(:(currenttype),:(printrecord(CONSTANTS, a)))",
   result + b,
 result
 
@@ -184,13 +184,13 @@ if a sub 1 = toint.CCAST ∧ castop.a sub 2 = ptrtoint then
  let gep = rec.slots sub (a sub 4 + 1),
  if gep sub 1 = toint.CGEP
  ∧ n.gep = 8
- ∧ {assume list is first slot} gep sub 4 = 0
+ ∧ {assume list is first slot}gep sub 4 = 0
  ∧ types sub (gep sub 5 + 1) = "i32"
  ∧ types sub (gep sub 7 + 1) = "i64"
  ∧ rec.slots sub (gep sub 6 + 1) = [toint.CINTEGER, 0]
- ∧ (rec.slots sub (gep sub 8 + 1)) sub 1 = toint.CINTEGER then (rec.slots sub (gep sub 8 + 1)) sub 2
- else-1
-else-1
+ ∧ (rec.slots sub (gep sub 8 + 1)) sub 1 = toint.CINTEGER then(rec.slots sub (gep sub 8 + 1)) sub 2
+ else -1
+else -1
 
 Function obj2txt(objects:seq.objectfldslots, slots:seq.seq.word) seq.word
 for acc = "", e ∈ objects
@@ -215,7 +215,7 @@ do
  let gep = rec.e,
  if gep sub 1 = toint.CGEP
  ∧ n.gep = 8
- ∧ {assume list is first slot} gep sub 4 = 0
+ ∧ {assume list is first slot}gep sub 4 = 0
  ∧ types sub (gep sub 5 + 1) = "i32"
  ∧ types sub (gep sub 7 + 1) = "i64"
  ∧ rec.slots sub (gep sub 6 + 1) = [toint.CINTEGER, 0]

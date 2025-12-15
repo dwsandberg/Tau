@@ -66,7 +66,7 @@ let result1 =
  the word.occurs 408 times./br
  the word, occurs 460 times.",
 if subseq(result, 1, 8) = subseq(result1, 1, 8) then "PASS wordfreq"
-else "<* literal FAIL wordfreq *>"
+else "// FAIL wordfreq /literal"
 
 function testdata seq.seq.word
 [

@@ -77,38 +77,38 @@ input:seq.file
 , include:seq.word
 , exclude:seq.word
 , order:seq.word
-) seq.byte
+) seq.word
 {COMMAND PROFILE /strong usegraph graphs /em use relationship between modules in source code. /br
 /br
 options: /br
-/strong exclude lists the modules to ignore in the use clauses. /br
-/strong include restricts the modules considered to those listed./br
-/strong order finds ordering of modules so for any arc in graph, the tail occurs before the head. <* block • /strong nograph Does not include graph in output. *> /p
-Examples:<* block > usegraph /sp+built core.libsrc // //../documentation/Ex1usegraph.html /href Result /a /br
+exclude /strong lists the modules to ignore in the use clauses. /br
+include /strong restricts the modules considered to those listed./br
+order /strong finds ordering of modules so for any arc in graph, the tail occurs before the head. /br
+// nograph Does not include graph in output. /block /p
+Examples: // usegraph /sp+built core.libsrc // //../documentation/Ex1usegraph.html /href Result /a /br
 > usegraph /sp+built core.libsrc exclude: seq standard // //../documentation/Ex2usegraph.html /href Result /a /br
 > usegraph /sp+built core.libsrc include: UTF8 words standard textio exclude: seq standard // //../documentation/Ex3usegraph.html /href Result /a /br
-> usegraph /sp+core UTF8.ls textio words standard encoding xxhash exclude = seq standard *> /p
+> usegraph /sp+core UTF8.ls textio words standard encoding xxhash exclude = seq standard /block /p
+/p
 The last two examples give the same result. The first excludes modules from consideration and the second only includes source files of modules that should be included. }
-let words =
- if not.isempty.order then
-  let allmodules = topasssymbols.breakparagraph.input
-  for used = empty:set.modref, e ∈ allmodules
-  do if isAbstract.modname.e then used else used ∪ uses.e + modname.e
-  let backarcs = expand(toseq.used, asset.allmodules, true)
-  let g0 = newgraph.toseq.backarcs
-  let before = reverse.orderNodes(nodes.g0, arcs.g0),
-  let check = check(before, toseq.arcs.g0),
-  (if isempty.check then "Good Ordering" else "FailedOrdering:(check)")
-  + {???? allow compound names in include such as encoding.seq.char} "/p ordering::(before)"
-  + if "nograph" sub 1 ∈ order then ""
-  else
-   for wordarcs = empty:seq.arc.word, e ∈ toseq.arcs.g0
-   do if head.e = tail.e then wordarcs else wordarcs + arc(merge.%.tail.e, merge.%.head.e),
-   drawgraph(wordarcs, asset.include, asset.exclude)
+if not.isempty.order then
+ let allmodules = topasssymbols.breakparagraph.input
+ for used = empty:set.modref, e ∈ allmodules
+ do if isAbstract.modname.e then used else used ∪ uses.e + modname.e
+ let backarcs = expand(toseq.used, asset.allmodules, true)
+ let g0 = newgraph.toseq.backarcs
+ let before = reverse.orderNodes(nodes.g0, arcs.g0),
+ let check = check(before, toseq.arcs.g0),
+ (if isempty.check then "Good Ordering" else "FailedOrdering:(check)")
+ + {???? allow compound names in include such as encoding.seq.char} "/p ordering::(before)"
+ + if "nograph" sub 1 ∈ order then ""
  else
-  let arcs = usegraph.breakparagraph.input,
-  drawgraph(arcs, asset.include, asset.exclude),
-toseqbyte(HTMLheader + HTMLformat1.words)
+  for wordarcs = empty:seq.arc.word, e ∈ toseq.arcs.g0
+  do if head.e = tail.e then wordarcs else wordarcs + arc(merge.%.tail.e, merge.%.head.e),
+  drawgraph(wordarcs, asset.include, asset.exclude)
+else
+ let arcs = usegraph.breakparagraph.input,
+ drawgraph(arcs, asset.include, asset.exclude)
 
 function %(a:set.modref) seq.word %.toseq.a
 

@@ -159,7 +159,7 @@ Function isdefine(a:classinfo) boolean (flags.a ∧ bits.8) = bits.8
 
 Function isnamedmark(a:classinfo) boolean (flags.a ∧ bits.16) = bits.16
 
-function print(t:seq.classinfo) seq.word
+Function print(t:seq.classinfo) seq.word
 for acc = "", e ∈ t
 do
  if isendtag.e then acc

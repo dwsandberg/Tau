@@ -35,43 +35,45 @@ let z =
   , compare(in, "n.[1, 2]", "n([1, 2])")
   , testerror(
    in
-   , "<* literal In module testit name of field is missing in: *>"
+   , "// In module testit name of field is missing in: /literal"
    , "type testtype is a:int, int"
   )
-  , {???? testerror(in,"<* literal syntax error *>","function f1(a:int)boolean(a"), testerror(in,"<* literal syntax error *>","function f1(a:int)boolean[a"), testerror(in,"<* literal syntax error *>","function f1(a:int)boolean[a+"),}
-  testerror(
+  , testerror(in, "// cannot find 1(()/literal", "function f1(a:int)boolean(a")
+  , testerror(in, "// cannot find 1[()/literal", "function f1(a:int)boolean[a")
+  , testerror(in, "// cannot find 1[()/literal", "function f1(a:int)boolean[a+")
+  , testerror(
    in
    , "Function f1 is defined twice in module testit"
    , "function f1(a:int)int 3 /p function f1(a:int)int 3"
   )
   , testerror(
    in
-   , "<* literal then and else types are different *>"
+   , "// then and else types are different /literal"
    , "function f1(a:int)int if true then true else 0"
   )
   , testerror(
    in
-   , "<* literal cond of if must be boolean but is int *>"
+   , "// cond of if must be boolean but is int /literal"
    , "function f1(a:int)int if 1 then 2 else 3"
   )
   , testerror(
    in
-   , "<* literal condition in assert must be boolean"
+   , "// condition in assert must be boolean in:/literal"
    , "function f1(a:int)int assert 1 report 2, 3"
   )
   , testerror(
    in
-   , "<* literal report in assert must be seq of word in:"
+   , "// report in assert must be seq of word in:/literal"
    , "function f1(a:int)int assert true report 2, 3"
   )
   , testerror(
    in
-   , "function f1(z:hhh)<* literal cannot resolve type hhh *>"
+   , "function f1(z:hhh)// cannot resolve type hhh /literal"
    , "function f1(z:hhh)int 3"
   )
   , testerror(
    in
-   , "function f1(z:int)xxx 3 <* literal cannot resolve type xxx *>"
+   , "function f1(z:int)xxx 3 // cannot resolve type xxx /literal"
    , "function f1(z:int)xxx 3"
   )
   , testerror(in, "recursive type problem:", "type testtype is fld1:testtype, fld2:int")
@@ -177,7 +179,7 @@ let x =
  for acc = "", i ∈ arithseq(n.y, 1, 1)
  do if y sub i = b sub i then acc else acc + toword.i,
  acc,
-if x = "" then "PASS:(testname)" else "<* literal FAILED *> test:(x)in:(testname)"
+if x = "" then "PASS:(testname)" else "// FAILED /literal test:(x)in:(testname)"
 
 function x(a:int) checkprec checkprec.[toword.a]
 

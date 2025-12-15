@@ -115,22 +115,19 @@ do
      let k2 =
       if n.k21 < 2 then k21
       else
-       for acc = empty:set.symbol, sy ∈ toseq.k21
-       do if isunbound.sy then acc else acc + sy,
+       for acc = empty:set.symbol, sy ∈ toseq.k21 do if isunbound.sy then acc else acc + sy,
        if isempty.acc then k21 else acc,
      if isempty.k2 then instantiateTemplate(symz, templates)
      else
       assert n.k2 = 1 report
        "unbound problem:(symz):(if n.k2 > 1 then
-        for txt = "", symt ∈ toseq.k2
-        do txt + "/br" + library.module.symt + %.symt,
+        for txt = "", symt ∈ toseq.k2 do txt + "/br" + library.module.symt + %.symt,
         txt
        else "")"
       let sym2 = k2 sub 1,
       let b2 = getSymdef(source, sym2),
       if not.isempty.b2 then
-       for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1)
-       do paras + Local.i,
+       for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1) do paras + Local.i,
        symdef(sym2, paras + sym2, paragraphno.b2 sub 1)
       else instantiateTemplate(sym2, templates)
    {------------}
@@ -138,7 +135,7 @@ do
    for
     newdict4 = newdict2
     , cache = empty:set.symdef
-    , nextvar = {will be calculated if needed} 0
+    , nextvar = {will be calculated if needed}0
     , result1 = empty:seq.symbol
     , sym3 ∈ code.sd
    do
@@ -156,7 +153,8 @@ do
       else sym5,
      next(newdict4, cache, nextvar, result1 + newsym)
     else
-     let newdict3 = if isSimple.module.sym4 then newdict4 else addtype(newdict4, para.module.sym4),
+     let newdict3 =
+      if isSimple.module.sym4 then newdict4 else addtype(newdict4, para.module.sym4),
      if name.sym5 ∈ "pushflds" ∧ isBuiltin.sym5 then
       let typ = para.module.sym5,
       next(
@@ -190,7 +188,7 @@ do
         else xx << nopara.sym5
       let result2 = if kind.sym3 = kfref then result1 + PreFref else result1,
       let newValue2 =
-       if not.isempty.result2 ∧ kind.result2 sub n.result2 = kprefref ∧ n.newValue ≠ 1 then {cannot inline Fref} [sym5]
+       if not.isempty.result2 ∧ kind.result2 sub n.result2 = kprefref ∧ n.newValue ≠ 1 then{cannot inline Fref}[sym5]
        else newValue,
       next(
        newdict3
@@ -221,24 +219,27 @@ acc
 
 function blockitsymbol(T:mytype) seq.symbol
 let para = parameter.T,
-if para ∈ [typeint, typeptr, typereal] then [symbol(moduleref("* taublockseq", para), "blockit3", [T], T)]
+if para ∈ [typeint, typeptr, typereal] then[symbol(moduleref("* taublockseq", para), "blockit3", [T], T)]
 else
- let i = findindex([typepacked2, typepacked3, typepacked4, typepacked5, typepacked6], para),
- if i < 6 then [Lit(i + 1), symbol(moduleref("* taublockseq", para), "blockit2", [T, typeint], T)]
+ let i =
+  findindex([typepacked2, typepacked3, typepacked4, typepacked5, typepacked6], para),
+ if i < 6 then[Lit(i + 1), symbol(moduleref("* taublockseq", para), "blockit2", [T, typeint], T)]
  else
   assert para = typebyte report "????:(T)",
   [symbol(moduleref."* tausupport", "blockIt", [T], T)]
 
 function handleBuiltin(sym:symbol, newdict3:typedict) seq.symbol
 if name.sym ∈ "finishStart" then
- let geteinfo2Sym = symbol(moduleref."* encodingsupport", "geteinfo2", [typeint, typeint], typeptr)
+ let geteinfo2Sym =
+  symbol(moduleref."* encodingsupport", "geteinfo2", [typeint, typeint], typeptr)
  let updateSym = symbol(moduleref."* encodingsupport", "evectorUpdate", [typeptr], typeptr)
- let critial = symbol(internalmod, "critical", [typeint, typeint, typeptr, typeint], typeptr),
+ let critial =
+  symbol(internalmod, "critical", [typeint, typeint, typeptr, typeint], typeptr),
  let currentprocess = symbol(internalmod, "currentprocess", typeptr),
  [
   Lit.0
   , currentprocess
-  , {paranetprocess} Lit.7
+  , {paranetprocess}Lit.7
   , Getfld.typeptr
   , PreFref
   , geteinfo2Sym
@@ -248,8 +249,10 @@ if name.sym ∈ "finishStart" then
 else if name.sym ∈ "indirect fromindirect" then empty:seq.symbol
 else if name.sym ∈ "getinstance3" then
  let typ = para.module.sym
- let gl = symbol4(moduleref."internallib $global", "global" sub 1, typ, empty:seq.mytype, typeptr)
- let mysym = symbol(moduleref."* encodingsupport", "geteinfo", [typeptr, seqof.typeword], typeptr),
+ let gl =
+  symbol4(moduleref."internallib $global", "global" sub 1, typ, empty:seq.mytype, typeptr)
+ let mysym =
+  symbol(moduleref."* encodingsupport", "geteinfo", [typeptr, seqof.typeword], typeptr),
  let discard = symbolref.mysym,
  [gl, Words.fullprint.typ, mysym]
 else if name.sym ∈ "primitiveadd" then
@@ -261,10 +264,11 @@ else if name.sym ∈ "primitiveadd" then
   symbol(
    internalmod
    , {addencoding5} "addencoding5"
-   , [typeptr, {typeint} typeptr, typeint]
+   , [typeptr, {typeint}typeptr, typeint]
    , typeint
   )
- let addefuncx = symbol(moduleref("* encoding", T), "add1encoding", [typeptr, T], encodingtype)
+ let addefuncx =
+  symbol(moduleref("* encoding", T), "add1encoding", [typeptr, T], encodingtype)
  let discard4 = symbolref.addefuncx,
  let discard3 = symbolref.add2,
  [Record.[basetype], PreFref, addefuncx, add2]
@@ -287,15 +291,15 @@ else if name.sym ∈ "typestructure" then
  for acc = empty:seq.symbol, row ∈ tmp
  do
   acc
-   + for accrow = empty:seq.symbol, t ∈ row
+  + for accrow = empty:seq.symbol, t ∈ row
   do
    let fp = fullprint.t,
    accrow
-    + for acctype = empty:seq.symbol, idx = 1, w ∈ fp
+   + for acctype = empty:seq.symbol, idx = 1, w ∈ fp
    do
     next(
      acctype
-      + (if idx < 3 then [Word.w] else [Word.w, Record.[typeword, typeword, typeword]])
+     + (if idx < 3 then [Word.w] else [Word.w, Record.[typeword, typeword, typeword]])
      , if idx = 3 then 1 else idx + 1
     ),
    acctype + Sequence(typeword, n.fp / 3),
@@ -339,12 +343,14 @@ if isSimple.module.sym2 then symdef(sym2, empty:seq.symbol, 0)
 else
  let gx = findabstract(templates, sym2)
  let tmp =
-  if n.gx = 2 ∧ not.isSimple.modpara.gx sub 1 ∧ parameter.modpara.gx sub 1 = modpara.gx sub 2 then {???? generalize?} gx sub 2
+  if n.gx = 2
+  ∧ not.isSimple.modpara.gx sub 1
+  ∧ parameter.modpara.gx sub 1 = modpara.gx sub 2 then{???? generalize?}gx sub 2
   else
    assert n.gx = 1 report
     "Cannot find template for X:(n.gx):(sym2):(if isempty.gx then
-     {for txt ="", e ∈toseq.templates do if name.sym.e = name.sym2 then txt+"
-     /br:(sym.e)" else txt}
+     {for txt ="", e ∈toseq.templates do if name.sym.e = name.sym2 then txt+"/br
+     :(sym.e)"else txt}
      ""
     else
      for txt = "", k ∈ gx do txt + "/br" + %.sym.sd.k + %.modpara.k,
@@ -354,9 +360,8 @@ else
  for newcode = empty:seq.symbol, sym4 ∈ code.sd.tmp
  do
   newcode
-   + if kind.sym4 = krecord then
-   for newtypes = empty:seq.mytype, e ∈ paratypes.sym4
-   do newtypes + replaceT(modpara.tmp, e),
+  + if kind.sym4 = krecord then
+   for newtypes = empty:seq.mytype, e ∈ paratypes.sym4 do newtypes + replaceT(modpara.tmp, e),
    if newtypes = paratypes.sym4 then sym4 else Record.newtypes
   else replaceTsymbol(modpara.tmp, sym4),
  symdef4(sym2, newcode, 0, options.sd.tmp)
@@ -375,21 +380,21 @@ else if isseq.type then
  let masterindex = 6,
  let theseqtype = basetype,
  [Sequence(elementtype, 0)]
-  + [Local.theseq, GetSeqLength, Define.totallength]
-  + Lit.0
-  + Loopblock([theseqtype, typeint], 2, theseqtype)
-  + [Local.lastidx, Local.totallength, EqOp, Br2(1, 2), Local.2, Exit]
-  + [Local.lastidx, Lit.1, PlusOp, Define.masterindex]
-  + [Local.theseq, Local.masterindex, symIdxNB.parameter.theseqtype, Define.theelement]
-  + [Local.2, Local.theelement, deepcopySym.parameter.type, cat]
-  + [Local.masterindex, continue.2]
-  + [EndBlock]
-  + blockitsymbol.basetype
+ + [Local.theseq, GetSeqLength, Define.totallength]
+ + Lit.0
+ + Loopblock([theseqtype, typeint], 2, theseqtype)
+ + [Local.lastidx, Local.totallength, EqOp, Br2(1, 2), Local.2, Exit]
+ + [Local.lastidx, Lit.1, PlusOp, Define.masterindex]
+ + [Local.theseq, Local.masterindex, symIdxNB.parameter.theseqtype, Define.theelement]
+ + [Local.2, Local.theelement, deepcopySym.parameter.type, cat]
+ + [Local.masterindex, continue.2]
+ + [EndBlock]
+ + blockitsymbol.basetype
 else
  let subflds = flatflds(typedict, type),
  if n.subflds = 1 then
-  {only one element in record so type is not represent by actual record} [Local.1]
-   + deepcopySym.subflds sub 1
+  {only one element in record so type is not represent by actual record}[Local.1]
+  + deepcopySym.subflds sub 1
  else
   for fldno = 1, fldkinds = empty:seq.mytype, result = empty:seq.symbol, fldtype ∈ subflds
   do
@@ -410,9 +415,9 @@ function symbolref(sym:symbol) symbolref symbolref.addorder.sym
 -------------------------------
 
 Function prescan2(s:seq.symdef, typedict:typedict) seq.symdef
-{removes name from locals and makes value of local unique.
-/br changes length and getseqtype to GetSeqLength and GetSeqType
-/br removes next in for loops}
+{removes name from locals and makes value of local unique./br
+changes length and getseqtype to GetSeqLength and GetSeqType /br
+removes next in for loops}
 for acc = empty:seq.symdef, p ∈ s
 do
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.sym.p, 1, 1)
@@ -442,8 +447,7 @@ do
    for newmap = map, v ∈ arithseq(nopara.sym, 1, firstvar.sym)
    do localmap2(v, [Local(v + offset)]) ∪ newmap,
    let newsym =
-    for acc2 = empty:seq.mytype, para ∈ paratypes.sym
-    do acc2 + basetype(para, newdict),
+    for acc2 = empty:seq.mytype, para ∈ paratypes.sym do acc2 + basetype(para, newdict),
     Loopblock(acc2, nextvar, basetype(resulttype.sym, newdict)),
    next(
     nextvar + nopara.sym
@@ -452,7 +456,9 @@ do
     , add(newdict, typebase.firstvar.sym, [resulttype.sym])
     , push(lastloop, sym)
    )
-  else if kind = kexit ∧ name.module.result sub n.result ∈ "$for" ∧ name.result sub n.result ∈ "next" then
+  else if kind = kexit
+  ∧ name.module.result sub n.result ∈ "$for"
+  ∧ name.result sub n.result ∈ "next" then
    let f = result sub n.result
    let continueSize = nopara.top.lastloop,
    let newresult =
@@ -482,7 +488,7 @@ do
     nextvar
     , map
     , result
-     + (if not.isBuiltin.sym then sym
+    + (if not.isBuiltin.sym then sym
     else if name.sym ∈ "assert" then
      let typ = basetype(para.module.sym, newdict),
      symbol(internalmod, "assert", [seqof.typeword], typeint)
@@ -505,8 +511,7 @@ do
   for acc2 = acc, sym ∈ toseq.exports.f do symbolref.sym,
   acc2
  else
-  for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f
-  do acc2 + getCode(prg10, sym)
+  for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f do acc2 + getCode(prg10, sym)
   for acc3 = acc, sym2 ∈ toseq.asset.acc2
   do
    if isAbstract.module.sym2 then acc3
@@ -514,7 +519,7 @@ do
    else if false then if kind.sym2 ∈ isOrdinary then symbolref.sym2 else acc3
    else if isconstantorspecial.sym2 ∨ isBuiltin.sym2 then acc3
    else
-    {assert kind.sym2 ∈ (isOrdinary+[knot, kinternalmod]) report" GG5:(kind.sym2)"}
+    {assert kind.sym2 ∈(isOrdinary+[knot, kinternalmod])report"GG5:(kind.sym2)"}
     symbolref.sym2,
   acc3,
 acc

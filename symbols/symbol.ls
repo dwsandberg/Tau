@@ -34,9 +34,9 @@ Export type:symbolKind
 
 Export toint(symbolKind) int
 
-Export ∈(symbolKind, seq.symbolKind) boolean {From seq.symbolKind}
+Export ∈(symbolKind, seq.symbolKind) boolean{From seq.symbolKind}
 
-Export type:set.symbol {From set.symbol}
+Export type:set.symbol{From set.symbol}
 
 type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, flags:bits
 
@@ -53,8 +53,7 @@ do
 result
 
 Function changelibrary(s:symbol, map:seq.word) symbol
-for newtypes = empty:seq.mytype, t ∈ types.s
-do newtypes + changelibrary(t, map),
+for newtypes = empty:seq.mytype, t ∈ types.s do newtypes + changelibrary(t, map),
 symbol(
  worddata.s
  , moduleref([maplibrary(library.module.s, map), name.module.s], para.module.s)
@@ -81,15 +80,20 @@ let flags = flags.s ∧ (bits.-1 ⊻ requiresbit),
 if flags = flags.s then s else symbol(worddata.s, module.s, types.s, raw.s, flags)
 
 Function =(a:symbol, b:symbol) boolean
-types.a >> 1 = types.b >> 1 ∧ worddata.a = worddata.b ∧ module.a = module.b ∧ kind.a = kind.b
+types.a >> 1 = types.b >> 1
+ ∧ worddata.a = worddata.b
+ ∧ module.a = module.b
+ ∧ kind.a = kind.b
 
-/Function same (a:symbol, b:symbol) boolean types.a = types.b ∧ worddata.a = worddata.b ∧ flags.a = flags.b ∧ raw.a = raw.b ∧ name.module.a = name.module.b ∧ para.module.a = para.module.b ∧ library.module.a = library.module.b
+/Function same(a:symbol, b:symbol)boolean types.a = types.b ∧ worddata.a = worddata.b ∧ flags.a = flags.b ∧ raw.a = raw.b ∧ name.module.a = name.module.b ∧ para.module.a = para.module.b ∧ library.module.a = library.module.b
 
 Function >1(a:symbol, b:symbol) ordering
 a >2 b ∧ module.a >1 module.b ∧ toint.kind.a >1 toint.kind.b
 
 Function >2(a:symbol, b:symbol) ordering
-worddata.a >1 worddata.b ∧ types.a >> 1 >1 types.b >> 1 ∧ issimplename.a >1 issimplename.b
+worddata.a >1 worddata.b
+ ∧ types.a >> 1 >1 types.b >> 1
+ ∧ issimplename.a >1 issimplename.b
 
 Function privatefields(s:symbol) seq.int [toint.raw.s, toint.flags.s]
 
@@ -103,7 +107,7 @@ Function kind(s:symbol) symbolKind symbolKind.toint(flags.s ∧ mask(flagshift -
 
 Function issimplename(sym:symbol) boolean
 kind.sym
-∉ [kcompoundname, kbuiltincompound, kloop, kabortR, kabortI, kabortB, kabortP, kglobal]
+ ∉ [kcompoundname, kbuiltincompound, kloop, kabortR, kabortI, kabortB, kabortP, kglobal]
 
 Function isconst(s:symbolKind) boolean
 s ∈ [kfref, kwords, kword, kint, kreal, kfalse, ktrue, kconstantrecord]
@@ -127,8 +131,7 @@ Function replaceTsymbol(with:mytype, sym:symbol) symbol
 let kind = kind.sym,
 if with = typeT ∨ isconst.kind ∨ not(kind = kstart ∨ isAbstract.module.sym) then sym
 else
- for newtypes = empty:seq.mytype, t ∈ types.sym
- do newtypes + replaceT(with, t)
+ for newtypes = empty:seq.mytype, t ∈ types.sym do newtypes + replaceT(with, t)
  let newmodule = replaceT(with, module.sym),
  let newflags =
   if isAbstract.newmodule ∨ kind.sym ∈ [kcompoundname, kbuiltincompound] then flags.sym
@@ -231,19 +234,12 @@ function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype) seq.word
 let fullname = if isempty.nametype then [name] else [name] + ":" + %.nametype sub 1,
 if n.paratypes = 0 then fullname
 else
- for acc = fullname + "(", t ∈ paratypes
- do acc + %.t + ",",
+ for acc = fullname + "(", t ∈ paratypes do acc + %.t + ",",
  acc >> 1 + ")"
 
 Function Record(types:seq.mytype) symbol
 {reduce to basetype}
-symbol(
- "RECORD"
- , moduleref("internallib othermod", typeptr)
- , types + typeptr
- , 0x0
- , tobits.krecord
-)
+symbol("RECORD", moduleref("internallib othermod", typeptr), types + typeptr, 0x0, tobits.krecord)
 
 Function Reallit(i:int) symbol
 symbol([toword.i], othermod, [typereal], tobits.i, tobits.kreal)
@@ -315,40 +311,40 @@ let kind = kind.s,
 if kind = klocal then %.merge(["%" sub 1] + wordname.s)
 else if kind = kint then if value.s < 0 then "-:(-value.s)" else [name.s]
 else if kind ∈ [kreal, kconstantrecord] then [name.s]
-else if kind = kjmp then ":(name.s):(value.s) /br"
+else if kind = kjmp then ":(name.s):(value.s)/br"
 else if kind ∈ [kjmpB, klabel] then ":(name.s):(value.s)"
-else if kind = kwords then if dq sub 1 ∈ worddata.s then "':(worddata.s) '" else dq.worddata.s
+else if kind = kwords then if dq sub 1 ∈ worddata.s then "':(worddata.s)'" else dq.worddata.s
 else if kind = kword then
  "WORD"
-  + (if wordname.s = encodeword.[char.254] then "word$char$254" sub 1
+ + if wordname.s = encodeword.[char.254] then "word$char$254" sub 1
  else if wordname.s ∈ ("<* *> \keyword \br" + escapeformat) then encodeword(decodeword.wordname.s + char.32)
- else wordname.s)
+ else wordname.s
 else if kind = kdefine then "Define:(name.s)"
 else if kind = kcontinue then "Continue" + wordname.s + "/br"
 else if kind = krecord then fsig2("Record" sub 1, nametype.s, paratypes.s)
-else if kind = ksequence then "seq (:(worddata.s)):(resulttype.s)"
+else if kind = ksequence then "seq(:(worddata.s)):(resulttype.s)"
 else if kind = kbr then
- "Br2 ("
-  + toword.brt.s
-  + ","
-  + toword.brf.s
-  + ")
- /br"
+ "Br2("
+ + toword.brt.s
+ + ","
+ + toword.brf.s
+ + ")/br
+ "
 else if kind = kstart then
- "Start (:(resulttype.s))
- /br"
+ "Start(:(resulttype.s))/br
+ "
 else if kind = kendblock then
- "EndBlock
- /br"
+ "EndBlock /br
+ "
 else if kind = kexit then
- "Exit
- /br"
-else if kind = kloop then "Loop:(fsig2(wordname.s, nametype.s, paratypes.s) << 1):(para.module.s) /br"
+ "Exit /br
+ "
+else if kind = kloop then "Loop:(fsig2(wordname.s, nametype.s, paratypes.s) << 1):(para.module.s)/br"
 else if kind = kfref then "FREF:(basesym.s)"
 else
  (if name.module.s ∈ "internal" then "" else %.module.s + ":")
-  + fsig2(wordname.s, nametype.s, paratypes.s)
-  + %.resulttype.s
+ + fsig2(wordname.s, nametype.s, paratypes.s)
+ + %.resulttype.s
 
 Function Lit(i:int) symbol
 {OPTION INLINE}
@@ -392,7 +388,13 @@ symbol(
 )
 
 Function symbolC(i:int, libname:word) symbol
-symbol([merge.[libname, "." sub 1, toword.i]], othermod, [typeptr], 0x0, tobits.kconstantrecord)
+symbol(
+ [merge.[libname, "." sub 1, toword.i]]
+ , othermod
+ , [typeptr]
+ , 0x0
+ , tobits.kconstantrecord
+)
 
 Function symbol4(
 module:modref
@@ -405,7 +407,7 @@ let types = [namePara] + paras + rt
 let kind =
  tobits(
   if name.module ∈ "$global" then kglobal
-  else if name ∈ "abort" then {name.module = internal} symKind(module, name, [namePara] + paras, kcompoundname)
+  else if name ∈ "abort" then{name.module = internal}symKind(module, name, [namePara] + paras, kcompoundname)
   else if name.module ∈ "builtin" then kbuiltincompound
   else kcompoundname
  ),
@@ -433,7 +435,8 @@ Function continue(i:int) symbol
 symbol([toword.i], othermod, [type?], 0x0, tobits.kcontinue)
 
 Function Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol
-let xtypes = [typeref.[toword.firstvar, "." sub 1, "internallib" sub 1]] + types + resulttype,
+let xtypes =
+ [typeref.[toword.firstvar, "." sub 1, "internallib" sub 1]] + types + resulttype,
 symbol("LOOPBLOCK", moduleref("internallib internal", resulttype), xtypes, 0x0, tobits.kloop)
 
 Function firstvar(a:symbol) int toint.abstracttypename.(types.a) sub 1

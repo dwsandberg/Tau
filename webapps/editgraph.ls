@@ -22,7 +22,7 @@ use set.int
 
 use seq1.int
 
-Each nodes of the graph are numbered uniquely. A graph named n will be represented as <* block n 2 1, 3 1, 4 3 2, 5 *> which represents the arcs <* block (1 2) (1 3) (2 4) (2 4) *> with node 5 having no arcs to it. The follow PEG Grammar defines the representation /tag <table>
+Each nodes of the graph are numbered uniquely. A graph named n will be represented as <* block n 2 1, 3 1, 4 3 2, 5 *>, which represents the arcs <* block (1 2) (1 3) (2 4) (2 4) *> with node 5 having no arcs to it. The following PEG Grammar defines the representation /tag <table>
 /tag <tr><td> Graph GraphName Node Nodes'
 /tag <tr><td> * Nodes', Node
 /tag <tr><td> Node NodeNumber Predecessors
@@ -30,16 +30,16 @@ Each nodes of the graph are numbered uniquely. A graph named n will be represent
 /tag <tr><td> GraphName any
 /tag <tr><td> SVGnodeid GraphName.NodeNumber /tag </table>
 
-The object in the html page can be manipulated with function to retrive and set attribute values (setAttribute getattributes) and to set and get the contents of elements (setElementValue and getElementValue)
+The object in the html page can be manipulated with function to retrieve and set attribute values (setAttribute getattributes) and to set and get the contents of elements (setElementValue and getElementValue)
 
 When the html page is loaded the below function is called
 
 use seq.word
 
 Function editgraph real
-{Note that this function name match the html page name.
-/br Changes the path to reflect current location of nodes. It is call when the page is initialized and when a node is being dragged to another location. It can be found in the editgraph.html source code in a java script code snippet. }
-let graph = getElementValue."graph"
+{Note that this function name matches the HTML page name.
+/br Changes the path to reflect the current location of nodes. It is call when the page is initialized and when a node is being dragged to another location. It can be found in the editgraph.html source code in a java script code snippet. }
+let graph = getElementValue."graph" 
 let name = graph sub 1
 let discard = setElementValue("debug", "X:(graph)")
 for path = "", headxy = "", nodeid ∈ graph << 1 + ","

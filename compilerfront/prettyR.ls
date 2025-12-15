@@ -387,4 +387,3 @@ if resulttype.s = compoundNameType then false else issimplename.s
 function compoundName(s:symbol) seq.word
 if resulttype.s = compoundNameType then towords(emptyUTF8 + decodeword.name.s)
 else fullname.s 
-

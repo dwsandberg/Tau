@@ -28,15 +28,14 @@ Function %(t:PEGtable) seq.word %table.entries.t
 
 function otherinst seq.word "/e /length"
 
-function /e int-1
+function /e int -1
 
-function /length int-2
+function /length int -2
 
 function postProcess(m:PEGtable, subs:seq.word) PEGtable
 if isempty.subs then m
 else
- for constants = empty:seq.seq.word, e ∈ constants.m
- do constants + [replaceWords(e, subs)],
+ for constants = empty:seq.seq.word, e ∈ constants.m do constants + [replaceWords(e, subs)],
  PEGtable(postprocess(entries.m, subs), constants, actions.m)
 
 Function runMachine(
@@ -48,7 +47,7 @@ actno:int
 for stk = empty:stack.seq.word, inst ∈ (actions.actions) sub actno
 do
  if inst > 0 then push(stk, (constants.actions) sub inst)
- else if inst <-n.otherinst then push(stk, strings sub (-n.otherinst - inst))
+ else if inst < -n.otherinst then push(stk, strings sub (-n.otherinst - inst))
  else if inst = /e then push(stk, "")
  else
   assert inst = /length report "internal runMachine error"
@@ -81,8 +80,8 @@ do
     else if isempty.str then next(str, consts, actions + [-i])
     else
      let j = findindex(consts, str),
-     if j > n.consts then next("", consts + str, actions + [n.consts + 1,-i])
-     else next("", consts + str, actions + [j,-i]),
+     if j > n.consts then next("", consts + str, actions + [n.consts + 1, -i])
+     else next("", consts + str, actions + [j, -i]),
    if isempty.str then PEGtable(tbl, consts, actions.acc + actions)
    else
     let k = findindex(consts, str),

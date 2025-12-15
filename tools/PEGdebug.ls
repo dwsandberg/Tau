@@ -33,7 +33,7 @@ use seq1.word
 use set.word
 
 Function PEGdebug(input:seq.file, steps:seq.word, notable:boolean) seq.word
-{COMMAND /strong PEGdebug displays a trace of running a PEG. /br
+{COMMAND PEGdebug /strong displays a trace of running a PEG. /br
 -/strong input Expected first paragraph of input to be input and second paragraph to be the grammar./br
 -/strong steps from to. Only display steps between from and to./br
 -/strong notable. Do not display the parse table or grammar.}

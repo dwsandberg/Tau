@@ -48,19 +48,19 @@ use seq.seq.word
 
 use set.word
 
-Export type:midpoint {From symbol1}
+Export type:midpoint{From symbol1}
 
-Export libmods(m:midpoint) seq.modExports {From symbol1}
+Export libmods(m:midpoint) seq.modExports{From symbol1}
 
-Export option(midpoint) seq.word {From symbol1}
+Export option(midpoint) seq.word{From symbol1}
 
-Export prg(midpoint) set.symdef {From symbol1}
+Export prg(midpoint) set.symdef{From symbol1}
 
-Export src(midpoint) seq.seq.word {From symbol1}
+Export src(midpoint) seq.seq.word{From symbol1}
 
-Export templates(midpoint) set.symdef {From symbol1}
+Export templates(midpoint) set.symdef{From symbol1}
 
-Export typedict(midpoint) typedict {From symbol1}
+Export typedict(midpoint) typedict{From symbol1}
 
 Export midpoint(
 option:seq.word
@@ -71,27 +71,25 @@ option:seq.word
 ) midpoint
 {From symbol1}
 
-Export type:modExports {From symbol1}
+Export type:modExports{From symbol1}
 
-Export exports(modExports) seq.symbol {From symbol1}
+Export exports(modExports) seq.symbol{From symbol1}
 
-Export modname(modExports) modref {From symbol1}
+Export modname(modExports) modref{From symbol1}
 
-Export types(modExports) seq.seq.mytype {From symbol1}
+Export types(modExports) seq.seq.mytype{From symbol1}
 
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
 {From symbol1}
 
-Export type:typedict {From typedict}
+Export type:typedict{From typedict}
 
 function types(libinfo:midpoint) seq.seq.mytype
-for acc = empty:seq.seq.mytype, m ∈ libmods.libinfo
-do acc + types.m,
+for acc = empty:seq.seq.mytype, m ∈ libmods.libinfo do acc + types.m,
 acc
 
 function mods(mp:midpoint) seq.passsymbols
-for acc = empty:seq.passsymbols, m ∈ libmods.mp
-do acc + toPasssymbols.m,
+for acc = empty:seq.passsymbols, m ∈ libmods.mp do acc + toPasssymbols.m,
 acc
 
 function toPasssymbols(a:modExports) passsymbols
@@ -151,7 +149,8 @@ else
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
  let allmods = asset(abstract.t5 + simple.t5)
- let prga = compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
+ let prga =
+  compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
  let typedict =
   if option = "text" then emptytypedict
   else buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
@@ -161,9 +160,9 @@ else
  let prg10 =
   asset(
    prgb
-    + toseq.code.t5
-    + toseq.prg.libinfo
-    + (if option = "text" then prg else prescan2(prg, typedict))
+   + toseq.code.t5
+   + toseq.prg.libinfo
+   + (if option = "text" then prg else prescan2(prg, typedict))
   ),
  if option = "text" then
   for acc = empty:set.symdef, sd ∈ toseq.prg10
@@ -189,7 +188,8 @@ else
   let mtmp = postbind(exports, modules.t5, prg10, typedict)
   let libmods = toModules(typedict, toseq.modules.t5, exports)
   let simple = asset.simple.t5,
-  let prg12 = addExportOptions(simple, prg.mtmp, allsrc) + makeOrderSym(prg.mtmp, allmods, libname),
+  let prg12 =
+   addExportOptions(simple, prg.mtmp, allsrc) + makeOrderSym(prg.mtmp, allmods, libname),
   midpoint5(
    option
    , prg12
@@ -207,8 +207,7 @@ do
  else
   let d2 = if isAbstract.module.m2 then defines.m2 ∪ exports.m2 else exports.m2
   let exps =
-   for acc3 = empty:seq.symbol, e ∈ toseq.d2
-   do if isunbound.e then acc3 else acc3 + e,
+   for acc3 = empty:seq.symbol, e ∈ toseq.d2 do if isunbound.e then acc3 else acc3 + e,
    acc3,
   let types =
    for acc5 = empty:seq.seq.mytype, s ∈ toseq.d2
@@ -227,8 +226,7 @@ do
 acc
 
 function roots(s1:seq.modExports) set.symbol
-for exports = empty:seq.symbol, m ∈ s1
-do exports + exports.m,
+for exports = empty:seq.symbol, m ∈ s1 do exports + exports.m,
 asset.exports
 
 function close(
@@ -279,8 +277,7 @@ let initprofile =
 let prg10 =
  for acc = prg.midin ∪ templates.midin, e ∈ initprofile
  do
-  for acc2 = acc, sy ∈ exports.e
-  do acc2 ∪ getSymdef(prg.dependentlibs, sy),
+  for acc2 = acc, sy ∈ exports.e do acc2 ∪ getSymdef(prg.dependentlibs, sy),
   acc2,
  acc
 let libextnames0 =
@@ -325,7 +322,7 @@ do
       for acc = empty:seq.symbol, sym2 ∈ code.sd sub 1
       do
        acc
-        + if library.module.sym2 ∈ "*" then
+       + if library.module.sym2 ∈ "*" then
         let basesym = basesym.sym2
         let b = getSymdef(libextnames, basesym),
         if not.isempty.b then if kind.sym2 = kfref then Fref.sym.b sub 1 else sym.b sub 1
@@ -342,17 +339,23 @@ do
   if isempty.new then next(stackTrace, prgX, if abstract then idx else idx + 1)
   else if abstract then next(stackTrace, prgX + new sub 1, idx)
   else
-   let tmp = if name.sym.new sub 1 ∈ "stackTraceImp" then asset.[new sub 1] else stackTrace,
+   let tmp =
+    if name.sym.new sub 1 ∈ "stackTraceImp" then asset.[new sub 1] else stackTrace,
    next(tmp, prgX + starmap(baselib, new sub 1), idx + 1)
 let stacktrace2 =
  if isempty.stackTrace then ""
- else "stacktrace::([library.module.sym.stackTrace sub 1, name.module.sym.stackTrace sub 1, name.sym.stackTrace sub 1])",
+ else
+  "stacktrace::([
+   library.module.sym.stackTrace sub 1
+   , name.module.sym.stackTrace sub 1
+   , name.sym.stackTrace sub 1
+  ])",
 midpoint(
  option.midin
  , prgX
  , typedict.midin
  , libmods.midin + initprofile
- , ["uses::(uses) baselib::(baselib):(stacktrace2)"]
+ , ["uses::(uses)baselib::(baselib):(stacktrace2)"]
 )
 
 Function outlib(m:midpoint) midpoint
@@ -365,8 +368,7 @@ for
  , md ∈ mods.m
 do
  if isAbstract.modname.md then
-  for acc = roots, sy ∈ toseq.exports.md
-  do acc ∪ asset(getCode(prg.m, sy) + sy),
+  for acc = roots, sy ∈ toseq.exports.md do acc ∪ asset(getCode(prg.m, sy) + sy),
   acc
  else roots ∪ exports.md
 for acc = empty:seq.symdef, rc = empty:seq.symbol, root ∈ toseq.roots
@@ -385,7 +387,7 @@ do
     do isconstantorspecial.sy ∨ sy ∈ roots,
     next(
      acc
-      + symdef4(sym.sd, if includecode then code.sd else empty:seq.symbol, paragraphno.sd, newoptions)
+     + symdef4(sym.sd, if includecode then code.sd else empty:seq.symbol, paragraphno.sd, newoptions)
      , rc + getrecordconst.code.sd
     )
 let libname = libname.m
@@ -395,10 +397,8 @@ let exportedTypeDefs =
   for acc5 = exportedTypeDefs, t ∈ types.x do acc5 + t sub 1,
   acc5,
  asset.exportedTypeDefs
-for typeused = empty:seq.mytype, sd0 ∈ acc
-do typeused + resulttype.sym.sd0 + types.sym.sd0
-for acc5 = empty:seq.mytype, t3 ∈ toseq.asset.typeused
-do acc5 + reduce.t3
+for typeused = empty:seq.mytype, sd0 ∈ acc do typeused + resulttype.sym.sd0 + types.sym.sd0
+for acc5 = empty:seq.mytype, t3 ∈ toseq.asset.typeused do acc5 + reduce.t3
 for moretypes = empty:seq.seq.mytype, t4 ∈ toseq(asset.acc5 \ exportedTypeDefs)
 do
  if library.abstractModref.t4 = libname then
@@ -432,8 +432,7 @@ let k = asset.new \ have,
 if isempty.k then acc else f45(k ∪ have, k, acc)
 
 function starmap(baselib:word, sd:symdef) symdef
-for acc2 = empty:seq.symbol, sy ∈ code.sd
-do acc2 + clearrequiresbit.replacestar(sy, baselib)
+for acc2 = empty:seq.symbol, sy ∈ code.sd do acc2 + clearrequiresbit.replacestar(sy, baselib)
 let newsym = replacestar(sym.sd, baselib),
 if isInternal.sym.sd then symdef4(newsym, acc2, 2, ThisLibrary + options.sd)
 else symdef4(newsym, acc2, paragraphno.sd, options.sd) 

@@ -38,7 +38,12 @@ input:seq.file
 , info:boolean
 , profile:boolean
 ) seq.file
-{COMMAND /strong compile to webAssembly}
+{COMMAND compile to webAssembly /p
+Library /br
+exports /br
+output /br
+profile /br
+}
 {problem is same symbol is used in different onclicks}
 let LF = [encodeword.[char.10]]
 let includetemplate = false

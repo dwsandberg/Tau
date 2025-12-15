@@ -82,7 +82,7 @@ let all =
  + check:seq.typerec2(16, 8)
  + EOL
  + sparsecheck,
-if "FAIL" sub 1 ∉ all then "PASS testseq" else "FAIL testseq:(all)"
+if "FAIL" sub 1 ∉ all then "PASS testseq" else ":(red."FAIL")testseq:(all)"
 
 Function sparsecheck seq.word
 let b =

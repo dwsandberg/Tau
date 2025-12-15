@@ -113,13 +113,11 @@ do
 acc
 
 Function libsrc(m:midpoint, outfn:seq.filename) seq.file
-{OPTION PROFILE }
 let outname = outfn sub 1
- for only = "",full=false, fn ∈ outfn
-do if ext.fn ∈ "libsrc" then 
-if name.outname=name.fn then next(only,true)
-else 
-next(only + name.fn ,  full ) else next(only,full)
+for only = "", full = false, fn ∈ outfn
+do
+ if ext.fn ∈ "libsrc" then if name.outname = name.fn then next(only, true) else next(only + name.fn, full)
+ else next(only, full)
 for
  libname = "?" sub 1
  , all = ""
@@ -133,7 +131,9 @@ do
   else
    let newlibs =
     if libname ∉ only ∨ isempty.libtxt then libs
-    else libs + file(filename("+:(dirpath.outname)" + libname + ".libsrc"), toseqbyte.textFormat1a.libtxt),
+    else
+     libs
+     + file(filename("+:(dirpath.outname)" + libname + ".libsrc"), toseqbyte.textFormat1a.libtxt),
    next(newlibname, all + "/p" + libtxt, p, newlibs)
  else
   let newtxt =
@@ -141,46 +141,8 @@ do
    ∈ ["Function", "function", "Export", "type", "builtin", "Builtin", "unbound"] then removeMarkup.prettyNoChange.p
    else escapeformat.p,
   next(libname, all, libtxt + "/p" + newtxt, libs),
-  if full then
-[file(changeext(outname, "libsrc"), toseqbyte.textFormat1a.all)] + libs
+if full then [file(changeext(outname, "libsrc"), toseqbyte.textFormat1a.all)] + libs
 else libs
-
-
-/Function libsrc(m:midpoint, outfn:seq.filename) seq.file
-{OPTION PROFILE }
-let outname = outfn sub 1
- for only = "",full=false, fn ∈ outfn
-do if ext.fn ∈ "libsrc" then 
-if name.outname=name.fn then next(only,true)
-else 
-next(only + name.fn ,  full ) else next(only,full)
-for
- libname = "?" sub 1
- , all = empty:seq.byte
- , libtxt = ""
- , libs = empty:seq.file
- , p ∈ src.m << 1 + ["# File:+?"]
-do
- if subseq(p, 1, 3) = "# File:" ∧ n.p > 4 then
-  let newlibname = p sub 5,
-  if newlibname = libname then next(newlibname, all, libtxt, libs)
-  else if isempty.libtxt then next(libname, all, libtxt,libs)
-  else 
-   let bytes=toseqbyte.textFormat1a.libtxt
-   let newlibs= if libname ∉ only then libs
-    else libs + file(filename("+:(dirpath.outname)" + libname + ".libsrc"), bytes),
-    let newall=if isempty.all then bytes else all+[tobyte.10,tobyte.10]+bytes
-   next(newlibname, newall, p, newlibs)
- else
-  let newtxt =
-   if subseq(p, 1, 1)
-   ∈ ["Function", "function", "Export", "type", "builtin", "Builtin", "unbound"] then removeMarkup.prettyNoChange.p
-   else escapeformat.p,
-  next(libname, all, libtxt + "/p" + newtxt, libs),
-  if full then
-[file(changeext(outname, "libsrc"),  all)] + libs
-else libs
-
 
 function pretty(p:seq.word, change:boolean) seq.word
 if p sub 1 ∈ "Function function" then

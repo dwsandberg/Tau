@@ -35,20 +35,21 @@ Function conststype llvmtype array(-2, i64)
 Function CGEP(typ:llvmtype, p:slot, a:slot, b:slot, org:seq.int) slot
 {need to figure out types}
 let t1 = consttype.p
-let new = [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.consttype.a, toint.a, typ.consttype.b, toint.b]
-assert new = org report "DIFF:(printrecord(CONSTANTS, org)) /br new:(printrecord(CONSTANTS, new))"
+let new =
+ [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.consttype.a, toint.a, typ.consttype.b, toint.b]
+assert new = org report "DIFF:(printrecord(CONSTANTS, org))/br new:(printrecord(CONSTANTS, new))"
 let typa =
  if typ.t1 ∈ [1, 2] then i64
  else llvmtype.typerecords sub (last.typerecords sub (typ.t1 + 1) + 1),
 C(ptr.typa, new)
 
 Function modulerecord(name:seq.word, rec:seq.int, org:seq.int) slot
-assert rec = org report "DIFF:(printrecord(MODULE, org)) /br new:(printrecord(MODULE, rec))",
+assert rec = org report "DIFF:(printrecord(MODULE, org))/br new:(printrecord(MODULE, rec))",
 modulerecord(name, rec)
 
 Function ptrtoint(i:slot, typ:llvmtype, org:seq.int) slot
 let new = [toint.CCAST, 9, typ.typ, toint.i]
-assert new = org report "DIFF:(printrecord(CONSTANTS, org)) /br new:(printrecord(CONSTANTS, new))",
+assert new = org report "DIFF:(printrecord(CONSTANTS, org))/br new:(printrecord(CONSTANTS, new))",
 C(i64, new)
 
 Function ptrtoint(i:slot, typ:llvmtype) slot
@@ -121,7 +122,7 @@ let new =
  do
   let inst = instop.rec sub 1,
   new
-   + if inst = BR then
+  + if inst = BR then
    if n.rec = 2 then [rec sub 1, getblock(labels, rec sub 2)]
    else [rec sub 1, getblock(labels, rec sub 2), getblock(labels, rec sub 3), 1]
   else if inst = PHI then
@@ -131,16 +132,16 @@ let new =
      if isblock then getblock(labels, e)
      else
       let slot = last.rec
-      let t2 = 
+      let t2 =
        if e > 0 then slot - e - 1 + 1
        else slot - (offset + labels sub (-e + 1)) - 1,
-      if t2 ≥ 0 then t2 * 2 else-t2 * 2 + 1,
+      if t2 ≥ 0 then t2 * 2 else -t2 * 2 + 1,
     next(acc + this, not.isblock),
    acc
   else rec,
  new
 let chk = check(orgrecs.t, new, 1, "")
-assert chk = "" report "ERROR:(chk) labels::(%n.labels.t)",
+assert chk = "" report "ERROR:(chk)labels::(%n.labels.t)",
 [[1, blockno.t - 1]] + new
 
 Function check(old:seq.seq.int, new:seq.seq.int, i:int, result:seq.word) seq.word
@@ -152,10 +153,10 @@ else
   , new
   , i + 1
   , result
-   + "/br old"
-   + printrecord(FUNCTIONBLK, old sub i)
-   + "/br new"
-   + printrecord(FUNCTIONBLK, new sub i)
+  + "/br old"
+  + printrecord(FUNCTIONBLK, old sub i)
+  + "/br new"
+  + printrecord(FUNCTIONBLK, new sub i)
  )
 
 function getblock(labels:seq.int, i:int) int labels sub (i + 1)
@@ -189,11 +190,12 @@ if argtypes.next = "label" then
  track(offset.t, slot.t, recs.t, orgrecs.t, newlabels, blockno.t)
 else
  let tp = instop.(data.next) sub 1
- let slotinc = if tp ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
+ let slotinc =
+  if tp ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
  let blockinc = if tp ∈ [BR, RET] then 1 else 0
  let newlabels =
-  if slotinc = 1 ∧ toint.label.next ≠ 0 then replaceS(labels.t,-toint.label.next + 1, [slot.t - offset.t])
-  else if blockinc = 1 ∧ toint.label.next ≠ 0 then replaceS(labels.t,-toint.label.next + 1, [blockno.t + 1])
+  if slotinc = 1 ∧ toint.label.next ≠ 0 then replaceS(labels.t, -toint.label.next + 1, [slot.t - offset.t])
+  else if blockinc = 1 ∧ toint.label.next ≠ 0 then replaceS(labels.t, -toint.label.next + 1, [blockno.t + 1])
   else if blockinc = 1 then replaceS(labels.t, n.labels.t + 1, [blockno.t])
   else labels.t,
  let newrec =

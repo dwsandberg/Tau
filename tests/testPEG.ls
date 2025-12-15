@@ -83,7 +83,7 @@ let result =
  )
  + checkerror(
   "A a"
-  , "<* literal Error in PEG grammar *> /br
+  , "// Error in PEG grammar /literal /br
   /br
   Unparsed Input: A a"
  ),

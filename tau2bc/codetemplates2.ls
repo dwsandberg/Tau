@@ -36,27 +36,27 @@ use seq.typedef
 
 use seq1.seq.word
 
-Export type:match5 {From codetemplates}
+Export type:match5{From codetemplates}
 
-Export action(match5) word {From codetemplates}
+Export action(match5) word{From codetemplates}
 
-Export arg(match5) int {From codetemplates}
+Export arg(match5) int{From codetemplates}
 
-Export firstvar(a:match5) int {From codetemplates}
+Export firstvar(a:match5) int{From codetemplates}
 
-Export length(match5) int {no of instruction that return results} {From codetemplates}
+Export length(match5) int{no of instruction that return results}{From codetemplates}
 
-Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
+Export llvmtypelist(match5) seq.llvmtype{From codetemplates}
 
-Export sym(match5) symbol {From codetemplates}
+Export sym(match5) symbol{From codetemplates}
 
-Export type:recordcoderesult {From codetemplates}
+Export type:recordcoderesult{From codetemplates}
 
-Export bc(recordcoderesult) internalbc {From codetemplates}
+Export bc(recordcoderesult) internalbc{From codetemplates}
 
-Export regno(recordcoderesult) int {From codetemplates}
+Export regno(recordcoderesult) int{From codetemplates}
 
-Export findtemplate(d:symbol) seq.match5 {From codetemplates}
+Export findtemplate(d:symbol) seq.match5{From codetemplates}
 
 Export recordcode(
 args:seq.int
@@ -74,14 +74,14 @@ args:seq.int
 ) recordcoderesult
 {From codetemplates}
 
-Export symboltableentry(name:seq.word, type:llvmtype) slot {From codetemplates}
+Export symboltableentry(name:seq.word, type:llvmtype) slot{From codetemplates}
 
-Export tollvmtype(typedict, symbol) llvmtype {From codetemplates}
+Export tollvmtype(typedict, symbol) llvmtype{From codetemplates}
 
 Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
 {From codetemplates}
 
-Export constdata seq.slot {From persistant}
+Export constdata seq.slot{From persistant}
 
 Function conststype llvmtype array(-2, i64)
 
@@ -116,11 +116,12 @@ do
     ),
    next(used + toseq.asset.code.sd, crecord + sd, indefines)
   else if isInternal.firstsym then
-   if {firstsym is external call} not.isinternalimp.sym.cc ∧ isThisLibrary.cc then
+   if {firstsym is external call}not.isinternalimp.sym.cc ∧ isThisLibrary.cc then
     let discard5 = call(alltypes, firstsym, "CALL" sub 1, name.firstsym),
     next(used, crecord, indefines)
    else if not.isbase then
-    let discard5 = call(alltypes, firstsym, "CALL" sub 1, mangledname(prgX, firstsym, libname)),
+    let discard5 =
+     call(alltypes, firstsym, "CALL" sub 1, mangledname(prgX, firstsym, libname)),
     next(used, crecord, indefines)
    else next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
   else if kind.firstsym = kglobal then
@@ -134,10 +135,10 @@ do
   else if libname = library.module.firstsym ∨ isThisLibrary.cc ∨ externalNo.cc = 0 then next(used + toseq.asset.code + firstsym, crecord, indefines + cc)
   else
    {not define in this library}
-   let discard5 = call(alltypes, firstsym, "CALL" sub 1, mangledname(prgX, firstsym, libname)),
+   let discard5 =
+    call(alltypes, firstsym, "CALL" sub 1, mangledname(prgX, firstsym, libname)),
    next(used, crecord, indefines)
-for discard101 = 0, sd ∈ indefines
-do declare(alltypes, prgX, sym.sd, libname)
+for discard101 = 0, sd ∈ indefines do declare(alltypes, prgX, sym.sd, libname)
 for acc = empty:seq.slot, sym ∈ initprofile
 do
  if name.sym ∉ "profileData" then acc
@@ -177,12 +178,24 @@ do
  else if kind = kword then addtemplate(ele, 0, emptyinternalbc, "ACTARG" sub 1, slot.wordref.wordname.ele)
  else if kind = krecord then
   if nopara.ele < 10 then
-   let fldbc = recordcode(arithseq(nopara.ele, 1, ibcfirstpara2 + 1), tollvmtypelist(alltypes, ele) << 2, 0, true),
+   let fldbc =
+    recordcode(
+     arithseq(nopara.ele, 1, ibcfirstpara2 + 1)
+     , tollvmtypelist(alltypes, ele) << 2
+     , 0
+     , true
+    ),
    addtemplate(ele, regno.fldbc, bc.fldbc)
   else addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, tollvmtypelist(alltypes, ele) << 2)
  else if kind = ksequence then
   if nopara.ele < 10 then
-   let fldbc = sequencecode(arithseq(nopara.ele, 1, ibcfirstpara2 + 1), tollvmtype(alltypes, para.module.ele), 0, true),
+   let fldbc =
+    sequencecode(
+     arithseq(nopara.ele, 1, ibcfirstpara2 + 1)
+     , tollvmtype(alltypes, para.module.ele)
+     , 0
+     , true
+    ),
    addtemplate(ele, regno.fldbc, bc.fldbc)
   else
    addtemplate(
@@ -228,16 +241,15 @@ else processconst(notprocessed, alltypes)
 Function isinternalimp(s:symbol) boolean between(kind.s, kstacktrace, ksetP)
 
 Function internalidx(s:symbol) int
-{list of external calls" arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"}
+{list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"}
 if between(kind.s, kstacktrace, ksetP) then kind.s - kstacktrace + 2 else 1
 
 Function mangledname(extname:set.symdef, s:symbol, library:word) word
 let b = getSymdef(extname, s)
 assert not.isempty.b report
  "Mangled Name problem:(s)"
-  + library
-  + for txt = "", sd ∈ toseq.extname
- do txt + "/br" + %.sym.sd + library.module.sym.sd,
+ + library
+ + for txt = "", sd ∈ toseq.extname do txt + "/br" + %.sym.sd + library.module.sym.sd,
  txt + stacktrace
 let extNo =
  if kind.s ∈ [kother, kcompoundname, kmakereal, kcat, kmember, kidx] then externalNo.b sub 1
@@ -262,8 +274,7 @@ addobject(
 
 Function addtypeseq(a:seq.mytype) int
 addobject(
- for acc = [addint.0, addint.n.a], @e ∈ a
- do acc + addtype.@e,
+ for acc = [addint.0, addint.n.a], @e ∈ a do acc + addtype.@e,
  acc
 )
 

@@ -106,7 +106,8 @@ do
   assert ext.fn.i ∈ "ls libsrc" report "Extension" + fullname.fn.i,
   next(libinfo, srcfiles + i)
 let allsrc = breakparagraph.srcfiles
-let libname = libname.midpoint(option, empty:set.symdef, emptytypedict, empty:seq.modExports, allsrc)
+let libname =
+ libname.midpoint(option, empty:set.symdef, emptytypedict, empty:seq.modExports, allsrc)
 let exports = extractExports(allsrc, exports0)
 let m =
  if "bitcode" sub 1 ∉ option then compilerfront3(option, allsrc, libname, exports, libinfo)
@@ -122,7 +123,7 @@ let m =
 if (option.m) sub 1 ∈ "library text pass1 pass1a prebind" then m
 else
  let librarymap = [libname, "*" sub 1]
- let prg = {if" xxx" sub 1 ∈ option then GG.hasstate.prg.m else} prg.m
+ let prg = {if"xxx"sub 1 ∈ option then GG.hasstate.prg.m else}prg.m
  let prg5 = pass2:T(librarymap, prg, typedict.m, option, libname, libinfo),
  let m2 =
   if "profile" sub 1 ∈ option then
@@ -187,7 +188,8 @@ do
    next(big, complete + sd, modorder)
   else if OrderSym = sym.pele0 then next(big, complete, fullconstantcode.(code.pele0) sub 1)
   else next(big + pele0, complete, modorder)
-let final = if nojumptable then "nojumptable noinline tailrecursion" else "noinline tailrecursion"
+let final =
+ if nojumptable then "nojumptable noinline tailrecursion" else "noinline tailrecursion"
 let jjmp = if nojumptable then "nojumptable" else ""
 let segs = tosegs(asset.big, modorder)
 assert true report %.segs + "/p" + check(segs, toseq.prg, complete)
@@ -243,13 +245,20 @@ for
  , nextvar = nextvarX
  , map = mapX
  , sym = Lit.0
- , ahead ∈ ss + (if isconst.self then Lit.0 else EndMark)
+ , ahead ∈ ss + if isconst.self then Lit.0 else EndMark
 do
  let kind = kind.sym,
  if between(kind, kfref, kconstantrecord) ∨ kind ∈ [kjmpB, klabel] then next(part + sym, blkparts, stk, nextvar, map, ahead)
  else if kind = klocal then
   let t = lookup(map, value.sym),
-  next(part + (if isempty.t then [sym] else value.t sub 1), blkparts, stk, nextvar, map, ahead)
+  next(
+   part + (if isempty.t then [sym] else value.t sub 1)
+   , blkparts
+   , stk
+   , nextvar
+   , map
+   , ahead
+  )
  else if kind = kdefine then
   let thelocal = value.sym
   let len = n.part,
@@ -268,9 +277,7 @@ do
   let nopara = nopara.sym
   let len = n.part
   let args = subseq(part, len + 1 - nopara, len),
-  for constargs = n.args = nopara, @e ∈ args
-  while constargs
-  do isconst.@e,
+  for constargs = n.args = nopara, @e ∈ args while constargs do isconst.@e,
   if constargs then next(part >> nopara + Constant2(libname, args + sym), blkparts, stk, nextvar, map, ahead)
   else next(part + sym, blkparts, stk, nextvar, map, ahead)
  else if kind ∈ [kcontinue, kexit] then next(empty:seq.symbol, blkparts + (part + sym), stk, nextvar, map, ahead)
@@ -333,10 +340,20 @@ do
     next(code.tmp, blkparts.top.stk, pop.stk, nextvar.tmp, map, ahead)
   else if kind.last.blkparts sub 1 = kexit then
    {remove block with just one Exit}
-   next(part.top.stk >> 1 + blkparts sub 1 >> 1, blkparts.top.stk, pop.stk, nextvar, map, ahead)
+   next(
+    part.top.stk >> 1 + blkparts sub 1 >> 1
+    , blkparts.top.stk
+    , pop.stk
+    , nextvar
+    , map
+    , ahead
+   )
   else if kind.ahead = kexit then
    {combine current block with outer block}
-   let tmp2 = adjustbr(blkparts.top.stk, n.blkparts) + [part.top.stk >> 1 + blkparts sub 1] + blkparts << 1,
+   let tmp2 =
+    adjustbr(blkparts.top.stk, n.blkparts)
+    + [part.top.stk >> 1 + blkparts sub 1]
+    + blkparts << 1,
    next(last.tmp2 >> 1, tmp2 >> 1, pop.stk, nextvar, map, last.last.tmp2)
   else if kind.ahead = kbr then
    {combine boolean block with outer block}
@@ -344,7 +361,10 @@ do
    do
     let p1 = if kind.last.p = kexit then p >> 1 + Br2(brt, brf) else p,
     next([p1] + partsA, brt + 1, brf + 1)
-   let tmp2 = adjustbr(blkparts.top.stk, n.blkparts) + [part.top.stk >> 1 + partsA sub 1] + partsA << 1,
+   let tmp2 =
+    adjustbr(blkparts.top.stk, n.blkparts)
+    + [part.top.stk >> 1 + partsA sub 1]
+    + partsA << 1,
    next(last.tmp2 >> 1, tmp2 >> 1, pop.stk, nextvar, map, last.last.tmp2)
   else
    let recursive =
@@ -405,7 +425,8 @@ do
    else next(code.r, blkparts, stk, nextvar.r, map, ahead)
   else if sym = self then next(part + sym, blkparts, stk, nextvar, map, ahead)
   else
-   let newresult = if kind.sym = kcat then checkemptycat(sym, part) else empty:seq.symbol,
+   let newresult =
+    if kind.sym = kcat then checkemptycat(sym, part) else empty:seq.symbol,
    if not.isempty.newresult then next(newresult, blkparts, stk, nextvar, map, ahead)
    else
     let nopara = nopara.sym
@@ -424,9 +445,10 @@ do
     else
      let code = code.b sub 1,
      if VERYSIMPLE ∈ symoptions then next(part + code << nopara.sym, blkparts, stk, nextvar, map, ahead)
-     else if n.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then {function just returns result} next(part, blkparts, stk, nextvar, map, ahead)
+     else if n.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then{function just returns result}next(part, blkparts, stk, nextvar, map, ahead)
      else if nopara = 0 then
-      let r = newanal:T(librarymap, prg, code, self, nextvar, empty:set.localmap2, libname, typedict, options),
+      let r =
+       newanal:T(librarymap, prg, code, self, nextvar, empty:set.localmap2, libname, typedict, options),
       next(part + code.r, blkparts, stk, nextvar.r, map, ahead)
      else
       for
@@ -445,7 +467,7 @@ do
          paraval + Define.nextvarExpand + paracode
          , pmap + localmap2(parano, [Local.nextvarExpand])
          , nextvarExpand + 1
-         , {idx} tmp - 1
+         , {idx}tmp - 1
          , parano - 1
         )
       let r =
@@ -462,9 +484,9 @@ do
        ),
       let expandresult = subseq(part, 1, idx) + Define.nextvarExpand + paracode + code.r,
       next(expandresult, blkparts, stk, nextvar.r, map, ahead)
-{for maxvar = nextvarX-1, p ∈ part do if islocal.p ∨ isdefine.p then max (value.p, maxvar) else maxvar assert maxvar < nextvar report %.maxvar+"
-/br nextvar:(nextvar)
-/br self::(self)"+%.part,}
+{for maxvar = nextvarX-1, p ∈ part do if islocal.p ∨ isdefine.p then max(value.p, maxvar)else maxvar assert maxvar < nextvar report %.maxvar+"/br
+nextvar:(nextvar)/br
+self::(self)"+%.part,}
 expandresult(nextvar, part << 1)
 
 use seq1.localmap2

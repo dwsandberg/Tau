@@ -40,12 +40,10 @@ let d3 = decodeLEBu(r, next.d2)
 let d4 = decodeLEBu(r, next.d3)
 let d5 = decodeLEBs(r, next.d4)
 let d6 = decodeLEBs(r, next.d5)
-for sample = [0], k ∈ [0x2, 0x4, 0x6, 0x8, 0xA, 0xC, 0xE]
-do sample + toint(k << 60)
-let val1 =-4618090677529464034
+for sample = [0], k ∈ [0x2, 0x4, 0x6, 0x8, 0xA, 0xC, 0xE] do sample + toint(k << 60)
+let val1 = -4618090677529464034
 let xxx =
- for acc = empty:seq.byte, i ∈ sample
- do acc + LEBs.i + LEBu.i
+ for acc = empty:seq.byte, i ∈ sample do acc + LEBs.i + LEBu.i
  for ok = empty:seq.boolean, next = 1, j ∈ sample
  do
   let t = decodeLEBs(acc, next)
@@ -57,15 +55,14 @@ let xxx =
   , value.d3 = 65536
   , value.d4 = 624485
   , value.d5 = 127
-  , value.d6 =-123456
+  , value.d6 = -123456
   , val1 = value.decodeLEBs(LEBs.val1, 1)
   , decodeLEBu:seq.int(LEBu.sample) = sample
   , decodeLEBs:seq.int(LEBs.sample) = sample
   , LEBu.127 + LEBu.128 + LEBu.2 sup 16 + LEBu.624485 + LEBs.127 + LEBs.-123456 = r
  ]
-  + ok
-for acc = empty:seq.int, i = 1, e ∈ xxx
-do next(if e then acc else acc + i, i + 1),
+ + ok
+for acc = empty:seq.int, i = 1, e ∈ xxx do next(if e then acc else acc + i, i + 1),
 if isempty.acc then "PASS testLEB" else "FAIL testLEB numbers::(acc)"
 
 Function LEBu(i:int) seq.byte LEB(bits.0, bits.i, empty:seq.byte)
@@ -78,7 +75,7 @@ let value1 =
  if toint.value < 0 ∧ toint.signbit ≠ 0 then bits.-1 << (64 - 7) ∨ value >> 7
  else value >> 7,
 if toint.value1 = 0 ∧ toint(byte ∧ signbit) = 0 then result + tobyte.byte
-else if toint.value1 =-1 ∧ toint.byte ≥ toint.signbit then result + tobyte.byte
+else if toint.value1 = -1 ∧ toint.byte ≥ toint.signbit then result + tobyte.byte
 else LEB(signbit, value1, result + tobyte(byte ∨ bits.128))
 
 Function decodeLEBu(a:seq.byte, i:int) decoderesult decodeLEB2(a, i, 0x0)
@@ -92,7 +89,9 @@ while (lastbyte ∧ 0x80) ≠ 0x0
 do
  let byte = tobits.a sub (i + j),
  next(acc ∨ (byte ∧ 0x7F) << (j * 7), byte, j + 1)
-let value = if (lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc else acc ∨ tobits.-1 << (j * 7),
+let value =
+ if (lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc
+ else acc ∨ tobits.-1 << (j * 7),
 decoderesult(toint.value, i + j)
 
 type decoderesult is value:int, next:int

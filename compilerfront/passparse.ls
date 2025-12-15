@@ -43,9 +43,9 @@ sinkstokeep:set.symbol
 , g:graph.arc.symbol
 , toprocess:seq.symbol
 ) seq.arc.symbol
-{removes sinks that are not unbound and parameter of module is typeT
-/br do a transitiveClosure and only keep arcs whose head is a sink
-/br looking for relation of function to the unbound functions it can call.This are not quite yet that relation. }
+{removes sinks that are not unbound and parameter of module is typeT /br
+do a transitiveClosure and only keep arcs whose head is a sink /br
+looking for relation of function to the unbound functions it can call.This are not quite yet that relation. }
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess
 do
  if isunbound.n ∨ para.module.n ≠ typeT then next(keep + n, pred, g2)
@@ -79,16 +79,15 @@ do
   if symsrc sub 1 ∈ "Builtin builtin" then
    if isSimple.module.sym.p then
     acc
-     + symdef4(sym.p, empty:seq.symbol, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
+    + symdef4(sym.p, empty:seq.symbol, paragraphno.p, commentoptions(symsrc, nopara.sym.p))
    else
     let sym = sym.p
-    for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1)
-    do code + Local.@e,
+    for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1) do code + Local.@e,
     acc
-     + symdef(
+    + symdef(
      sym.p
      , code
-      + [
+     + [
       if issimplename.sym then symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
       else symbol4(builtinmod.typeT, wordname.sym, (nametype.sym) sub 1, paratypes.sym, resulttype.sym)
      ]
@@ -135,8 +134,8 @@ if isempty.s1 ∨ s1 sub 1 ∉ "OPTION COMMAND" then NOOPTIONS
 else
  for acc = NOOPTIONS, w ∈ s1
  while w
- ∉ "{}
- /br"
+ ∉ "{}/br
+ "
  do
   if w ∈ "PROFILE" then acc + PROFILE + NOINLINE
   else if w ∈ "STATE" then acc + STATE
@@ -149,12 +148,12 @@ else
 
 Function buildrequires(prg:seq.symdef) set.symdef
 let g3 = newgraph.abstractarcs.prg
-{graph g3 has three kinds of sinks.
-/br 1:is unbound and module parameter is T
-/br 2:is not unbound and module parameter is T
-/br 3:module parameter is not T
-/br examples:seq1.T:= (T, T) boolean ; seq1.T:step (arithmeticseq.T) T ;
-/br seq1.sparseele.T:binarysearch (seq.sparseele.T)}
+{graph g3 has three kinds of sinks./br
+1:is unbound and module parameter is T /br
+2:is not unbound and module parameter is T /br
+3:module parameter is not T /br
+examples:seq1.T:=(T, T)boolean ; seq1.T:step(arithmeticseq.T)T ; /br
+seq1.sparseele.T:binarysearch(seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 {change many-to-one relation defined by arcs in g4 into format of set.symdef}

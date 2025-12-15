@@ -38,7 +38,8 @@ Function typepacked6 mytype typeref."packed6 tausupport *"
 
 Function emptytypedict typedict typedict.empty:set.typeentry
 
-function >1(a:typeentry, b:typeentry) ordering (totypeseq.a) sub 1 >1 (totypeseq.b) sub 1
+function >1(a:typeentry, b:typeentry) ordering
+(totypeseq.a) sub 1 >1 (totypeseq.b) sub 1
 
 function type(a:typeentry) mytype (totypeseq.a) sub 1
 
@@ -67,15 +68,13 @@ else
     if iscore4.subfld ∨ subfld = typeT ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
    assert n.totypedict.alltypes < n.totypedict.acc report
-    "PROBLEM:(type) flat::(for txt = "", g ∈ flatflds do txt + %.g,
+    "PROBLEM:(type)flat::(for txt = "", g ∈ flatflds do txt + %.g,
     txt + "/br"):(acc)",
    addtype(acc, type)
 
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype) typedict
-for typesused = empty:seq.mytype, sym ∈ toseq.syms
-do typesused + typesused.sym
-for typesyms = empty:set.typeentry, tp ∈ types
-do typesyms + typeentry(tp sub 1, tp << 1)
+for typesused = empty:seq.mytype, sym ∈ toseq.syms do typesused + typesused.sym
+for typesyms = empty:set.typeentry, tp ∈ types do typesyms + typeentry(tp sub 1, tp << 1)
 for acc3 = toseq.typesyms, q ∈ toseq.asset.typesused
 do
  let z = typeentry(q, empty:seq.mytype),
@@ -94,10 +93,9 @@ function resolvetypesize(prg1:seq.typeentry) typedict
 let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5 report
  "recursive type problem:/br:(for acc10 = "", h ∈ unknown.bx5
- do acc10 + "type:(type.h) is:(%(",", flatflds.h))" >> 1 + "/br",
+ do acc10 + "type:(type.h)is:(%(",", flatflds.h))" >> 1 + "/br",
  acc10)"
-for acc = emptytypedict, d ∈ toseq.known.bx5
-do add(acc, type.d, flatflds.d),
+for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d),
 acc
 
 use seq1.mytype
@@ -149,13 +147,11 @@ else
  if unchanged then flatflds else expandflat(type, acc, types)
 
 function replaceT(with:mytype, typs:seq.mytype) seq.mytype
-for acc = empty:seq.mytype, t ∈ typs
-do acc + replaceT(with, t),
+for acc = empty:seq.mytype, t ∈ typs do acc + replaceT(with, t),
 acc
 
 Function asseqseqmytype(dict:typedict) seq.seq.mytype
-for acc = empty:seq.seq.mytype, tr ∈ toseq.totypedict.dict
-do acc + totypeseq.tr,
+for acc = empty:seq.seq.mytype, tr ∈ toseq.totypedict.dict do acc + totypeseq.tr,
 acc
 
 Function %(dict:typedict) seq.word
@@ -180,8 +176,7 @@ function closedict(all:typedict, subdict:typedict) typedict
 for acc = empty:set.mytype, have = empty:set.mytype, te ∈ toseq.totypedict.subdict
 do
  next(
-  for acc2 = acc, t ∈ flatflds.te
-  do if isseq.t then acc2 + parameter.t else acc2 + t,
+  for acc2 = acc, t ∈ flatflds.te do if isseq.t then acc2 + parameter.t else acc2 + t,
   acc2
   , have + type.te
  )
@@ -193,8 +188,7 @@ do
 if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new))
 
 Function basetype(a:seq.mytype, alltypes:typedict) seq.mytype
-for acc = empty:seq.mytype, e ∈ a
-do acc + basetype(e, alltypes),
+for acc = empty:seq.mytype, e ∈ a do acc + basetype(e, alltypes),
 acc
 
 Function basetype(typ:mytype, alltypes:typedict) mytype

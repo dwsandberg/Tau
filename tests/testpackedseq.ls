@@ -17,11 +17,11 @@ let unpack = random:seq.T(depth)
 let pack = packed.unpack
 let typ = getseqtype.pack
 let blksize = 8160 * 8,
-if pack ≠ unpack then "FAIL seq not equal"
+if pack ≠ unpack then red."FAIL" + "seq not equal"
 else if n.pack ≤ blksize ∧ typ = 0 ∧ size = 8 then "PASS std" + toword.n.pack
 else if n.pack ≤ blksize / size ∧ typ = 1 then "PASS packed" + toword.n.pack
 else if n.pack > blksize / size ∧ typ ∉ [0, 1] then "PASS block" + toword.n.pack
-else "FAIL" + toword.n.pack + toword.typ
+else red."FAIL" + toword.n.pack + toword.typ
 
 Function random:seq.T(depth:int) seq.T
 if depth ≤ 0 then base:seq.T

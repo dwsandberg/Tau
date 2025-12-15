@@ -114,14 +114,14 @@ librarymap:seq.word
 Function calcOptions(self:symbol, optionsIn:symdefOption, code:seq.symbol) symdefOption
 if isempty.code ∨ NOINLINE ∈ optionsIn then optionsIn \ VERYSIMPLE
 else
- {length of code for" sub" is 36}
+ {length of code for"sub"is 36}
  let nopara = nopara.self
  let N = 1
  let C = 2,
  for
   acc = nonReducible
-   + (if n.code ≤ 36 then INLINE else NOOPTIONS)
-   + (if n.code ≥ nopara then VERYSIMPLE else NOOPTIONS)
+  + (if n.code ≤ 36 then INLINE else NOOPTIONS)
+  + (if n.code ≥ nopara then VERYSIMPLE else NOOPTIONS)
   , stk = empty:stack.int
   , idx = 1
   , sym ∈ code
@@ -142,13 +142,13 @@ else
   ∧ N ∈ top(stk, nopara.sym)
   ∧ nonReducible ∈ acc then next(acc, push(pop(stk, nopara.sym), N), idx + 1)
   else
-   let newacc = acc \ (if idx > nopara then nonReducible else VERYSIMPLE + nonReducible),
+   let newacc = acc \ if idx > nopara then nonReducible else VERYSIMPLE + nonReducible,
    next(newacc, stk, idx + 1),
  optionsIn \ (VERYSIMPLE + nonReducible)
-  + if VERYSIMPLE ∈ acc then acc + INLINE else acc
+ + if VERYSIMPLE ∈ acc then acc + INLINE else acc
 
 Function pdict(nopara:int) set.localmap2
-{let d1 = localmap2 (1, [Local.1]) let d2 = localmap2 (2, [Local.2]) let d3 = localmap2 (3, [Local.3]) if nopara = 0 then empty:set.localmap2 else if nopara = 1 then asset.[d1] else if nopara = 2 then asset.[d1, d2] else for pdict = asset.[d1, d2, d3], parano ∈ arithseq (nopara-3, 1, 4)}
+{let d1 = localmap2(1,[Local.1])let d2 = localmap2(2,[Local.2])let d3 = localmap2(3,[Local.3])if nopara = 0 then empty:set.localmap2 else if nopara = 1 then asset.[d1]else if nopara = 2 then asset.[d1, d2]else for pdict = asset.[d1, d2, d3], parano ∈ arithseq(nopara-3, 1, 4)}
 for pdict = empty:set.localmap2, parano ∈ arithseq(nopara, 1, 1)
 do pdict + localmap2(parano, [Local.parano]),
 pdict
@@ -175,9 +175,9 @@ else if kind.fromTheEnd(2, part) = kconstantrecord ∧ kind.part sub n.part = kc
  let b = fullconstantcode.part sub n.part,
  if kind.a sub n.a = ksequence ∧ kind.b sub n.b = ksequence then
   part >> 2
-   + a >> 1
-   + b >> 1
-   + Sequence(parameter.resulttype.b sub n.b, nopara.a sub n.a + nopara.b sub n.b)
+  + a >> 1
+  + b >> 1
+  + Sequence(parameter.resulttype.b sub n.b, nopara.a sub n.a + nopara.b sub n.b)
  else empty:seq.symbol
 else
  let para2 = backparse3(part, n.part, true),
@@ -223,15 +223,15 @@ Function checkLoopIsNoOp(syms:seq.symbol, parts:seq.seq.symbol, self:symbol) seq
 let prior = syms >> 1
 let loop = syms sub n.syms,
 if n.parts = 3
-∧ n.parts sub 3 ∈ [13, 14]
-∧ parts sub 2 = [Lit.0, Exit]
-∧ nopara.loop = 2
-∧ prior << (n.prior - 1) = [Lit.0]
-∧ isseq.(paratypes.loop) sub 1 then
+ ∧ n.parts sub 3 ∈ [13, 14]
+ ∧ parts sub 2 = [Lit.0, Exit]
+ ∧ nopara.loop = 2
+ ∧ prior << (n.prior - 1) = [Lit.0]
+ ∧ isseq.(paratypes.loop) sub 1 then
  let lastpart = parts sub 3
  let theseqtype = resulttype.fromTheEnd(3, lastpart),
  let theseq = lastpart sub 5,
- if %.parameter.theseqtype ∈ ["packed2", "ptr"] then {???? hack! should at least check to see if cat is defined.} empty:seq.symbol
+ if %.parameter.theseqtype ∈ ["packed2", "ptr"] then{???? hack! should at least check to see if cat is defined.}empty:seq.symbol
  else
   let firstvar = firstvar.loop
   let idx = firstvar + 1
@@ -273,8 +273,8 @@ if n.parts = 3
      , Local.firstvar
      , Local(firstvar + 3)
     ]
-     + cat
-     + [Local(firstvar + 2), continue.2],
+    + cat
+    + [Local(firstvar + 2), continue.2],
    if [Local.idx, seqlen, EqOp] = parts sub 1 >> 1 ∧ lastpart = matchbrf then
     let newsyms =
      if prior << (n.prior - 3) = [GetSeqLength, Define(firstvar.loop - 1), Lit.0] then syms >> 4
@@ -283,16 +283,15 @@ if n.parts = 3
     if isempty.newsyms then empty:seq.symbol
     else
      newsyms
-      + symbol(moduleref("* seq", parameter.theseqtype), "+", [theseqtype, theseqtype], theseqtype)
-      + Define.firstvar
-      + Lit.0
+     + symbol(moduleref("* seq", parameter.theseqtype), "+", [theseqtype, theseqtype], theseqtype)
+     + Define.firstvar
+     + Lit.0
    else empty:seq.symbol
 else empty:seq.symbol
 
 type stkele is part:seq.symbol, blkparts:seq.seq.symbol
 
-/Function % (a:stkele) seq.word"
-/p part::(part.a):(%n.blkparts.a)"
+/Function %(a:stkele)seq.word"/p part::(part.a):(%n.blkparts.a)"
 
 Function checkrecursive(
 parts:seq.seq.symbol
@@ -308,19 +307,17 @@ do
   let newacc =
    if changed then acc
    else
-    for acc2 = empty:seq.seq.symbol, p2 ∈ acc
-    do acc2 + adjustvar(p2, nopara),
+    for acc2 = empty:seq.seq.symbol, p2 ∈ acc do acc2 + adjustvar(p2, nopara),
     acc2,
   next(true, newacc + adjustvar(p >> 2 + continue.nopara, nopara))
  else next(changed, acc + (if changed then adjustvar(p, nopara) else p)),
 if changed then
- for pvar = empty:seq.symbol, i ∈ arithseq(nopara.self, 1, 1)
- do pvar + Local.i,
+ for pvar = empty:seq.symbol, i ∈ arithseq(nopara.self, 1, 1) do pvar + Local.i,
  [Lit.0]
-  + pvar
-  + Loopblock(paratypes.self, nopara + 1, resulttype.self)
-  + adjustvar(subseq(stkpart, 2, n.stkpart - 1), nopara)
-  + code.blocktocode(empty:seq.symbol, acc, self, nojumptable, nextvar)
+ + pvar
+ + Loopblock(paratypes.self, nopara + 1, resulttype.self)
+ + adjustvar(subseq(stkpart, 2, n.stkpart - 1), nopara)
+ + code.blocktocode(empty:seq.symbol, acc, self, nojumptable, nextvar)
 else empty:seq.symbol
 
 function ⊻(a:boolean, b:boolean) boolean if a then not.b else b
@@ -340,7 +337,7 @@ do
   for acc = e >> (value.x - 2), e2 ∈ subseq(e, n.e - value.x + 3, n.e - 1)
   do
    acc
-    + if kind.e2 = klabel then if value.e2 + place > n.tmp + 1 then Label(value.e2 + amount - 1) else e2
+   + if kind.e2 = klabel then if value.e2 + place > n.tmp + 1 then Label(value.e2 + amount - 1) else e2
    else e2,
   next(replace(tmp, place, acc + e sub n.e), place + 1)
  else next(tmp, place + 1),
@@ -359,12 +356,17 @@ let last = subexp sub n.subexp
 for idx = 1, nest = 0, e ∈ part
 while idx > 0
 do
- if nest = 0 ∧ not.isspecial.kind.e ∧ e = last ∧ subseq(part, idx - n.subexp + 1, idx) = subexp then next(-idx, nest)
+ if nest = 0
+ ∧ not.isspecial.kind.e
+ ∧ e = last
+ ∧ subseq(part, idx - n.subexp + 1, idx) = subexp then next(-idx, nest)
  else
   let kind = kind.e,
   next(
    idx + 1
-   , if kind ∈ [kstart, kloop] then nest + 1 else if kind = kendblock then nest - 1 else nest
+   , if kind ∈ [kstart, kloop] then nest + 1
+   else if kind = kendblock then nest - 1
+   else nest
   ),
 abs.idx
 
@@ -389,8 +391,8 @@ result:seq.symbol
 ) expandresult
 {???? remove hoist restriction}
 let hoist = name.self ∈ "optest37 optest35"
-{name.self ∉" union diff getcode newstack reallit"}
-{∨ %.self ∈ [" xset.word:diff (seq.word, seq.word, int, int) seq.word"," xset.mytype:diff (seq.mytype, seq.mytype, int, int) seq.mytype"," xset.symbol:diff (seq.symbol, seq.symbol, int, int) seq.symbol"," xset.int:diff (seq.int, seq.int, int, int) seq.int"," xset.filename:diff (seq.filename, seq.filename, int, int) seq.filename"," xset.encoding.word3:diff (seq.encoding.word3, seq.encoding.word3, int, int) seq.encoding.word3"," xset.state:diff (seq.state, seq.state, int, int) seq.state"," xset.arc.int:diff (seq.arc.int, seq.arc.int, int, int) seq.arc.int"]}
+{name.self ∉"union diff getcode newstack reallit"}
+{∨ %.self ∈["xset.word:diff(seq.word, seq.word, int, int)seq.word","xset.mytype:diff(seq.mytype, seq.mytype, int, int)seq.mytype","xset.symbol:diff(seq.symbol, seq.symbol, int, int)seq.symbol","xset.int:diff(seq.int, seq.int, int, int)seq.int","xset.filename:diff(seq.filename, seq.filename, int, int)seq.filename","xset.encoding.word3:diff(seq.encoding.word3, seq.encoding.word3, int, int)seq.encoding.word3","xset.state:diff(seq.state, seq.state, int, int)seq.state","xset.arc.int:diff(seq.arc.int, seq.arc.int, int, int)seq.arc.int"]}
 let first = parts0 sub 1,
 if kind.first sub n.first = kexit then expandresult(nextvar0, result >> 1 + first >> 1)
 else
@@ -400,7 +402,7 @@ else
   else if kind2 = kfalse then brf.first sub n.first
   else 0,
  if z > 0 then
-  assert z + 1 ≤ n.parts0 report ":(self):(z) blocktocode:(%n.parts0)"
+  assert z + 1 ≤ n.parts0 report ":(self):(z)blocktocode:(%n.parts0)"
   let newparts = [parts0 sub 1 >> 2 + parts0 sub (z + 1)] + parts0 << (z + 1),
   blocktocode(result, newparts, self, nojumptable, nextvar0)
  else
@@ -457,26 +459,28 @@ else
      let newarcs5 =
       if brt = brf then arcs5 + arc(brt + place, place)
       else arcs5 + arc(brt + place, place) + arc(brf + place, place),
-     let newbrs = if n.this = 2 ∧ this sub 1 ∈ [Littrue, Litfalse] then brs else brs + place,
-     if idx = 0 then {no subexpression was found} next(parts + this, newreached, newarcs5, newbrs, nextvar)
+     let newbrs =
+      if n.this = 2 ∧ this sub 1 ∈ [Littrue, Litfalse] then brs else brs + place,
+     if idx = 0 then{no subexpression was found}next(parts + this, newreached, newarcs5, newbrs, nextvar)
      else
       let parent = parts sub placeX
       {check printrecord slotorder2 are form printbitcodes descslot}
       if kind.parent sub (idx + 1) ≠ kdefine then
        {subexpression was found but not placed in variable}
-       let newparent = subseq(parent, 1, idx) + Define.nextvar + Local.nextvar + parent << idx
+       let newparent =
+        subseq(parent, 1, idx) + Define.nextvar + Local.nextvar + parent << idx
        let newpart =
         replace(parts, placeX, newparent)
-         + (subseq(this, 1, exp - 4)
-         + Local.value.newparent sub (idx + 1)
-         + subseq(this, exp + 1, n.this)),
+        + (subseq(this, 1, exp - 4)
+        + Local.value.newparent sub (idx + 1)
+        + subseq(this, exp + 1, n.this)),
        next(newpart, newreached, newarcs5, newbrs, nextvar + 1)
       else
        {subexpression was found that is in variable}
        let newpart =
         subseq(this, 1, exp - 4)
-         + Local.value.parent sub (idx + 1)
-         + subseq(this, exp + 1, n.this),
+        + Local.value.parent sub (idx + 1)
+        + subseq(this, exp + 1, n.this),
        next(parts + newpart, newreached, newarcs5, newbrs, nextvar)
   {map contains location from end of block. Branch chains have been removed from block. Block is reconstruct from end to beginning. }
   for
@@ -504,10 +508,10 @@ else
        assert kind ≠ kjmp report "not expecting jmp:(part)",
        Local.0
     for run = [place], brtrues = empty:seq.int, vals = empty:seq.symbol, cpart = part
-    while {more} not.isempty.cpart
+    while {more}not.isempty.cpart
     do
      let isbr = kind.cpart sub n.cpart = kbr,
-     if {not partofrun} isbr
+     if {not partofrun}isbr
      ∧ (n.cpart < 4
      ∨ cpart sub (n.cpart - 3) ≠ runreg
      ∨ cpart sub (n.cpart - 1) ≠ EqOp
@@ -536,16 +540,17 @@ else
         if brf.tmp sub n.tmp + idx = run sub n.run then next(run + idx, newbrtrues, newvals, tmp)
         else next(run, newbrtrues, newvals, quit)
     let haverun = n.vals ≥ 3 ∧ not.nojumptable
-    assert not.haverun ∨ n.asset.vals = n.vals report "Error: Function:(self) has duplicate value in branch table::(vals)"
+    assert not.haverun ∨ n.asset.vals = n.vals report "Error: Function:(self)has duplicate value in branch table::(vals)"
     let default =
      place
-      + if kind.part sub n.part = kbr then brf.part sub n.part else value.fromTheEnd(2, part),
+     + if kind.part sub n.part = kbr then brf.part sub n.part
+     else value.fromTheEnd(2, part),
     for
      map1 = map
      , acc = empty:seq.int
      , finalp0 = final
      , p0 = placements
-     , e ∈ [default] + (if haverun then brtrues else [place + brt.part sub n.part])
+     , e ∈ [default] + if haverun then brtrues else [place + brt.part sub n.part]
     do
      let c5 = check5(map1, e, parts)
      for map2 = map1, finalp1 = finalp0, p1 = p0, e1 ∈ c5
@@ -560,7 +565,8 @@ else
     if haverun then
      let lastofrun = run sub n.run
      let tmp = parts sub lastofrun
-     let runprefix = if kind.tmp sub n.tmp = kbr then tmp >> 3 else tmp >> value.tmp sub n.tmp
+     let runprefix =
+      if kind.tmp sub n.tmp = kbr then tmp >> 3 else tmp >> value.tmp sub n.tmp
      for ss2 = empty:seq.symbol, e ∈ acc
      do
       let label = Label(n.p0 - e + 1),
@@ -622,7 +628,7 @@ function makePart(map:seq.int, len:int, part:seq.symbol, place:int) seq.symbol
 if kind.part sub n.part ≠ kbr then part
 else
  part >> 1
-  + Br2(
+ + Br2(
   len - map sub (place + brt.part sub n.part) + 1
   , len - map sub (place + brf.part sub n.part) + 1
  )
@@ -652,7 +658,12 @@ else
  else if kind = kfalse then chain(i + brf.last, parts)
  else i
 
-Function membercode(p1:mytype, part:seq.symbol, prg:set.symdef, nextvar:int) expandresult
+Function membercode(
+p1:mytype
+, part:seq.symbol
+, prg:set.symdef
+, nextvar:int
+) expandresult
 let last = part sub n.part
 let part1 =
  if kind.last = kwords then
@@ -696,7 +707,7 @@ let tmp6 =
  if kind = kmulint then [Lit(value.fromTheEnd(2, part) * value.part sub n.part)]
  else if kind = kaddint then [Lit(value.fromTheEnd(2, part) + value.part sub n.part)]
  else if kind = ksubint then [Lit(value.fromTheEnd(2, part) - value.part sub n.part)]
- else if kind = kdivint ∧ part sub n.part ≠ Lit.0 then [Lit(value.fromTheEnd(2, part) / value.part sub n.part)]
+ else if kind = kdivint ∧ part sub n.part ≠ Lit.0 then[Lit(value.fromTheEnd(2, part) / value.part sub n.part)]
  else if kind ∈ [kidx, kidxNB] then
   let args = subseq(part, n.part - 1, n.part),
   if kind.args sub 1 = kwords then [Word.(worddata.args sub 1) sub value.args sub 2]
@@ -717,35 +728,43 @@ let tmp6 =
   else
    let x = last.fullconstantcode.part sub n.part,
    if kind.x = ksequence then [Lit.0] else empty:seq.symbol
- else if kind = keqlB then [if kind.fromTheEnd(2, part) = kind.part sub n.part then Littrue else Litfalse]
+ else if kind = keqlB then[if kind.fromTheEnd(2, part) = kind.part sub n.part then Littrue else Litfalse]
  else if kind = keqlI then
   let tmp =
    if kind.fromTheEnd(2, part) = kword then worddata.fromTheEnd(2, part) = worddata.part sub n.part
    else value.fromTheEnd(2, part) = value.part sub n.part,
   [if tmp then Littrue else Litfalse]
- else if kind = kgrtI then [if value.fromTheEnd(2, part) > value.part sub n.part then Littrue else Litfalse]
+ else if kind = kgrtI then[if value.fromTheEnd(2, part) > value.part sub n.part then Littrue else Litfalse]
  else if kind = k<<bits then [Lit.toint(tobits.value.fromTheEnd(2, part) << value.part sub n.part)]
  else if kind = k>>bits then [Lit.toint(tobits.value.fromTheEnd(2, part) >> value.part sub n.part)]
- else if kind = k∨bits then [Lit.toint(tobits.value.fromTheEnd(2, part) ∨ tobits.value.part sub n.part)]
- else if kind = k∧bits then [Lit.toint(tobits.value.fromTheEnd(2, part) ∧ tobits.value.part sub n.part)]
- else if kind = kxorbits then [Lit.toint(tobits.value.fromTheEnd(2, part) ⊻ tobits.value.part sub n.part)]
- else if kind = kaddreal then [Reallit.representation(casttoreal.value.fromTheEnd(2, part) + casttoreal.value.part sub n.part)]
- else if kind = ksubreal then [Reallit.representation(casttoreal.value.fromTheEnd(2, part) - casttoreal.value.part sub n.part)]
- else if kind = kmakereal ∧ kind.part sub n.part = kwords then [Reallit.representation.makereal.worddata.part sub n.part]
+ else if kind = k∨bits then[Lit.toint(tobits.value.fromTheEnd(2, part) ∨ tobits.value.part sub n.part)]
+ else if kind = k∧bits then[Lit.toint(tobits.value.fromTheEnd(2, part) ∧ tobits.value.part sub n.part)]
+ else if kind = kxorbits then[Lit.toint(tobits.value.fromTheEnd(2, part) ⊻ tobits.value.part sub n.part)]
+ else if kind = kaddreal then
+  [
+   Reallit.representation(casttoreal.value.fromTheEnd(2, part) + casttoreal.value.part sub n.part)
+  ]
+ else if kind = ksubreal then
+  [
+   Reallit.representation(casttoreal.value.fromTheEnd(2, part) - casttoreal.value.part sub n.part)
+  ]
+ else if kind = kmakereal ∧ kind.part sub n.part = kwords then[Reallit.representation.makereal.worddata.part sub n.part]
  else if kind = kfld then
   let t = fullconstantcode.fromTheEnd(2, part)
   let val = value.part sub n.part,
-  if kind.t sub n.t = krecord ∧ between(val, 0, nopara.t sub n.t - 1) ∧ nopara.t sub n.t = n.t - 1 then [t sub (val + 1)]
+  if kind.t sub n.t = krecord
+  ∧ between(val, 0, nopara.t sub n.t - 1)
+  ∧ nopara.t sub n.t = n.t - 1 then[t sub (val + 1)]
   else empty:seq.symbol
  else if kind = kcat then
-  if kind.fromTheEnd(2, part) = kwords ∧ kind.part sub n.part = kwords then [Words(worddata.fromTheEnd(2, part) + worddata.part sub n.part)]
+  if kind.fromTheEnd(2, part) = kwords ∧ kind.part sub n.part = kwords then[Words(worddata.fromTheEnd(2, part) + worddata.part sub n.part)]
   else if kind.fromTheEnd(2, part) = kconstantrecord ∧ kind.part sub n.part = kconstantrecord then
    let a = fullconstantcode.fromTheEnd(2, part)
    let b = fullconstantcode.part sub n.part,
    if kind.a sub n.a = ksequence ∧ kind.b sub n.b = ksequence then
     a >> 1
-     + b >> 1
-     + Sequence(parameter.resulttype.b sub n.b, nopara.a sub n.a + nopara.b sub n.b)
+    + b >> 1
+    + Sequence(parameter.resulttype.b sub n.b, nopara.a sub n.a + nopara.b sub n.b)
    else empty:seq.symbol
   else empty:seq.symbol
  else empty:seq.symbol,
@@ -772,27 +791,27 @@ else
 
 function noopsymbolss(self:symbol) boolean
 %.self
-∈ [
- "llvm:% (llvmtype) seq.word"
- , "llvm:function (seq.llvmtype) llvmtype"
- , "UTF8:tocharseq2 (seq.int) seq.char"
- , "UTF8:tointseq (seq.char) seq.int"
- , "UTF8:tocharseq (seq.int) seq.char"
- , "persistant:hash (const3) int"
+ ∈ [
+ "llvm:%(llvmtype)seq.word"
+ , "llvm:function(seq.llvmtype)llvmtype"
+ , "UTF8:tocharseq2(seq.int)seq.char"
+ , "UTF8:tointseq(seq.char)seq.int"
+ , "UTF8:tocharseq(seq.int)seq.char"
+ , "persistant:hash(const3)int"
  , "llvm:typerecords seq.seq.int"
- , "llvm:AGGREGATE (seq.slot) slot"
- , "compileTimeT.callconfig:buildargs:callconfig (seq.symbol) seq.int"
- , "compileTimeT.callconfig:tocode:callconfig (int, mytype, typedict) seq.symbol"
- , "set.mytype:findelement2 (set.mytype, mytype) set.mytype"
- , "set.symbol:findelement2 (set.symbol, symbol) set.symbol"
- , "set.arc.symbol:findelement2 (set.arc.symbol, arc.symbol) set.arc.symbol"
- , "object01:inrec (seq.seq.int) ptr"
- , "typedict:asseqseqmytype (typedict) seq.seq.mytype"
- , "set.int:findelement2 (set.int, int) set.int"
+ , "llvm:AGGREGATE(seq.slot)slot"
+ , "compileTimeT.callconfig:buildargs:callconfig(seq.symbol)seq.int"
+ , "compileTimeT.callconfig:tocode:callconfig(int, mytype, typedict)seq.symbol"
+ , "set.mytype:findelement2(set.mytype, mytype)set.mytype"
+ , "set.symbol:findelement2(set.symbol, symbol)set.symbol"
+ , "set.arc.symbol:findelement2(set.arc.symbol, arc.symbol)set.arc.symbol"
+ , "object01:inrec(seq.seq.int)ptr"
+ , "typedict:asseqseqmytype(typedict)seq.seq.mytype"
+ , "set.int:findelement2(set.int, int)set.int"
  , "test11a:checkprec seq.word"
- , "set.myExport:findelement2 (set.myExport, myExport) set.myExport"
- , "set.sym/modref:findelement2 (set.sym/modref, sym/modref) set.sym/modref"
- , "prettycompilerfront:transform2 (midpoint, seq.word, seq.word, seq.word, boolean, boolean, seq.word, boolean, boolean, seq.file, seq.file, seq.word) seq.file"
- , "opttests:optest16 (seq.char) seq.int"
- , "genEnumeration:enumerate (seq.word, seq.word, boolean, seq.word) seq.seq.word"
+ , "set.myExport:findelement2(set.myExport, myExport)set.myExport"
+ , "set.sym/modref:findelement2(set.sym/modref, sym/modref)set.sym/modref"
+ , "prettycompilerfront:transform2(midpoint, seq.word, seq.word, seq.word, boolean, boolean, seq.word, boolean, boolean, seq.file, seq.file, seq.word)seq.file"
+ , "opttests:optest16(seq.char)seq.int"
+ , "genEnumeration:enumerate(seq.word, seq.word, boolean, seq.word)seq.seq.word"
 ] 

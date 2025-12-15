@@ -53,7 +53,8 @@ builtin profiledata seq.seq.parc
 
 Function decode(d:set.addrsym, i:int) symbol sym.lookup(d, addrsym(i, Lit.0)) sub 1
 
-function %(p:parc) seq.word %.caller.p + %.callee.p + %.counts.p + %.clocks.p + %.unused.p
+function %(p:parc) seq.word
+%.caller.p + %.callee.p + %.counts.p + %.clocks.p + %.unused.p
 
 use set.int
 
@@ -70,11 +71,9 @@ use drawGraph.profileMeasure.symbol
 use profileMeasure.symbol
 
 Function profileresults(measure:seq.word) seq.word
-for d0 = empty:seq.addrsym, a ∈ addresssymbols
-do d0 + a
+for d0 = empty:seq.addrsym, a ∈ addresssymbols do d0 + a
 let d = asset.d0
-for profileData = empty:seq.parc, e ∈ profiledata
-do profileData + e
+for profileData = empty:seq.parc, e ∈ profiledata do profileData + e
 for acc0 = empty:seq.profileMeasure.symbol, max = 1, arc ∈ profileData
 do
  let m = measure(arc, measure),

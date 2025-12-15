@@ -24,7 +24,7 @@ use llvmcode
 
 use objectio.midpoint
 
-use pretty 
+use pretty
 
 use standard
 
@@ -43,20 +43,20 @@ input:seq.file
 , entryUses:seq.word
 , output:seq.word
 ) seq.file
-{COMMAND OPTION PROFILE /strong makebitcode compiler /br
+{COMMAND makebitcode /strong compiler /br
 Options:/br
-/strong entryUses addition use clause added to module when building entry point. /br
-/strong profile generates information for profiling /br
-/strong showllvm show text form of llvm code generated for the names of procedure given./br
-/info show text form of code info /br
+entryUses /strong addition use clause added to module when building entry point. /br
+profile /strong generates information for profiling /br
+showllvm /strong show text form of llvm code generated for the names of procedure given./br
+info /strong show text form of code info /br
 /exports list of packes to show. }
 let options =
  (if info then "info: " else "")
-  + (if profile then "profile: " else "")
-  + (if not.isempty.showllvm then "showllvm: :(showllvm)" else "")
+ + (if profile then "profile: " else "")
+ + (if not.isempty.showllvm then "showllvm: :(showllvm)" else "")
 let outfn = tofilenames.output
 let p = process.subcompile(input, outfn, options, exports, entryUses),
-if aborted.p then [file("error.html", "COMPILATION ERROR in libray::(name.outfn sub 1) /br:(message.p)")]
+if aborted.p then[file("error.html", "COMPILATION ERROR in libray::(name.outfn sub 1)/br:(message.p)")]
 else result.p
 
 function subcompile(
@@ -67,11 +67,10 @@ input:seq.file
 , entryUses:seq.word
 ) seq.file
 {OPTION PROFILE First line of src.m was added by compilerFront so remove it}
-for uses = "", e ∈ input
-do if ext.fn.e ∈ "libinfo" then uses + name.fn.e else uses
+for uses = "", e ∈ input do if ext.fn.e ∈ "libinfo" then uses + name.fn.e else uses
 let m =
  compilerFront:callconfig(
-  "bitcode uses: :(uses):(options) Library::(name.outfn sub 1)"
+  "bitcode uses: :(uses):(options)Library::(name.outfn sub 1)"
   , input
   , exports
   , entryUses
