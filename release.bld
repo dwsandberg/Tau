@@ -26,7 +26,7 @@ startfresh +bin taubuild.sh taubc.bc putfile.c tauconfig.ls
 +.release.bld
 output: taubc0.lib
 
-makelib0 +core bits.ls encoding  classinfo.ls markup.ls format1   format1a format4 graph arc process real seq set sparseseq stack standard towords
+makelib0 +core bits.ls encoding  classinfo.ls markup.ls    format1a   graph arc process real seq set sparseseq stack standard towords
 UTF8 word xxhash seq1 sort textio file ptr indirect PEGrules  kernal 
 brandeskopf uniqueids layernode orderNodes 
    timestamp drawGraph svg stateFunctions
@@ -53,7 +53,7 @@ output: taubc.lib taubc.libsrc taubc.libinfo
 
 makelib taubc.libinfo
 +tools baseTypeCheck.ls   prettycompilerfront reconstructUses frontcmd graphcode cleanExports
-genPEG genEnumeration totext PEGdebug usegraph tau? PEGgenNoTable prettyScript
+genPEG genEnumeration totext PEGdebug usegraph tauhelp PEGgenNoTable prettyScript
    backparse3  
 entryUses: frontcmd.callconfig compilerfrontT.callconfig llvmcode
 output: tools.lib tools.libsrc
@@ -64,7 +64,7 @@ testprocess testseq tree wordfreq testopt test11a testcore seq8 testpackedseq te
 testDifferentTypesB testanal
 output: testcore.lib testcore.libsrc
 
-testall +tests opttests.ls
+ testall +tests opttests.ls
 +$build taubc.libinfo
 output: testall.html
 
@@ -122,24 +122,29 @@ output: +documentation Ex3usegraph.html
 
 transform+tests docprofileExampleSrc.ls html: Module output:+documentation profileExampleSrc.html
 
- # transform       core.libsrc   bind:  html: Module h1 link:  core.libsrc
+  transform       core.libsrc   bind:  html: Module h1 link:  core.libsrc
 output: +documentation core.html
 
-# transform    webcore.libsrc  tausupport 
+ transform    webcore.libsrc  
 link:   +documentation core.html html: h1
 output: +documentation webcore.html
 
  
 
-# needs work transform webcore.libsrc tausupport core symbols compilerfront tools 
+# transform webcore.libsrc  symbols compilerfront tools 
+ +core svg.ls drawGraph.ls
+layernode
+uniqueids
+ orderNodes 
+ brandeskopf
 +webapps webcallconfig.ls  webcmd.html
 +tau2bc makescript.ls     link:  +webapps webcmd.ls +documentation core.html  webcore
 html: h1 h2 h3
 output: +documentation webcmd.html
 
-# define tau? tools
+define tauhelp tools
 
-# tau? %:full output: +documentation cmddoc.html
+ tauhelp %:full output: +documentation cmddoc.html
 
 # ###
 
@@ -149,7 +154,7 @@ output: baseTypeCheck.html
 
 wasm +webcore webIOtypes.ls webIO SpecialExports JS webHTTP SpecialImports
 +tausupport taublockseq bitcast tausupport encodingsupport
-+core bits.ls encoding format1 format4 format1a graph arc process real seq set sparseseq stack standard
++core bits.ls encoding  markup classinfo format1a graph arc process real seq set sparseseq stack standard
 UTF8 word xxhash seq1 sort textio file ptr indirect PEGrules kernal towords timestamp stateFunctions
 Library: webcore
 output: webcore.wasm webcore.libsrc
@@ -179,7 +184,6 @@ uniqueids
  brandeskopf
 +webapps webcallconfig.ls webcmd.ls webcmd.html
 +tau2bc makescript.ls
-+core markup  classinfo  
 Library: webcmd
 exports: webcmd
 output: webcmd.wasm
@@ -213,7 +217,7 @@ define regen ppp test2
 
 regen output: regen.bc
 
-# transform  core.libsrc tausupport bind:  output: hhh.html
+transform  core.libsrc tausupport bind:  output: hhh.html
 
 transform +built taubc.libsrc tools webassembly testcore printbitcodes
 +tests opttests.ls profile profileMeasure profileCompile
@@ -245,11 +249,11 @@ library: taubc5
 output: profileCompile.html
 
 buildhelp tools.libsrc taubc webassembly transform1info.html
-target: +tools tau?.ls
-output: +tmp/tools tau?.ls
+target: +tools tauhelp.ls
+output: +tmp/tools tauhelp.ls
 
 
-# tau? %:shellscript output: taucommands.sh
+  tauhelp %:shellscript output: taucommands.sh
 
 prettyScript +.release.bld output: +tmp release.bld
 
