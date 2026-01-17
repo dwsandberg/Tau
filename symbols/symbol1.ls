@@ -8,9 +8,11 @@ use seq.mytype
 
 use standard
 
+use symbol
+
 use seq1.symbol
 
-use symbol
+use seq.symbolKind
 
 use symbolconstant
 
@@ -492,8 +494,6 @@ Export between(symbolKind, symbolKind, symbolKind) boolean
 Export %(symbolKind) seq.word
 
 Export ∈(symbolKind, seq.symbolKind) boolean
-
-use seq.symbolKind
 
 Export =(a:symbolKind, b:symbolKind) boolean
 

@@ -231,7 +231,9 @@ else if kind ∈ [kcontinue, ksequence] then toint.name.s
 else n.types.s - if issimplename.s then 1 else 2
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype) seq.word
-let fullname = if isempty.nametype then [name] else [name] + ":" + %.nametype sub 1,
+let fullname =
+ if isempty.nametype then if name ∈ "=" then [encodeword([char.32] + decodeword.name)] else [name]
+ else [name] + ":" + %.nametype sub 1,
 if n.paratypes = 0 then fullname
 else
  for acc = fullname + "(", t ∈ paratypes do acc + %.t + ",",

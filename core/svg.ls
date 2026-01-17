@@ -1,10 +1,10 @@
 Module svg
 
-use seq1.int
-
 use seq1.seq.int
 
 use sort.seq.int
+
+use seq1.int
 
 use layernode
 
@@ -16,7 +16,8 @@ use uniqueids
 
 Function text(class:seq.word, id:seq.word, x:int, y:int, w:seq.word) seq.word
 {"/tag <text /sp class = /tag:(dq.class):(if id =""then id else"id = /tag:(dq.id)")x = /tag:(dq.%.x)y = /tag:(dq.%.y)>:(w)/tag </text>"}
-atts."/tag <text = class =:(class)=:(if id = "" then id else "id =:(id)=")x =:(x)= y =:(y)/br >:(w)/tag </text>"
+atts."/tag <text = class =:(class)=:(if id = "" then id else "id =:(id)=")x =:(x)= y =:(y)/br"
+ + ">:(w)/tag </text>"
 
 Function svgpath(class:seq.word, id:seq.word, path:seq.word) seq.word
 atts."/tag <path = class =:(class)=:(if id = "" then id else "id =:(id)=")d =:(path)/br />"
@@ -25,18 +26,13 @@ atts."/tag <path = class =:(class)=:(if id = "" then id else "id =:(id)=")d =:(p
 
 Function svg(classes2:seq.seq.word, otherAttributes:seq.seq.word, body:seq.word) seq.word
 for att = "", e ∈ otherAttributes
-do if isempty.e then "" else att + ":(e sub 1)=:(dq("/nsp" + e << 1))"
+do if isempty.e then "" else att + ":(e sub 1)=:(dq."/nsp:(e << 1)")"
 for
  acc = ""
  , e ∈ for acc2 = empty:seq.seq.word, e ∈ classes2 do acc2 + "" + e,
  acc2
-do acc + e
-let classdefs =
- atts."/tag <style = type = text/css /br
- > /tag <"
- + acc
- + "/tag ></style>",
- "/tag <svg /sp:(att)>:(classdefs):(body)Your browser does not support inline SVG. /tag </svg>"
+do acc + e,
+ "/tag <svg /sp:(att)> /tag <style>:(acc)/tag ????</style>:(body)Your browser does not support inline SVG. /tag </svg>"
 
 Function drawscript seq.word
 {Adjust beginning of paths so the start at the end of the word}

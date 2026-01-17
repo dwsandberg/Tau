@@ -28,11 +28,11 @@ use pretty
 
 use standard
 
-use seq1.word
+use seq.seq.word
 
 use seq1.seq.word
 
-use seq.seq.word
+use seq1.word
 
 Function makebitcode(
 input:seq.file
@@ -56,7 +56,7 @@ let options =
  + (if not.isempty.showllvm then "showllvm: :(showllvm)" else "")
 let outfn = tofilenames.output
 let p = process.subcompile(input, outfn, options, exports, entryUses),
-if aborted.p then[file("error.html", "COMPILATION ERROR in libray::(name.outfn sub 1)/br:(message.p)")]
+if aborted.p then[file("tmp/error.html", "COMPILATION ERROR in libray::(name.outfn sub 1)/br:(message.p)")]
 else result.p
 
 function subcompile(

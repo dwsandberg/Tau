@@ -1,10 +1,16 @@
 Module token
 
-use standard
-
 use bits
 
 use kernal
+
+use standard
+
+use encoding.tkn
+
+use seq1.tkn
+
+use seq.token
 
 type token is value:bits
 
@@ -24,13 +30,9 @@ function eqvclass(t:token) int toint(value.t >> 32)
 
 type tkn is w:word, token:token
 
-use encoding.tkn
-
 function =(a:tkn, b:tkn) boolean w.a = w.b
 
 function hash(a:tkn) int hash.w.a
-
-use encoding.tkn
 
 Function addprec(str:seq.word, internal:boolean) seq.word
 for precedence = 0, e ∈ str
@@ -61,8 +63,6 @@ Function opprec(a:word) int
 let k = findencode.tkn(a, token(a, 0)),
 if isempty.k then 0 else eqvclass.token.k sub 1
 
-use seq1.tkn
-
 function %(a:tkn) seq.word ":(w.a):(toword.token.a):(eqvclass.token.a)"
 
 Function totoken(w:word) token
@@ -77,7 +77,5 @@ else value.a >> 32 = value.b >> 32
 Function totokens(s:seq.word) seq.token
 for p2 = empty:seq.token, e ∈ s do p2 + totoken.e,
 p2
-
-use seq.token
 
 Export type:token 

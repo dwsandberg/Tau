@@ -4,17 +4,17 @@ use arc.modref
 
 use graph.arc.modref
 
+use orderNodes.arc.modref
+
 use seq.arc.modref
 
 use set.arc.modref
 
-use orderNodes.arc.modref
-
-use seq1.modref
+use seq.seq.modref
 
 use seq1.seq.modref
 
-use seq.seq.modref
+use seq1.modref
 
 use set.modref
 
@@ -50,9 +50,9 @@ use set.symbol
 
 use symbol1
 
-use seq1.symdef
-
 use seq.symdef
+
+use seq1.symdef
 
 use set.symdef
 

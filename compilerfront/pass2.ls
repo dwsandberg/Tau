@@ -12,9 +12,9 @@ use graph.arc.int
 
 use set.arc.int
 
-use seq1.int
-
 use seq.int
+
+use seq1.int
 
 use set.int
 
@@ -32,13 +32,13 @@ use real
 
 use standard
 
-use seq1.symbol
+use seq.symbol
 
 use seq1.seq.symbol
 
-use set.symbol
+use seq1.symbol
 
-use seq.symbol
+use set.symbol
 
 use symbol1
 

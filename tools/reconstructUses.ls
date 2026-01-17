@@ -193,8 +193,12 @@ Function includecomment(modtext:seq.word) int
 for i = findindex(modtext, "/p" sub 1)
 while i < n.modtext
  ∧ modtext sub (i + 1) ∉ "Function type function Export unbound Builtin builtin"
-do findindex(modtext, "/p" sub 1),
+do findindex(modtext << i, "/p" sub 1) + i,
 i
+
+function showZ(out:seq.word) seq.word
+for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
+acc
 
 function replaceT(with:mytype, a:seq.symbol, dict:set.symbol) seq.symbol
 for acc = empty:seq.symbol, sym ∈ a

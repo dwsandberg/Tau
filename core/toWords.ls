@@ -10,11 +10,11 @@ use seq.int
 
 use standard
 
+use seq.tblrec
+
 use seq.word
 
 use seq.seq.word
-
-use seq.tblrec
 
 use seq1.seq.word
 

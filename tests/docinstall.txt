@@ -27,10 +27,10 @@ In the hello directory, create a text file named text.ls containing the followin
 
 Next, create a file named hello.bld  which describes with how to build and run the program.  Its contents are the following lines:// define makelib taubc makebitcode /br /br makelib taubc.libinfo+hello hello.ls /br output: hello.lib /br /br define hello hello /br /br hello output: hello.html /br /br define open shell open input:/br /br open input: hello.html output: hello.txt /block  
 
-Now run the following command in the <Tau> directory // bash taubuild.sh hello/hello.bld /block
+Now run the following command in the <Tau> directory // bash taubuild.sh hello/hello.bld /block /br
+Running the above command does the following: 
 
-Running the above command does the following 
-  Create an executable with the name of <Tau>/built/hello.lib from the source code. (Paragraphs one and two of the build file.) /li
+//ol Create an executable with the name of <Tau>/built/hello.lib from the source code. (Paragraphs one and two of the build file.) /li
  The program is executed and the output is placed in <Tau>/built/hello.html. (Paragraphs three and four of the build file.) /li
    A web browser opens the file <Tau>/built/hello.html.(Last two paragraphs of the build file.) /li
     A tar archive of the source files is created in the directory ~/taubackups/hello/. (An archive is created on successful completion of the build file.) /li /ol
@@ -44,7 +44,7 @@ Commands /h2
 The following assumes that" source built/taucommands.sh" has been executed in the command shell. 
 
 In languages such as C, a function main provides the single entry point into a program. In Tau, there can be many entry points, and they are specified by including the word // COMMAND /em in a comment of a function that meets the following conditions: 
- Is a valid function /li
+//ul  Is a valid function /li
   Define with Function /li  
   Has parameter types of seq.word, seq.file, or boolean. /li Has a return type of seq.word, seq.byte, seq.UTF8, or seq.file /li
    the word COMMAND is in a comment immediately following the return type. /li /ul

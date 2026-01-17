@@ -4,9 +4,9 @@ use UTF8
 
 use encoding.addrsym
 
-use seq1.addrsym
-
 use seq.seq.addrsym
+
+use seq1.addrsym
 
 use sort.addrsym
 

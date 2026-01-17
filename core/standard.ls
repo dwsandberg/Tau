@@ -2,11 +2,13 @@ Module standard
 
 use bits
 
-use seq1.char
-
 use seq.char
 
+use seq1.char
+
 use sort.char
+
+use seq.int
 
 use seq1.int
 
@@ -14,9 +16,9 @@ use kernal
 
 use word
 
-use seq1.word
-
 use seq.seq.word
+
+use seq1.word
 
 Export char1(s:seq.word) char
 
@@ -283,8 +285,6 @@ if a = b then EQ else decodeword.a >alpha decodeword.b
 Export type:word
 
 Function >alpha(a:char, b:char) ordering a >1 b
-
-use seq.int
 
 Function seqseg2(s:seq.int, i:int) pseq.int seqseg(s, i)
 

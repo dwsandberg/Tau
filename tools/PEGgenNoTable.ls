@@ -104,7 +104,7 @@ do
  , "function $(int)attributeType empty:seq.attributeType sub 0"
  , "type frame is Sstate:int, Fstate:int, i:int, result:seq.attributeType, faili:int, failini:seqElementType, failresult:seq.attributeType"
  , "type resultType is stk:stack.frame /trace, trace:seq.word /end"
- , "Function result(a:resultType)attributeType last. result.top.stk.a"
+ , "Function result(a:resultType)attributeType last.result.top.stk.a"
  , "function parse(myinput0:seq.seqElementType, initAttr:attributeType /common, common:commonType /end)resultType /br
  let myinput = packed(myinput0+endMark)/br
  let initresult =[initAttr]let initstk = push(empty:stack.frame, frame(1, 0, 1, initresult, 1, myinput sub 1, initresult))/br

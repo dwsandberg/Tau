@@ -1,14 +1,14 @@
 Module graph.T
 
-use standard
-
 use set.<<.T
-
-use set.T
 
 use seq.barc.T
 
 use set.barc.T
+
+use set.T
+
+use standard
 
 unbound tail(T) <<.T
 

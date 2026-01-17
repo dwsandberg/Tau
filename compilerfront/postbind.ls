@@ -8,11 +8,11 @@ use seq.modExports
 
 use mytype
 
-use seq1.mytype
-
 use seq.mytype
 
 use seq.seq.mytype
+
+use seq1.mytype
 
 use passsymbol
 

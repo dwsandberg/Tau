@@ -1,10 +1,10 @@
 Module arc.T
 
+use set.T
+
 use standard
 
 use seq.seq.word
-
-use set.T
 
 Export type:arc.T
 

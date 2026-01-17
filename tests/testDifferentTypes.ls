@@ -2,23 +2,23 @@ Module testDifferentTypes
 
 Types with same name in differnt modules
 
-use seq.word
-
-type bug17 is part1:word, part2:word
+use seq1.bug17
 
 use set.bug17
 
 use standard
 
-use seq1.bug17
+use testDifferentTypesB
+
+use seq.word
+
+type bug17 is part1:word, part2:word
 
 function %(a:bug17) seq.word [part1.a, part2.a]
 
 function >1(a:bug17, b:bug17) ordering part1.a >1 part1.b ∧ part2.a >1 part2.b
 
 function >2(a:bug17, b:bug17) ordering part1.a >1 part1.b
-
-use testDifferentTypesB
 
 Function testDiffTypes seq.word
 if AA."H" + "/p" + BB."HH"

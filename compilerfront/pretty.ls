@@ -1,5 +1,7 @@
 Module pretty
 
+use UTF8
+
 use autolink
 
 use set.autolink
@@ -9,6 +11,10 @@ use file
 use seq.file
 
 use seq.filename
+
+use format1a
+
+use stack.int
 
 use seq1.mytype
 
@@ -37,12 +43,6 @@ use sort.seq.word
 use seq1.word
 
 use sort.word
-
-use format1a
-
-use stack.int
-
-use UTF8
 
 Export escapeformat(seq.word) seq.word{From prettyR}
 
@@ -660,9 +660,7 @@ if Sstate.top.stk.a ≠ Match then 'Failed
 else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
-Function result(a:resultType) seq.symbol
-let t = result.top.stk.a,
-t sub n.t
+Function result(a:resultType) seq.symbol last.result.top.stk.a
 
 function parse(myinput0:seq.token, initAttr:seq.symbol) resultType
 let myinput = packed(myinput0 + endMark)

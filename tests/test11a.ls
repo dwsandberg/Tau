@@ -1,5 +1,7 @@
 Module test11a
 
+use seq1.boolean
+
 use compilerfrontT.callconfig
 
 use checking
@@ -93,8 +95,6 @@ let z =
   , testerror(in, "Duplicate module name", "Module testit")
  ],
 check(z, "test11a") + checkprec
-
-use seq1.boolean
 
 function testcomp2(in:seq.file, s:seq.word) seq.word
 let txt = "/p module testit /p use standard /p:(s)"

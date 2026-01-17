@@ -2,9 +2,9 @@ Module encodingsupport
 
 use bitcast.einfo
 
-use seq1.einfo
-
 use bitcast.seq.einfo
+
+use seq1.einfo
 
 use bitcast.evector
 

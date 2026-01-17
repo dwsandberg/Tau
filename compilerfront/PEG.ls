@@ -6,31 +6,31 @@ use PEGparse
 
 use UTF8
 
-use seq1.int
-
 use seq.int
 
 use seq.seq.int
+
+use seq1.int
 
 use seq.pegrule
 
 use standard
 
-use seq1.tableEntry
-
 use seq.seq.tableEntry
+
+use seq1.tableEntry
 
 use textio
 
-use seq1.word
-
 use seq.word
-
-use seq1.seq.word
 
 use seq.seq.word
 
 use seq.seq.seq.word
+
+use seq1.seq.word
+
+use seq1.word
 
 use set.word
 
@@ -49,7 +49,7 @@ Function maketable(s:seq.word) PEGtable
 let gin = PEGparse.s,
 maketable(
  gin
- , "dq:(dq), // /, //action /action, //br /br
+ , "dq:(dq), $/ /, //action /action, //br /br
  "
  , false
 )
@@ -117,9 +117,7 @@ if Sstate.top.stk.a ≠ Match then 'Failed
 else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
-Function result(a:runresult) seq.word
-let t = result.top.stk.a,
-t sub n.t
+Function result(a:runresult) seq.word last.result.top.stk.a
 
 function parse(
 myinput0:seq.word

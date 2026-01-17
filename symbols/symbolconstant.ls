@@ -8,9 +8,9 @@ use seq.mytype
 
 use standard
 
-use seq1.symbol
-
 use symbol
+
+use seq1.symbol
 
 use encoding.symbolconstant
 

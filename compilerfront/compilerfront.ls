@@ -28,11 +28,11 @@ use postbind
 
 use standard
 
-use seq1.symbol
-
 use seq.symbol
 
 use seq.seq.symbol
+
+use seq1.symbol
 
 use set.symbol
 
@@ -41,6 +41,8 @@ use symbol1
 use seq.symdef
 
 use set.symdef
+
+use token
 
 use typedict
 
@@ -118,8 +120,6 @@ else
   else if inexport ∧ p sub 1 ∈ "use" then next(inexport, exports2 + p sub 2)
   else next(inexport, exports2),
  exportlist >> (n.exportlist - idx + 1) + exports2
-
-use token
 
 Function compilerfront3(
 option:seq.word

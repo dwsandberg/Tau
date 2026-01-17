@@ -10,6 +10,8 @@ use seq.mytype
 
 use seq.seq.mytype
 
+use seq1.mytype
+
 use set.mytype
 
 use set.passsymbols
@@ -473,8 +475,6 @@ do
 partdict(syms, requires)
 
 type partdict is syms:set.symbol, req:set.symdef
-
-use seq1.mytype
 
 Function findabstract(templates:set.symdef, sym:symbol) seq.findabstractresult
 for acc = empty:seq.findabstractresult, sd ∈ toseq.templates

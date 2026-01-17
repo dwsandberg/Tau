@@ -6,13 +6,15 @@ use seq.mytype
 
 use seq.seq.mytype
 
+use seq1.mytype
+
 use set.mytype
 
 use standard
 
-use set.symbol
-
 use symbol
+
+use set.symbol
 
 use seq.typeentry
 
@@ -97,8 +99,6 @@ assert isempty.unknown.bx5 report
  acc10)"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d),
 acc
-
-use seq1.mytype
 
 function checkflat(types:set.typeentry, unknown:seq.typeentry) checkflatresult2
 for known = types, notflat = empty:seq.typeentry, p ∈ unknown

@@ -1,8 +1,8 @@
 Module testpackedseq.T
 
-use seq1.T
-
 use seq.T
+
+use seq1.T
 
 use standard
 

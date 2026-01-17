@@ -18,19 +18,19 @@ use process.returntype
 
 use standard
 
+use stateFunctions
+
 use tausupport
 
 use process.seq.word
 
 use seq1.seq.word
 
-use seq1.word
-
 use sort.seq.word
 
-use sort.word
+use seq1.word
 
-use stateFunctions
+use sort.word
 
 type returntype is a:int, b:int, c:seq.word
 

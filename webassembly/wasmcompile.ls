@@ -52,9 +52,9 @@ use encoding.wfunc
 
 use seq.wfunc
 
-use seq1.word
-
 use set.seq.word
+
+use seq1.word
 
 use seq1.wtype
 

@@ -26,13 +26,13 @@ use seq.slotdesc
 
 use standard
 
-use seq1.word
-
 use process.word
 
 use seq.word
 
 use sparseseq.seq.word
+
+use seq1.word
 
 use set.word
 

@@ -2,35 +2,35 @@ Module entrypoint
 
 use UTF8
 
+use bits
+
+use seq.byte
+
 use file
 
 use seq.file
 
 use seq.filename
 
+use format1a
+
 use functionHeader
 
 use pretty
 
-use format1a
-
 use standard
-
-use seq1.word
-
-use seq1.seq.word
-
-use seq.seq.word
-
-use set.seq.word
-
-use set.word
 
 use token
 
-use seq.byte
+use seq.seq.word
 
-use bits
+use seq1.seq.word
+
+use set.seq.word
+
+use seq1.word
+
+use set.word
 
 Function entrypoint(input:seq.file, entryUses:seq.word, core:boolean) seq.byte
 {COMMAND entrypoint /strong For seeing the Module the compiler generates to define the entry point. /br
@@ -89,7 +89,7 @@ if not.core then
  ]
  + [
   "Export addbcwords(seq.byte)int"
-  , "Function entrypoint(args:UTF8)UTF8 let p = process.entrypoint2(args), if aborted.p then finishentry.[file(:(dq."error.html"), message.p)]else result.p"
+  , "Function entrypoint(args:UTF8)UTF8 let p = process.entrypoint2(args), if aborted.p then finishentry.[file(:(dq."tmp/error.html"), message.p)]else result.p"
   , "function entrypoint2(args0:UTF8)UTF8 let args = towords.args0,:(partA), assert not.isempty.cmdline report:(dq."No command named")+cmd let files = getfiles.b let errors = errors.files assert isempty.errors report:(dq."Error fetching input files /br
   ")+errors finishentry.runthecmd(cmdline, files)"
  ]

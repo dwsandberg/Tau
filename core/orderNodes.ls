@@ -1,14 +1,14 @@
 Module orderNodes.T
 
-use graph.T
-
-use set.T
-
 use seq1.<<.T
 
 use set.<<.T
 
 use seq.set.<<.T
+
+use graph.T
+
+use set.T
 
 use standard
 

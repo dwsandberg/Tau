@@ -10,9 +10,9 @@ use set.UTF8
 
 use bits
 
-use seq1.byte
-
 use seq.seq.byte
+
+use seq1.byte
 
 use set.cmddef
 
@@ -212,8 +212,8 @@ else
    cmds
    + "/br function:(cmd)/sp{/br
    built/ /nsp:(exe).lib:(rest)$@ /br
-   if /sp[/sp-e error.html /sp]/sp ; then /br
-   $tauopen error.html ; exit 1 /br
+   if /sp[/sp-e tmp/error.html /sp]/sp ; then /br
+   $tauopen tmp/error.html ; exit 1 /br
    fi /br
    }",
  createorder(subg, allfile, acc + cmds) + "/br fi"

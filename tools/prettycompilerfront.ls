@@ -2,6 +2,12 @@ Module prettycompilerfront
 
 use PEG
 
+use autolink
+
+use seq1.autolink
+
+use set.autolink
+
 use seq.char
 
 use cleanExports
@@ -52,8 +58,6 @@ use set.symdef
 
 use sort.symdef
 
-use set.autolink
-
 use textio
 
 use token
@@ -100,13 +104,13 @@ else
   assert not.isempty.u report "SDF"
   {only first word of u is a module name}
   uselist1 + ([rename(modrenames, u sub 1)] + u << 1)
- let uselist = sortuse(uselist1, ""),
+ let uselist = sortuse(uselist1, "")
  let idx = includecomment.modtext,
+ for newuses = "", e ∈ uselist do newuses + "/p use" + e,
  "Module"
  + rename(modrenames, modname)
  + subseq(modtext, 3, idx - 1)
- + for newuses = "", e ∈ uselist do newuses + "/p use" + e,
- newuses
+ + newuses
  + (if moveexports then newtext(exportinfo, modname) else "")
  + modtext << (idx - 1)
 
@@ -116,7 +120,7 @@ else if levelchange > 0 then patternseq(levelchange * 2, "//")
 else patternseq(-levelchange, "/block")
 
 function TOC(input:seq.seq.word, html:seq.word) seq.seq.word
-let h = "<h1> <h2> <h3> <h4> <h5> <h6>"
+let h = "/h1 /h2 /h3 /h4 /h5 /h6"
 let Module = -1
 for kinds = empty:set.int, e ∈ html
 do
@@ -129,22 +133,20 @@ else
   let kind =
    if n.p < 2 then n.h + 2
    else if p sub 1 ∈ "Module" then Module
-   else if p sub 1 ∈ "/tag" then findindex(h, p sub 2)
-   else n.h + 2,
+   else
+    let t = findindex(h, last.p),
+    if t ≤ n.h then t else n.h + 2,
   if kind > n.h ∨ kind ∉ kinds then next(acc + p, toc, count, lasth, lastmod)
   else
    let tagname = if kind = Module then p sub 2 else toword.count
    let href = "//:(merge("#" + tagname))/href",
    if kind = Module then
     let newacc = acc + p,
-    if lastmod = 1 then next(newacc, toc + "//" + href + (p << 1 + "/a"), count + 1, lasth, 1)
-    else next(newacc, toc + "//:(href):(p)/a", count + 1, lasth, 1)
+    next(newacc, toc + "//:(href):(p)/a", count + 1, lasth, 1)
    else
     next(
-     acc + "// // tagname /id:(p)/p"
-     , toc
-     + levelchange(kind - (lastmod + lasth))
-     + "//:(href):(subseq(p, 3, n.p - 2))/a"
+     acc + "// //:(tagname)/id:(p >> 1):(last.p)"
+     , toc + levelchange(kind - (lastmod + lasth)) + "//:(href):(p >> 1)/a"
      , count + 1
      , kind
      , 0
@@ -173,10 +175,6 @@ if p sub 1 ∈ "Function function Builtin builtin" then
 else ""
 
 function >4(a:symdef, b:symdef) ordering paragraphno.a >1 paragraphno.b
-
-use token
-
-use seq1.autolink
 
 function print(s:set.autolink) seq.word
 for acc = "", e ∈ toseq.s do acc + id.e + file.e + "/br",
@@ -211,14 +209,18 @@ let srctext0 =
   do
    if paragraphno.sd = 0 then next(lastno, acc5)
    else
-    let header = getheader.src sub paragraphno.sd
-    let newwords = pretty(header, code.sd, autolinks, true)
+    let srctext2 = src sub paragraphno.sd
+    let isfunc = srctext2 sub 1 ∈ "Function function"
+    let newwords =
+     if isfunc then pretty(getheader.srctext2, code.sd, autolinks, true) else pretty.srctext2
     let tmp =
      if not.isempty.html ∧ not.isempty.link then
-      let rest = if newwords sub 1 ∈ "Function function" then 2 else 1,
+      let rest = if isfunc then 2 else 1,
       ":(newwords sub 1)//:(id.sym.sd)/id // # /nsp:(name.module.sym.sd)/href /a:(newwords << rest)"
-     else newwords,
-    {assert isempty.link ∨"tobits"sub 1 ∉ newwords report"here4"+showZ.newwords+"/p"+showZ.tmp}
+     else newwords
+    {assert srctext2 sub 2 ∉"representation"report"herefg"+showZ.newwords}
+    {assert">>"sub 1 ∉ newwords report"here4"+showZ.newwords+"/p
+    "+showZ.pretty.src sub paragraphno.sd}
     next(paragraphno.sd, acc5 + subseq(src, lastno + 1, paragraphno.sd - 1) + tmp),
   acc5 + subseq(src, lastno + 1, n.src)
  else
@@ -290,23 +292,11 @@ do
      else "//:(functionId.p)/id:(merge."#:(subseq(modtext, 2, 2))")/href:(key)/a:(pretty.p << 2)",
     next(txt, modtext + "/p" + tmp, uses, pno + 1)
   else if key ∈ "unbound Builtin builtin type" then
-   assert "//" sub 1 ∉ p ∨ not.isempty.link report "NM:(html):(isempty.link)" + esc.p
-   let pretty = pretty.p,
+   let pretty =
+    if bind ∧ key ∈ "Builtin builtin" ∧ "T" sub 1 ∉ p then p else pretty.p,
    next(
     txt
-    , modtext
-    + "/p"
-    + (if isempty.html then removeMarkup.pretty
-    else if key ∉ "type unbound" then
-     assert true report
-      "KL"
-      + esc."//:(functionId.p)/id:(merge."#:(subseq(modtext, 2, 2))")/href:(key)/a:(pretty.p << 2)"
-      + "/p"
-      + esc.p
-      + "/p"
-      + esc.pretty,
-     pretty
-    else pretty)
+    , modtext + "/p" + (if isempty.html then removeMarkup.pretty else pretty)
     , uses
     , pno + 1
    )
@@ -335,12 +325,8 @@ if not.isempty.html then
    maintxt
    + ((if M sub 1 ∈ "Module" then "// //:(subseq(M, 2, 2))/id Module /keyword:(M << 1)"
    else M)
-   + "/p")
- assert last.output ∈ "html" report "Expecting html file:(output)"
- let link2 = "//../daws/codeExample.css /link"
- {assert isempty.link report"here1:(isempty.link):(isempty.maintxt)"+maintxt}
- {assert name.fn(input2 sub 1)∉"docsrc"report"XX"+esc.maintxt}
- [file(filename.output, toseqbyte.processTXT([link2 + maintxt], stdCSS, false, "en"))]
+   + "/p"),
+ [file(filename.output, maintxt)]
 else
  let modtodir =
   for modtodir = "", lib = directory sub 1, p1 ∈ if bind then src.m else srctext
@@ -369,14 +355,8 @@ else
    let modname = M sub 2
    let idx = findindex(modtodir, modname),
    let fn = filename("+" + modtodir sub (idx + 1) + modname + ".ls"),
-   next(files + file(fn, toseqbyte.textFormat1a.M), summary + "/br" + fullname.fn),
+   next(files + file(fn, M), summary + "/br" + fullname.fn),
  files + file(output, summary)
-
-use UTF8
-
-use markup
-
-use seq1.word
 
 function getautolinks(m:midpoint, link:seq.file) set.autolink
 {this looks at the html files in link and creates autolink entries}
@@ -393,7 +373,7 @@ do
     for autolink2 = autolink1, p ∈ break(p1, "<p>", false)
     do
      {assert">Function</a>"sub 1 ∉ p report":(esc.subseq(p, 1, 4))hereyX:(esc.p)"}
-     if subseq(p, 1, 4) ≠ "<a id =" + dq ∨ ">Function</a>" sub 1 ∉ p then autolink2
+     if subseq(p, 1, 4) ≠ "<a id =:(dq)" ∨ ">Function</a>" sub 1 ∉ p then autolink2
      else
       let i = findindex(p << 4, dq sub 1)
       let linkvalue = subseq(p, 4, i + 4)
@@ -405,8 +385,6 @@ do
     autolink2,
   autolink1,
 autolinks
-
-use autolink
 
 Function unusedsymbols2(
 m:midpoint

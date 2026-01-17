@@ -1,10 +1,10 @@
 Module sort.T
 
-use standard
-
 use seq.T
 
 use set.T
+
+use standard
 
 unbound >1(T, T) ordering
 

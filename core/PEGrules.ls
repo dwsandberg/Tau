@@ -10,9 +10,9 @@ use seq1.oneRule
 
 use set.oneRule
 
-use seq1.pegpart
-
 use seq.pegpart
+
+use seq1.pegpart
 
 use seq1.pegrule
 
@@ -193,19 +193,20 @@ let terms =
 let unusedNon = toseq(Non \ asset.rightsides - leftside.g sub 1),
 checkrules.g
  + (if isempty.unusedNon then "" else "/br Unused non-terminals::(unusedNon)")
- + "/br Non-terminals::(sort>alpha.toseq.Non)/br Terminals::(sort>alpha.toseq.terms)"
+ + "/br Non-terminals::(sort>alpha.toseq.Non)/br Terminals::(sort>alpha.toseq.terms)/br"
  + %(5, g)
 
 Function %(format:int, newg:seq.pegrule) seq.word
 {1 as string 2-as table 3-as table with action 4-as txt 6-as code}
-let action = ["/action", "", "/br", "", "", dq + "="] sub format
-let part = ["/br /", "/br", "/br", "/", "/", "/br,:(dq)/"] sub format
+let action = ["/action", "", "/td", "", "", dq + "="] sub format
+let part = ["/br /", "/td /tr", "/td /tr", "/", "/", "/br,:(dq)/"] sub format
 let rule =
  [
   "/br"
   , "/td /tr"
   , "/td /tr"
-  , "/br:(escapeformat)/br:(escapeformat)"
+  , "/sp:(escapeformat)/br:(escapeformat)/sp /br
+  "
   , "/br"
   , "/br,:(dq)"
  ]
@@ -214,11 +215,17 @@ let arrow = ["", "/td", "/td", "←", "←", ""] sub format
 for txt0 = "", r ∈ newg
 do
  for txt1 = "", e ∈ parts.r
- do txt1 + (part.e + action + (if isempty.action then "" else replacement.e) + part),
- txt0 >> n.part
- + (rule + (if kind.r ∈ "*+" then [kind.r] else "") + %.leftside.r + arrow + txt1),
+ do
+  let seperator = if not.isempty.txt1 ∧ format ∈ [2, 3] then "/td" else "",
+  txt1
+  + (seperator + part.e + action + (if isempty.action then "" else replacement.e) + part),
+ txt0
+ + ((if kind.r ∈ "*+" then [kind.r] else "") + leftside.r + arrow + txt1 >> n.part)
+ + rule,
 if format ∈ [2, 3] then "left /th right /th action /th /tr:(txt0)/table"
-else if format = 4 then "function genPEG(attributeType:word)seq.boolean[:(subseq(txt0, 3, n.txt0 - 3))]"
+else if format = 4 then
+ "function genPEG(attributeType:word)seq.boolean[/br
+ :(subseq(txt0, 1, n.txt0 - 1))]"
 else txt0 >> 1
 
 function checkrules(g:seq.pegrule) seq.word
@@ -514,7 +521,7 @@ do
   else "/br:(rowno):(action.a)/td:(escapeformat):([match.a]):(escapeformat)/td:(Sstate.a)/td:(Fstate.a)/td:(recover.a)/td /tr")
   , rowno + 1
  ),
- "PEG Rules:(acc)/table"
+ "// PEG Rule Table /caption:(acc)/table"
 
 Function >1(a:state, b:state) ordering toint.a >1 toint.b
 

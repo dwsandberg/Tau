@@ -4,6 +4,10 @@ Implements the tau help command, tauhelp, and buildhelp for extraction help info
 
 use UTF8
 
+use bits
+
+use seq.byte
+
 use seq.char
 
 use file
@@ -31,10 +35,6 @@ use seq1.word
 use set.word
 
 use sort.word
-
-use seq.byte
-
-use bits
 
 type helpinfo is cmd:word, exe:word, txt:seq.word
 
@@ -118,8 +118,6 @@ else
    else p + "/p",
  txt2
 
-use markup
-
 function escapedq(s:seq.word) seq.word
 for acc = "", e ∈ s do if e ∈ dq then acc + "^" + "(dq)" else acc + e,
 acc
@@ -169,7 +167,7 @@ if isempty.acc2 then "" else "(:(acc2))"
 function hh(d:helpinfo, level:seq.word, option:seq.word) seq.word
 if level = "full" then
  let j = findindex(txt.d, "COMMAND" sub 1),
- "// Command:(cmd.d)/h3" + subseq(txt.d, j + 1, n.txt.d - 1)
+ "// Command:(cmd.d)/h3:(subseq(txt.d, j + 1, n.txt.d - 1))"
 else
  let a = "kl",
  ":(cmd.d)/strong:(break(a, "/br", true) sub 2 << 3)"
@@ -177,7 +175,7 @@ else
 function helpdata seq.helpinfo
 {This function was created using
 buildhelp tools.libsrc taubc webassembly transform1info.html target:+tools tauhelp.ls}
-[helpinfo("PEGdebug"sub 1,"tools"sub 1,"(input:seq.file, steps:seq.word, notable:boolean)seq.word{COMMAND PEGdebug /strong displays a trace of running a PEG. /br-/strong input Expected first paragraph of input to be input and second paragraph to be the grammar./br-/strong steps from to. Only display steps between from and to./br-/strong notable. Do not display the parse table or grammar.}"),
+[helpinfo("PEGdebug"sub 1,"tools"sub 1,"(input:seq.file, steps:seq.word, notable:boolean)seq.word{COMMAND PEGdebug /strong displays a trace of running a PEG. /br-input /strong Expecting the first paragraph of input to be input and the second paragraph to be the grammar./br-steps /strong from to. Only display steps between from and to./br-notable /strong. Do not display the parse table or grammar.}"),
 helpinfo("buildhelp"sub 1,"tools"sub 1,"(input:seq.file, target:seq.file, shellscript:boolean, doc:boolean)seq.word{COMMAND buildhelp /strong update helpdata in module. /br input /strong files from which to extract the help data./br target /strong file to update help data in /br shellscript /strong produces shell script to define commands. /br doc /strong format for command documentation source file. }"),
 helpinfo("entrypoint"sub 1,"taubc"sub 1,"(input:seq.file, entryUses:seq.word, core:boolean)seq.byte{COMMAND entrypoint /strong For seeing the Module the compiler generates to define the entry point. /br Options:/br entryUses /strong addition use clause added to module when building entry point. /br core /strong Only show core of Module. }"),
 helpinfo("front"sub 1,"tools"sub 1,":T(input:seq.file, output:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word, ~mods:seq.word, within:boolean, %:seq.word)seq.file{COMMAND The front /strong is a multiple-purpose command. It outputs data from various stages of the compiler. /p One use is to determine which functions are used between modules. The usegraph of the core functions indicates there are dependencies between the modules texio, file and bits. To see the dependences, use // block front /sp+built core.libsrc mods: textio file bits format /block A graph will be displayed with the dependencies between the modules. The nodes in the graph are the procedure names. Since a name does not uniquely identify a function, hovering over the beginning of the name will pop up a more complete description beginning with the name of the function. /p The dependence on the module bits will not be displayed. If an earlier pass of the compiler is specified like this // front  +built taubc.libsrc mods = textio file bits format pass = text /block then it will be displayed. /p The dependence within the module textio can be seen with // front  +built taubc.libsrc mods = textio pass = text within = /block /p To see all the functions that call functions named /em breakparagraph in the library use // front  +built taubc.libsrc n = breakparagraph pass = text out = calledby /block /p This will list the function definitions in a package // front  +built taubc.libsrc mods = textio out = symdef /block The format is the function followed by a post order transversal of the call tree. /p The front command takes several parameters that control which functions are considered./br ○ /strong n a list of names of functions to include /br ○ /strong ~n a list of names to exclude /br ○ /strong mods a list of modules to include /br ○ /strong ~mods a list of modules to exculde /br ○ /strong pass The option pass determines how much processing is done before looking at the symbols. // • /strong library Only report on functions imported from libraries. /br • /strong text Parse the input in such a way that the source code can be reconstructed./br • /strong pass1 Output from first stage of processing. All bindings of text to symbols have been done./br • /strong pass1a Like pass1 with Compiler options on Export statements added. /br • /strong pass2 After some optimization /br • /strong all Just before code generation. /block /br ○ /strong % The option % determines the format of the output. // • /strong sym Just the symbol names /br • /strong symdef The symbol definitions. The format is the symbol followed by a post order transversal of the call tree./br • /strong symdefgraph For each symbol definition, the definition is presented as a call tree graph./br • /strong calledby The option n is ignored in building a call graph. Then only the symbols that • call symbols in n directly or indirectly are included in the graph /br • /strong calls The option n is ignored in building a call graph. Then only the symbols that • are called(directly or indirectly)from symbols in n are included in the graph./br • /strong txt Instead of producing a SVG graph print the args of the graph./br • /strong baseTypeCheck /br • /strong resultCheck /block}"),

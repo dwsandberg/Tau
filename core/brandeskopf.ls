@@ -2,35 +2,45 @@ Module brandeskopf
 
 Graph layout based on:Fast and Simple Horizontal Coordinate Assignment Ulrik Brandes and Boris Kopf, 2002
 
-use seq1.block
-
 use seq1.seq.block
+
+use seq1.block
 
 use set.block
 
-use seq1.int
-
 use seq.int
+
+use seq.seq.int
 
 use seq1.seq.int
 
-use seq.seq.int
+use seq1.int
 
 use set.int
 
 use layernode
 
-use seq1.layernode
+use arc.layernode
+
+use graph.arc.layernode
+
+use seq.arc.layernode
+
+use set.arc.layernode
 
 use seq.layernode
+
+use seq1.seq.layernode
+
+use seq1.layernode
+
+use set.layernode
 
 use sort.layernode
 
 use real
 
 use standard
-
-use seq1.seq.layernode
 
 function =(a:layernode, b:layernode) boolean no.a = no.b
 
@@ -212,16 +222,6 @@ do
 assigned0
 
 ----------------------
-
-use graph.arc.layernode
-
-use set.layernode
-
-use set.arc.layernode
-
-use seq.arc.layernode
-
-use arc.layernode
 
 Function assignx(gin:graph.arc.layernode, orgNodeCount:int, scaley:int) seq.layernode
 {Final step is to merge multiple layouts into one.}

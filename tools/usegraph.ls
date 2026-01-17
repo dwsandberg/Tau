@@ -70,8 +70,6 @@ use seq1.word
 
 use set.word
 
-use format1a
-
 Function usegraph(
 input:seq.file
 , include:seq.word

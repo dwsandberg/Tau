@@ -12,17 +12,17 @@ use set.mytype
 
 use standard
 
-use seq1.symbol
-
 use seq.symbol
+
+use seq1.symbol
 
 use set.symbol
 
 use symbol1
 
-use seq.word
-
 use token
+
+use seq.word
 
 Export text(attribute) seq.word
 
@@ -264,9 +264,7 @@ if Sstate.top.stk.a ≠ Match then 'Failed
 else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
-Function result(a:recoverInfo) attribute
-let t = result.top.stk.a,
-t sub n.t
+Function result(a:recoverInfo) attribute last.result.top.stk.a
 
 function parse(myinput0:seq.word, initAttr:attribute, common:commonType) recoverInfo
 let myinput = packed(myinput0 + endMark)

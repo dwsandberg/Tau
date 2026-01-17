@@ -1,21 +1,5 @@
 Module llvm_exports.T
 
-use kernal
-
-use symboldict
-
-use stateFunctions
-
-use token
-
-use svg
-
-use drawGraph.T
-
-use orderNodes.T
-
-use layernode
-
 use LEBencoding
 
 use PEG
@@ -32,19 +16,25 @@ use compileTimeT.T
 
 use compilerfrontT.T
 
+use drawGraph.T
+
 use encoding.T
 
 use graph.T
 
 use indirect.T
 
+use markup.T
+
 use objectio.T
 
-use seq1.T
+use orderNodes.T
 
 use process.T
 
 use seq.T
+
+use seq1.T
 
 use set.T
 
@@ -56,11 +46,15 @@ use stack.T
 
 use UTF8
 
+use autolink
+
 use backparse
 
 use bits
 
 use brandeskopf
+
+use classinfo
 
 use compilerfront
 
@@ -70,7 +64,13 @@ use entrypoint
 
 use file
 
+use format1a
+
 use internalbc
+
+use kernal
+
+use layernode
 
 use llvm
 
@@ -84,17 +84,7 @@ use mytype
 
 use orderModules
 
-use orderNodes.T
-
-use classinfo
-
 use pretty
-
-use format1a
-
-use pretty
-
-use autolink
 
 use ptr
 
@@ -102,7 +92,13 @@ use real
 
 use standard
 
+use stateFunctions
+
+use svg
+
 use symbol1
+
+use symboldict
 
 use tausupport
 
@@ -110,10 +106,10 @@ use textio
 
 use timestamp
 
+use token
+
 use uniqueids
 
 use word
 
-use xxhash
-
-use markup 
+use xxhash 

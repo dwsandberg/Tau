@@ -352,7 +352,7 @@ else
   let result =
    let tmp = if isempty.file.match then "" else "/tag:(file.match)",
    "// //:(tmp)/nsp # /nsp:(id.match)/href:(compoundName.sym)/a",
-  assert name.sym ∉ "subseq" ∨ n.links2 = 1 report "xx:(print.asset.[match])" + result + "/p" + print.find(links, symid),
+  assert name.sym ∉ "subseq" ∨ n.links2 = 1 report "xx:(print.asset.[match]):(result)/p:(print.find(links, symid))",
   result
 
 Function pretty(

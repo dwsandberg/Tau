@@ -2,9 +2,9 @@ Module bitcodesupport
 
 use UTF8
 
-use seq1.int
-
 use seq.seq.int
+
+use seq1.int
 
 use llvm
 

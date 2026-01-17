@@ -1,20 +1,20 @@
 Module testDifferentTypesB
 
+use seq1.bug17
+
+use set.bug17
+
 use file
 
 use seq.file
 
-use seq.word
-
 use seq.filename
-
-type bug17 is part1:word, part2:word
-
-use set.bug17
 
 use standard
 
-use seq1.bug17
+use seq.word
+
+type bug17 is part1:word, part2:word
 
 function %(a:bug17) seq.word [part1.a, part2.a]
 

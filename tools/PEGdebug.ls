@@ -32,11 +32,13 @@ use seq1.word
 
 use set.word
 
+function input2 seq.word "function Example1 int let a = 1+2, a+(3+4)"
+
 Function PEGdebug(input:seq.file, steps:seq.word, notable:boolean) seq.word
 {COMMAND PEGdebug /strong displays a trace of running a PEG. /br
--/strong input Expected first paragraph of input to be input and second paragraph to be the grammar./br
--/strong steps from to. Only display steps between from and to./br
--/strong notable. Do not display the parse table or grammar.}
+-input /strong Expecting the first paragraph of input to be input and the second paragraph to be the grammar./br
+-steps /strong from to. Only display steps between from and to./br
+-notable /strong. Do not display the parse table or grammar.}
 let in = breakparagraph.input << 1
 assert n.in > 1 report "Expected first paragraph of input to be input and second paragraph to be the grammar"
 let gin = adjust.PEGparse.in sub 2
@@ -51,11 +53,8 @@ let inputtxt = in sub 1
 let start = if isempty.steps then 1 else toint.steps sub 1
 let end = if n.steps < 2 then start + 999 else toint.last.steps
 let r = parse(inputtxt, entries.tab, "", tab, start, end),
-[status.r]
- + (if status.r ∈ "Failed" then subseq(inputtxt, 1, i.top.stk.r - 1) + "RI(" + recoveryEnding(r, entries.tab) + ")"
-else result.r)
- + trace.r
- + if notable then "" else "/p PEG parse table:(tab)/p:(%(3, gin))"
+ "Status:(status.r):(if status.r ∈ "Failed" then subseq(inputtxt, 1, i.top.stk.r - 1) + "RI(" + recoveryEnding(r, entries.tab) + ")"
+else "Result:/p:(result.r)")/p:(trace.r)/table:(if notable then "" else "/p:(tab)/p:(%(3, gin))")"
 
 Function toAttribute(b:seq.word, a:seq.word) seq.word a
 
@@ -122,12 +121,12 @@ if Sstate.top.stk.a ≠ Match then 'Failed
 else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
-Function result(a:recoverInfo) seq.word
-let t = result.top.stk.a,
-t sub n.t
+Function result(a:recoverInfo) seq.word last.result.top.stk.a
 
 function tracestart(trace:seq.word) seq.word
- "Key to column labels S--step no; D--Depth of Stack F--on fail reset I to F; I--Location in input; Lower case are values on top of stack <* table /row S /cell D /cell f /cell success /cell fail /cell result /cell Result /cell F /cell State /cell I /cell Remaining input:(trace)*>"
+ "Key to column labels S--step no; D--Depth of Stack F--on fail reset I to F; I--Location in input; Lower case are values on top of stack /p
+S /td D /td f /td success /td fail /td result /td Result /td F /td State /td I /td Remaining input /td /tr
+:(trace)"
 
 function trace(
 stepno:int
@@ -142,10 +141,10 @@ stepno:int
 ) seq.word
 let stkdata =
  %.n.toseq.stk
- + if isempty.stk then "/cell /cell /cell /cell"
- else "/cell:(faili.top.stk)/cell:(Sstate.top.stk)/cell:(Fstate.top.stk)/cell:(last.result.top.stk)",
+ + if isempty.stk then "/td /td /td /td"
+ else "/td:(faili.top.stk)/td:(Sstate.top.stk)/td:(Fstate.top.stk)/td:(last.result.top.stk)",
 trace0
- + "/row:(stepno)/cell:(stkdata)/cell:(%("^", result) >> 1)/cell:(faili)/cell:(state)/cell:(i)/cell:(subseq(input, i, min(i + 20, n.input - 1)))/cell:(recovery)"
+ + ":(stepno)/td:(stkdata)/td:(%("^", result) >> 1)/td:(faili)/td:(state)/td:(i)/td:(subseq(input, i, min(i + 20, n.input - 1)))/td:(recovery)/td /tr"
 
 function parse(
 myinput0:seq.word
@@ -174,7 +173,7 @@ do
   if stepno < startStep then trace0
   else
    let tmp =
-    if isempty.stk.rinfo then "" else ":(place.rinfo)/cell:(recoveryEnding(rinfo, table))",
+    if isempty.stk.rinfo then "" else ":(place.rinfo)/td:(recoveryEnding(rinfo, table))",
    trace(stepno, trace0, stk, result, faili, state, i, myinput, tmp)
  let actionState = action.state,
  if actionState = Fail then

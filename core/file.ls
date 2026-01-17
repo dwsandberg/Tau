@@ -6,21 +6,25 @@ use bits
 
 use seq.byte
 
+use seq.seq.char
+
 use seq1.char
 
-use seq.seq.char
+use classinfo
 
 use seq.filename
 
 use format1a
 
-use markup
+use markup.markupNoExtension
 
 use standard
 
 use textio
 
 use seq.seq.word
+
+use stack.seq.word
 
 Export type:file
 
@@ -75,16 +79,25 @@ file(getname.name, bytes)
 
 Function file(name:seq.word, bytes:seq.byte) file file(getname.name, bytes)
 
-use markup
+function dawsextensions:markupNoExtension(op:word, argstk:stack.seq.word) stack.seq.word
+{return empty:stack.seq.word if not defined}
+{if op ∈"/pretty"then push(pop.argstk, pretty.top.argstk)else}
+empty:stack.seq.word
+
+type markupNoExtension is a:int
 
 Function file(fn:filename, out:seq.word) file
 {OPTION NOINLINE}
+let stdCSS =
+ processCSS(
+  ["span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.literal{color:red ; transform: }span.comment{color:green ;}span.block{/* daws output: <span class id > = content /trim = </span> */ padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}"]
+  , defaults
+ )
 let bytes =
- if ext.fn ∈ "html" then toseqbyte.processTXT(["//../tau.css /link" + out], stdCSS, false, "en")
- else toseqbyte.textformat.out
-let bytes1 =
- if isempty.bytes ∨ bytes sub n.bytes = tobyte.10 then bytes else bytes + tobyte.10,
-file(fn, bytes1)
+ if ext.fn ∈ "html" then
+  toseqbyte.processTXT:markupNoExtension(["//../tau.css /link:(out)"], stdCSS, false, "en")
+ else toseqbyte.textformat.out,
+file(fn, bytes)
 
 Function file(fn:filename) file file(fn, [empty:seq.byte], emptyUTF8)
 

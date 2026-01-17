@@ -10,13 +10,13 @@ use seq.byte
 
 use bitcast.int
 
-use seq1.int
-
 use seq.int
 
 use bitcast.seq.int
 
 use seq.seq.int
+
+use seq1.int
 
 use seq.mytype
 

@@ -1,8 +1,8 @@
 Module codegen
 
-use seq1.Lcode
-
 use seq.Lcode
+
+use seq1.Lcode
 
 use stack.Lcode
 
@@ -24,11 +24,11 @@ use seq.file
 
 use idxNBtemplate
 
-use seq1.int
-
 use seq.int
 
 use seq.seq.int
+
+use seq1.int
 
 use stack.int
 
@@ -42,21 +42,21 @@ use llvm
 
 use llvmcode
 
-use seq1.llvmtype
-
 use seq.llvmtype
 
-use seq1.localmap
+use seq1.llvmtype
 
 use seq.localmap
+
+use seq1.localmap
 
 use seq.match5
 
 use mytype
 
-use seq1.mytype
-
 use seq.mytype
+
+use seq1.mytype
 
 use persistant
 

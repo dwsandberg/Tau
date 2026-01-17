@@ -4,13 +4,15 @@ use PEGrules
 
 use UTF8
 
+use seq.bindinfo
+
 use seq.char
 
 use mytype
 
-use seq1.mytype
-
 use seq.mytype
+
+use seq1.mytype
 
 use set.mytype
 
@@ -18,9 +20,9 @@ use pretty
 
 use standard
 
-use seq1.symbol
-
 use seq.symbol
+
+use seq1.symbol
 
 use set.symbol
 
@@ -28,15 +30,13 @@ use symbol1
 
 use symboldict
 
-use seq1.word
-
-use seq.word
-
-use seq.bindinfo
-
 use token
 
 use seq.token
+
+use seq.word
+
+use seq1.word
 
 type commonType is types:set.mytype, outText:boolean, input:seq.word
 
@@ -72,7 +72,7 @@ while go
 do
  if e = last.remove then next(idx - 1, remove >> 1, addback, n.remove > 1)
  else
-  assert true report "ERR DEBUG" + showZ.remove + "/p" + showZ.pp,
+  assert true report "ERR DEBUG:(showZ.remove)/p:(showZ.pp)",
   if e ∈ "/literal:(escapeformat)" then next(idx - 1, remove, [e] + addback, go)
   else if e
   ∈ "/keyword /br
@@ -1086,9 +1086,7 @@ if Sstate.top.stk.a ≠ Match then 'Failed
 else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
-Function result(a:recoverInfo) bindinfo
-let t = result.top.stk.a,
-t sub n.t
+Function result(a:recoverInfo) bindinfo last.result.top.stk.a
 
 function parse(myinput0:seq.token, initAttr:bindinfo, common:commonType) recoverInfo
 let myinput = packed(myinput0 + endMark)

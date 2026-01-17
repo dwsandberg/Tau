@@ -2,9 +2,9 @@ Module layernode
 
 /use brandeskopf
 
-use seq1.int
-
 use seq.seq.int
+
+use seq1.int
 
 use arc.layernode
 

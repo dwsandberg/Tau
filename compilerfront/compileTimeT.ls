@@ -10,9 +10,9 @@ use bitcast.seq.int
 
 use stack.int
 
-use seq1.mytype
-
 use seq.mytype
+
+use seq1.mytype
 
 use bitcast.packed3
 

@@ -20,9 +20,9 @@ use testpackedseq.typereal
 
 use testpackedseq.typerec2
 
-use seq1.word
-
 use testpackedseq.seq.word
+
+use seq1.word
 
 use testpackedseq.word
 

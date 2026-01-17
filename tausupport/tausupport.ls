@@ -20,9 +20,9 @@ use encodingsupport
 
 use bitcast.int
 
-use seq1.int
-
 use bitcast.seq.int
+
+use seq1.int
 
 use taublockseq.int
 
@@ -56,11 +56,11 @@ use bitcast.seq.real
 
 use taublockseq.real
 
+use stateFunctions
+
 use word
 
 use seq.word
-
-use stateFunctions
 
 Export type:packed2
 

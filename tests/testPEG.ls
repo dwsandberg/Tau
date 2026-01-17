@@ -2,9 +2,11 @@ Module testPEG
 
 use PEG
 
-use standard
+use process.PEGtable
 
 use file
+
+use standard
 
 use seq1.seq.word
 
@@ -19,6 +21,11 @@ let gram104 =
  maketable."* ZZ3 any = V /action $.0 $.1 = $.2 ; /br
  * V ! C any /action $.0 $.1 /br
  C any = /action"
+let gram105 =
+ maketable."* N Start /action $.0 $.1 /br
+ / !{!}any /action $.0 $.1 /br
+ Start	{N}/action $.0 $.1 /br
+ "
 let tbl =
  maketable."S ! f1 A /action $.1 /br
  / ! f1 Z /action $.1 /br
@@ -58,6 +65,7 @@ let result =
   , "f1(a:int, b:boolean)seq.seq.int"
   , "Match f1(a:int, b:boolean)seq.seq.int"
  )
+ + check(gram105, "????{A B{C}}", "Match A B C")
  + check(gram104, "a1 = value one a2 =", "Match a1 = value one ; a2 = ;")
  + check(gram103, "a1 = v1", "Match X a1 = v1")
  + check(
@@ -75,11 +83,7 @@ let result =
  + checkerror(
   "A a /action a /br
   A b /action b"
-  , "Duplicate Non-Terminal:A left /th right /th action /th /tr
-  /td /tr
-  A /td a /td /tr
-  A /td b /br
-  /table"
+  , "Duplicate Non-Terminal:A left /th right /th action /th /tr A /td a /td /tr A /td b /td /tr /table"
  )
  + checkerror(
   "A a"
@@ -87,15 +91,17 @@ let result =
   /br
   Unparsed Input: A a"
  ),
-if isempty.result then "Pass PEG" else "Fail PEG:(result)"
+if isempty.result then "Pass PEG" else "FAIL  /literal PEG:(result)"
 
 function checkerror(input:seq.word, expect:seq.word) seq.word
 let got = message.process.checkgrammar.input,
-if got = expect then "" else "Fail got::(got)expected::(expect)"
+if got = expect then "" else showZ."Fail got::(got)expected::(expect)"
+
+function showZ(out:seq.word) seq.word
+for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
+acc
 
 function checkgrammar(gin:seq.word) PEGtable maketable.gin
-
-use process.PEGtable
 
 function check(tbl:PEGtable, input:seq.word, expect:seq.word) seq.word
 let got = run(tbl, input),

@@ -1,8 +1,8 @@
 Module symboldict
 
-use seq1.mytype
-
 use seq.mytype
+
+use seq1.mytype
 
 use standard
 

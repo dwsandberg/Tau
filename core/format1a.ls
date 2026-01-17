@@ -409,9 +409,7 @@ if Sstate.top.stk.a ≠ Match then 'Failed
 else if place.a = {length of input}faili.top.stk.a then 'Match
 else 'MatchPrefix
 
-Function result(a:thisresult) seq.byte
-let t = result.top.stk.a,
-t sub n.t
+Function result(a:thisresult) seq.byte last.result.top.stk.a
 
 function parse(myinput0:seq.word, initAttr:seq.byte, textOut:boolean) thisresult
 let myinput = packed(myinput0 + endMark)

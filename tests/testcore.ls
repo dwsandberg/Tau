@@ -2,25 +2,11 @@ Module testcore
 
 precedence > for >1 >2 >3 >4 >alpha
 
-use test11a
-
-use testopt
-
-use file
-
-use seq.file
-
-use standard
+use LEBencoding
 
 use testanal.T
 
-Function testall(input:seq.file, noseq:boolean) seq.word
-{COMMAND}
-testcore.noseq
- + test11a.input
- + if isempty.input then "no opt test file specified"
-else if ext.fn.input sub 1 ∈ "ls" then testopt.input
-else ""
+use UTF8
 
 use bug7
 
@@ -32,23 +18,35 @@ use standard
 
 use test11
 
+use test11a
+
+use testDifferentTypes
+
+use testPEG
+
 use testencoding
 
 use testmodules
+
+use testopt
 
 use testprocess
 
 use testseq
 
-use wordfreq
+use timestamp
 
 use word
 
-use testPEG
+use wordfreq
 
-use testDifferentTypes
-
-use timestamp
+Function testall(input:seq.file, noseq:boolean) seq.word
+{COMMAND}
+testcore.noseq
+ + test11a.input
+ + if isempty.input then "no opt test file specified"
+else if ext.fn.input sub 1 ∈ "ls" then testopt.input
+else ""
 
 function checkhash seq.word
 if for
@@ -158,8 +156,4 @@ if [
  ∧ textformat."2023-7-5.10:8:7" = textformat.print.ts
  ∧ dayofyear.ts = 186
  ∧ seconds.timestamp.212555268487 = 212555268487 then "PASS timestamp"
-else ":(red."FAIL")timestamp"
-
-use UTF8
-
-use LEBencoding 
+else ":(red."FAIL")timestamp" 

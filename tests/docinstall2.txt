@@ -11,7 +11,7 @@ A function can be profiled to see where the time is being spent in a program.  A
 // // ./profileExample.html /href here. /a
 
 
-The /keyword htmlcode cmd create html from source files pretty prints the file and adds syntax highlighting and a module index.  It is useful for examining source code.  For example 
+The htmlcode /keyword  cmd create html from source files pretty prints the file and adds syntax highlighting and a module index.  It is useful for examining source code.  For example 
  block htmlcode +built core.libsrc  
 
  Introduction to intermediate code produced by compiler /h2
@@ -41,14 +41,14 @@ The body of fact2 can be rewritten as a sequence of statements using explicit go
   ) /block
 
 ???? /em  /strong  at beginning of line causes problem
- /strong goto(+n) means do not execute the next n-1 statements and continue with the following statement. 
-/strong Exit means skip executing all the follow statements in the block. 
+  goto(+n) /strong means do not execute the next n-1 statements and continue with the following statement. 
+ Exit /strong means skip executing all the following statements in the block. 
 
 
 A further rewrite gets closer to the intermediate code. The rewrite starts the block with Start (<type
 of value returned by block>). Each statement is expressed in postfix notation. The /ldq if <exp> then
 goto (a) else goto (b)" becomes /ldq <postfix exp> Br2 (a, b)". The end of the block is indicated by
-EndBlock The parameter names become %1 and %2
+EndBlock /em. The parameter names become %1 and %2
 //
  /br   Start(int) 
  /br   %1 1 =  Br2(1,2) 
@@ -58,7 +58,7 @@ EndBlock The parameter names become %1 and %2
  /br   %1 1 - %2 %1 *  fact2 Exit 
  /br   EndBlock  /block
   
-  This function is tail recursive and the recursion 
+  This function is tail-recursive and the recursion 
   can be removed by using a loop.  The values that change each time through the loop are 
   capture in loop variables. The loop will use two additon symbols called Loop and Continue. 
   
@@ -88,7 +88,7 @@ step is same as the first step in calling a function. Also the /strong Continue 
 /br %3 1-(int, int)int %4 %3 *(int, int)int Continue 2 
 /br EndBlock *>  
 
-/  HelloWorld with dynamic libraries /tag /h2
+  HelloWorld with dynamic libraries   /h2
 
 The Mac OS X implementation also allows  dynamic libraries to be created instead of programs.
 The command is    <* block ltau stdlib HelloWorld x   *> 

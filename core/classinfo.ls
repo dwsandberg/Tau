@@ -12,6 +12,8 @@ use set.classinfo
 
 use sort.classinfo
 
+use stack.mark
+
 use standard
 
 Export type:classinfo
@@ -128,19 +130,18 @@ else
  let baseclass = info2 sub 1
  for newdefs = "class", last = "?", e ∈ more
  do next(if e ∈ ": " then newdefs + last else newdefs, [e])
- for skip = false, basedefs = "", last1 = "", e ∈ def.baseclass
+ {newdefs is a list of definitions included in the new class definition}
+ for skip = false, basedefs = "", last1 = "", e ∈ def.baseclass + "dummy: "
  do
   if e ∉ ": " then next(skip, if skip then basedefs else basedefs + last1, [e])
   else if not.isempty.last1 ∧ last1 sub 1 ∈ newdefs then next(true, basedefs, "")
   else next(false, basedefs + last1, [e])
- {assert class ∈"pic xx picC slide name"∨ basedefs+last1 = def.baseclass report":(class)more"+more+"/p
- "+"base"+def.baseclass+"/p
- "+"newbase"+basedefs+last1}
+ {basedefs >> 1 is a list of definitions included in base but not in the new definition}
  let y =
   classinfo(
    key
    , basekey
-   , "class: " + class + more + basedefs + last1
+   , "class: " + class + more + basedefs >> 1
    , tag.baseclass
    , flags.baseclass
   ),
@@ -177,7 +178,7 @@ do
 acc
 
 Function extractdef(defs:seq.word, name:word) seq.word
-for notdone = true, found = false, acc = "", e ∈ defs + "dummy:"
+for notdone = true, found = false, acc = "", e ∈ defs + "dummy: "
 while notdone
 do
  if found then if e ∈ ": " then next(false, found, acc >> 1) else next(notdone, found, acc + e)
@@ -232,7 +233,7 @@ let data =
  base.daws{/* daws flags: mark noendtag output: <base rel href = content = /> totxt: = href /mark = class */}/br
  title.daws{/* daws output: <title class > content </title> totxt: content class /br
  */}/br
- hr.daws{/* daws flags: noendtag output: <hr class /> totxt: /p
+ hr.daws{/* daws flags: noendtag output: content <hr class /> totxt: /p
  content class */}/br
  br.daws{/* daws flags: noendtag output: content <br class id /> totxt: content id class /br
  */}/br
@@ -258,7 +259,7 @@ let data =
  li.daws{/* daws output: <li class id > content </li> totxt: /p
  content id class /p
  */}/br
- ol.daws{/* daws flags: namedmark output: <ol class id > content </ol> totxt: /p
+ ol.daws{/* daws flags: namedmark output: <ol class id start > content </ol> totxt: /p
  content id class /p
  */}/br
  ul.daws{/* daws flags: namedmark output: <ul class id > content </ul> totxt: /p
@@ -273,4 +274,21 @@ let data =
  id.daws{/* daws flags: define /id: id output: /id colon content */}/br
  rel.daws{/* daws flags: define /rel: rel output: /rel colon content */}/br
  ",
-processCSS([data], empty:seq.classinfo) 
+processCSS([data], empty:seq.classinfo)
+
+Function attribute(val:seq.word, att:word) seq.word
+if isempty.val then "" else "/sp:(att)/nsp =:(dq + "/nsp" + val + dq)"
+
+Export type:mark
+
+Export kind(mark) word
+
+Export place(mark) int
+
+Export mark(word, int) mark
+
+type mark is kind:word, place:int
+
+Function %(m:mark) seq.word ":(kind.m):(place.m)"
+
+Function push(s:stack.mark, i:int) stack.mark push(s, mark("mark" sub 1, i)) 

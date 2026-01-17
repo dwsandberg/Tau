@@ -20,6 +20,8 @@ use seq.file
 
 use localmap2
 
+use seq1.localmap2
+
 use set.localmap2
 
 use objectio.midpoint
@@ -32,11 +34,11 @@ use seq1.modref
 
 use set.modref
 
-use seq1.mytype
-
 use seq.mytype
 
 use seq.seq.mytype
+
+use seq1.mytype
 
 use orderModules
 
@@ -45,6 +47,8 @@ use pass2
 use seq1.seg
 
 use standard
+
+use seq1.stkele
 
 use stack.stkele
 
@@ -488,10 +492,6 @@ do
 nextvar:(nextvar)/br
 self::(self)"+%.part,}
 expandresult(nextvar, part << 1)
-
-use seq1.localmap2
-
-use seq1.stkele
 
 function compileTime:T(
 librarymap:seq.word

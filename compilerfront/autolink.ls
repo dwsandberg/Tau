@@ -1,8 +1,8 @@
 Module autolink
 
-use standard
-
 use set.autolink
+
+use standard
 
 use seq1.word
 

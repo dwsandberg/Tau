@@ -6,9 +6,9 @@ use bits
 
 use seq.byte
 
-use standard
-
 use kernal
+
+use standard
 
 Export type:timestamp
 

@@ -14,17 +14,19 @@ use encoding.blockabbr
 
 use seq.blockabbr
 
-use seq1.boolean
-
 use seq.boolean
+
+use seq1.boolean
 
 use seq1.byte
 
 use seq.char
 
+use seq.codefreq
+
 use seq1.codefreq
 
-use seq.codefreq
+use sort.codefreq
 
 use sparseseq.codefreq
 
@@ -54,11 +56,11 @@ use standard
 
 use textio
 
-use seq1.word
-
 use seq.word
 
 use seq1.seq.word
+
+use seq1.word
 
 use set.word
 
@@ -497,8 +499,6 @@ else
  + toword.count.p
  + "times. /br
  "
-
-use sort.codefreq
 
 function removelowcount(mincount:int, p:codefreq) seq.codefreq
 if count.p < mincount then empty:seq.codefreq else [p]

@@ -1,0 +1,20 @@
+
+
+span.avoidwrap {display:inline-block ;} 
+
+span.keyword { /* daws totxt: content */ color:blue ;}
+
+span.literal { /* daws totxt: content */ color:red ; transform: }
+
+span.comment { /* daws totxt: content */ color:green ; }
+
+span.block { /* daws totxt:    = content /indent =   */ padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}
+
+a.funcid {  /* daws totxt: content */ } 
+
+br.rmbr { /* daws totxt: content  
+ /br */}
+p.code { /* daws totxt: =content /pretty= */ margin-left: 0px; background-color:yellow;  }
+
+p { color: black; }
+

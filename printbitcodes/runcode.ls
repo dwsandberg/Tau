@@ -4,9 +4,9 @@ use bitcodesupport
 
 use seq.instop
 
-use seq1.int
-
 use seq.seq.int
+
+use seq1.int
 
 use sparseseq.int
 

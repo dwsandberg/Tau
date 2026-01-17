@@ -1,6 +1,6 @@
  
 
- enumexample /tag // enum /id /h1
+ enumexample  // enum /id /h1
 
 Module enumexample
 
@@ -8,12 +8,9 @@ use bits
 
 use standard
 
-The function name genEnum is treated as magic by the transform command. It auto generates the code
-to implement enumeration types. This example implements two enumeration types. In the first enumeration
-type Each word in the value list is given a value starting with 0. 
+The function name genEnum is considered special by the transform command. It automatically generates the code to create enumeration types. This example shows how to implement two enumeration types. In the first enumeration, each word in the value list is assigned a value starting from 0. 
 
-In the first example The question mark is a place holder for
-numbers that with not be include in the type.
+In the first example, the question mark acts as a placeholder for numbers that will not be part of the type.
 
 The second example uses an existing data type byte. 
 

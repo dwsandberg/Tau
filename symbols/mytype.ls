@@ -14,9 +14,9 @@ use set.passtypes
 
 use standard
 
-use seq1.typedef
-
 use token
+
+use seq1.typedef
 
 use xxhash
 

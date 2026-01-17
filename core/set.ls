@@ -2,9 +2,9 @@ Module set.T
 
 use seq1.T
 
-use standard
-
 use sort.T
+
+use standard
 
 Export type:set.T
 

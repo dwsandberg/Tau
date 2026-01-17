@@ -81,13 +81,13 @@ else
  touch $oldscript #must have oldscript file for parameter to makeScript
 fi 
 
-rm -f error.html
+rm -f tmp/error.html
 
 #now built script to do actual changes.
 $build/taubc0.lib makeScript   $@ builddir:+$build hashes: $sharoot $oldscript   o:$scriptname.sh 
 
-if [ -e error.html ] ; then
-$tauopen error.html
+if [ -e tmp/error.html ] ; then
+$tauopen tmp/error.html
 exit 1
 fi
 
