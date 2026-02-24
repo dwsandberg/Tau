@@ -454,7 +454,7 @@ for acc = empty:seq.block, @e ∈ a do acc + filter(blockid, @e),
 acc
 
 function print(a:block) seq.word
- "abbrvlen:"
+"abbrvlen:"
  + toword.abbrevlen.a
  + "blockid:"
  + decode.blockop.blockid.a

@@ -211,8 +211,7 @@ let srctext0 =
    else
     let srctext2 = src sub paragraphno.sd
     let isfunc = srctext2 sub 1 ∈ "Function function"
-    let newwords =
-     if isfunc then pretty(getheader.srctext2, code.sd, autolinks, true) else pretty.srctext2
+    let newwords = prettyX(srctext2, code.sd, autolinks, true, isempty.html)
     let tmp =
      if not.isempty.html ∧ not.isempty.link then
       let rest = if isfunc then 2 else 1,
@@ -238,9 +237,7 @@ let srctext0 =
   acc
 let srctext = {create table of content}TOC(srctext0, html)
 {dict and exported are only used to reconstruct use clauses}
-for
- dict = empty:set.symbol
- , sd ∈ if bind ∧ reorguse then toseq.prg.m else empty:seq.symdef
+for dict = empty:set.symbol, sd ∈ if bind ∧ reorguse then toseq.prg.m else empty:seq.symdef
 do dict + sym.sd
 let exported = exportedmodref.m
 let directory = if isempty.target then "tmp" else target
@@ -268,9 +265,7 @@ do
      generatedtext = ""
      , e ∈ [p, "<<<< Below is auto generated code >>>>"]
      + if p sub 2 ∈ "genEnum" then generateEnum.p else generatePEG.p
-    do
-     if e sub 1 ∈ "Function function type Export" then generatedtext + removeMarkup.pretty.e + "/p"
-     else generatedtext + escapeformat.e + "/p"
+    do generatedtext + pretty(e, true, true) + "/p"
     let formatedModuleText =
      finishmodule(
       modtext + "/p" + generatedtext >> 1
@@ -287,19 +282,15 @@ do
     next(txt + formatedModuleText, "", empty:seq.seq.word, pno + 1)
    else
     let tmp =
-     if isempty.html then if bind then removeMarkup.p else removeMarkup.pretty.p
+     if isempty.html then if bind then p else pretty(p, true, true)
      else if bind then p
      else "//:(functionId.p)/id:(merge."#:(subseq(modtext, 2, 2))")/href:(key)/a:(pretty.p << 2)",
     next(txt, modtext + "/p" + tmp, uses, pno + 1)
   else if key ∈ "unbound Builtin builtin type" then
-   let pretty =
-    if bind ∧ key ∈ "Builtin builtin" ∧ "T" sub 1 ∉ p then p else pretty.p,
-   next(
-    txt
-    , modtext + "/p" + (if isempty.html then removeMarkup.pretty else pretty)
-    , uses
-    , pno + 1
-   )
+   let p2 =
+    if bind ∧ key ∈ "Builtin builtin" ∧ "T" sub 1 ∉ p then p
+    else pretty(p, true, isempty.html),
+   next(txt, modtext + "/p" + p2, uses, pno + 1)
   else if key ∈ "Module module" then
    if isempty.modtext ∨ modtext sub 1 ∉ "Module module" then next(txt + modtext, p, empty:seq.seq.word, pno + 1)
    else
@@ -313,8 +304,8 @@ do
      if cleanexports ∨ moveexports then
       let p2 = newtext(exportinfo, pno, modtext sub 2),
       if isempty.p2 ∨ moveexports then modtext else modtext + "/p" + pretty.p2
-     else modtext + "/p" + if isempty.html then removeMarkup.pretty.p else pretty.p
-    else modtext + "/p" + if isempty.html then escapeformat.p else p,
+     else modtext + "/p" + pretty(p, true, isempty.html)
+    else modtext + "/p" + pretty(p, true, isempty.html),
    next(txt, newmodtext, uses, pno + 1)
 {Create the output files. One file is created if producing HTML output.Otherwise, A file for each module is created for each Module}
 if not.isempty.html then
@@ -443,7 +434,7 @@ let outsyms =
  else a3
 for acc = empty:seq.seq.word, sym ∈ toseq.outsyms
 do if name.sym ∈ ignore then acc else acc + %.sym,
- "Unused symbols for roots:(toseq.roots)/p:(%n.sort>alpha.acc)"
+"Unused symbols for roots:(toseq.roots)/p:(%n.sort>alpha.acc)"
 
 function rename(renames:seq.word, name:word) word
 let i = findindex(renames, name),

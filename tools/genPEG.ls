@@ -230,16 +230,16 @@ if isempty.grammar.a then empty:seq.pegpart else parts.(grammar.a) sub 1
 
 function FP(a:seq.word, value:seq.word) attribute
 toAttribute(
- if a sub 1 ∈ "attributeType" ∧ value = "seq.word" then[pegpart(a, "$.0:(value)"), pegpart("/wordsAttribute S2 Else /end", "$.0 $.1")]
+ if a sub 1 ∈ "attributeType" ∧ value = "seq.word" then [pegpart(a, "$.0:(value)"), pegpart("/wordsAttribute S2 Else /end", "$.0 $.1")]
  else if a sub 1 ∈ "seqElementType" ∧ value = "word" then
   [
    pegpart(a, "$.0:(value)")
    , pegpart("/isWords S2 Else /end", "$.0 $.1")
    , pegpart("tblEle", "$.0 tableEntry")
   ]
- else if a sub 1 ∈ "commonName" then[pegpart(a, "$.0:(value)"), pegpart("/common S2 Else /end", "$.0 $.1")]
- else if a sub 1 ∈ "seqElementType attributeType resultType commonType wordmap" then[pegpart(a, "$.0:(value)")]
- else if a sub 1 ∈ "error trace fix nogrammar notable" then[pegpart(%.merge."/:(a)" + "S2 Else /end", "$.0 $.1")]
+ else if a sub 1 ∈ "commonName" then [pegpart(a, "$.0:(value)"), pegpart("/common S2 Else /end", "$.0 $.1")]
+ else if a sub 1 ∈ "seqElementType attributeType resultType commonType wordmap" then [pegpart(a, "$.0:(value)")]
+ else if a sub 1 ∈ "error trace fix nogrammar notable" then [pegpart(%.merge."/:(a)" + "S2 Else /end", "$.0 $.1")]
  else empty:seq.pegpart
 )
 
@@ -432,11 +432,11 @@ do
   next(pop.stk, Sstate.top, i.top, ini, result.top, faili.top, failresult.top)
  else if actionState = T then
   let te = idxNB(packedTable, index.state),
-  if inputi ≠ match.te then{fail}next(stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+  if inputi ≠ match.te then {fail}next(stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
   else next(stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
  else if actionState = !T then
   let te = idxNB(packedTable, index.state),
-  if inputi = match.te then{fail}next(stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+  if inputi = match.te then {fail}next(stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
   else next(stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),

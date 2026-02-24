@@ -52,7 +52,7 @@ modname.a >1 modname.b
  ∧ %.sym.a >1 %.sym.b
 
 function keyx(s:symbol) seq.word
-if nopara.s = 1 then[merge.%.(paratypes.s) sub 1] + if name.s ∈ "type" then "a" else "b"
+if nopara.s = 1 then [merge.%.(paratypes.s) sub 1] + if name.s ∈ "type" then "a" else "b"
 else if name.s = (%.resulttype.s) sub 1 then [merge.%.resulttype.s] + "c"
 else "zzzz d"
 

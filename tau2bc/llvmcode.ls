@@ -104,7 +104,7 @@ Function tocstr(w:word) seq.byte
 {returns 16 bytes of header followed by UTF8 bytes ending with 0 byte.}
 packed(toseqbyte(emptyUTF8 + decodeword.w) + tobyte.0)
 
-builtin getbytefile2(seq.byte) process.seq.byte{OPTION STATE}
+builtin getbytefile2(seq.byte) process.seq.byte {OPTION STATE}
 
 Function getfiles(b:seq.seq.filename) seq.seq.file
 for acc = empty:seq.seq.file, fileNames ∈ b

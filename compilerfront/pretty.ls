@@ -44,33 +44,31 @@ use seq1.word
 
 use sort.word
 
-Export escapeformat(seq.word) seq.word{From prettyR}
-
-Export id(symbol) seq.word{From prettyR}
+Export id(symbol) seq.word {From prettyR}
 
 Export type:autolink{From prettyR}
 
-Export file(autolink) seq.word{From prettyR}
+Export file(autolink) seq.word {From prettyR}
 
-Export id(autolink) seq.word{From prettyR}
+Export id(autolink) seq.word {From prettyR}
 
-Export autolink(seq.word, seq.word) autolink{From prettyR}
+Export autolink(seq.word, seq.word) autolink {From prettyR}
 
-Export >1(a:autolink, b:autolink) ordering{From prettyR}
+Export >1(a:autolink, b:autolink) ordering {From prettyR}
 
-Export >2(a:autolink, b:autolink) ordering{From prettyR}
+Export >2(a:autolink, b:autolink) ordering {From prettyR}
 
-Export pretty(
-header:seq.word
+Export prettyX(
+srctxt:seq.word
 , code:seq.symbol
 , syms:set.autolink
 , change:boolean
+, totxt:boolean
 ) seq.word
-{From prettyR}
 
-Export getheader(s:seq.word) seq.word{From prettySupport}
+Export removeMarkup(s:seq.word) seq.word
 
-Export showZ(seq.word) seq.word{From prettySupport}
+Export showZ(seq.word) seq.word {From prettySupport}
 
 Function sortuse(b:seq.seq.word, prefix:seq.word) seq.seq.word
 for a = empty:seq.seq.word, u ∈ b do a + reverse.u
@@ -78,39 +76,6 @@ for acc = empty:seq.seq.word, @e ∈ sort>alpha.toseq.asset.a do acc + (prefix +
 acc
 
 Function pretty(p:seq.word) seq.word pretty(p, true)
-
-Function prettyNoChange(p:seq.word) seq.word pretty(p, false)
-
-Function removeMarkup(a:seq.word) seq.word
-for skip = false, acc = "", mark = empty:stack.int, e ∈ a
-do
- if e = escapeformat then next(not.skip, acc + e, mark)
- else if skip then next(skip, acc + [e], mark)
- else if e ∈ "//" then next(skip, acc, push(mark, n.acc))
- else if e ∈ "/literal" then
-  let b = if isempty.mark then 0 else top.mark
-  let before = acc >> (n.acc - b)
-  let new =
-   if not.isempty.before ∧ last.before ∉ "[{(." then before + "/sp" + acc << b
-   else acc,
-  {assert last.before ∉"["report"new"+showZ.new,}
-  next(skip, new, if isempty.mark then mark else pop.mark)
- else if e ∈ "/comment /keyword /code" then next(skip, acc, if isempty.mark then mark else pop.mark)
- else if e ∈ "/block" then
-  if isempty.mark then next(skip, acc + [e], mark)
-  else
-   let tt = acc << top.mark
-   let tt2 = "/br:(if isempty.tt ∨ last.acc ∉ "/br" then tt else tt >> 1)"
-   for skip2 = false, acc2 = "", e2 ∈ tt2
-   do
-    if e2 = escapeformat then next(not.skip2, acc2 + e2)
-    else if skip2 then next(skip2, acc2 + e2)
-    else if e2 ∈ "/br" then next(skip2, acc2 + "/br" + encodeword.[{char.32,}char.32])
-    else next(skip2, acc2 + e2),
-   let addbreak = if last.acc2 ∈ "/br" then "" else "/br",
-   next(skip, subseq(acc, 1, top.mark) + acc2 + addbreak, pop.mark)
- else next(skip, acc + e, mark),
-acc
 
 Function libsrc(m:midpoint, outfn:seq.filename) seq.file
 let outname = outfn sub 1
@@ -135,31 +100,19 @@ do
      libs
      + file(filename("+:(dirpath.outname)" + libname + ".libsrc"), toseqbyte.textFormat1a.libtxt),
    next(newlibname, all + "/p" + libtxt, p, newlibs)
- else
-  let newtxt =
-   if subseq(p, 1, 1)
-   ∈ ["Function", "function", "Export", "type", "builtin", "Builtin", "unbound"] then removeMarkup.prettyNoChange.p
-   else escapeformat.p,
-  next(libname, all, libtxt + "/p" + newtxt, libs),
+ else next(libname, all, libtxt + "/p" + pretty(p, false, true), libs),
 if full then [file(changeext(outname, "libsrc"), toseqbyte.textFormat1a.all)] + libs
 else libs
 
-function pretty(p:seq.word, change:boolean) seq.word
+Function pretty(p:seq.word, change:boolean) seq.word pretty(p, change, false)
+
+Function pretty(p:seq.word, change:boolean, totxt:boolean) seq.word
 if p sub 1 ∈ "Function function" then
  assert opprec."+" sub 1 = 4 report "no prec specified"
  let r = parse(totokens.p, empty:seq.symbol),
- if status.r ∈ "Match MatchPrefix" then pretty(formatHeader.getheader.p, result.r, empty:set.autolink, change)
+ if status.r ∈ "Match MatchPrefix" then prettyX(p, result.r, empty:set.autolink, change, totxt)
  else [status.r] + %.result.r
-else if p sub 1 ∈ "Export unbound Builtin builtin" then
- let h = formatHeader.getheader.p
- let rest = p << (findindex(p, "{" sub 1) - 1),
- if width(h + rest) < maxwidth then h + rest else h + "/br" + rest
-else if p sub 1 ∈ "type" then
- if width.p < maxwidth then p
- else
-  for acc = subseq(p, 1, 3), e ∈ break(p << 3, ",", true) do acc + "/br" + e,
-  acc
-else p
+else prettyX(p, empty:seq.symbol, empty:set.autolink, change, totxt)
 
 function toAttribute(b:seq.symbol, tokens:seq.token) seq.symbol
 for w = "", e ∈ tokens do w + toword.e,
@@ -362,7 +315,7 @@ else if partno = 5 then strExp(R sub (n.R - 1), "", true, R sub n.R)
 else if partno = 6 then strExp(R sub n.R, [toword.firsttoken.rinfo], false, empty:seq.symbol)
 else if partno = 7 then strExp(R sub (n.R - 1), worddata.R sub n.R, false, empty:seq.symbol)
 else if partno = 9 then R sub n.R
-else if partno = 10 then[Lit(1 + noargs.R sub (n.R - 1))] + R sub (n.R - 1) << 1 + R sub n.R
+else if partno = 10 then [Lit(1 + noargs.R sub (n.R - 1))] + R sub (n.R - 1) << 1 + R sub n.R
 else if partno = 11 then R sub (n.R - 1) + R sub n.R
 else if partno = 12 then binary(R sub (n.R - 1), firsttoken.rinfo, R sub n.R)
 else if partno = 13 then R sub (n.R - 1) + R sub n.R
@@ -755,7 +708,7 @@ do
   else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),
-  if inputi = endMark then{fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  if inputi = endMark then {fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),

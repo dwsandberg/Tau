@@ -103,7 +103,7 @@ do
 acc3 + undoc
 
 function tokind(typ:seq.word) word
- "flag words files ??" sub findindex(["boolean", "seq.word", "seq.file"], typ)
+"flag words files ??" sub findindex(["boolean", "seq.word", "seq.file"], typ)
 
 function toAttribute(b:seq.word, a:seq.word) seq.word a
 
@@ -324,11 +324,11 @@ do
   next(pop.stk, Sstate.top, i.top, ini, result.top, faili.top, failresult.top)
  else if actionState = T then
   let te = idxNB(packedTable, index.state),
-  if inputi ≠ match.te then{fail}next(stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+  if inputi ≠ match.te then {fail}next(stk, Fstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
   else next(stk, Sstate.te, i + 1, idxNB(myinput, i + 1), result, faili, failresult)
  else if actionState = !T then
   let te = idxNB(packedTable, index.state),
-  if inputi = match.te then{fail}next(stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
+  if inputi = match.te then {fail}next(stk, Sstate.te, faili, idxNB(myinput, faili), failresult, faili, failresult)
   else next(stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),

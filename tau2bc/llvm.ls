@@ -237,7 +237,7 @@ Function constvalue(i:slot) int
 Function constantrecords seq.slotrecord encodingdata:slotrecord
 
 Function record(a:slotrecord) seq.int
-if typ.a = -1 then{name comes before record}subseq(toseq.a, 2 + (toseq.a) sub 1, n.toseq.a)
+if typ.a = -1 then {name comes before record}subseq(toseq.a, 2 + (toseq.a) sub 1, n.toseq.a)
 else toseq.a
 
 Function symtablename(a:slotrecord) seq.char

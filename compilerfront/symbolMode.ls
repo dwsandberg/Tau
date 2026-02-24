@@ -359,7 +359,7 @@ do
   else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),
-  if inputi = endMark then{fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  if inputi = endMark then {fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),

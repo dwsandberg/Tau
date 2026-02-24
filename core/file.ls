@@ -197,7 +197,7 @@ let a = decodeword.dirpath.fn
 let b =
  if subseq(a, 1, 2) = [char1.".", char1."/"] ∧ n.a > 2 then encodeword(a << 2)
  else dirpath.fn,
- "# File:+:(b):(name.fn)." + ext.fn
+"# File:+:(b):(name.fn)." + ext.fn
 
 Function HTMLheader UTF8
 {the format of the meta tag is carefully crafted to get math unicode characters to display correctly}

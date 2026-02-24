@@ -126,7 +126,7 @@ a
 type checkprec is toseq:seq.word
 
 function checkprec seq.word
-assert-(1 * 1) - 5 = -6 report "Fail prec"
+assert -(1 * 1) - 5 = -6 report "Fail prec"
 let a =
  [
   x.1 + {commet should not change assocativity}x.2 + x.3

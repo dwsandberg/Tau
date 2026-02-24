@@ -52,17 +52,17 @@ use set.word
 
 Export type:midpoint{From symbol1}
 
-Export libmods(m:midpoint) seq.modExports{From symbol1}
+Export libmods(m:midpoint) seq.modExports {From symbol1}
 
-Export option(midpoint) seq.word{From symbol1}
+Export option(midpoint) seq.word {From symbol1}
 
-Export prg(midpoint) set.symdef{From symbol1}
+Export prg(midpoint) set.symdef {From symbol1}
 
-Export src(midpoint) seq.seq.word{From symbol1}
+Export src(midpoint) seq.seq.word {From symbol1}
 
-Export templates(midpoint) set.symdef{From symbol1}
+Export templates(midpoint) set.symdef {From symbol1}
 
-Export typedict(midpoint) typedict{From symbol1}
+Export typedict(midpoint) typedict {From symbol1}
 
 Export midpoint(
 option:seq.word
@@ -75,11 +75,11 @@ option:seq.word
 
 Export type:modExports{From symbol1}
 
-Export exports(modExports) seq.symbol{From symbol1}
+Export exports(modExports) seq.symbol {From symbol1}
 
-Export modname(modExports) modref{From symbol1}
+Export modname(modExports) modref {From symbol1}
 
-Export types(modExports) seq.seq.mytype{From symbol1}
+Export types(modExports) seq.seq.mytype {From symbol1}
 
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
 {From symbol1}

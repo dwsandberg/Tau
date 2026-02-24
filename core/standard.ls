@@ -32,118 +32,118 @@ Export char(int) char
 
 Export type:ordering
 
-Export toword(n:int) word{Covert integer to a single word.}{From UTF8}
+Export toword(n:int) word {Covert integer to a single word.}{From UTF8}
 
-Export toint(w:word) int{Convert an integer represented as a word to an int}{From UTF8}
+Export toint(w:word) int {Convert an integer represented as a word to an int}{From UTF8}
 
-Export not(a:boolean) boolean{From internal}
+Export not(a:boolean) boolean {From internal}
 
-Export =(a:boolean, b:boolean) boolean{From internal}
+Export =(a:boolean, b:boolean) boolean {From internal}
 
-Export false boolean{From internal}
+Export false boolean {From internal}
 
-Export true boolean{From internal}
+Export true boolean {From internal}
 
-Export arithseq(int, int, int) seq.int{From seq1.int}
+Export arithseq(int, int, int) seq.int {From seq1.int}
 
-Export constantseq(len:int, element:int) seq.int{From seq1.int}
+Export constantseq(len:int, element:int) seq.int {From seq1.int}
 
-Export findindex(seq.word, word) int{From seq1.word}
+Export findindex(seq.word, word) int {From seq1.word}
 
 Export type:seq.char{From seq.char}
 
-Export isempty(seq.char) boolean{From seq.char}
+Export isempty(seq.char) boolean {From seq.char}
 
-Export n(seq.char) int{From seq.char}
+Export n(seq.char) int {From seq.char}
 
-Export sub(seq.char, int) char{From seq.char}
+Export sub(seq.char, int) char {From seq.char}
 
-Export +(seq.char, char) seq.char{From seq.char}
+Export +(seq.char, char) seq.char {From seq.char}
 
-Export +(seq.char, seq.char) seq.char{From seq.char}
+Export +(seq.char, seq.char) seq.char {From seq.char}
 
-Export =(seq.char, seq.char) boolean{From seq.char}
+Export =(seq.char, seq.char) boolean {From seq.char}
 
-Export empty:seq.char seq.char{From seq.char}
+Export empty:seq.char seq.char {From seq.char}
 
-Export subseq(seq.char, int, int) seq.char{From seq.char}
+Export subseq(seq.char, int, int) seq.char {From seq.char}
 
 Export type:seq.int{From seq.int}
 
-Export isempty(seq.int) boolean{From seq.int}
+Export isempty(seq.int) boolean {From seq.int}
 
-Export n(seq.int) int{From seq.int}
+Export n(seq.int) int {From seq.int}
 
-Export sub(seq.int, int) int{From seq.int}
+Export sub(seq.int, int) int {From seq.int}
 
-Export +(seq.int, int) seq.int{From seq.int}
+Export +(seq.int, int) seq.int {From seq.int}
 
-Export +(seq.int, seq.int) seq.int{From seq.int}
+Export +(seq.int, seq.int) seq.int {From seq.int}
 
-Export =(seq.int, seq.int) boolean{From seq.int}
+Export =(seq.int, seq.int) boolean {From seq.int}
 
-Export empty:seq.int seq.int{From seq.int}
+Export empty:seq.int seq.int {From seq.int}
 
-Export subseq(seq.int, int, int) seq.int{From seq.int}
+Export subseq(seq.int, int, int) seq.int {From seq.int}
 
-Export ∈(int, seq.int) boolean{From seq.int}
+Export ∈(int, seq.int) boolean {From seq.int}
 
 Export type:seq.seq.word{From seq.seq.word}
 
-Export n(seq.seq.word) int{From seq.seq.word}
+Export n(seq.seq.word) int {From seq.seq.word}
 
-Export sub(seq.seq.word, int) seq.word{From seq.seq.word}
+Export sub(seq.seq.word, int) seq.word {From seq.seq.word}
 
-Export +(seq.seq.word, seq.seq.word) seq.seq.word{From seq.seq.word}
+Export +(seq.seq.word, seq.seq.word) seq.seq.word {From seq.seq.word}
 
-Export +(seq.seq.word, seq.word) seq.seq.word{From seq.seq.word}
+Export +(seq.seq.word, seq.word) seq.seq.word {From seq.seq.word}
 
-Export empty:seq.seq.word seq.seq.word{From seq.seq.word}
+Export empty:seq.seq.word seq.seq.word {From seq.seq.word}
 
-Export subseq(seq.seq.word, int, int) seq.seq.word{From seq.seq.word}
+Export subseq(seq.seq.word, int, int) seq.seq.word {From seq.seq.word}
 
-Export ∈(seq.word, seq.seq.word) boolean{From seq.seq.word}
+Export ∈(seq.word, seq.seq.word) boolean {From seq.seq.word}
 
 Export type:seq.word{From seq.word}
 
-Export isempty(seq.word) boolean{From seq.word}
+Export isempty(seq.word) boolean {From seq.word}
 
-Export n(seq.word) int{From seq.word}
+Export n(seq.word) int {From seq.word}
 
-Export sub(seq.word, int) word{From seq.word}
+Export sub(seq.word, int) word {From seq.word}
 
-Export +(a:seq.word, b:seq.word) seq.word{OPTION COMPILETIME}{From seq.word}
+Export +(a:seq.word, b:seq.word) seq.word {OPTION COMPILETIME}{From seq.word}
 
-Export +(seq.word, word) seq.word{From seq.word}
+Export +(seq.word, word) seq.word {From seq.word}
 
 Export <<(s:seq.word, i:int) seq.word
 {* removes i words from beginning of s From seq.word}{From seq.word}
 
-Export =(seq.word, seq.word) boolean{From seq.word}
+Export =(seq.word, seq.word) boolean {From seq.word}
 
-Export >>(s:seq.word, i:int) seq.word{* removes i words from end of s}{From seq.word}
+Export >>(s:seq.word, i:int) seq.word {* removes i words from end of s}{From seq.word}
 
 Export last(seq.word) word
 
-Export empty:seq.word seq.word{From seq.word}
+Export empty:seq.word seq.word {From seq.word}
 
-Export subseq(seq.word, int, int) seq.word{From seq.word}
+Export subseq(seq.word, int, int) seq.word {From seq.word}
 
-Export ∈(word, seq.word) boolean{From seq.word}
+Export ∈(word, seq.word) boolean {From seq.word}
 
-Export encodeword(a:seq.char) word{From word}
+Export encodeword(a:seq.char) word {From word}
 
-Export merge(a:seq.word) word{make multiple word into a single word.}{From word}
+Export merge(a:seq.word) word {make multiple word into a single word.}{From word}
 
 Export type:word{From word}
 
-Export decodeword(w:word) seq.char{From word}
+Export decodeword(w:word) seq.char {From word}
 
-Export hash(a:word) int{From word}
+Export hash(a:word) int {From word}
 
-Export =(a:word, b:word) boolean{From word}
+Export =(a:word, b:word) boolean {From word}
 
-Export >1(a:word, b:word) ordering{From word}
+Export >1(a:word, b:word) ordering {From word}
 
 Export stacktrace seq.word
 

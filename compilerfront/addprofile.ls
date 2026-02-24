@@ -167,6 +167,5 @@ if isempty.remove then g else removeSinksSources.subgraph(g, nodes.g \ asset.rem
 
 function cyclenodes(g:graph.arc.symbol) seq.symbol
 let tc = transitiveClosure.removeSinksSources.g
-for acc = empty:seq.symbol, n ∈ toseq.nodes.tc
-do if toarc.n ∈ arcs.tc then acc + n else acc,
+for acc = empty:seq.symbol, n ∈ toseq.nodes.tc do if toarc.n ∈ arcs.tc then acc + n else acc,
 acc 

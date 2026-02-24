@@ -231,7 +231,7 @@ if n.parts = 3
  let lastpart = parts sub 3
  let theseqtype = resulttype.fromTheEnd(3, lastpart),
  let theseq = lastpart sub 5,
- if %.parameter.theseqtype ∈ ["packed2", "ptr"] then{???? hack! should at least check to see if cat is defined.}empty:seq.symbol
+ if %.parameter.theseqtype ∈ ["packed2", "ptr"] then {???? hack! should at least check to see if cat is defined.}empty:seq.symbol
  else
   let firstvar = firstvar.loop
   let idx = firstvar + 1
@@ -461,7 +461,7 @@ else
       else arcs5 + arc(brt + place, place) + arc(brf + place, place),
      let newbrs =
       if n.this = 2 ∧ this sub 1 ∈ [Littrue, Litfalse] then brs else brs + place,
-     if idx = 0 then{no subexpression was found}next(parts + this, newreached, newarcs5, newbrs, nextvar)
+     if idx = 0 then {no subexpression was found}next(parts + this, newreached, newarcs5, newbrs, nextvar)
      else
       let parent = parts sub placeX
       {check printrecord slotorder2 are form printbitcodes descslot}
@@ -680,8 +680,7 @@ else
    let f1 =
     {findelement2}
     lookup(prg, symdef(symbol(internalmod, "=", [p1, p1], typeboolean), empty:seq.symbol, 0))
-   for EqOp1 = empty:seq.symbol, e ∈ toseq.f1
-   do if isunbound.sym.e then EqOp1 else EqOp1 + sym.e,
+   for EqOp1 = empty:seq.symbol, e ∈ toseq.f1 do if isunbound.sym.e then EqOp1 else EqOp1 + sym.e,
    EqOp1,
  if n.EqOp2 ≠ 1 then expandresult(0, empty:seq.symbol)
  else
@@ -707,7 +706,7 @@ let tmp6 =
  if kind = kmulint then [Lit(value.fromTheEnd(2, part) * value.part sub n.part)]
  else if kind = kaddint then [Lit(value.fromTheEnd(2, part) + value.part sub n.part)]
  else if kind = ksubint then [Lit(value.fromTheEnd(2, part) - value.part sub n.part)]
- else if kind = kdivint ∧ part sub n.part ≠ Lit.0 then[Lit(value.fromTheEnd(2, part) / value.part sub n.part)]
+ else if kind = kdivint ∧ part sub n.part ≠ Lit.0 then [Lit(value.fromTheEnd(2, part) / value.part sub n.part)]
  else if kind ∈ [kidx, kidxNB] then
   let args = subseq(part, n.part - 1, n.part),
   if kind.args sub 1 = kwords then [Word.(worddata.args sub 1) sub value.args sub 2]
@@ -728,18 +727,18 @@ let tmp6 =
   else
    let x = last.fullconstantcode.part sub n.part,
    if kind.x = ksequence then [Lit.0] else empty:seq.symbol
- else if kind = keqlB then[if kind.fromTheEnd(2, part) = kind.part sub n.part then Littrue else Litfalse]
+ else if kind = keqlB then [if kind.fromTheEnd(2, part) = kind.part sub n.part then Littrue else Litfalse]
  else if kind = keqlI then
   let tmp =
    if kind.fromTheEnd(2, part) = kword then worddata.fromTheEnd(2, part) = worddata.part sub n.part
    else value.fromTheEnd(2, part) = value.part sub n.part,
   [if tmp then Littrue else Litfalse]
- else if kind = kgrtI then[if value.fromTheEnd(2, part) > value.part sub n.part then Littrue else Litfalse]
+ else if kind = kgrtI then [if value.fromTheEnd(2, part) > value.part sub n.part then Littrue else Litfalse]
  else if kind = k<<bits then [Lit.toint(tobits.value.fromTheEnd(2, part) << value.part sub n.part)]
  else if kind = k>>bits then [Lit.toint(tobits.value.fromTheEnd(2, part) >> value.part sub n.part)]
- else if kind = k∨bits then[Lit.toint(tobits.value.fromTheEnd(2, part) ∨ tobits.value.part sub n.part)]
- else if kind = k∧bits then[Lit.toint(tobits.value.fromTheEnd(2, part) ∧ tobits.value.part sub n.part)]
- else if kind = kxorbits then[Lit.toint(tobits.value.fromTheEnd(2, part) ⊻ tobits.value.part sub n.part)]
+ else if kind = k∨bits then [Lit.toint(tobits.value.fromTheEnd(2, part) ∨ tobits.value.part sub n.part)]
+ else if kind = k∧bits then [Lit.toint(tobits.value.fromTheEnd(2, part) ∧ tobits.value.part sub n.part)]
+ else if kind = kxorbits then [Lit.toint(tobits.value.fromTheEnd(2, part) ⊻ tobits.value.part sub n.part)]
  else if kind = kaddreal then
   [
    Reallit.representation(casttoreal.value.fromTheEnd(2, part) + casttoreal.value.part sub n.part)
@@ -748,16 +747,16 @@ let tmp6 =
   [
    Reallit.representation(casttoreal.value.fromTheEnd(2, part) - casttoreal.value.part sub n.part)
   ]
- else if kind = kmakereal ∧ kind.part sub n.part = kwords then[Reallit.representation.makereal.worddata.part sub n.part]
+ else if kind = kmakereal ∧ kind.part sub n.part = kwords then [Reallit.representation.makereal.worddata.part sub n.part]
  else if kind = kfld then
   let t = fullconstantcode.fromTheEnd(2, part)
   let val = value.part sub n.part,
   if kind.t sub n.t = krecord
   ∧ between(val, 0, nopara.t sub n.t - 1)
-  ∧ nopara.t sub n.t = n.t - 1 then[t sub (val + 1)]
+  ∧ nopara.t sub n.t = n.t - 1 then [t sub (val + 1)]
   else empty:seq.symbol
  else if kind = kcat then
-  if kind.fromTheEnd(2, part) = kwords ∧ kind.part sub n.part = kwords then[Words(worddata.fromTheEnd(2, part) + worddata.part sub n.part)]
+  if kind.fromTheEnd(2, part) = kwords ∧ kind.part sub n.part = kwords then [Words(worddata.fromTheEnd(2, part) + worddata.part sub n.part)]
   else if kind.fromTheEnd(2, part) = kconstantrecord ∧ kind.part sub n.part = kconstantrecord then
    let a = fullconstantcode.fromTheEnd(2, part)
    let b = fullconstantcode.part sub n.part,

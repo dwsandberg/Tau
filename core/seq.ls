@@ -22,7 +22,7 @@ type seq is sequence, x:T
 
 Builtin packed(s:seq.T) seq.T
 
-Builtin empty:seq.T seq.T{empty seq}
+Builtin empty:seq.T seq.T {empty seq}
 
 Builtin idxNB(a:seq.T, i:int) T
 
@@ -124,7 +124,7 @@ Function >>(s:seq.T, i:int) seq.T
 {* removes i elements from end of s}
 subseq(s, 1, n.s - i)
 
-Builtin n(s:seq.T) int{length of string}
+Builtin n(s:seq.T) int {length of string}
 
 Function sub(s:seq.T, i:int) T
 {Number elements in sequence from 1 to n.s and return the element numbered i}

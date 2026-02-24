@@ -21,7 +21,7 @@ do
  let nameValue = extractValue(p, "nameValue")
  let existingType = extractValue(p, "existingType")
  let newType = extractValue(p, "newType")
- assert(isempty.existingType ∨ isempty.newType) ∧ not.isempty(newType + existingType) report "genEnum: Either existingType: or newType: must specify a type name in:(p)",
+ assert (isempty.existingType ∨ isempty.newType) ∧ not.isempty(newType + existingType) report "genEnum: Either existingType: or newType: must specify a type name in:(p)",
  assert not.isempty.values ∨ not.isempty.nameValue report "genEnum: names: or nameValue: must not be empty:(p)",
  auto
  + enumerate(
@@ -71,7 +71,7 @@ let bodypart =
   do next(codes5 + constantseq(value.e - last - 1, "?" sub 1) + name.e, value.e)
   let tmp = 1 - lowValue,
   let tmp1 =
-   if tmp = 0 then "i"else if tmp > 0 then "(i+:(tmp))" else "(i-:(-tmp))",
+   if tmp = 0 then "i" else if tmp > 0 then "(i+:(tmp))" else "(i-:(-tmp))",
   "if between(i,:(lowValue),:(highValue))then let r =[:(dq.codes5)sub:(tmp1)], if r ≠:(dq."?")then r else:(dq(type + "."))+toword.i else"
  else
   for txt = "", e ∈ toseq.pairs do txt + "if i =:(value.e)then:(dq.[name.e])else",
@@ -143,7 +143,7 @@ Function r6 e2 e2.1
 Function decode(code:e2) seq.word
 let discard = [r5, r6]
 let i = toint.code,
-if i = 0 then "r5"else if i = 1 then "r6" else "e2." + toword.i
+if i = 0 then "r5" else if i = 1 then "r6" else "e2." + toword.i
 
 Function r3 int 3
 
@@ -152,7 +152,7 @@ Function r7 int 9
 Function d1(code:int) seq.word
 let discard = [r3, r7]
 let i = code,
-if i = 3 then "r3"else if i = 9 then "r7" else "int." + toword.i
+if i = 3 then "r3" else if i = 9 then "r7" else "int." + toword.i
 
 Function op1 byte tobyte.45
 
@@ -161,7 +161,7 @@ Function op2 byte tobyte.97
 Function ops(code:byte) seq.word
 let discard = [op1, op2]
 let i = toint.code,
-if i = 45 then "op1"else if i = 97 then "op2" else "byte." + toword.i
+if i = 45 then "op1" else if i = 97 then "op2" else "byte." + toword.i
 
 Function two0 byte tobyte.0
 

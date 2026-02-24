@@ -30,7 +30,7 @@ Export action(match5) word
 
 Export arg(match5) int
 
-Export length(match5) int{no of instruction that return results}
+Export length(match5) int {no of instruction that return results}
 
 Export llvmtypelist(match5) seq.llvmtype
 
@@ -51,9 +51,9 @@ Export bc(recordcoderesult) internalbc
 
 Export regno(recordcoderesult) int
 
-Export wordref(w:word) int{From persistant}
+Export wordref(w:word) int {From persistant}
 
-Export constdata seq.slot{From persistant}
+Export constdata seq.slot {From persistant}
 
 Export type:symbol{From symbol}{From symbol}
 

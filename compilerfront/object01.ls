@@ -256,7 +256,7 @@ do
 finished
  + if stkcount > 0 then adjuststkcounts(acc, fldtypes, stkcount)
 else if buildtype = buildrecord ∧ n.acc < 10 then [buildtblrecord] + acc << 1
-else if buildtype = buildseq ∧ (n.acc < 10 ∨ acc sub 2 = word0 ∧ n.acc < 300) then[buildtblseq] + acc << 1
+else if buildtype = buildseq ∧ (n.acc < 10 ∨ acc sub 2 = word0 ∧ n.acc < 300) then [buildtblseq] + acc << 1
 else acc
 
 function dumptable seq.word
@@ -400,7 +400,7 @@ all
 
 function packedpattern(seqelementpat:seq.int, eletypeidx:int) seq.int
 if not.between(n.seqelementpat, 2, {must match packed seqs in implementation}6)
- ∨ seqelementpat sub 1 = 0 then[eletypeidx]
+ ∨ seqelementpat sub 1 = 0 then [eletypeidx]
 else seqelementpat
 
 Function packobject(typ:word, obj:ptr) ptr

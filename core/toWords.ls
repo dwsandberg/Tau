@@ -6,6 +6,8 @@ use bits
 
 use seq.byte
 
+use seq1.char
+
 use seq.int
 
 use standard
@@ -28,7 +30,7 @@ Function breakparagraph(bytes:seq.byte) seq.seq.word
 test(bytes, tableText)
 
 Function fromHTML(bytes:seq.byte) seq.seq.word
-{input is broken into paragraphs when each paragraph is either an HTML element or is text. Paragraphs of text end with a double quote.}
+{input is broken into paragraphs where each paragraph is either an HTML element or is text. Paragraphs of text end with a double quote.}
 test(bytes, tableHTML)
 
 type tblrec is kind:int, chr:char
@@ -38,16 +40,25 @@ if ch = char1.";" then
  let list = decodeword."<&" sub 1
  for acc = empty:seq.char, idx = 1, e ∈ [decodeword."&lt" sub 1, decodeword."&amp" sub 1]
  do
-  if subseq(chars, n.chars - n.e + 1, n.chars) = e then next(subseq(chars, n.e + 1, n.e) + list sub idx, idx + 1)
+  if subseq(chars, n.chars - n.e + 1, n.chars) = e then next(chars >> n.e + list sub idx, idx + 1)
   else next(acc, idx + 1),
  if isempty.acc then chars + ch else acc
 else chars + ch
 
+function showZ(out:seq.word) seq.word
+for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
+acc
+
+function addnewword(words:seq.word, chars:seq.char) seq.word
+if n.chars = 0 then words else words + encodeword.chars
+
 function test(bytes:seq.byte, classify:seq.tblrec) seq.seq.word
 let period/colon = 1
 {period or colon is pending waiting for next character}
+let Charesc = 1
+let InTag = 2
 for
- tag = false
+ tag = 0
  , state0 = 0
  , paragraph0 = empty:seq.seq.word
  , chars0 = empty:seq.char
@@ -65,9 +76,9 @@ do
   {???? make sure this for does not use loop in final code.}
   if state = 0 then next(state, paragraph, words, chars)
   else if state = period/colon then
-   let newwords =
-    encodeword(chars0 + (if ch = {space}char.32 then [char.32] else empty:seq.char)),
-   next(0, paragraph, words + newwords, empty:seq.char)
+   let newchars =
+    chars0 + if ch = {space}char.32 then [char.32] else empty:seq.char,
+   next(0, paragraph, addnewword(words, newchars), empty:seq.char)
   else if state = 2 then
    {found first LF and looking for second LF}
    let newstate = if kind = Space then if ch = {LF}char.10 then 3 else 2 else 0,
@@ -78,35 +89,31 @@ do
    else
     {finish paragraph}
     next(0, if isempty.words then paragraph else paragraph + [words], "", chars),
- if kind = Char&< then
-  {starting a tag}
-  let newwords = if n.chars = 0 then words else words + encodeword.chars,
-  if ch = char1.">" then
-   {assert ch ∈(decodeword."<!doctypehml"sub 1+char.32)report"ch:(tag)"+encodeword.[ch]}
-   if tag then
-    let newpara =
-     paragraph
-     + if subseq(chars, 1, 2) = decodeword."</" sub 1 then [words] + [encodeword(chars + ch)]
-     else [words] + [[encodeword.chars] + ">"],
-    next(false, state, newpara, empty:seq.char, bits.0, 0, "")
-   else if isempty.words ∨ char1.words ≠ char1."<" then
-    {???? A more general solution is needed to determine whether a '>' marks the end of an element tag. Does not handle the case where the first word of text is a less than.}
-    next(false, 0, paragraph, chars + ch, bits.0, 0, words)
+ if kind = Char&<> then
+  if ch = char1."&" then next(tag + Charesc, 0, paragraph, chars + ch, bits.0, 0, words)
+  else if ch = char1."<" then
+   {starting a tag}
+   if tag = InTag then next(0, 0, paragraph, chars + ch, bits.0, 0, words)
    else
-    let newpara = paragraph + [words + [encodeword.chars] + ">"],
-    next(false, 0, newpara, empty:seq.char, bits.0, 0, "")
-  else if ch = char1."<" ∧ not.isempty.newwords ∧ last.newwords ∉ ">" then next(true, 0, paragraph + [newwords + dq], [ch], bits.0, 0, "")
-  else next(true, 0, paragraph, [ch], bits.0, 0, newwords)
- else if kind = Space then
-  if tag then
-   let newpara = paragraph + if isempty.words0 then empty:seq.seq.word else [words0],
-   next(false, state, newpara, empty:seq.char, bits.0, 0, [encodeword.chars])
+    let newwords = addnewword(words, chars),
+    if not.isempty.newwords ∧ last.newwords ∉ ">" then next(tag + InTag, 0, paragraph + [newwords + dq], [ch], bits.0, 0, "")
+    else next(tag + InTag, 0, paragraph, [ch], bits.0, 0, newwords)
   else
-   let newwords = if n.chars = 0 then words else words + encodeword.chars
-   let newstate = if ch = {LF}char.10 ∧ state = 0 then 2 else state,
-   next(tag, newstate, paragraph, empty:seq.char, bits.0, 0, newwords)
+   {ch = char1.">"}
+   {???? A more general solution is needed to determine whether a '>' marks the end of an element tag. Does not handle the case where the first word of text is a less than.}
+   if tag = 0 then next(tag, 0, paragraph, chars + ch, bits.0, 0, words)
+   else if subseq(chars, 1, 2) = decodeword."</" sub 1 then
+    let tmp =
+     if isempty.words then [[encodeword(chars + ch)]]
+     else [words + dq] + [encodeword(chars + ch)],
+    next(0, 0, paragraph + tmp, empty:seq.char, bits.0, 0, "")
+   else next(0, 0, paragraph + [addnewword(words, chars) + ">"], empty:seq.char, bits.0, 0, "")
+ else if kind = Space then
+  let newstate = if ch = {LF}char.10 ∧ state = 0 then 2 else state
+  let newtag = if tag ∈ [Charesc, Charesc + InTag] then tag - Charesc else tag,
+  next(tag, newstate, paragraph, empty:seq.char, bits.0, 0, addnewword(words, chars))
  else if kind = 0 then
-  if tag then next(ch ≠ char1.";", 0, paragraph, handleCharRef(chars, ch), bits.0, 0, words)
+  if tag ∈ [Charesc, Charesc + InTag] ∧ ch = char1.";" then next(tag - Charesc, 0, paragraph, handleCharRef(chars, ch), bits.0, 0, words)
   else next(tag, 0, paragraph, chars + ch, bits.0, 0, words)
  else if kind = ThreeByte then next(tag, 0, paragraph, chars, 0xF ∧ bits, 2, words)
  else if kind = TwoByte then next(tag, 0, paragraph, chars, 0x1F ∧ bits, 1, words)
@@ -118,17 +125,23 @@ do
    assert expect > 0 report "error",
    next(tag, 0, paragraph, chars, newbits, expect - 1, words)
  else if kind = StandAlone then
-  let newwords = if n.chars = 0 then words else words + encodeword.chars,
-  next(tag, 0, paragraph, empty:seq.char, bits.0, 0, newwords + encodeword.[ch])
- else if kind = Period then
-  let newwords = if n.chars = 0 then words else words + encodeword.chars,
-  next(tag, period/colon, paragraph, [ch], bits.0, 0, newwords)
+ let newwords=addnewword(words, chars) + encodeword.[ch]
+  next(
+   tag
+   , 0
+   , paragraph
+   , empty:seq.char
+   , bits.0
+   , 0
+   , newwords
+  )
+ else if kind = Period then next(tag, period/colon, paragraph, [ch], bits.0, 0, addnewword(words, chars))
  else
   assert false report "kind:(kind)",
   next(tag, 0, paragraph, chars, bits.0, 0, words),
 if isempty.words0 then paragraph0
 else
- let html = kind.classify sub (toint.char1."<" + 1) = Char&<,
+ let html = kind.classify sub (toint.char1."<" + 1) = Char&<>,
  paragraph0 + [if html then words0 + dq else words0]
 
 function Invalid int 1
@@ -147,7 +160,7 @@ function Space int 7
 
 function Period int 8
 
-function Char&< int 9
+function Char&<> int 9
 
 function tableHTML seq.tblrec
 {auto generated}
@@ -190,7 +203,7 @@ function tableHTML seq.tblrec
  , {23}tblrec(0, char1."#")
  , {24}tblrec(0, char1."$")
  , {25}tblrec(0, char1."%")
- , {26}tblrec(Char&<, char1."&")
+ , {26}tblrec(Char&<>, char1."&")
  , {27}tblrec(0, char1."'")
  , {28}tblrec(StandAlone, char1."(")
  , {29}tblrec(StandAlone, char1.")")
@@ -212,9 +225,9 @@ function tableHTML seq.tblrec
  , {39}tblrec(0, char1."9")
  , {3A}tblrec(Period, char1.":")
  , {3B}tblrec(0, char1.";")
- , {3C}tblrec(Char&<, char1."<")
+ , {3C}tblrec(Char&<>, char1."<")
  , {3D}tblrec(StandAlone, char1."=")
- , {3E}tblrec(Char&<, char1.">")
+ , {3E}tblrec(Char&<>, char1.">")
  , {3F}tblrec(0, char1."?")
  , {40}tblrec(0, char1."@")
  , {41}tblrec(0, char1."A")

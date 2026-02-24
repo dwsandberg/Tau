@@ -29,9 +29,9 @@ symbol(module, name, empty:seq.mytype, returntype)
 
 Export =(a:symdef, b:symdef) boolean
 
-Export symbol(modref, seq.word, mytype) symbol{From symbol}
+Export symbol(modref, seq.word, mytype) symbol {From symbol}
 
-Export symbol(modref, seq.word, seq.mytype, mytype) symbol{From symbol}
+Export symbol(modref, seq.word, seq.mytype, mytype) symbol {From symbol}
 
 Export symIdxNB(seqparatype:mytype) symbol
 
@@ -69,93 +69,93 @@ Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modE
 
 Export type:modref{From mytype}
 
-Export %(modref) seq.word{From mytype}
+Export %(modref) seq.word {From mytype}
 
-Export isAbstract(modref) boolean{From mytype}
+Export isAbstract(modref) boolean {From mytype}
 
-Export library(modref) word{From mytype}
+Export library(modref) word {From mytype}
 
-Export name(modref) word{From mytype}
+Export name(modref) word {From mytype}
 
-Export para(modref) mytype{From mytype}
+Export para(modref) mytype {From mytype}
 
 Export type:mytype{From mytype}
 
-Export %(t:mytype) seq.word{From mytype}
+Export %(t:mytype) seq.word {From mytype}
 
-Export parameter(mytype) mytype{From mytype}
+Export parameter(mytype) mytype {From mytype}
 
-Export seqof(mytype) mytype{From mytype}
+Export seqof(mytype) mytype {From mytype}
 
-Export moduleref(seq.word) modref{From mytype}
+Export moduleref(seq.word) modref {From mytype}
 
-Export typeref(seq.word) mytype{From mytype}
+Export typeref(seq.word) mytype {From mytype}
 
 Export type:typedef{From mytype}
 
-Export =(modref, modref) boolean{From mytype}
+Export =(modref, modref) boolean {From mytype}
 
-Export =(mytype, mytype) boolean{From mytype}
+Export =(mytype, mytype) boolean {From mytype}
 
-Export >1(mytype, mytype) ordering{From mytype}
+Export >1(mytype, mytype) ordering {From mytype}
 
-Export addabstract(mytype, mytype) mytype{From mytype}
+Export addabstract(mytype, mytype) mytype {From mytype}
 
-Export internalmod modref{From mytype}
+Export internalmod modref {From mytype}
 
-Export moduleref(seq.word, mytype) modref{From mytype}
+Export moduleref(seq.word, mytype) modref {From mytype}
 
-Export typeT mytype{From mytype}
+Export typeT mytype {From mytype}
 
-Export typeboolean mytype{From mytype}
+Export typeboolean mytype {From mytype}
 
-Export typeint mytype{From mytype}
+Export typeint mytype {From mytype}
 
-Export typeptr mytype{From mytype}
+Export typeptr mytype {From mytype}
 
-Export typereal mytype{From mytype}
+Export typereal mytype {From mytype}
 
-Export %(seq.symbol) seq.word{From seq1.symbol}
+Export %(seq.symbol) seq.word {From seq1.symbol}
 
-Export Lit(int) symbol{From symbol}
+Export Lit(int) symbol {From symbol}
 
-Export Local(int) symbol{From symbol}
+Export Local(int) symbol {From symbol}
 
-Export Reallit(i:int) symbol{From symbol}
+Export Reallit(i:int) symbol {From symbol}
 
-Export continue(i:int) symbol{From symbol}
+Export continue(i:int) symbol {From symbol}
 
-Export Start(mytype) symbol{From symbol}
+Export Start(mytype) symbol {From symbol}
 
-Export builtinmod(mytype) modref{From symbol}
+Export builtinmod(mytype) modref {From symbol}
 
-Export deepcopySym(mytype) symbol{From symbol}
+Export deepcopySym(mytype) symbol {From symbol}
 
-Export isseq(mytype) boolean{From symbol}
+Export isseq(mytype) boolean {From symbol}
 
-Export Record(seq.mytype) symbol{From symbol}
+Export Record(seq.mytype) symbol {From symbol}
 
-Export Words(seq.word) symbol{From symbol}
+Export Words(seq.word) symbol {From symbol}
 
 Export type:symbol{From symbol}
 
-Export %(symbol) seq.word{From symbol}
+Export %(symbol) seq.word {From symbol}
 
-Export Fref(s:symbol) symbol{From symbol}
+Export Fref(s:symbol) symbol {From symbol}
 
-Export basesym(s:symbol) symbol{From symbol}
+Export basesym(s:symbol) symbol {From symbol}
 
-Export brf(symbol) int{From symbol}
+Export brf(symbol) int {From symbol}
 
-Export brt(symbol) int{From symbol}
+Export brt(symbol) int {From symbol}
 
-Export clearrequiresbit(symbol) symbol{From symbol}
+Export clearrequiresbit(symbol) symbol {From symbol}
 
-Export firstvar(symbol) int{From symbol}
+Export firstvar(symbol) int {From symbol}
 
-Export fullname(symbol) seq.word{From symbol}
+Export fullname(symbol) seq.word {From symbol}
 
-Export hash(symbol) int{From symbol}
+Export hash(symbol) int {From symbol}
 
 Function isOrdinary seq.symbolKind [kother, kcompoundname, kcat, kidx, kmakereal, kmember]
 
@@ -163,104 +163,104 @@ Function isInternal(sym:symbol) boolean name.module.sym = "internal" sub 1
 
 Function isconstantorspecial(s:symbol) boolean between(kind.s, kfref, kendblock)
 
-Export issimplename(symbol) boolean{From symbol}
+Export issimplename(symbol) boolean {From symbol}
 
 Function isspecial(kind:symbolKind) boolean between(kind, klocal, kendblock)
 
 Function isconst(s:symbol) boolean toint.kind.s ≤ toint.kconstantrecord
 
-Export isunbound(symbol) boolean{From symbol}
+Export isunbound(symbol) boolean {From symbol}
 
-Export module(symbol) modref{From symbol}
+Export module(symbol) modref {From symbol}
 
-Export name(symbol) word{From symbol}
+Export name(symbol) word {From symbol}
 
-Export nametype(symbol) seq.mytype{From symbol}
+Export nametype(symbol) seq.mytype {From symbol}
 
-Export nopara(symbol) int{From symbol}
+Export nopara(symbol) int {From symbol}
 
-Export paratypes(symbol) seq.mytype{From symbol}
+Export paratypes(symbol) seq.mytype {From symbol}
 
-Export privatefields(s:symbol) seq.int{From symbol}
+Export privatefields(s:symbol) seq.int {From symbol}
 
-Export resulttype(symbol) mytype{From symbol}
+Export resulttype(symbol) mytype {From symbol}
 
-Export types(symbol) seq.mytype{From symbol}
+Export types(symbol) seq.mytype {From symbol}
 
-Export value(symbol) int{From symbol}
+Export value(symbol) int {From symbol}
 
-Export worddata(symbol) seq.word{From symbol}
+Export worddata(symbol) seq.word {From symbol}
 
-Export wordname(symbol) word{From symbol}
+Export wordname(symbol) word {From symbol}
 
 Export type:symdef{From symbol}
 
-Export code(symdef) seq.symbol{From symbol}
+Export code(symdef) seq.symbol {From symbol}
 
-Export externalNo(sd:symdef) int{From symbol}
+Export externalNo(sd:symdef) int {From symbol}
 
 Export ∈(a:symdefOption, b:symdefOption) boolean
 
-Export options(sd:symdef) symdefOption{From symbol}
+Export options(sd:symdef) symdefOption {From symbol}
 
-Export isThisLibrary(sd:symdef) boolean{From symbol}
+Export isThisLibrary(sd:symdef) boolean {From symbol}
 
-Export paragraphno(symdef) int{From symbol}
+Export paragraphno(symdef) int {From symbol}
 
-Export sym(symdef) symbol{From symbol}
+Export sym(symdef) symbol {From symbol}
 
-Export symdef(symbol, seq.symbol, int) symdef{From symbol}
+Export symdef(symbol, seq.symbol, int) symdef {From symbol}
 
-Export Word(word) symbol{From symbol}
+Export Word(word) symbol {From symbol}
 
-Export =(symbol, symbol) boolean{From symbol}
+Export =(symbol, symbol) boolean {From symbol}
 
-Export >1(a:symdef, b:symdef) ordering{From symbol}
+Export >1(a:symdef, b:symdef) ordering {From symbol}
 
-Export >1(symbol, symbol) ordering{From symbol}
+Export >1(symbol, symbol) ordering {From symbol}
 
-Export >2(symbol, symbol) ordering{From symbol}
+Export >2(symbol, symbol) ordering {From symbol}
 
-Export Br2(int, int) symbol{From symbol}
+Export Br2(int, int) symbol {From symbol}
 
-Export Define(word, int) symbol{From symbol}
+Export Define(word, int) symbol {From symbol}
 
-Export EndBlock symbol{From symbol}
+Export EndBlock symbol {From symbol}
 
-Export Exit symbol{From symbol}
+Export Exit symbol {From symbol}
 
-Export GetSeqLength symbol{From symbol}
+Export GetSeqLength symbol {From symbol}
 
-Export GetSeqType symbol{From symbol}
+Export GetSeqType symbol {From symbol}
 
-Export Litfalse symbol{From symbol}
+Export Litfalse symbol {From symbol}
 
-Export Littrue symbol{From symbol}
+Export Littrue symbol {From symbol}
 
-Export Local(name:word, type:mytype, parano:int) symbol{From symbol}
+Export Local(name:word, type:mytype, parano:int) symbol {From symbol}
 
-Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol{From symbol}
+Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype) symbol {From symbol}
 
-Export NotOp symbol{From symbol}
+Export NotOp symbol {From symbol}
 
-Export PlusOp symbol{From symbol}
+Export PlusOp symbol {From symbol}
 
-Export PreFref symbol{From symbol}
+Export PreFref symbol {From symbol}
 
-Export Sequence(mytype, int) symbol{From symbol}
+Export Sequence(mytype, int) symbol {From symbol}
 
-Export getCode(set.symdef, symbol) seq.symbol{From symbol}
+Export getCode(set.symdef, symbol) seq.symbol {From symbol}
 
-Export getSymdef(set.symdef, symbol) set.symdef{From symbol}
+Export getSymdef(set.symdef, symbol) set.symdef {From symbol}
 
-Export replaceTsymbol(mytype, symbol) symbol{From symbol}
+Export replaceTsymbol(mytype, symbol) symbol {From symbol}
 
 Function istype(s:symbol) boolean
 not.issimplename.s ∧ wordname.s = "type" sub 1 ∧ nopara.s = 1
 
 Export kind(s:symbol) symbolKind
 
-Export symbol4(modref, word, mytype, seq.mytype, mytype) symbol{From symbol}
+Export symbol4(modref, word, mytype, seq.mytype, mytype) symbol {From symbol}
 
 Export symdef4(
 sym:symbol
@@ -302,29 +302,29 @@ Export \(a:symdefOption, b:symdefOption) symdefOption
 
 Export =(a:symdefOption, b:symdefOption) boolean
 
-Export type? mytype{From symbol}
+Export type? mytype {From symbol}
 
-Export typebits mytype{From symbol}
+Export typebits mytype {From symbol}
 
-Export typebyte mytype{From symbol}
+Export typebyte mytype {From symbol}
 
-Export typeword mytype{From symbol}
+Export typeword mytype {From symbol}
 
-Export fullconstantcode(s:symbol) seq.symbol{From symbolconstant}
+Export fullconstantcode(s:symbol) seq.symbol {From symbolconstant}
 
 Export type:symbolconstant{From symbolconstant}
 
-Export Constant2(libname:word, args:seq.symbol) symbol{From symbolconstant}
+Export Constant2(libname:word, args:seq.symbol) symbol {From symbolconstant}
 
 Export type:typedict{From typedict}
 
 Export type:typeentry{From typedict}
 
-Export basetype(mytype, typedict) mytype{From typedict}
+Export basetype(mytype, typedict) mytype {From typedict}
 
-Export basetype(seq.mytype, typedict) seq.mytype{From typedict}
+Export basetype(seq.mytype, typedict) seq.mytype {From typedict}
 
-Export emptytypedict typedict{From typedict}
+Export emptytypedict typedict {From typedict}
 
 Function midpoint5(
 a:seq.word
@@ -371,71 +371,71 @@ Function libname(info:midpoint) word
 let a = extractValue(option.info, "Library"),
 (if isempty.a then "noName" else a) sub 1
 
-Export typebase(i:int) mytype{From mytype}
+Export typebase(i:int) mytype {From mytype}
 
 Export type:modref{From mytype}
 
-Export %(modref) seq.word{From mytype}
+Export %(modref) seq.word {From mytype}
 
-Export isAbstract(modref) boolean{From mytype}
+Export isAbstract(modref) boolean {From mytype}
 
-Export isSimple(modref) boolean{From mytype}
+Export isSimple(modref) boolean {From mytype}
 
-Export library(modref) word{From mytype}
+Export library(modref) word {From mytype}
 
-Export name(modref) word{From mytype}
+Export name(modref) word {From mytype}
 
-Export para(modref) mytype{From mytype}
+Export para(modref) mytype {From mytype}
 
 Export type:mytype{From mytype}
 
-Export %(p:mytype) seq.word{From mytype}
+Export %(p:mytype) seq.word {From mytype}
 
-Export abstractModref(mytype) modref{From mytype}
+Export abstractModref(mytype) modref {From mytype}
 
-Export abstracttype(mytype) mytype{From mytype}
+Export abstracttype(mytype) mytype {From mytype}
 
-Export abstracttypename(mytype) word{From mytype}
+Export abstracttypename(mytype) word {From mytype}
 
-Export isAbstract(m:mytype) boolean{From mytype}
+Export isAbstract(m:mytype) boolean {From mytype}
 
-Export parameter(mytype) mytype{From mytype}
+Export parameter(mytype) mytype {From mytype}
 
-Export processof(mytype) mytype{From mytype}
+Export processof(mytype) mytype {From mytype}
 
-Export seqof(mytype) mytype{From mytype}
+Export seqof(mytype) mytype {From mytype}
 
-Export tomodref(mytype) modref{From mytype}
+Export tomodref(mytype) modref {From mytype}
 
 Export type:passtypes{From mytype}
 
-Export moduleref(seq.word) modref{From mytype}
+Export moduleref(seq.word) modref {From mytype}
 
-Export typeref(seq.word) mytype{From mytype}
+Export typeref(seq.word) mytype {From mytype}
 
-Export >1(modref, modref) ordering{From mytype}
+Export >1(modref, modref) ordering {From mytype}
 
-Export >1(typedef, typedef) ordering{From mytype}
+Export >1(typedef, typedef) ordering {From mytype}
 
-Export addabstract(a:mytype, t:mytype) mytype{From mytype}
+Export addabstract(a:mytype, t:mytype) mytype {From mytype}
 
-Export internalmod modref{From mytype}
+Export internalmod modref {From mytype}
 
-Export moduleref(seq.word, para:mytype) modref{From mytype}
+Export moduleref(seq.word, para:mytype) modref {From mytype}
 
-Export replaceT(mytype, modref) modref{From mytype}
+Export replaceT(mytype, modref) modref {From mytype}
 
-Export replaceT(with:mytype, m:mytype) mytype{From mytype}
+Export replaceT(with:mytype, m:mytype) mytype {From mytype}
 
-Export typeT mytype{From mytype}
+Export typeT mytype {From mytype}
 
-Export typeboolean mytype{From mytype}
+Export typeboolean mytype {From mytype}
 
-Export typeint mytype{From mytype}
+Export typeint mytype {From mytype}
 
-Export typeptr mytype{From mytype}
+Export typeptr mytype {From mytype}
 
-Export typereal mytype{From mytype}
+Export typereal mytype {From mytype}
 
 Export type:set.symbol{From set.symbol}
 

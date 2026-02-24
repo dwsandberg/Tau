@@ -76,7 +76,7 @@ action:state
 , recover:seq.word
 ) tableEntry
 
-Export ∈(state, seq.state) boolean{From seq.state}
+Export ∈(state, seq.state) boolean {From seq.state}
 
 Function adjust(g:seq.pegrule) seq.pegrule
 for
@@ -521,7 +521,7 @@ do
   else "/br:(rowno):(action.a)/td:(escapeformat):([match.a]):(escapeformat)/td:(Sstate.a)/td:(Fstate.a)/td:(recover.a)/td /tr")
   , rowno + 1
  ),
- "// PEG Rule Table /caption:(acc)/table"
+"// PEG Rule Table /caption:(acc)/table"
 
 Function >1(a:state, b:state) ordering toint.a >1 toint.b
 

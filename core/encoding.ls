@@ -154,7 +154,7 @@ if isempty.r then empty:seq.T else [data.r sub 1]
 Function addorder(t:T) int valueofencoding.encode.t
 
 function analyze(t:encodingstate.T) seq.word
- "numele =" + toword.n.all.t + "encodecounts" + counts(encodetable.t, 1, 0, 0, 0)
+"numele =" + toword.n.all.t + "encodecounts" + counts(encodetable.t, 1, 0, 0, 0)
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int) seq.word
 if i > n.s then

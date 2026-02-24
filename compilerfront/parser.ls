@@ -66,7 +66,7 @@ function errormessage(message:seq.word, rinfo:recoverInfo) seq.word
 let input = input.rinfo
 let place = place.rinfo
 let ending = recoveryEnding.rinfo
-let pp = prettyNoChange(towords.subseq(input, 1, place - 1) + ending)
+let pp = pretty(towords.subseq(input, 1, place - 1) + ending, false)
 for idx = n.pp, remove = ending, addback = "", go = not.isempty.ending, e ∈ reverse.pp
 while go
 do
@@ -162,7 +162,7 @@ static:commonType
 , thenpart:bindinfo
 , rinfo:recoverInfo
 ) bindinfo
-assert(types.cond) sub 1 = typeboolean report errormessage("cond of if must be boolean but is:((types.cond) sub 1)", rinfo)
+assert (types.cond) sub 1 = typeboolean report errormessage("cond of if must be boolean but is:((types.cond) sub 1)", rinfo)
 assert isempty.types.R0 ∨ types.R0 = types.thenpart report errormessage("then and else types are different", rinfo),
 bindinfo(dict.R0, code.R0 + code.cond + Br2(1, 2) + code.thenpart + Exit, types.thenpart, "")
 
@@ -207,7 +207,7 @@ let f =
  else
   for bound = empty:set.symbol, unbound = empty:set.symbol, sy ∈ toseq.f0
   do if isunbound.sy then next(bound, unbound + sy) else next(bound + sy, unbound),
-  if isempty.bound ∧ not.isempty.unbound then{Allow multiple unbound with same signature}subseq(unbound, 1, 1)
+  if isempty.bound ∧ not.isempty.unbound then {Allow multiple unbound with same signature}subseq(unbound, 1, 1)
   else bound
 assert not.isempty.f report
  if n.name = 1 ∧ name sub 1 ∈ "if else then for" then errormessage("Syntax error", rinfo)
@@ -392,8 +392,8 @@ static:commonType
 , exp:bindinfo
 , rinfo:recoverInfo
 ) bindinfo
-assert(types.cond) sub 1 = typeboolean report errormessage("condition in assert must be boolean in:", rinfo)
-assert(types.exp) sub 1 = seqof.typeword report errormessage("report in assert must be seq of word in:", rinfo),
+assert (types.cond) sub 1 = typeboolean report errormessage("condition in assert must be boolean in:", rinfo)
+assert (types.exp) sub 1 = seqof.typeword report errormessage("report in assert must be seq of word in:", rinfo),
 if outText.static then
  bindinfo(
   dict.cond
@@ -1181,7 +1181,7 @@ do
   else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),
-  if inputi = endMark then{fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  if inputi = endMark then {fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),

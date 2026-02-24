@@ -61,7 +61,7 @@ let cl =
   EndBlock /br
   "
   , "25"
-  , {test 26} "%1 3 seq.int:sub"
+  , {test 26}"%1 3 seq.int:sub"
   + "(seq.int, int)int Define 2 Start(int)/br
   %2 JmpB 15 4:1 5:1 7:1 8:1 9:1 3333:1:2 Jmp 15 /br
   25 Exit /br
@@ -97,7 +97,7 @@ let cl =
   "
   , "31"
   , "%1"
-  , {test 33} "33"
+  , {test 33}"33"
   , "%1 %2 seq.int:sub(seq.int, int)int Define 3 Start(int)/br
   %3 JmpB 17 1:1 9:1 5:1 2:1 12:1 3:1 4:1:2 Jmp 17 /br
   10 Exit /br
@@ -186,7 +186,7 @@ let cl =
   %3 9 %6 Continue 3 /br
   EndBlock /br
   Define 8 3"
-  , {46} "2"
+  , {46}"2"
   , {47}
   "%1 %2 %3 Loop:4(int, int, int)int /br
   Start(seq.int)/br
@@ -206,7 +206,7 @@ let cl =
   %4-1+(int, int)int Define 5 %1 %5 idxNB(seq.int, int)int Define 6 %3 %6 seq(1)seq.int seq.word:+(seq.word, seq.word)seq.word %5 Continue 2 /br
   EndBlock /br
   Define 7 %3"
-  , {49} "WORD test"
+  , {49}"WORD test"
   , "Start(int)/br
   %1 3+(int, int)int 9 =(int, int)boolean Br2(1, 2)/br
   90 Exit /br
@@ -235,9 +235,9 @@ let cl =
   EndBlock /br
   "
   , ""
-  , {54} "6 0 /(int, int)int Define 1 14"
-  , {55} ""
-  , {56} ""
+  , {54}"6 0 /(int, int)int Define 1 14"
+  , {55}""
+  , {56}""
  ]
 {,{50}"Start(int)/br
 %1 5555 =(int, int)boolean Br2(1, 2)/br

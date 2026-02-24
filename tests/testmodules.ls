@@ -52,7 +52,7 @@ let y =
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int) seq.word
- "[:(for acc = "", @e ∈ a do acc + toword.@e + ",",
+"[:(for acc = "", @e ∈ a do acc + toword.@e + ",",
 acc >> 1)]"
 
 ---

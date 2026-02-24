@@ -12,18 +12,17 @@ Function maxwidth int 100
 
 Function getheader(s:seq.word) seq.word
 let gram =
- maketable."Head Export type:any Type' /action Export /keyword type:$.1 $.2 /br
- / any FName:any Type' FPL any Type' /action $.1 /keyword $.2:$.3 $.4 $.5 $.6 $.7 /br
- / any FName FPL any Type' /action $.1 /keyword $.2 $.3 $.4 $.5 /br
+ maketable."Head Export type:any Type' /action // Export /keyword type:$.1 $.2 /br
+ / any any:any Type' FPL any Type' /action // $.1 /keyword $.2:$.3 $.4 $.5 // $.6 $.7 /spc /br
+ / any any FPL any Type' /action // $.1 /keyword $.2 $.3 // $.4 $.5 /spc /br
  * Type'.any /action /All /br
- FPL(L)/action($.1)/sp /br
+ FPL(L)/action($.1)/br
  / /action /br
- * L !)any /action /All /br
- FName !+!-! = any /action $.1 /br
- / any /action /sp $.1",
+ * L !)any /action /All",
 run(gram, s) << 1
 
-Function formatHeader(p:seq.word) seq.word
+Function formatHeader(p1:seq.word) seq.word
+let p = getheader.p1,
 if width.p < maxwidth then p
 else
  let i = findindex(p, "(" sub 1),
@@ -50,7 +49,7 @@ acc
 
 function wordwidth(w:word) int
 if w ∈ ("/literal /comment /keyword: ./tag /nsp //" + escapeformat) then 0
-else if w ∈ "(,)/sp:(dq)" then 1
+else if w ∈ "(,)/sp:(dq)/spc" then 1
 else n.decodeword.w + 1
 
 Function addcomma(s:seq.word) seq.word
@@ -66,8 +65,8 @@ while count > 0
 do
  if w = escapeformat then next(idx + 1, count, not.inescape)
  else if inescape then next(idx + 1, count, inescape)
- else if w ∈ {open} "(//" then next(idx + 1, count - 1, inescape)
- else if w ∈ {close} ")/keyword /literal /comment /block" then next(idx + 1, count + 1, inescape)
+ else if w ∈ {open}"(//" then next(idx + 1, count - 1, inescape)
+ else if w ∈ {close}")/keyword /literal /comment /block /spc" then next(idx + 1, count + 1, inescape)
  else next(idx + 1, count, inescape)
 assert count = 0 report "formatproblem2 empty comment:(count):(idx):(showZ.txt)",
 idx
@@ -91,15 +90,16 @@ else
 Function removeclose(a:seq.word) seq.word
 {removes the unwanted parenthesis in expressions like[1, 2+(if 3 = 4 then 5 else 6)]}
 for endings0 = "", hasparen = false, w ∈ reverse.a
-while w ∈ "]/block"
+while w ∈ "]/block /spc"
 do if w ∈ ")" then next([w] + endings0, true) else next([w] + endings0, hasparen)
 let a1 = subseq(a, n.endings0 + 1, n.a - n.endings0),
 if last.a1 ∉ ")" then a
 else
+ {assert n.a ∈[16, 30, 286, 287, 535, 881, 14, 139]∨"iis"sub 1 ∉ a report"DEBUG:(n.a)"+showZ.a}
  let i = matchR.a1
  let start = subseq(a1, n.a1 - i + 1, n.a1 - i + 4),
  if start ∈ ["(// if /keyword", "(// for /keyword"] ∧ checkup(a1, i, a) ∨ i = n.a1 then
-  {may not need"/nsp"in condition}subseq(a, 1, n.endings0)
+  subseq(a, 1, n.endings0)
   + a1 >> i
   + subseq(a1, n.a1 - i + 2, n.a1 - 1)
   + endings0

@@ -91,7 +91,7 @@ let b =
   , @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)
  do check(acc, @e),
  acc,
- "Pass Sparse Sequence"
+"Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int) seq.int
 let i = r sub 1 mod 30 + 1

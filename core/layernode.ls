@@ -55,7 +55,7 @@ type path is tailidx:int, headidx:int, startdummy:int, enddummy:int, class:word
 Function >1(a:path, b:path) ordering tailidx.a >1 tailidx.b
 
 Function %(a:path) seq.word
- ":(tailidx.a):(headidx.a):(startdummy.a):(enddummy.a):(class.a)"
+":(tailidx.a):(headidx.a):(startdummy.a):(enddummy.a):(class.a)"
 
 Export class(path) word
 

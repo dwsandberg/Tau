@@ -36,12 +36,12 @@ use set.word
 
 Export type:PEGtable{From PEGmachine}
 
-Export entries(PEGtable) seq.tableEntry{From PEGmachine}
+Export entries(PEGtable) seq.tableEntry {From PEGmachine}
 
 Export maketable(gin:seq.pegrule, subs:seq.word, addrecover:boolean) PEGtable
 {From PEGmachine}
 
-Export runMachine(int, PEGtable, seq.seq.word, seq.word) seq.word{From PEGmachine}
+Export runMachine(int, PEGtable, seq.seq.word, seq.word) seq.word {From PEGmachine}
 
 Function %(t:PEGtable) seq.word %table.entries.t
 
@@ -217,7 +217,7 @@ do
   else next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
  else if actionState = MatchAny then
   let te = idxNB(packedTable, index.state),
-  if inputi = endMark then{fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
+  if inputi = endMark then {fail}next(rinfo, stk, Fstate.te, i, inputi, result, faili, failresult)
   else
    let reslt = result + toAttribute(result sub n.result, [inputi])
    let ini = idxNB(myinput, i + 1),

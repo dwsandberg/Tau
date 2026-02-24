@@ -32,11 +32,11 @@ for
  , e ∈ for acc2 = empty:seq.seq.word, e ∈ classes2 do acc2 + "" + e,
  acc2
 do acc + e,
- "/tag <svg /sp:(att)> /tag <style>:(acc)/tag ????</style>:(body)Your browser does not support inline SVG. /tag </svg>"
+"/tag <svg /sp:(att)> /tag <style>:(acc)/tag ????</style>:(body)Your browser does not support inline SVG. /tag </svg>"
 
 Function drawscript seq.word
 {Adjust beginning of paths so the start at the end of the word}
- "/tag <script> function shiftstart(arcs){let bb = document.getElementById(arcs[0]).getBBox(); arcs.forEach(function(idval, index){if(index > 0){let element = document.getElementById(idval); let d = /tag:(dq."M")+(bb.x+bb.width)+/tag:(dq.",")+(bb.y+bb.height / 2)+element.getAttribute(/tag:(dq."/nsp d")).substring(5); element.setAttribute(/tag:(dq."/nsp d"), d);}});}/tag </script>"
+"/tag <script> function shiftstart(arcs){let bb = document.getElementById(arcs[0]).getBBox(); arcs.forEach(function(idval, index){if(index > 0){let element = document.getElementById(idval); let d = /tag:(dq."M")+(bb.x+bb.width)+/tag:(dq.",")+(bb.y+bb.height / 2)+element.getAttribute(/tag:(dq."/nsp d")).substring(5); element.setAttribute(/tag:(dq."/nsp d"), d);}});}/tag </script>"
  + encodeword.[char.10]
 
 Function atts(s:seq.word) seq.word

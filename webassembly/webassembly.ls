@@ -120,7 +120,7 @@ let fns = tofilenames.output,
 if n.fns > 1 then acc + libsrc(rcinfo, tofilenames.output) else acc
 
 Function doc seq.word
- "Steps to call function f1 as a process./br
+"Steps to call function f1 as a process./br
 1. Create a record, R. The first two fields are deepcopy function for the result type of f1 and seq.word. The third field is the webassembly funcidx. The remain fields are the actual parameters of f1./br
 2. get typeidx for f1. Let assume the typeidx is 45./br
 3. create at compile time a function processX45 that takes the record R and funcidx of f1 as parameters, unpacks the record R and calls the third field in R. In this case it will call f1. /br

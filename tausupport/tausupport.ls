@@ -72,55 +72,55 @@ Export type:packed5
 
 Export type:packed6
 
-Export decode(encoding.seq.char) seq.char{From encoding.seq.char}
+Export decode(encoding.seq.char) seq.char {From encoding.seq.char}
 
-Export encode(seq.char) encoding.seq.char{From encoding.seq.char}
+Export encode(seq.char) encoding.seq.char {From encoding.seq.char}
 
-Export addencodings(seq.seq.char) int{From encoding.seq.char}
+Export addencodings(seq.seq.char) int {From encoding.seq.char}
 
 Export type:einfo{From encodingsupport}
 
-Export evectorUpdate(b:ptr) ptr{From encodingsupport}
+Export evectorUpdate(b:ptr) ptr {From encodingsupport}
 
-Export geteinfo(gl:ptr, name:seq.word) einfo{From encodingsupport}
+Export geteinfo(gl:ptr, name:seq.word) einfo {From encodingsupport}
 
-Export geteinfo2(int, int) einfo{From encodingsupport}
+Export geteinfo2(int, int) einfo {From encodingsupport}
 
 Export type:ptr{From ptr}
 
-Export blockseqtype:byte int{From taublockseq.byte}
+Export blockseqtype:byte int {From taublockseq.byte}
 
-Export blockit3(seq.int) seq.int{From taublockseq.int}
+Export blockit3(seq.int) seq.int {From taublockseq.int}
 
-Export _(blockseq.int, int) int{From taublockseq.int}
+Export _(blockseq.int, int) int {From taublockseq.int}
 
-Export _(blockseq.packed2, int) packed2{From taublockseq.packed2}
+Export _(blockseq.packed2, int) packed2 {From taublockseq.packed2}
 
-Export blockit2(seq.packed2, int) seq.packed2{From taublockseq.packed2}
+Export blockit2(seq.packed2, int) seq.packed2 {From taublockseq.packed2}
 
-Export _(blockseq.packed3, int) packed3{From taublockseq.packed3}
+Export _(blockseq.packed3, int) packed3 {From taublockseq.packed3}
 
-Export blockit2(seq.packed3, int) seq.packed3{From taublockseq.packed3}
+Export blockit2(seq.packed3, int) seq.packed3 {From taublockseq.packed3}
 
-Export _(blockseq.packed4, int) packed4{From taublockseq.packed4}
+Export _(blockseq.packed4, int) packed4 {From taublockseq.packed4}
 
-Export blockit2(seq.packed4, int) seq.packed4{From taublockseq.packed4}
+Export blockit2(seq.packed4, int) seq.packed4 {From taublockseq.packed4}
 
-Export _(blockseq.packed5, int) packed5{From taublockseq.packed5}
+Export _(blockseq.packed5, int) packed5 {From taublockseq.packed5}
 
-Export blockit2(seq.packed5, int) seq.packed5{From taublockseq.packed5}
+Export blockit2(seq.packed5, int) seq.packed5 {From taublockseq.packed5}
 
-Export _(blockseq.packed6, int) packed6{From taublockseq.packed6}
+Export _(blockseq.packed6, int) packed6 {From taublockseq.packed6}
 
-Export blockit2(seq.packed6, int) seq.packed6{From taublockseq.packed6}
+Export blockit2(seq.packed6, int) seq.packed6 {From taublockseq.packed6}
 
-Export blockit3(seq.ptr) seq.ptr{From taublockseq.ptr}
+Export blockit3(seq.ptr) seq.ptr {From taublockseq.ptr}
 
-Export _(blockseq.ptr, int) ptr{From taublockseq.ptr}
+Export _(blockseq.ptr, int) ptr {From taublockseq.ptr}
 
-Export blockit3(seq.real) seq.real{From taublockseq.real}
+Export blockit3(seq.real) seq.real {From taublockseq.real}
 
-Export _(blockseq.real, int) real{From taublockseq.real}
+Export _(blockseq.real, int) real {From taublockseq.real}
 
 Builtin getseqlength(ptr) int
 

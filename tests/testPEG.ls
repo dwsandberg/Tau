@@ -91,7 +91,7 @@ let result =
   /br
   Unparsed Input: A a"
  ),
-if isempty.result then "Pass PEG" else "FAIL  /literal PEG:(result)"
+if isempty.result then "Pass PEG" else "FAIL /literal PEG:(result)"
 
 function checkerror(input:seq.word, expect:seq.word) seq.word
 let got = message.process.checkgrammar.input,

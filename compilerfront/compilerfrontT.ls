@@ -449,7 +449,7 @@ do
     else
      let code = code.b sub 1,
      if VERYSIMPLE ∈ symoptions then next(part + code << nopara.sym, blkparts, stk, nextvar, map, ahead)
-     else if n.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then{function just returns result}next(part, blkparts, stk, nextvar, map, ahead)
+     else if n.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then {function just returns result}next(part, blkparts, stk, nextvar, map, ahead)
      else if nopara = 0 then
       let r =
        newanal:T(librarymap, prg, code, self, nextvar, empty:set.localmap2, libname, typedict, options),

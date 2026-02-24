@@ -86,11 +86,11 @@ Export types(prg6) seq.seq.mytype
 
 Export type:symdef{From symbol}{From symbolconstant}
 
-Export code(symdef) seq.symbol{From symbol}{From symbolconstant}
+Export code(symdef) seq.symbol {From symbol}{From symbolconstant}
 
-Export sym(symdef) symbol{From symbol}{From symbolconstant}
+Export sym(symdef) symbol {From symbol}{From symbolconstant}
 
-Export symdef(symbol, seq.symbol, int) symdef{From symbol}{From symbolconstant}
+Export symdef(symbol, seq.symbol, int) symdef {From symbol}{From symbolconstant}
 
 Function resolvesymbols(
 allsrc:seq.seq.word

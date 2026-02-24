@@ -98,7 +98,7 @@ if not.isempty.order then
  let before = reverse.orderNodes(nodes.g0, arcs.g0),
  let check = check(before, toseq.arcs.g0),
  (if isempty.check then "Good Ordering" else "FailedOrdering:(check)")
- + {???? allow compound names in include such as encoding.seq.char} "/p ordering::(before)"
+ + {???? allow compound names in include such as encoding.seq.char}"/p ordering::(before)"
  + if "nograph" sub 1 ∈ order then ""
  else
   for wordarcs = empty:seq.arc.word, e ∈ toseq.arcs.g0

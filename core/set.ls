@@ -12,11 +12,11 @@ Export toseq(set.T) seq.T
 
 Export sub(seq.T, int) T
 
-Export +(seq.T, T) seq.T{From seq.T}
+Export +(seq.T, T) seq.T {From seq.T}
 
-Export +(seq.T, seq.T) seq.T{From seq.T}
+Export +(seq.T, seq.T) seq.T {From seq.T}
 
-Export empty:seq.T seq.T{From seq.T}
+Export empty:seq.T seq.T {From seq.T}
 
 type set is toseq:seq.T
 

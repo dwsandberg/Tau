@@ -45,8 +45,8 @@ output: taubc2.lib
 
 makelib2 +built core.libsrc symbols tau2bc tausupport compilerfront
 exports: markup / llvm_exports
-info: 
-profile: 
+info:
+profile:
 output: taubc.lib taubc.libsrc taubc.libinfo
 
 makelib taubc.libinfo
@@ -81,7 +81,7 @@ output: +documentation PEGdebugEx.html
 define buildhelp tools
 
 buildhelp tools.libsrc taubc
-doc: 
+doc:
 output: +documentation cmddoc.html
 
 transform taubc.libinfo
@@ -122,7 +122,7 @@ html: Module
 output:+documentation profileExampleSrc.html
 
 transform core.libsrc
-bind: 
+bind:
 html: Module h1
 link: core.libsrc
 output: +documentation core.html
@@ -275,9 +275,9 @@ genPointModule typenames: point3d matrix
 elements:x y z
 output: point3d.ls
 
-wasm webcore.libsrc  
-+webapps editgraph.ls editgraph.html 
-+common point2d.ls 
+wasm webcore.libsrc
++webapps editgraph.ls editgraph.html
++common point2d.ls
 exports: editgraph
 Library: weditgraph
 output: weditgraph.wasm

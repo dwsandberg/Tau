@@ -63,8 +63,7 @@ do
 acc
 
 function lookupModule(m:midpoint, modname:word) modExports
-for acc = (libmods.m) sub 1, md ∈ libmods.m
-do if name.modname.md = modname then md else acc,
+for acc = (libmods.m) sub 1, md ∈ libmods.m do if name.modname.md = modname then md else acc,
 acc
 
 function exports(m:midpoint, modr:modref) seq.symbol
@@ -136,7 +135,7 @@ let in =
 {now try and resolve unhandled module sets}
 for acc = empty:set.set.modref, newuses = asset.uses, u ∈ toseq.in
 do
- if isempty.u ∨ not.isempty(u ∩ newuses) then{ignore empty sets and sets with one of the modules already in uses}next(acc, newuses)
+ if isempty.u ∨ not.isempty(u ∩ newuses) then {ignore empty sets and sets with one of the modules already in uses}next(acc, newuses)
  else if n.u = 1 then {add the single modref to uses}next(acc, newuses + u sub 1)
  else next(acc + u, newuses)
 let tmp =
@@ -176,9 +175,7 @@ do
  else
   for acc2 = empty:seq.symbol, sd ∈ toseq.templates
   do
-   if replaceTsymbol(para.module.sym, sym.sd) = sym then
-    (if addtemplate then acc2 + sym.sd else acc2)
-    + replaceT(para.module.sym, code.sd, dict)
+   if replaceTsymbol(para.module.sym, sym.sd) = sym then (if addtemplate then acc2 + sym.sd else acc2) + replaceT(para.module.sym, code.sd, dict)
    else acc2,
   acc + acc2,
 asset.acc

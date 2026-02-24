@@ -33,8 +33,7 @@ do
 acc2
 
 function mincount(mincount:int, data:seq.wordfreq) seq.wordfreq
-for acc = empty:seq.wordfreq, p ∈ sort.data
-do if count.p < mincount then acc else acc + p,
+for acc = empty:seq.wordfreq, p ∈ sort.data do if count.p < mincount then acc else acc + p,
 acc
 
 Function testwordfreq seq.word

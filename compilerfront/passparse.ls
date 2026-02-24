@@ -51,8 +51,7 @@ do
  if isunbound.n ∨ para.module.n ≠ typeT then next(keep + n, pred, g2)
  else next(keep, pred ∪ predecessors(g2, n), deletenode(g2, n))
 let newsinks =
- for acc = empty:seq.symbol, p ∈ toseq.pred
- do if outdegree(g, p) = 0 then acc + p else acc,
+ for acc = empty:seq.symbol, p ∈ toseq.pred do if outdegree(g, p) = 0 then acc + p else acc,
  acc,
 if isempty.newsinks then
  for acc = empty:seq.arc.symbol, a ∈ toseq.arcs.transitiveClosure.g2

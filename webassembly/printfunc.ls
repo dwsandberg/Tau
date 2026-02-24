@@ -231,18 +231,18 @@ do
   else
    let newresult = result ∨ c << shift,
    next(text, op, newresult, shift + 7, state, stk, blkstk, lastop),
- "P:(text)"
+"P:(text)"
 
 function newstack(op:byte, stk:stack.word, text:seq.word) stack.word
 let d =
- if op ∈ [i64mul, i64sub, i64add, i64divs, i64shl, i64shru, i64or, i64and, i64xor] then["i64 i64", "i64"]
+ if op ∈ [i64mul, i64sub, i64add, i64divs, i64shl, i64shru, i64or, i64and, i64xor] then ["i64 i64", "i64"]
  else if op ∈ [i64gts, i64eq, i64les, i64ges] then ["i64 i64", "i32"]
  else if op ∈ [i32wrapi64] then ["i64", "i32"]
  else if op ∈ [f64converti32u, f64converti32s, f64load] then ["i32", "f64"]
  else if op ∈ [f64converti64s, f64reinterpreti64] then ["i64", "f64"]
  else if op ∈ [i64truncf64s, i64reinterpretf64] then ["f64", "i64"]
  else if op ∈ [i32truncf64s, i32truncf64u] then ["f64", "i32"]
- else if op ∈ [i32mul, i32add, i32sub, i32gtu, i32eq, i32and, i32ne, i32xor, i32or] then["i32 i32", "i32"]
+ else if op ∈ [i32mul, i32add, i32sub, i32gtu, i32eq, i32and, i32ne, i32xor, i32or] then ["i32 i32", "i32"]
  else if op ∈ [i32store] then ["i32 i32", ""]
  else if op ∈ [i64store] then ["i32 i64", ""]
  else if op ∈ [f64store] then ["i32 f64", ""]

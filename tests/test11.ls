@@ -155,7 +155,8 @@ function t039 boolean
 let a = 6 * 6,
 a + a = 72
 
-function t040 boolean "a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, "k" sub 1)
+function t040 boolean
+"a b c d e 1 2 3 4 k" = replace("a b c d e 1 2 3 4 5", 10, "k" sub 1)
 
 function t041 boolean "1 2 k 4 5" = replace("1 2 3 4 5", 3, "k" sub 1)
 
@@ -165,7 +166,7 @@ function t042 boolean
 acc
 
 function t043 boolean
- "code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
+"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
  = for acc = "code glyph", e ∈ arithseq(43, 1, 48) do acc + [toword.e, encodeword.[char.e]],
 acc
 

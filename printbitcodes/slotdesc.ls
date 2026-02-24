@@ -188,7 +188,7 @@ if a sub 1 = toint.CCAST ∧ castop.a sub 2 = ptrtoint then
  ∧ types sub (gep sub 5 + 1) = "i32"
  ∧ types sub (gep sub 7 + 1) = "i64"
  ∧ rec.slots sub (gep sub 6 + 1) = [toint.CINTEGER, 0]
- ∧ (rec.slots sub (gep sub 8 + 1)) sub 1 = toint.CINTEGER then(rec.slots sub (gep sub 8 + 1)) sub 2
+ ∧ (rec.slots sub (gep sub 8 + 1)) sub 1 = toint.CINTEGER then (rec.slots sub (gep sub 8 + 1)) sub 2
  else -1
 else -1
 

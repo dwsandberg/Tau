@@ -34,7 +34,7 @@ Export type:symbolKind
 
 Export toint(symbolKind) int
 
-Export ∈(symbolKind, seq.symbolKind) boolean{From seq.symbolKind}
+Export ∈(symbolKind, seq.symbolKind) boolean {From seq.symbolKind}
 
 Export type:set.symbol{From set.symbol}
 
@@ -409,7 +409,7 @@ let types = [namePara] + paras + rt
 let kind =
  tobits(
   if name.module ∈ "$global" then kglobal
-  else if name ∈ "abort" then{name.module = internal}symKind(module, name, [namePara] + paras, kcompoundname)
+  else if name ∈ "abort" then {name.module = internal}symKind(module, name, [namePara] + paras, kcompoundname)
   else if name.module ∈ "builtin" then kbuiltincompound
   else kcompoundname
  ),

@@ -34,4 +34,4 @@ let data =
   , bug17("b" sub 1, "J" sub 1)
   , last
  ],
- "set order: :(%(",", toseq.data))lookup::(toseq.lookup(data, last))findelement2::(toseq.findelement2(data, last))" 
+"set order: :(%(",", toseq.data))lookup::(toseq.lookup(data, last))findelement2::(toseq.findelement2(data, last))" 

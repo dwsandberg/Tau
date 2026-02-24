@@ -38,25 +38,25 @@ use seq1.seq.word
 
 Export type:match5{From codetemplates}
 
-Export action(match5) word{From codetemplates}
+Export action(match5) word {From codetemplates}
 
-Export arg(match5) int{From codetemplates}
+Export arg(match5) int {From codetemplates}
 
-Export firstvar(a:match5) int{From codetemplates}
+Export firstvar(a:match5) int {From codetemplates}
 
-Export length(match5) int{no of instruction that return results}{From codetemplates}
+Export length(match5) int {no of instruction that return results}{From codetemplates}
 
-Export llvmtypelist(match5) seq.llvmtype{From codetemplates}
+Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
 
-Export sym(match5) symbol{From codetemplates}
+Export sym(match5) symbol {From codetemplates}
 
 Export type:recordcoderesult{From codetemplates}
 
-Export bc(recordcoderesult) internalbc{From codetemplates}
+Export bc(recordcoderesult) internalbc {From codetemplates}
 
-Export regno(recordcoderesult) int{From codetemplates}
+Export regno(recordcoderesult) int {From codetemplates}
 
-Export findtemplate(d:symbol) seq.match5{From codetemplates}
+Export findtemplate(d:symbol) seq.match5 {From codetemplates}
 
 Export recordcode(
 args:seq.int
@@ -74,14 +74,14 @@ args:seq.int
 ) recordcoderesult
 {From codetemplates}
 
-Export symboltableentry(name:seq.word, type:llvmtype) slot{From codetemplates}
+Export symboltableentry(name:seq.word, type:llvmtype) slot {From codetemplates}
 
-Export tollvmtype(typedict, symbol) llvmtype{From codetemplates}
+Export tollvmtype(typedict, symbol) llvmtype {From codetemplates}
 
 Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int) internalbc
 {From codetemplates}
 
-Export constdata seq.slot{From persistant}
+Export constdata seq.slot {From persistant}
 
 Function conststype llvmtype array(-2, i64)
 

@@ -50,7 +50,7 @@ do
    ":(e)has already been given a different precedence: /br
    :(str)",
   precedence,
- ""
+""
 
 Function tknencoding seq.word
 let str =

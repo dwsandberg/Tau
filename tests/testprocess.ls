@@ -150,7 +150,7 @@ else
  let a = i / 2
  {intpart.sqrt.toreal.i}
  let b = (a + i / a) / 2,
- for acc = true, f ∈ arithseq(a, 2, 3)while acc ∧ f ≤ b do i mod f ≠ 0,
+ for acc = true, f ∈ arithseq(a, 2, 3) while acc ∧ f ≤ b do i mod f ≠ 0,
  acc
 
 -------------------------------

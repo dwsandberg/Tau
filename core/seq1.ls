@@ -16,33 +16,33 @@ Export type:arithmeticseq.T
 
 Export type:seq.T{From seq.T}
 
-Export isempty(a:seq.T) boolean{From seq.T}
+Export isempty(a:seq.T) boolean {From seq.T}
 
-Export ispseq(s:seq.T) boolean{From seq.T}
+Export ispseq(s:seq.T) boolean {From seq.T}
 
-Export n(a:seq.T) int{From seq.T}
+Export n(a:seq.T) int {From seq.T}
 
 Export sub(s:seq.T, i:int) T
 
-Export +(a:seq.T, b:seq.T) seq.T{From seq.T}
+Export +(a:seq.T, b:seq.T) seq.T {From seq.T}
 
-Export +(l:seq.T, a:T) seq.T{From seq.T}
+Export +(l:seq.T, a:T) seq.T {From seq.T}
 
-Export <<(s:seq.T, i:int) seq.T{* removes i elements from beginning of s}{From seq.T}
+Export <<(s:seq.T, i:int) seq.T {* removes i elements from beginning of s}{From seq.T}
 
-Export =(a:seq.T, b:seq.T) boolean{From seq.T}
+Export =(a:seq.T, b:seq.T) boolean {From seq.T}
 
-Export >>(s:seq.T, i:int) seq.T{* removes i elements from end of s}{From seq.T}
+Export >>(s:seq.T, i:int) seq.T {* removes i elements from end of s}{From seq.T}
 
 Export last(seq.T) T
 
-Export empty:seq.T seq.T{From seq.T}
+Export empty:seq.T seq.T {From seq.T}
 
-Export lookup(s:seq.T, T) seq.T{From seq.T}
+Export lookup(s:seq.T, T) seq.T {From seq.T}
 
-Export subseq(s:seq.T, start:int, finish:int) seq.T{From seq.T}
+Export subseq(s:seq.T, start:int, finish:int) seq.T {From seq.T}
 
-Export ∈(a:T, s:seq.T) boolean{From seq.T}
+Export ∈(a:T, s:seq.T) boolean {From seq.T}
 
 Function reverse(s:seq.T) seq.T
 for acc = empty:seq.T, i = n.s while i > 0 do next(acc + s sub i, i - 1),

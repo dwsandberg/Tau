@@ -4,6 +4,8 @@ Implements the tau help command, tauhelp, and buildhelp for extraction help info
 
 use UTF8
 
+use PEG
+
 use bits
 
 use seq.byte
@@ -67,22 +69,22 @@ target /strong file to update help data in /br
 shellscript /strong produces shell script to define commands. /br
 doc /strong format for command documentation source file. }
 assert shellscript ∨ doc ∨ not.isempty.target report "Target must be specified."
+let gram =
+ maketable."Head Function any:any Type' FPL any Type' C /action /All /br
+ / Function any FPL any Type' C /action /All /br
+ FPL(L)/action($.1)/br
+ / /action /br
+ * L !)any /action /br
+ * Type'.any /action /br
+ C{COMMAND TXT}/action /br
+ * TXT !}any /action"
 for acc = empty:seq.seq.word, f ∈ input
 do
  for acc3 = acc, p ∈ breakparagraph.[f]
  do
-  if p sub 1 ∈ "Function" then
-   let h = getheader.p
-   {Header will include two additional words for formatting keywords Function}
-   if subseq(p, n.h - 1, n.h) = "{COMMAND" then
-    acc3
-    + ([p sub 2]
-    + name.fn.f
-    + escapeformat
-    + subseq(p, 3, findindex(p, "}" sub 1))
-    + escapeformat)
-   else acc3
-  else acc3,
+  let tmp = run(gram, p),
+  if subseq(tmp, 1, 1) = "Failed" then acc3
+  else acc3 + ([p sub 2] + name.fn.f + escapeformat + tmp << 3 + escapeformat),
  acc3
 for info = empty:seq.helpinfo, e ∈ sort>alpha.acc
 do info + helpinfo(e sub 1, e sub 2, e << 2),
@@ -114,7 +116,7 @@ else
   else
    txt2
    + if subseq(p, 1, 2) = "function helpdata" then newdata + "/p"
-   else if p sub 1 ∈ "function Function" then removeMarkup.pretty.p + "/p"
+   else if p sub 1 ∈ "function Function" then pretty(p, true, true) + "/p"
    else p + "/p",
  txt2
 
@@ -136,11 +138,7 @@ let option = subseq(cmd, 2, 2),
 if % = "shellscript" then script.helpdata
 else
  for acc = "", c = 1, p ∈ helpdata
- do
-  next(
-   if isempty.cmd0 ∨ cmd.p ∈ cmd0 then acc + hh(p, %, option) + "/br" else acc
-   , c + 1
-  ),
+ do next(if isempty.cmd0 ∨ cmd.p ∈ cmd0 then acc + hh(p, %, option) + "/br" else acc, c + 1),
  if isempty.% then
   "For more information on command use tauhelp cmd: <command> %: full /br
   :(acc)"
@@ -155,7 +153,7 @@ do
  + "/br function:(cmd.p)/sp{/br
  tau:(exe.p):(cmd.p):(defaultDir)$@ /br
  }",
- "# functions are used instead of alias because alias adds extra arguments /br
+"# functions are used instead of alias because alias adds extra arguments /br
 :(acc)"
 
 function paradesc(d:helpinfo) seq.word

@@ -2,6 +2,8 @@ Module classinfo
 
 precedence > for >1 >2
 
+use UTF8
+
 use bits
 
 use seq.char
@@ -11,6 +13,8 @@ use seq.classinfo
 use set.classinfo
 
 use sort.classinfo
+
+use seq.mark
 
 use stack.mark
 
@@ -58,7 +62,7 @@ else
   next(newlow, newhigh, newup, newdown),
  subseq(toseq.s, low, high)
 
-Function %(a:classinfo) seq.word esc.[key.a, baseon.a, tag.a] + def.a
+Function %(a:classinfo) seq.word escapeFormat([key.a, baseon.a, tag.a] + def.a)
 
 Function >1(a:classinfo, b:classinfo) ordering key.a >1 key.b
 
@@ -70,51 +74,32 @@ Function tokey(w:word) word
 let a = decodeword.w,
 if a sub 2 = char1."/" then w else encodeword([char1."/"] + decodeword.w << 1)
 
-Function esc(z:seq.word) seq.word
-for dd = "", e ∈ z
-do
- if e
- ∈ "/p /br
- /sp /tag /keyword <* *>" then dd + "/sp /tag:(e)/sp"
- else dd + e,
-dd
-
-Function removeesc(z:seq.word) seq.word
-for dd = "", e ∈ z
-do
- if e
- ∈ "/p /br
- /sp /tag"
- ∧ subseq(dd, n.dd - 1, n.dd) = "/sp /tag" then dd >> 2 + e
- else dd + e,
-dd
-
 Function classinfo2(
 base:set.classinfo
 , ele:word
 , class:word
 , more:seq.word
 ) seq.classinfo
+let flagdefs = extractdef(more, "flags" sub 1)
+for flags = tobits.0, w ∈ flagdefs
+do
+ let str = "mark noendtag define namedmark nocontent"
+ let i = findindex(str, w),
+ if i > n.str then flags else flags ∨ tobits.2 sup i,
 if class ∈ "daws" then
  let key = merge("/" + ele)
- let flags = extractdef(more, "flags" sub 1)
- for acc = 0, w ∈ flags
- do
-  let str = "mark noendtag define namedmark"
-  let i = findindex(str, w),
-  if i > n.str then acc else acc + 2 sup i
  let tag = merge("<" + ele)
  let more1 =
   if subseq(more, 1, 2) = "flags: " then
    let i = min(findindex(more << 2, ":" sub 1), findindex(more << 2, ": " sub 1)),
    if i + 2 > n.more then "" else more << i
   else more,
- let a = classinfo(key, key, more1, tag, bits.acc),
+ let a = classinfo(key, key, more1, tag, flags),
  if noendtag.a ∨ isdefine.a then [a]
  else
   let endtag = encodeword([char1."<", char1."/"] + decodeword.ele + char1.">")
   let namedtag = merge("//" + ele),
-  if ismark.a then [a, classinfo(endtag, tag, "", endtag, tobits(acc + 1))]
+  if ismark.a then [a, classinfo(endtag, tag, "", endtag, flags ∨ tobits.1)]
   else if isnamedmark.a then
    [
     a
@@ -126,7 +111,7 @@ else
  let key = merge("/" + class)
  let basekey = merge("/" + ele)
  let info2 = lookupkey(base, basekey)
- assert not.isempty.info2 report esc."no base class key basekey:" + basekey + "key:" + key + "ele:" + ele
+ assert not.isempty.info2 report escapeFormat("no base class key basekey:" + basekey + "key:" + key + "ele:" + ele)
  let baseclass = info2 sub 1
  for newdefs = "class", last = "?", e ∈ more
  do next(if e ∈ ": " then newdefs + last else newdefs, [e])
@@ -143,9 +128,9 @@ else
    , basekey
    , "class: " + class + more + basedefs >> 1
    , tag.baseclass
-   , flags.baseclass
+   , if isempty.flagdefs then flags.baseclass else flags
   ),
- if isnamedmark.info2 sub 1 then
+ if isnamedmark.y then
   let namedtag = merge("//" + class),
   [y, classinfo(namedtag, basekey, "", namedtag, tobits.16)]
  else [y]
@@ -159,6 +144,8 @@ Function noendtag(a:classinfo) boolean (flags.a ∧ bits.4) = bits.4
 Function isdefine(a:classinfo) boolean (flags.a ∧ bits.8) = bits.8
 
 Function isnamedmark(a:classinfo) boolean (flags.a ∧ bits.16) = bits.16
+
+Function isnocontent(a:classinfo) boolean (flags.a ∧ bits.32) = bits.32
 
 Function print(t:seq.classinfo) seq.word
 for acc = "", e ∈ t
@@ -218,7 +205,8 @@ let data =
  em.daws{/* daws flags: mark output: <em class id > content </em> totxt: = content /mark = class */}/br
  strong.daws{/* daws flags: mark output: <strong class id > content </strong> totxt: = content /mark = t class */}/br
  span.daws{/* daws flags: mark output: <span class id > content </span> totxt: = content /mark = id class */}/br
- caption.daws{/* daws flags: mark output: <caption class id > content </caption> totxt: = content /mark = class */}/br
+ span.spc{/* daws output: <span class > /sp content /sp </span> */}/br
+ caption.daws{/* daws flags: namedmark output: <caption class id > content </caption> totxt: content class */}/br
  a.daws{/* daws flags: mark output: <a class id href = href = > content </a> totxt: = content /mark = href class */}/br
  sub.daws{/* daws flags: mark output: <sub class id > content </sub> totxt: = content /mark = class */}/br
  sup.daws{/* daws flags: mark output: <sup class id > content </sup> totxt: = content /mark = class */}/br
@@ -229,43 +217,40 @@ let data =
  body.daws{/* daws */}/br
  ?xml.daws{/* daws flags: noendtag */}/br
  head.daws{/* daws <body>: /tag <body> output: <head > content </head> <body> totxt: content */}/br
- link.daws{/* daws flags: mark noendtag rel: stylesheet output: <link rel href = content = /> totxt: = href /mark = class */}/br
- base.daws{/* daws flags: mark noendtag output: <base rel href = content = /> totxt: = href /mark = class */}/br
+ link.daws{/* daws flags: noendtag rel: stylesheet output: <link rel href = content = /> totxt: = href = class /br
+ */}/br
+ base.daws{/* daws flags: noendtag output: <base rel href = content = /> totxt: = href = class */}/br
  title.daws{/* daws output: <title class > content </title> totxt: content class /br
  */}/br
- hr.daws{/* daws flags: noendtag output: content <hr class /> totxt: /p
- content class */}/br
+ hr.daws{/* daws flags: noendtag output: content <hr class /> totxt: content class /p
+ */}/br
  br.daws{/* daws flags: noendtag output: content <br class id /> totxt: content id class /br
  */}/br
  img.daws{/* daws flags: mark noendtag alt: a picture output: <img class id alt src = prefix content /pre postfix /post = /> totxt: = prefix src postfix /post /pre /mark = id class */}/br
  style.daws{/* daws */}/br
- p.daws{/* daws output: <p class id > content </p> totxt: /p
- content id class /p
+ p.daws{/* daws output: <p class id > content </p> totxt: content id class */}/br
+ h1.daws{/* daws flags: namedmark output: <h1 class id > content </h1> totxt: content id class /p
  */}/br
- h1.daws{/* daws output: <h1 class id > content </h1> totxt: /p
- content id class */}/br
- h2.daws{/* daws output: <h2 class id > content </h2> totxt: /p
- content id class */}/br
- h3.daws{/* daws output: <h3 class id > content </h3> totxt: /p
- content id class */}/br
- h4.daws{/* daws output: <h4 class id > content </h4> totxt: /p
- content id class */}/br
- h5.daws{/* daws output: <h5 class id > content </h5> totxt: /p
- content id class */}/br
- h6.daws{/* daws output: <h6 class id > content </h6> totxt: /p
- content id class */}/br
- table.daws{/* daws output: <table class id > content </table> totxt: /p
- content id class */}/br
- li.daws{/* daws output: <li class id > content </li> totxt: /p
- content id class /p
+ h2.daws{/* daws output: <h2 class id > content </h2> totxt: content id class /p
  */}/br
- ol.daws{/* daws flags: namedmark output: <ol class id start > content </ol> totxt: /p
- content id class /p
+ h3.daws{/* daws output: <h3 class id > content </h3> totxt: content id class /p
  */}/br
- ul.daws{/* daws flags: namedmark output: <ul class id > content </ul> totxt: /p
- content id class */}/br
- div.daws{/* daws flags: namedmark output: <div class id > content </div> totxt: /p
- = content /mark = id class */}/br
+ h4.daws{/* daws output: <h4 class id > content </h4> totxt: content id class /p
+ */}/br
+ h5.daws{/* daws output: <h5 class id > content </h5> totxt: content id class /p
+ */}/br
+ h6.daws{/* daws output: <h6 class id > content </h6> totxt: content id class /p
+ */}/br
+ table.daws{/* daws flags: namedmark output: <table class id > content </table> totxt: = content /mark = id class /br
+ */}/br
+ li.daws{/* daws output: <li class id > content </li> totxt: content id class /p
+ */}/br
+ ol.daws{/* daws flags: namedmark output: <ol class id start > content </ol> totxt: = content /mark = id class /p
+ */}/br
+ ul.daws{/* daws flags: namedmark output: <ul class id > content </ul> totxt: = content /mark = id class /p
+ */}/br
+ div.daws{/* daws flags: namedmark output: <div class id > content </div> totxt: = content /mark = id class /p
+ */}/br
  tr.daws{/* daws output: <tr class id > content </tr> totxt: content id class /br
  */}/br
  td.daws{/* daws output: <td class id > content </td> totxt: content id class */}/br
@@ -291,4 +276,36 @@ type mark is kind:word, place:int
 
 Function %(m:mark) seq.word ":(kind.m):(place.m)"
 
-Function push(s:stack.mark, i:int) stack.mark push(s, mark("mark" sub 1, i)) 
+Function push(s:stack.mark, i:int) stack.mark push(s, mark("mark" sub 1, i))
+
+Function extractdef(defs:seq.word, name:word, content:seq.word) seq.word
+if name ∈ "content" then content
+else if name ∈ "colon" then ": "
+else extractdef(defs, name)
+
+Function errorMarkup(
+message:seq.word
+, acc:seq.word
+, marks:stack.mark
+, z:seq.seq.word
+) seq.word
+let bb = "/tag <p>"
+for txt = "", pcount = 1, wcount = 1, mrk0 = toseq.marks, e ∈ acc
+do
+ for mrk = mrk0, marktxt0 = ""
+ while not.isempty.mrk ∧ wcount = place.mrk sub 1
+ do next(mrk << 1, marktxt0 + escapeFormat.[kind.mrk sub 1])
+ let marktxt1 = if isempty.marktxt0 then marktxt0 else "/tag <p> <<" + marktxt0 + ">>",
+ if e = encodeword.[char.10] then next(txt + bb + toword.pcount + marktxt1, pcount + 1, wcount + 1, mrk)
+ else
+  next(
+   if e ∈ "/sp /nsp /tag" then txt + marktxt1 else txt + escapeFormat.[e] + marktxt1
+   , pcount
+   , wcount + 1
+   , mrk
+  )
+for txt2 = "", e ∈ z sub pcount do txt2 + escapeFormat.[e],
+red.message + "/p:(txt)/p PROCESSING PARAGRAPH:(txt2)/p:(red.message)"
+
+Function escapeFormat(b:seq.word) seq.word
+[escapeformat, encodeword.[char.32]] + b + [encodeword.[char.32], escapeformat] 

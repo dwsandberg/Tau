@@ -188,7 +188,7 @@ do
         else xx << nopara.sym5
       let result2 = if kind.sym3 = kfref then result1 + PreFref else result1,
       let newValue2 =
-       if not.isempty.result2 ∧ kind.result2 sub n.result2 = kprefref ∧ n.newValue ≠ 1 then{cannot inline Fref}[sym5]
+       if not.isempty.result2 ∧ kind.result2 sub n.result2 = kprefref ∧ n.newValue ≠ 1 then {cannot inline Fref}[sym5]
        else newValue,
       next(
        newdict3
@@ -219,11 +219,11 @@ acc
 
 function blockitsymbol(T:mytype) seq.symbol
 let para = parameter.T,
-if para ∈ [typeint, typeptr, typereal] then[symbol(moduleref("* taublockseq", para), "blockit3", [T], T)]
+if para ∈ [typeint, typeptr, typereal] then [symbol(moduleref("* taublockseq", para), "blockit3", [T], T)]
 else
  let i =
   findindex([typepacked2, typepacked3, typepacked4, typepacked5, typepacked6], para),
- if i < 6 then[Lit(i + 1), symbol(moduleref("* taublockseq", para), "blockit2", [T, typeint], T)]
+ if i < 6 then [Lit(i + 1), symbol(moduleref("* taublockseq", para), "blockit2", [T, typeint], T)]
  else
   assert para = typebyte report "????:(T)",
   [symbol(moduleref."* tausupport", "blockIt", [T], T)]
@@ -263,7 +263,7 @@ else if name.sym ∈ "primitiveadd" then
  let add2 =
   symbol(
    internalmod
-   , {addencoding5} "addencoding5"
+   , {addencoding5}"addencoding5"
    , [typeptr, {typeint}typeptr, typeint]
    , typeint
   )
@@ -345,7 +345,7 @@ else
  let tmp =
   if n.gx = 2
   ∧ not.isSimple.modpara.gx sub 1
-  ∧ parameter.modpara.gx sub 1 = modpara.gx sub 2 then{???? generalize?}gx sub 2
+  ∧ parameter.modpara.gx sub 1 = modpara.gx sub 2 then {???? generalize?}gx sub 2
   else
    assert n.gx = 1 report
     "Cannot find template for X:(n.gx):(sym2):(if isempty.gx then
