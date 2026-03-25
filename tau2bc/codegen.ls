@@ -249,12 +249,7 @@ else [file(filename."+:(dirpath.outname)showllvm.html", showcontent)])
  + if "info" sub 1 ∈ options then
  let extsymbols =
   for acc = empty:seq.word, sd ∈ defines
-  do
-   acc
-   + (%.mangledname(prgX, sym.sd, libname)
-   + %.sym.sd
-   + "+/br
-   "),
+  do acc + (%.mangledname(prgX, sym.sd, libname) + %.sym.sd + "+/br"),
   acc,
  [file(filename."+:(dirpath.outname):(merge.[libname, "info" sub 1]).html", extsymbols)]
 else empty:seq.file
@@ -604,8 +599,7 @@ do
   for switchArgs = empty:seq.int, arg ∈ args >> 1
   do
    switchArgs
-   + (if n.switchArgs mod 2 = 0 then {toint.C64.}arg
-   else noblocks.blks sub (i + arg))
+   + (if n.switchArgs mod 2 = 0 then {toint.C64.}arg else noblocks.blks sub (i + arg))
   let stk11 = pop(args.l, n.args),
   let new =
    SWITCH(r(regno.blks sub (i + 1) + 1), i64, slot.top.stk11, defaultBlk, switchArgs),

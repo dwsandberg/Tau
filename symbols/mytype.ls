@@ -102,17 +102,14 @@ Function isSimple(m:modref) boolean isempty.typerep.para.m
 
 Function parameter(t:mytype) mytype mytype(typerep.t << 1)
 
-Function isAbstract(a:mytype) boolean
-(typerep.a) sub n.typerep.a = (typerep.typeT) sub 1
+Function isAbstract(a:mytype) boolean (typerep.a) sub n.typerep.a = (typerep.typeT) sub 1
 
 Function replaceT(with0:mytype, m:mytype) mytype
 if isAbstract.m ∧ with0 ≠ typeT then
  let with1 =
   if n.typerep.with0 > 2 ∧ abstracttypename.with0 ∈ "<<" then mytype(typerep.with0 << 2)
   else with0,
- if n.typerep.m > 1
- ∧ name.(typerep.m) sub (n.typerep.m - 1) ∈ "<<"
- ∧ n.typerep.with1 > 1 then mytype(typerep.m >> 2 + typerep.with1 << 1)
+ if n.typerep.m > 1 ∧ name.(typerep.m) sub (n.typerep.m - 1) ∈ "<<" ∧ n.typerep.with1 > 1 then mytype(typerep.m >> 2 + typerep.with1 << 1)
  else mytype(typerep.m >> 1 + typerep.with1)
 else m
 
@@ -126,8 +123,7 @@ else name.a >1 name.b ∧ modname.a >1 modname.b ∧ wild(library.a, library.b)
 
 Function >2(a:typedef, b:typedef) ordering name.a >1 name.b
 
-Function wild(a:word, b:word) ordering
-if a ∈ "*" ∨ b ∈ "*" then EQ else a >1 b
+Function wild(a:word, b:word) ordering if a ∈ "*" ∨ b ∈ "*" then EQ else a >1 b
 
 Function >1(a:mytype, b:mytype) ordering typerep.a >1 typerep.b
 
@@ -254,8 +250,7 @@ do
     , newmod
    )
  else if m sub 1 ∈ "use" then
-  assert for state = 0, w ∈ m << 1
-  do if state < 2 then 2 else if state = 2 ∧ w ∈ "." then 1 else 3,
+  assert for state = 0, w ∈ m << 1 do if state < 2 then 2 else if state = 2 ∧ w ∈ "." then 1 else 3,
   state = 2 report "incorrect format in module::(mref)/br:(m)",
   next(knownmods, s, defines, unresolveduses + m << 1, unresolvedexports, mref)
  else if m sub 1 ∈ "type" then
@@ -295,11 +290,7 @@ mytype([typedef(name, name.mref2, library.mref2)] + typerep.para.mref2)
 
 function printunresolved(p:passtypes) seq.word
 for acc = "", t ∈ unresolveduses.p do acc + "use:(t)/br"
-for txt = acc, t2 ∈ unresolvedexports.p
-do
- txt
- + "Export type::(t2)+/br
- ",
+for txt = acc, t2 ∈ unresolvedexports.p do txt + "Export type::(t2)+/br",
 if isempty.acc then ""
 else "module:(modname.p)contains lines that cannot be resolved::(txt)"
 
@@ -338,10 +329,7 @@ else
  else if n.ref = 1 then empty:seq.mytype
  else
   let a =
-   findelement2(
-    knowntypes
-    , mytype([typedef(ref sub 1, "internal" sub 1, "." sub 1)] + typerep.typeT)
-   ),
+   findelement2(knowntypes, mytype([typedef(ref sub 1, "internal" sub 1, "." sub 1)] + typerep.typeT)),
   if n.a ≠ 1 then empty:seq.mytype
   else if ref sub 2 = "." sub 1 then
    let b = resolvetype(knowntypes, ref << 2),

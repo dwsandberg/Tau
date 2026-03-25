@@ -169,7 +169,7 @@ else
       {binary op}
       let new =
        if name.sym ∈ "$mergecode" then prettyR(opprec, 10000, "")
-       else prettyR(opprec, width.[name.sym] + 2, "/sp:(href(sym, links))/sp")
+       else prettyR(opprec, width.[name.sym] + 2, "//:(href(sym, links))/spc")
       let stk1 =
        if prec.top.stk ≠ 0 then
         let tmp = if prec.top.stk = 2 ∧ opprec = 1 then false else prec.top.stk ≥ opprec,
@@ -182,12 +182,14 @@ else
         if isString.top.stk1 then
          let ttext = text.top.t,
          if ttext sub (n.ttext - 3) ∈ ":" ∧ (text.top.stk1) sub 6 ∈ "(" then push(stk1, prettyR(opprec."+" sub 1, 1, "//+/spc"))
-         else push(pop.t, prettyR(text.top.t >> 2 + text.top.stk1 << 2))
-        else
-         push(
-          pop.t
-          , prettyR(text.top.t >> 2 + ":" + "(:(removeclose.text.top.stk1)):(dq)/literal")
-         ),
+         else
+          let a = text.top.t >> 2
+          let b = text.top.stk1 << 2,
+          let c =
+           if last.a ∈ [escapeformat] ∧ b sub 1 ∈ [escapeformat] then a >> 1 + b << 1
+           else a + b,
+          push(pop.t, prettyR.c)
+        else push(pop.t, prettyR(text.top.t >> 2 + ":" + "(:(removeclose.text.top.stk1)):(dq)/literal")),
        new2
       else if prec.top.t ∈ [0, opprec] then push(stk1, new)
       else
@@ -234,10 +236,7 @@ else
       else
        let w = width."():(compoundName.sym)"
        let op = prettyR({prec}15, 2, ", /sp")
-       for acc = push(empty:stack.prettyR, args sub 1), p ∈ args << 1
-       do
-        {let newp = prettyR(prec.p, width.p,"//:(text.p)/spc")}
-        push(push(acc, p), op)
+       for acc = push(empty:stack.prettyR, args sub 1), p ∈ args << 1 do push(push(acc, p), op)
        let plist = top.reduce(acc, change),
        {???? adding block is not needed when one parameter and is already a block}
        if kind.sym = ksequence then push(stk1, prettyR(0, width.plist + 2, "[:(addblock.plist)]"))
@@ -350,12 +349,9 @@ else
       for neweid = "", w ∈ id.e do if w ∈ "T" then neweid + T else neweid + w,
       if neweid = symid then e else match
      else match,
-    match
-  let result =
-   let tmp = if isempty.file.match then "" else "/tag:(file.match)",
-   "// //:(tmp)/nsp # /nsp:(id.match)/href:(compoundName.sym)/a",
-  assert name.sym ∉ "subseq" ∨ n.links2 = 1 report "xx:(print.asset.[match]):(result)/p:(print.find(links, symid))",
-  result
+    match,
+  if isempty.file.match then "// // # /nsp:(id.match)/href:(compoundName.sym)/a"
+  else "// //:(file.match)/nsp # /nsp:(id.match)/href:(compoundName.sym)/a"
 
 Function prettyX(
 srctxt:seq.word
@@ -389,17 +385,18 @@ else
  else p
 
 Function escape2format(in:seq.word) seq.word
-if width.in < maxwidth then [escapeformat] + in + escapeformat
-else
- for result = [escapeformat], w ∈ in
- do
-  if w
-  ∈ "/br /p
-  /tr
-  "
-  ∧ n.result > 1 then result + w + escapeformat + "/br" + escapeformat
-  else result + w,
- result + escapeformat
+escapeFormat(
+ if width.in < maxwidth then in
+ else
+  for result = "", w ∈ in
+  do
+   if w
+   ∈ "/br /p /tr
+   "
+   ∧ n.result > 1 then result + w + escapeFormat."/br"
+   else result + w,
+  result
+)
 
 Function compoundNameType mytype typeref."internal internal:"
 

@@ -83,7 +83,10 @@ let result =
  + checkerror(
   "A a /action a /br
   A b /action b"
-  , "Duplicate Non-Terminal:A left /th right /th action /th /tr A /td a /td /tr A /td b /td /tr /table"
+  , "Duplicate Non-Terminal:A left /th right /th action /th /tr
+  A /td a /td /tr
+  A /td b /td /tr
+  /table"
  )
  + checkerror(
   "A a"

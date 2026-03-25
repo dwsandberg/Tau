@@ -140,8 +140,7 @@ do
  else next(acc + u, newuses)
 let tmp =
  if not.isempty.acc then
-  for acc2 = empty:seq.modref, x ∈ toseq.acc sub 1
-  do if %.x ∈ olduses then acc2 + x else acc2,
+  for acc2 = empty:seq.modref, x ∈ toseq.acc sub 1 do if %.x ∈ olduses then acc2 + x else acc2,
   acc2
  else empty:seq.modref,
 if n.tmp = 1 then chooseUses(toseq.newuses + tmp sub 1, acc, modname, olduses, exported)

@@ -71,8 +71,7 @@ do
  else
   for acc = acc0, part ∈ parts.r
   do
-   for subs = otherinst, i ∈ arithseq(NTcount(part, gin) + 1, 1, 0)
-   do subs + merge."$.:(i)"
+   for subs = otherinst, i ∈ arithseq(NTcount(part, gin) + 1, 1, 0) do subs + merge."$.:(i)"
    for str = "", consts = constants.acc, actions = empty:seq.int, w ∈ preprocess.replacement.part
    do
     let i = findindex(subs, w),

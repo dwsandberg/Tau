@@ -467,8 +467,7 @@ else
       {check printrecord slotorder2 are form printbitcodes descslot}
       if kind.parent sub (idx + 1) ≠ kdefine then
        {subexpression was found but not placed in variable}
-       let newparent =
-        subseq(parent, 1, idx) + Define.nextvar + Local.nextvar + parent << idx
+       let newparent = subseq(parent, 1, idx) + Define.nextvar + Local.nextvar + parent << idx
        let newpart =
         replace(parts, placeX, newparent)
         + (subseq(this, 1, exp - 4)
@@ -543,8 +542,7 @@ else
     assert not.haverun ∨ n.asset.vals = n.vals report "Error: Function:(self)has duplicate value in branch table::(vals)"
     let default =
      place
-     + if kind.part sub n.part = kbr then brf.part sub n.part
-     else value.fromTheEnd(2, part),
+     + if kind.part sub n.part = kbr then brf.part sub n.part else value.fromTheEnd(2, part),
     for
      map1 = map
      , acc = empty:seq.int

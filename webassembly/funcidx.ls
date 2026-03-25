@@ -273,9 +273,7 @@ Function >1(a:wfunc, b:wfunc) ordering funcidx.a >1 funcidx.b
 
 Function lookup2(s:seq.wfunc, a:wfunc) seq.wfunc
 let t =
- for found = empty:seq.wfunc, e ∈ s
- while isempty.found
- do if a = e then found + e else found,
+ for found = empty:seq.wfunc, e ∈ s while isempty.found do if a = e then found + e else found,
  found
 assert name.sym.a ∉ "intpart" ∨ not.isempty.t report
  "KKK:(sym.a):(for txt = ">>>", b ∈ s do txt + %.sym.b + "/br",

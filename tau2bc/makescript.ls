@@ -64,12 +64,12 @@ input /strong build files /br
 builddir /strong build directory, usually"+built"./br
 hashes /strong two files with one containing lines from the unix command shasum. The two files are compared looking for identical lines which is used to determine which files have not be changed since the last build.}
 let txtbytes =
- toseqbyte.textformat."if /sp[[/sp-n true /sp]]; then /br
+ toseqbyte.textFormat."if /sp[[/sp-n true /sp]]; then /br
  :(makeScriptCore(input, builddir, "script" sub 1, hashes))/br else /br
  shahash of source files /br
  "
 let databytes = if isempty.hashes then empty:seq.byte else data.hashes sub 1,
-txtbytes + tobyte.10 + databytes + toseqbyte.textformat."/br fi"
+txtbytes + tobyte.10 + databytes + toseqbyte.textFormat."/br fi"
 
 function tolineinfo(line0:seq.word, builddir:seq.word, cmddef:cmddef) lineinfo
 let line =
@@ -188,7 +188,7 @@ for changelist = "", n ∈ toseq.changed do changelist + fullname.n
 for unchangelist = "", n ∈ toseq.unchanged do unchangelist + fullname.n
 let acc2 =
  "set /sp-e /br
- changelist /tag =:(dq.changelist)/br unchangelist /tag =:(dq.unchangelist)/br for f in $changelist $unchangedlist ; do /br
+ changelist /nsp =:(dq.changelist)/br unchangelist /nsp =:(dq.unchangelist)/br for f in $changelist $unchangedlist ; do /br
  if /sp ! /sp[/sp-f $f /sp]/sp ; then /br
  echo:(dq."File $f does not exist."); exit 1 /br
  fi /br
@@ -211,8 +211,7 @@ else
    let rest = if n.toseq.d < 4 then [cmd] else [(toseq.d) sub 4],
    cmds
    + "/br function:(cmd)/sp{/br
-   built/ /nsp:(exe).lib:(rest)$@ /br
-   if /sp[/sp-e tmp/error.html /sp]/sp ; then /br
+   built/ /nsp:(exe).lib:(rest)$@ /br if /sp[/sp-e tmp/error.html /sp]/sp ; then /br
    $tauopen tmp/error.html ; exit 1 /br
    fi /br
    }",
@@ -236,13 +235,7 @@ else
    let l = line.b sub 1,
    txt
    + if l sub 1 ∈ "define" then ""
-   else if cmdlib.def.b sub 1 ∈ "shell" then
-    "/br:(shellparameters(
-     toseq.def.b sub 1 << 3
-     , fullnames.input.b sub 1
-     , fullnames.output.b sub 1
-     , line.b sub 1
-    ))"
+   else if cmdlib.def.b sub 1 ∈ "shell" then "/br:(shellparameters(toseq.def.b sub 1 << 3, fullnames.input.b sub 1, fullnames.output.b sub 1, line.b sub 1))"
    else
     let l1 = if subseq(l, 2, 3) = "input: " then [l sub 1] + l << 3 else l,
     "/br echo making:((output.b sub 1) sub 1)/br:(l1)",
@@ -258,7 +251,7 @@ cmd:seq.word
 , output:seq.word
 , other:seq.word
 ) seq.word
-if n.cmd = 1 then cmd + "/sp /tag:(dq.input)"
+if n.cmd = 1 then cmd + "/sp:(dq + "/nsp" + input + dq)"
 else
  for out = subseq(cmd, 1, 1), last = cmd sub 1, w ∈ cmd << 1
  do

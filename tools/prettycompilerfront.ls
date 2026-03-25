@@ -339,9 +339,7 @@ else
   txt2,
  for files = empty:seq.file, summary = "inputs:(para)/p files created", M ∈ txt
  do
-  if subseq(M, 1, 1) ∉ ["Module", "module"]
-  ∨ char1."$" ∈ decodeword.M sub 2
-  ∨ n.M < 2 then next(files, summary)
+  if subseq(M, 1, 1) ∉ ["Module", "module"] ∨ char1."$" ∈ decodeword.M sub 2 ∨ n.M < 2 then next(files, summary)
   else
    let modname = M sub 2
    let idx = findindex(modtodir, modname),

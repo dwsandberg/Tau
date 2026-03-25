@@ -65,9 +65,7 @@ toseq.patternseq(len, n.element, element)
 Function replace(s:seq.T, index:int, value:T) seq.T
 if not.ispseq.s then
  for acc = empty:seq.T, i = 1 while i < index do next(acc + s sub i, i + 1)
- for oldacc = acc + value, j = index + 1
- while j ≤ n.s
- do next(oldacc + s sub j, j + 1),
+ for oldacc = acc + value, j = index + 1 while j ≤ n.s do next(oldacc + s sub j, j + 1),
  oldacc
 else
  let p = to:pseq.T(s),

@@ -388,9 +388,7 @@ t2:symbol
 let w = symdef(t2, empty:seq.symbol, 0),
 if module.newsym = module.t2 then s
 else
- for i = 1, e ∈ s
- while sym.e ≠ sym.w ∨ (allsrc sub paragraphno.e) sub 1 ∉ "Export"
- do i + 1,
+ for i = 1, e ∈ s while sym.e ≠ sym.w ∨ (allsrc sub paragraphno.e) sub 1 ∉ "Export" do i + 1,
  if i > n.s then s
  else
   subseq(s, 1, i - 1)
@@ -466,8 +464,7 @@ do
      if isempty.require then next(acc + sym2, req)
      else
       let list =
-       for acc2 = empty:seq.symbol, sym4 ∈ code.require sub 1
-       do acc2 + replaceTsymbol(para.u, sym4),
+       for acc2 = empty:seq.symbol, sym4 ∈ code.require sub 1 do acc2 + replaceTsymbol(para.u, sym4),
        acc2,
       next(acc + setrequires.sym2, req + symdef(sym2, list, 0)),
    partdict(acc, req),

@@ -72,8 +72,7 @@ function subx(a:tree.int, b:tree.int, i:int, o:ordering) ordering
 if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a sub i >1 b sub i) else o
 
 function t502 boolean
-[GT, EQ, EQ]
- = [tr2 sub 1 >1 tr2, tr2 sub 1 >1 tr2 sub 2, tr1 sub 2 >1 tree.1]
+[GT, EQ, EQ] = [tr2 sub 1 >1 tr2, tr2 sub 1 >1 tr2 sub 2, tr1 sub 2 >1 tree.1]
 
 function t503 boolean "a" = %.tree."a" sub 1
 

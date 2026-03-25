@@ -58,8 +58,7 @@ assert isEntry.e report "returnType restricted to entry points"
 let returnTypeEnd = findindex(header.e, "{" sub 1) - 1,
 subseq(
  header.e
- , if (header.e) sub (returnTypeEnd - 1) ∈ "." then returnTypeEnd - 2
- else returnTypeEnd
+ , if (header.e) sub (returnTypeEnd - 1) ∈ "." then returnTypeEnd - 2 else returnTypeEnd
  , returnTypeEnd
 )
 

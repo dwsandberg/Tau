@@ -59,30 +59,28 @@ Function getURLargs seq.word towords.URLargs
 
 Function getLines(id:seq.word) seq.seq.word
 let a = toseqbyte.getattributes2(token.id, jsUTF8.toseqbyte.HTMLformat."textContent")
-for acc = empty:seq.seq.word, l ∈ breaklines.a
-do acc + towords.l,
+for acc = empty:seq.seq.word, l ∈ breaklines.a do acc + towords.l,
 acc
 
 Function setAttribute(id:seq.word, att:seq.word, value:seq.word) real
 setattribute2(token.id, token.att, jsUTF8.toseqbyte.HTMLformat.value)
 
-Function openWindow(name:seq.word) real
- openWindow2(jsUTF8.toseqbyte.HTMLformat.name)
+Function openWindow(name:seq.word) real openWindow2.jsUTF8.toseqbyte.HTMLformat.name
 
 Function callevent(id:seq.word, event:seq.word) real
 {OPTION NOINLINE}
 callevent2(token.id, token.event)
 
-Function replaceSVG(name:seq.word, xml0:seq.word) real 
+Function replaceSVG(name:seq.word, xml0:seq.word) real
 let none = "N" sub 1
 let xml =
  for xml = "", hasquote = none, w ∈ xml0
  do
-  if w ∈ dq then if hasquote = none then next(xml + "/tag" + w, w) else next(xml + w, none)
+  if w ∈ dq then if hasquote = none then next(xml + "/nsp" + w, w) else next(xml + w, none)
   else if w = "/br" sub 1 then next(xml + encodeword.[char.10], hasquote)
   else next(xml + w, hasquote),
  xml,
-replacesvg(token.name, jsUTF8.toseqbyte.textformat.xml)
+replacesvg(token.name, jsUTF8.toseqbyte.textFormat.xml)
 
 Function HTTPwords(h2:JS.HTTPstate.seq.word, h:JS.HTTPresult) real decodeZ(h2, h)
 

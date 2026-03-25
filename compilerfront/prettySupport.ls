@@ -48,7 +48,7 @@ do
 acc
 
 function wordwidth(w:word) int
-if w ∈ ("/literal /comment /keyword: ./tag /nsp //" + escapeformat) then 0
+if w ∈ ("/literal /comment /keyword: ./nsp //" + escapeformat) then 0
 else if w ∈ "(,)/sp:(dq)/spc" then 1
 else n.decodeword.w + 1
 
@@ -74,7 +74,7 @@ idx
 function checkup(a1:seq.word, i:int, a:seq.word) boolean
 let start = n.a1 - i,
 if start < 2 then false
-else if a1 sub start ∉ "/sp" then false
+else if a1 sub start ∉ "/sp /spc" then false
 else
  let ch2 = a1 sub (start - 1)
  let ch3 = if ch2 ∈ "/a" ∧ start > 2 then a1 sub (start - 2) else ch2

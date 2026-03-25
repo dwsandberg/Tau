@@ -74,9 +74,7 @@ do
  else
   assert true report "ERR DEBUG:(showZ.remove)/p:(showZ.pp)",
   if e ∈ "/literal:(escapeformat)" then next(idx - 1, remove, [e] + addback, go)
-  else if e
-  ∈ "/keyword /br
-  ," then next(idx - 1, remove, addback, go)
+  else if e ∈ "/keyword /br," then next(idx - 1, remove, addback, go)
   else next(idx - 1, remove, addback, false)
 let t = ":(red.message)/br:(subseq(pp, 1, idx))"
 for unprocessed = "", e ∈ subseq(input, place, min(place + 10, n.input - 1))

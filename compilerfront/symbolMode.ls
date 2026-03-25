@@ -31,8 +31,7 @@ Export types(attribute) seq.mytype
 Function symbolparse(input:seq.word, types:set.mytype, modname:modref) attribute
 let r =
  parse(input, attribute(empty:seq.mytype, ""), commonType(types, isAbstract.modname, input))
-assert status.r ∉ "Failed"
- ∧ (input sub 1 ∈ "function Function" ∨ i.top.stk.r = n.input + 1) report errormessage("Syntax error", input, i.top.stk.r),
+assert status.r ∉ "Failed" ∧ (input sub 1 ∈ "function Function" ∨ i.top.stk.r = n.input + 1) report errormessage("Syntax error", input, i.top.stk.r),
 result.r
 
 function addpara(common:commonType, name:seq.word, typ:attribute, place:int) attribute

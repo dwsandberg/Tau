@@ -179,12 +179,7 @@ do
  else if kind = krecord then
   if nopara.ele < 10 then
    let fldbc =
-    recordcode(
-     arithseq(nopara.ele, 1, ibcfirstpara2 + 1)
-     , tollvmtypelist(alltypes, ele) << 2
-     , 0
-     , true
-    ),
+    recordcode(arithseq(nopara.ele, 1, ibcfirstpara2 + 1), tollvmtypelist(alltypes, ele) << 2, 0, true),
    addtemplate(ele, regno.fldbc, bc.fldbc)
   else addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, tollvmtypelist(alltypes, ele) << 2)
  else if kind = ksequence then

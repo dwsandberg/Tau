@@ -125,16 +125,8 @@ do
    assert expect > 0 report "error",
    next(tag, 0, paragraph, chars, newbits, expect - 1, words)
  else if kind = StandAlone then
- let newwords=addnewword(words, chars) + encodeword.[ch]
-  next(
-   tag
-   , 0
-   , paragraph
-   , empty:seq.char
-   , bits.0
-   , 0
-   , newwords
-  )
+  let newwords = addnewword(words, chars) + encodeword.[ch],
+  next(tag, 0, paragraph, empty:seq.char, bits.0, 0, newwords)
  else if kind = Period then next(tag, period/colon, paragraph, [ch], bits.0, 0, addnewword(words, chars))
  else
   assert false report "kind:(kind)",

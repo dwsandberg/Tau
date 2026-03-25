@@ -255,14 +255,7 @@ do
  if between(kind, kfref, kconstantrecord) ∨ kind ∈ [kjmpB, klabel] then next(part + sym, blkparts, stk, nextvar, map, ahead)
  else if kind = klocal then
   let t = lookup(map, value.sym),
-  next(
-   part + (if isempty.t then [sym] else value.t sub 1)
-   , blkparts
-   , stk
-   , nextvar
-   , map
-   , ahead
-  )
+  next(part + (if isempty.t then [sym] else value.t sub 1), blkparts, stk, nextvar, map, ahead)
  else if kind = kdefine then
   let thelocal = value.sym
   let len = n.part,
@@ -344,14 +337,7 @@ do
     next(code.tmp, blkparts.top.stk, pop.stk, nextvar.tmp, map, ahead)
   else if kind.last.blkparts sub 1 = kexit then
    {remove block with just one Exit}
-   next(
-    part.top.stk >> 1 + blkparts sub 1 >> 1
-    , blkparts.top.stk
-    , pop.stk
-    , nextvar
-    , map
-    , ahead
-   )
+   next(part.top.stk >> 1 + blkparts sub 1 >> 1, blkparts.top.stk, pop.stk, nextvar, map, ahead)
   else if kind.ahead = kexit then
    {combine current block with outer block}
    let tmp2 =

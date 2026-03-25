@@ -108,14 +108,13 @@ do
  let slotinc =
   if inst ∈ [LOAD, ALLOCA, CALL, GEP, CAST, CMP2, BINOP, PHI] then 1 else 0
  let slot = slotinc + slotin
- let slottxt = if slotinc = 1 then "% /tag:(slot - offset)=" else "",
+ let slottxt = if slotinc = 1 then "% /nsp:(slot - offset)=" else "",
  for
   acc = resultin + "/br:(slottxt):(decode.inst)"
   , place = args
   , i ∈ arithseq(toint.r1.args, 1, 1)
  do
-  if nobits.place > 0
-  ∨ idx.place < n.parts.place ∧ bitcount.(parts.place) sub idx.place < 58 then
+  if nobits.place > 0 ∨ idx.place < n.parts.place ∧ bitcount.(parts.place) sub idx.place < 58 then
    let tmp = getvbr6.place
    let argval = toint.r1.tmp,
    let more =
@@ -131,11 +130,11 @@ do
     ∨ i = 4 ∧ inst = GEP
     ∨ i > 3 ∧ inst = CALL then
      let a = slotin + 1 - argval,
-     if a ≥ offset then "% /tag:(a - offset)/sp" else %.slot.a
+     if a ≥ offset then "% /nsp:(a - offset)/sp" else %.slot.a
     else if inst = PHI ∧ i mod 2 = 0 then
      let sign = if argval mod 2 = 0 then 1 else -1
      let a = slot - argval / 2 * sign,
-     if a ≥ offset then ", % /tag:(a - offset)/sp" else ",:(slot.a)"
+     if a ≥ offset then ", % /nsp:(a - offset)/sp" else ",:(slot.a)"
     else if i = 3 ∧ inst = LOAD then decode.align.argval
     else %.argval,
    next(acc + more, tmp)
@@ -145,11 +144,11 @@ do
    let nobits = bitcount.e,
    next(
     acc
-    + (if nobits = Reloc then "# /tag:(slotin + 1 + signedvalue.e))"
+    + (if nobits = Reloc then "# /nsp:(slotin + 1 + signedvalue.e))"
     else if nobits = Firstpara then "'%:(slotin + 1 - toint.bits.e)"
     else
      assert nobits = Relocsigned report "SDF:(idx.args):(acc)",
-     "# # /tag:({slotin+1-}{offset-}signedvalue.e)"
+     "# # /nsp({slotin+1-}{offset-}signedvalue.e)"
     )
     , pbc(0, 0x0, idx.place + 1, parts.place, 0x0)
    ),
@@ -646,9 +645,9 @@ let a =
   , MODABBREVLEN
   , [
    [1, 1]
-   , for acc = [toint.TRIPLE], @e ∈ toseqbyte.textformat.triple >> 1 do acc + toint.@e,
+   , for acc = [toint.TRIPLE], @e ∈ toseqbyte.textFormat.triple >> 1 do acc + toint.@e,
    acc
-   , for acc = [toint.LAYOUT], @e ∈ toseqbyte.textformat.taudatalayout >> 1 do acc + toint.@e,
+   , for acc = [toint.LAYOUT], @e ∈ toseqbyte.textFormat.taudatalayout >> 1 do acc + toint.@e,
    acc
   ]
  )

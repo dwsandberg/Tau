@@ -86,10 +86,7 @@ RtoL:boolean
 , marked:set.arc.layernode
 ) seq.arc.layernode
 {Step 2 is to find vertical alignments. This will return arcs that will have the two nodes with the same x value. Inner arcs are prime canidates for this vertial alignment.}
-for
- result1 = empty:seq.arc.layernode
- , lastlayer = layers2 sub 1
- , currentlayer ∈ layers2 << 1
+for result1 = empty:seq.arc.layernode, lastlayer = layers2 sub 1, currentlayer ∈ layers2 << 1
 do
  for result2 = empty:seq.arc.layernode, r = 0, assigned = empty:seq.int, node ∈ currentlayer
  do
@@ -132,9 +129,7 @@ let l1 = start.a
 let l2 = start.b
 let diff = layer.l2 - layer.l1,
 if diff = 0 then pos.l1 >1 pos.l2
-else if diff > 0 then
- if diff + 1 > n.blk.a then LT
- else pos.level sub ((blk.a) sub (diff + 1)) >1 pos.l2
+else if diff > 0 then if diff + 1 > n.blk.a then LT else pos.level sub ((blk.a) sub (diff + 1)) >1 pos.l2
 else if -diff + 1 > n.blk.b then GT
 else pos.l1 >1 pos.level sub ((blk.b) sub (-diff + 1))
 

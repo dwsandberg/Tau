@@ -102,8 +102,7 @@ else
  for
   txt = "function helpdata seq.helpinfo /br
   {This function was created using /br
-  buildhelp:(%%.input)target::(%%.target)}/br
-  ["
+  buildhelp:(%%.input)target::(%%.target)}/br["
   , e ∈ info
  do
   txt
@@ -151,8 +150,7 @@ do
  let defaultDir = if subseq(txt.p, i - 1, i - 1) = "input" then "+built" else "",
  acc
  + "/br function:(cmd.p)/sp{/br
- tau:(exe.p):(cmd.p):(defaultDir)$@ /br
- }",
+ tau:(exe.p):(cmd.p):(defaultDir)$@ /br}",
 "# functions are used instead of alias because alias adds extra arguments /br
 :(acc)"
 

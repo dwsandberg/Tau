@@ -65,7 +65,7 @@ name:seq.word
 {OPTION INLINE}
 jsHTTP(
  token.name
- , jsUTF8.toseqbyte.textformat.header
+ , jsUTF8.toseqbyte.textFormat.header
  , jsUTF8.body
  , token.followfunc
  , bitcast:JS.HTTPstate.seq.word(toptr.toJS.state)

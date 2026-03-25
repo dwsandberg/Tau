@@ -82,14 +82,11 @@ do
     + %.findtype(slots, rec sub 8))
     + "=:(rec sub 7)"
   else if rec sub 1 = toint.CCAST then
-   if (rec sub 2 = 9 ∧ typ.k = 0
-   ∨ rec sub 2 = 11 ∧ types sub (typ.k + 1) = "double")
+   if (rec sub 2 = 9 ∧ typ.k = 0 ∨ rec sub 2 = 11 ∧ types sub (typ.k + 1) = "double")
    ∧ findtype(slots, rec sub 4) ∈ [rec sub 3, -1] then result + z
    else
     result
-    + (z
-    + "ERROR"
-    + (types sub (typ.k + 1) + %.findtype(slots, rec sub 4) + %.rec sub 3))
+    + (z + "ERROR" + (types sub (typ.k + 1) + %.findtype(slots, rec sub 4) + %.rec sub 3))
   else if (rec.k) sub 1 = toint.CINTEGER then
    if types sub (typ.k + 1) ∈ ["i64", "i32"] then result + z
    else result + (z + "ERROR" + types sub (typ.k + 1))

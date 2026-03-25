@@ -47,7 +47,7 @@ let words =
   for names = "", f ∈ input do names + name.fn.f + "." + ext.fn.f,
   "<<<< Code Below was generated with command entrypoint:(names)entryUses::(entryUses)core: >>>> /p:(acc)"
  else acc,
-toseqbyte.textFormat1a.words
+toseqbyte.textFormat.words
 
 Function modEntry(src:seq.seq.word, entryUses:seq.word, core:boolean) seq.seq.word
 {The format of entryUses is flexible}

@@ -153,7 +153,7 @@ if [
  , tojulian(1600, 12, 31)
 ]
  = [2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
- ∧ textformat."2023-7-5.10:8:7" = textformat.print.ts
- ∧ dayofyear.ts = 186
+ ∧ {????? textformat."2023-7-5.10:8:7"= textFormat.print.ts ∧}dayofyear.ts
+ = 186
  ∧ seconds.timestamp.212555268487 = 212555268487 then "PASS timestamp"
 else ":(red."FAIL")timestamp" 

@@ -44,13 +44,11 @@ Export ext(filename) word
 
 Export name(filename) word
 
+Export textFormat(s:seq.word) UTF8
+
 Function HTMLformat1(myinput:seq.word) UTF8 HTMLformat1a.myinput
 
-Function textFormat1(myinput:seq.word) UTF8 textFormat1a.myinput
-
 Function HTMLformat(s:seq.word) UTF8 HTMLformat1.s
-
-Function textformat(s:seq.word) UTF8 textFormat1.s
 
 type filename is dirpath:word, name:word, ext:word
 
@@ -86,17 +84,21 @@ empty:stack.seq.word
 
 type markupNoExtension is a:int
 
+function tauCSS seq.word
+"span.keyword{/* daws totxt: content = ' /sp ' = */ color:blue ;}/br
+span.literal{/* daws totxt: content */ color:red ;}/br
+span.comment{/* daws totxt: content */ color:green ;}/br
+span.block{/* daws totxt: = content /indent = */ padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}/br
+p.code{/* daws totxt: = content /removeMarkup = /p
+*/}"
+
 Function file(fn:filename, out:seq.word) file
 {OPTION NOINLINE}
-let stdCSS =
- processCSS(
-  ["span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.literal{color:red ; transform: }span.comment{color:green ;}span.block{/* daws output: <span class id > = content /trim = </span> */ padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}"]
-  , defaults
- )
+let stdCSS = processCSS([tauCSS], defaults)
 let bytes =
  if ext.fn ∈ "html" then
   toseqbyte.processTXT:markupNoExtension(["//../tau.css /link:(out)"], stdCSS, false, "en")
- else toseqbyte.textformat.out,
+ else toseqbyte.textFormat.out,
 file(fn, bytes)
 
 Function file(fn:filename) file file(fn, [empty:seq.byte], emptyUTF8)
@@ -179,8 +181,7 @@ else
 Function addDefaultName(argsin:seq.word, first:word) seq.word
 let args = argsin << 1
 let len = n.args,
-if len > 1 ∧ args sub 2 ∈ ":: =" ∨ len = 0 then args
-else %.first + ":" + args
+if len > 1 ∧ args sub 2 ∈ ":: =" ∨ len = 0 then args else %.first + ":" + args
 
 Function changeext(f:filename, ext:seq.word) filename
 filename(dirpath.f, name.f, ext sub 1)
@@ -201,8 +202,4 @@ let b =
 
 Function HTMLheader UTF8
 {the format of the meta tag is carefully crafted to get math unicode characters to display correctly}
-textformat."<!doctype html> <meta charset =:(dq."UTF-8")><style> /br
-<!--span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}/br
-span.literal{color:red ;}span.comment{color:green ;}/br
-span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}/br
---> </style>" 
+textFormat."<!doctype html> <meta charset =:(dq."UTF-8")><style> /br:(tauCSS)/br </style>" 

@@ -94,7 +94,8 @@ acc
 function resolvetypesize(prg1:seq.typeentry) typedict
 let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5 report
- "recursive type problem:/br:(for acc10 = "", h ∈ unknown.bx5
+ "recursive type problem:/br
+ :(for acc10 = "", h ∈ unknown.bx5
  do acc10 + "type:(type.h)is:(%(",", flatflds.h))" >> 1 + "/br",
  acc10)"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d),

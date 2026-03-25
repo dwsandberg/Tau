@@ -183,19 +183,7 @@ else
      , failini
      , failresult
     )
-   else
-    "let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(build(
-     level + 1
-     , info
-     , Sstate.te
-     , stk
-     , [newi]
-     , [newinputi]
-     , result
-     , faili
-     , failini
-     , failresult
-    ))",
+   else "let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(build(level + 1, info, Sstate.te, stk, [newi], [newinputi], result, faili, failini, failresult))",
   "if{T'}:(inputi)=:(replaceWords2(match.te, wordmap.info))then:(KK)else:(build(level + 1, info, Fstate.te, stk, i, inputi, result, faili, failini, failresult))"
  else if teaction = !T then
   let newinputi = merge."ini:(level)",
@@ -203,18 +191,7 @@ else
  else if teaction = T then
   let newi = merge."i:(level)"
   let newinputi = merge."inputi:(level)",
-  "if{T}:(inputi)≠:(replaceWords2(match.te, wordmap.info))then let:(newi)= idxNB(myinput, faili):(build(level + 1, info, Fstate.te, stk, "faili", [newi], result, faili, failini, failresult))else let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(build(
-   level + 1
-   , info
-   , Sstate.te
-   , stk
-   , [newi]
-   , [newinputi]
-   , result
-   , faili
-   , failini
-   , failresult
-  ))"
+  "if{T}:(inputi)≠:(replaceWords2(match.te, wordmap.info))then let:(newi)= idxNB(myinput, faili):(build(level + 1, info, Fstate.te, stk, "faili", [newi], result, faili, failini, failresult))else let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(build(level + 1, info, Sstate.te, stk, [newi], [newinputi], result, faili, failini, failresult))"
  else if teaction = MatchAny then
   let newinputi = merge."inputi:(level)"
   let newi = merge."i:(level)",

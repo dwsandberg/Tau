@@ -36,7 +36,7 @@ function startfresh {
  #now get the default llvm layout for machine
  cc -S -emit-llvm bin/putfile.c 
  awk '/^target d/{print "\nFunction",$2, "seq.word",$4}\
- /^target t/{print "\nFunction",$2, "seq.word",$4,""}
+ /^target t/{print "\nFunction",$2, "seq.word",$4}
  ' putfile.ll \
  | cat bin/tauconfig.ls -  >tau2bc/tauconfig.ls
  #rm putfile.ll

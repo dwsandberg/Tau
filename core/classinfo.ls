@@ -158,9 +158,9 @@ do
    + (if isdefine.e then "define" else "")
    + (if isnamedmark.e then "namedmark" else "")
   let flags1 = if isempty.flags then "" else "flags: :(flags)",
+  let class = extractdef(def.e, "class" sub 1),
   acc
-  + [encodeword(decodeword.baseon.e << 1)]
-  + ".daws{/* daws:(flags1):(def.e)*/}"
+  + ":(encodeword(decodeword.baseon.e << 1)).:(if isempty.class then "daws" else class){/* daws:(flags1):(escapeFormat.def.e)*/}"
   + "/br",
 acc
 
@@ -191,73 +191,72 @@ do
     let more =
      if subseq(p, idx + 1, idx + 2) = "/* daws" then subseq(p, idx + 3, idx + findindex(p << idx, "*/" sub 1) - 1)
      else "",
-    acc1
-    + classinfo2(asset.acc1, {ele}p sub (idx - 3), {class}p sub (idx - 1), more),
+    classinfo2(asset.acc1, {ele}p sub (idx - 3), {class}p sub (idx - 1), more) + acc1,
   next(new, idx + findindex(p << idx, "{" sub 1)),
  acc1,
 acc
 
 Function defaults seq.classinfo
 let data =
- "q.daws{/* daws flags: mark output: <q class id > content </q> totxt: = content /mark = class */}/br
- b.daws{/* daws flags: mark output: <b class id > content </b> totxt: = content /mark = class */}/br
- i.daws{/* daws flags: mark output: <i class id > content </i> totxt: = content /mark = class */}/br
- em.daws{/* daws flags: mark output: <em class id > content </em> totxt: = content /mark = class */}/br
- strong.daws{/* daws flags: mark output: <strong class id > content </strong> totxt: = content /mark = t class */}/br
- span.daws{/* daws flags: mark output: <span class id > content </span> totxt: = content /mark = id class */}/br
- span.spc{/* daws output: <span class > /sp content /sp </span> */}/br
- caption.daws{/* daws flags: namedmark output: <caption class id > content </caption> totxt: content class */}/br
- a.daws{/* daws flags: mark output: <a class id href = href = > content </a> totxt: = content /mark = href class */}/br
- sub.daws{/* daws flags: mark output: <sub class id > content </sub> totxt: = content /mark = class */}/br
- sup.daws{/* daws flags: mark output: <sup class id > content </sup> totxt: = content /mark = class */}/br
+ "q.daws{/* daws flags: mark tohtml: < q class id > content </ q > totxt: content /mark id /id class */}/br
+ b.daws{/* daws flags: mark tohtml: < b class id > content </ b > totxt: content /mark id /id class */}/br
+ i.daws{/* daws flags: mark tohtml: < i class id > content </ i > totxt: content /mark id /id class */}/br
+ em.daws{/* daws flags: mark tohtml: < em class id > content </ em > totxt: content /mark id /id class */}/br
+ strong.daws{/* daws flags: mark tohtml: < strong class id > content </ strong > totxt: content /mark id /id class */}/br
+ span.daws{/* daws flags: mark tohtml: < span class id > content </ span > totxt: content /mark id /id class */}/br
+ span.spc{/* daws flags: mark tohtml: < span class id > content </ span > /sp */}/br
+ caption.daws{/* daws flags: namedmark tohtml: < caption class id > content </ caption > totxt: content class */}/br
+ a.daws{/* daws flags: mark tohtml: < a class id href > content </ a > totxt: content /mark href /href class */}/br
+ sub.daws{/* daws flags: mark tohtml: /nsp < sub class id > content </ sub > totxt: content /mark id /id class */}/br
+ sup.daws{/* daws flags: mark tohtml: /nsp < sup class id > content </ sup > totxt: content /mark id /id class */}/br
  !doctype.daws{/* daws flags: noendtag */}/br
  meta.daws{/* daws flags: noendtag */}/br
  !.daws{/* daws flags: noendtag */}/br
- html.daws{/* daws */}/br
+ html.daws{/* daws tohtml: content </ html > */}/br
  body.daws{/* daws */}/br
  ?xml.daws{/* daws flags: noendtag */}/br
- head.daws{/* daws <body>: /tag <body> output: <head > content </head> <body> totxt: content */}/br
- link.daws{/* daws flags: noendtag rel: stylesheet output: <link rel href = content = /> totxt: = href = class /br
+ head.daws{/* daws tohtml: < head > content </ head > < body > totxt: content */}/br
+ link.daws{/* daws flags: noendtag rel: stylesheet tohtml: < link rel href = content /> totxt: href /mark class /br
  */}/br
- base.daws{/* daws flags: noendtag output: <base rel href = content = /> totxt: = href = class */}/br
- title.daws{/* daws output: <title class > content </title> totxt: content class /br
+ base.daws{/* daws flags: noendtag tohtml: < base rel href = content /> totxt: href /mark class */}/br
+ title.daws{/* daws tohtml: < title class > content </ title > totxt: content class /br
  */}/br
- hr.daws{/* daws flags: noendtag output: content <hr class /> totxt: content class /p
+ hr.daws{/* daws flags: noendtag tohtml: content < hr class /> totxt: content class /p
  */}/br
- br.daws{/* daws flags: noendtag output: content <br class id /> totxt: content id class /br
+ br.daws{/* daws flags: noendtag tohtml: content < br class id /> totxt: contentid /id class /br
  */}/br
- img.daws{/* daws flags: mark noendtag alt: a picture output: <img class id alt src = prefix content /pre postfix /post = /> totxt: = prefix src postfix /post /pre /mark = id class */}/br
+ img.daws{/* daws flags: mark noendtag alt: a picture tohtml: < img class id alt src = prefix content /pre postfix /post /> totxt: prefix src postfix /post /pre /mark id /id class */}/br
  style.daws{/* daws */}/br
- p.daws{/* daws output: <p class id > content </p> totxt: content id class */}/br
- h1.daws{/* daws flags: namedmark output: <h1 class id > content </h1> totxt: content id class /p
+ p.daws{/* daws tohtml: < p class id > content </ p > totxt: content id /id class */}/br
+ h1.daws{/* daws flags: namedmark tohtml: < h1 class id > content </ h1 > totxt: content id /id class /p
  */}/br
- h2.daws{/* daws output: <h2 class id > content </h2> totxt: content id class /p
+ h2.daws{/* daws tohtml: < h2 class id > content </ h2 > totxt: content id /id class /p
  */}/br
- h3.daws{/* daws output: <h3 class id > content </h3> totxt: content id class /p
+ h3.daws{/* daws tohtml: < h3 class id > content </ h3 > totxt: content id /id class /p
  */}/br
- h4.daws{/* daws output: <h4 class id > content </h4> totxt: content id class /p
+ h4.daws{/* daws tohtml: < h4 class id > content </ h4 > totxt: content id /id class /p
  */}/br
- h5.daws{/* daws output: <h5 class id > content </h5> totxt: content id class /p
+ h5.daws{/* daws tohtml: < h5 class id > content </ h5 > totxt: content id /id class /p
  */}/br
- h6.daws{/* daws output: <h6 class id > content </h6> totxt: content id class /p
+ h6.daws{/* daws tohtml: < h6 class id > content </ h6 > totxt: content id /id class /p
  */}/br
- table.daws{/* daws flags: namedmark output: <table class id > content </table> totxt: = content /mark = id class /br
+ table.daws{/* daws flags: namedmark tohtml: < table class id > content </ table > totxt: content /mark id /id class /br
  */}/br
- li.daws{/* daws output: <li class id > content </li> totxt: content id class /p
+ li.daws{/* daws tohtml: < li class id > content </ li > totxt: content id /id class /p
  */}/br
- ol.daws{/* daws flags: namedmark output: <ol class id start > content </ol> totxt: = content /mark = id class /p
+ ol.daws{/* daws flags: namedmark tohtml: < ol class id start > content </ ol > totxt: content /mark id /id class /p
  */}/br
- ul.daws{/* daws flags: namedmark output: <ul class id > content </ul> totxt: = content /mark = id class /p
+ ul.daws{/* daws flags: namedmark tohtml: < ul class id > content </ ul > totxt: content /mark id /id class /p
  */}/br
- div.daws{/* daws flags: namedmark output: <div class id > content </div> totxt: = content /mark = id class /p
+ div.daws{/* daws flags: namedmark tohtml: < div class id > content </ div > totxt: content /mark id /id class /p
  */}/br
- tr.daws{/* daws output: <tr class id > content </tr> totxt: content id class /br
+ tr.daws{/* daws tohtml: < tr class id > content </ tr > totxt: content id /id class /br
  */}/br
- td.daws{/* daws output: <td class id > content </td> totxt: content id class */}/br
- th.daws{/* daws output: <th class id > content </th> totxt: content id class */}/br
- href.daws{/* daws flags: define /href: href output: /href colon content */}/br
- id.daws{/* daws flags: define /id: id output: /id colon content */}/br
- rel.daws{/* daws flags: define /rel: rel output: /rel colon content */}/br
+ td.daws{/* daws tohtml: < td class id > content </ td > totxt: content id /id class */}/br
+ th.daws{/* daws tohtml: < th class id > content </ th > totxt: content id /id class */}/br
+ href.daws{/* daws flags: define /href: href tohtml: /href colon content */}/br
+ id.daws{/* daws flags: define /id: id tohtml: /id colon content */}/br
+ rel.daws{/* daws flags: define /rel: rel tohtml: /rel colon content */}/br
  ",
 processCSS([data], empty:seq.classinfo)
 
@@ -281,31 +280,4 @@ Function push(s:stack.mark, i:int) stack.mark push(s, mark("mark" sub 1, i))
 Function extractdef(defs:seq.word, name:word, content:seq.word) seq.word
 if name ∈ "content" then content
 else if name ∈ "colon" then ": "
-else extractdef(defs, name)
-
-Function errorMarkup(
-message:seq.word
-, acc:seq.word
-, marks:stack.mark
-, z:seq.seq.word
-) seq.word
-let bb = "/tag <p>"
-for txt = "", pcount = 1, wcount = 1, mrk0 = toseq.marks, e ∈ acc
-do
- for mrk = mrk0, marktxt0 = ""
- while not.isempty.mrk ∧ wcount = place.mrk sub 1
- do next(mrk << 1, marktxt0 + escapeFormat.[kind.mrk sub 1])
- let marktxt1 = if isempty.marktxt0 then marktxt0 else "/tag <p> <<" + marktxt0 + ">>",
- if e = encodeword.[char.10] then next(txt + bb + toword.pcount + marktxt1, pcount + 1, wcount + 1, mrk)
- else
-  next(
-   if e ∈ "/sp /nsp /tag" then txt + marktxt1 else txt + escapeFormat.[e] + marktxt1
-   , pcount
-   , wcount + 1
-   , mrk
-  )
-for txt2 = "", e ∈ z sub pcount do txt2 + escapeFormat.[e],
-red.message + "/p:(txt)/p PROCESSING PARAGRAPH:(txt2)/p:(red.message)"
-
-Function escapeFormat(b:seq.word) seq.word
-[escapeformat, encodeword.[char.32]] + b + [encodeword.[char.32], escapeformat] 
+else extractdef(defs, name) 

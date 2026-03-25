@@ -1,5 +1,3 @@
- Building a Simple Web App /h2
-
 Module webcmd
 
 use UTF8
@@ -22,7 +20,7 @@ use seq.seq.filename
 
 use real
 
-use standard 
+use standard
 
 use tauhelp
 
@@ -34,35 +32,37 @@ use JS.HTTPstate.seq.word
 
 use webHTTP.seq.word
 
+use svg
+
 This example shows how a command history can be implement and outlines how to construct a web application. The history will be kept in a history file. 
 
-The file webcmd.html contains a small html fragment for this example. The lines of the body are:// <p id = status> loading<p>
-/br <input id = cmdline value =" usegraph+built core.libsrc include: UTF8 words standard textio toWords" >
-/br <button onclick =" runcmd ()" > run</button>
-/br <table id = history
-/br </table>
-/br <p id = cmdno> 1 </p>  /block
+The file webcmd.html contains a small html fragment for this example. The lines of the body are:// <p id = status> loading<p> /br
+<input id = cmdline value ="usegraph+built core.libsrc include: UTF8 words standard textio toWords"> /br
+<button onclick ="runcmd()"> run</button> /br
+<table id = history /br
+</table> /br
+<p id = cmdno> 1 </p> /block
 
 The first p element will be for a status line, the input element will be to enter a command, and the table element will be a history of the commands ran with links to the results. The final p element will be used to form the name of the next cmd output results. These compoents of the HTML file will be referenced by id from the file webcmd.ls which contains the Tau code. 
 
-The line in the build file specifies the pieces needed for this example:\ wasm webcore.libsrc tausupport core symbols compilerfront tools
-/br+webapps webcallconfig.ls webcmd.ls webcmd.html
-/br+tau2bc makescript.ls
-/br Library: webcmd
-/br exports: webcmd
-/br output: webcmd.wasm \block
+The line in the build file specifies the pieces needed for this example:\ wasm webcore.libsrc tausupport core symbols compilerfront tools /br
++webapps webcallconfig.ls webcmd.ls webcmd.html /br
++tau2bc makescript.ls /br
+Library: webcmd /br
+exports: webcmd /br
+output: webcmd.wasm \block
 
-Web browser are constructed so control is giving back to the browser for reading and writing of files. A callback function is supplied to specify which procedure to execute when the operation is complete. User interaction in a web browser is captured as events. A callback for each event to be acted upon also needs a callback. This example uses the following callbacks:\ webcmd /em is called when the page is loaded. The name of the callback (webcmd) matches the name of the page (webcmd). 
-/br AddHistory /em is called after reading the history file when the page is loaded.
-/br runcmd /em is called when the run button is pressed. The link between runcmd is specified with onclick =" runcmd ()" in webcmd.html
-/br ExecuteCmd /em is called after reading the input files to the cmd.
-/br createOutputFiles /em is called after write the output files of the cmd. \block
+Web browser are constructed so control is giving back to the browser for reading and writing of files. A callback function is supplied to specify which procedure to execute when the operation is complete. User interaction in a web browser is captured as events. A callback for each event to be acted upon also needs a callback. This example uses the following callbacks:\ webcmd /em is called when the page is loaded. The name of the callback(webcmd)matches the name of the page(webcmd). /br
+AddHistory /em is called after reading the history file when the page is loaded./br
+runcmd /em is called when the run button is pressed. The link between runcmd is specified with onclick ="runcmd()"in webcmd.html /br
+ExecuteCmd /em is called after reading the input files to the cmd./br
+createOutputFiles /em is called after write the output files of the cmd. \block
 
 type cmdstate is
 cmdline:seq.word
 , filegroups:seq.int
 , cmdAsEntered:seq.word
-, input:seq.file {this type contains the information kept across callbacks.}
+, input:seq.file{this type contains the information kept across callbacks.}
 
 Function HTTPcmdline(h2:JS.HTTPstate.cmdstate, h:JS.HTTPresult) real decodeZ(h2, h)
 
@@ -86,17 +86,17 @@ if isempty.errors.historyfiles then
  let data = breakparagraph.historyfiles
  {data has three elements. The first is the filename, the second is the contents for the history table, and the third is the next next cmdno value}
  setElementValue("cmdno", data sub 3)
-  + setElementValue("history", data sub 2)
-  + setElementValue("status", "ready")
+ + setElementValue("history", data sub 2)
+ + setElementValue("status", "ready")
 else
  setElementValue("history", "")
-  + setElementValue("status", "no history :(errors.historyfiles)")
+ + setElementValue("status", "no history:(errors.historyfiles)")
 
 use seq.seq.word
 
 Function runcmd real
-{Command is called when button is pressed. 
-/br fetchs input files with callback of" ExecuteCmd"}
+{Command is called when button is pressed. /br
+fetchs input files with callback of"ExecuteCmd"}
 let cmdstate = cmdstate.getElementValue."cmdline",
 if isempty.cmdline.cmdstate then setElementValue("status", "No such command")
 else HTTPcmdline(readarg(input.cmdstate, cmdstate, "ExecuteCmd", "HTTPcmdline"), empty:JS.HTTPresult)
@@ -105,31 +105,42 @@ Function ExecuteCmd(p2:JS.HTTPstate.cmdstate) real
 {callback for function runcmd. This function takes the input files and cmd arguments and produces the result set of files. The files are written with the callback of createOutputFiles}
 let s = fromJS.p2
 let errors = errors.files.s,
-if not.isempty.errors then setElementValue("status", "Errors in opening input files :(errors)")
+if not.isempty.errors then setElementValue("status", "Errors in opening input files:(errors)")
 else
  let cmdinfo = args.s
  let cmdno = getElementValue."cmdno"
  let outfiles =
   runthecmd(
-   cmdline.cmdinfo + "output: + :(dirpath.historyfilename) :(cmdno).html"
+   cmdline.cmdinfo + "output: +:(dirpath.historyfilename):(cmdno).html"
    , filegroups(cmdinfo, files.s)
   )
  let newhistory =
-  "/tag <tr><td> cmd /sp /tag <td> result
-  /tag <tr><td> :(cmdAsEntered.cmdinfo) /sp /tag <td> :(href.outfiles) /tag <tr><td> :(history)"
+  htmlMark."tr td"
+  + "cmd /sp"
+  + htmlMark."td"
+  + "result"
+  + "/sp"
+  + htmlMark."tr td"
+  + cmdAsEntered.cmdinfo
+  + "/sp"
+  + htmlMark."td"
+  + href.outfiles
+  + htmlMark."tr td"
+  + history
  let newcmdno = [toword(toint.cmdno sub 1 + 1)],
- let historyfile = file(historyfilename, " :(escapeformat) :(newhistory) :(escapeformat) /p :(newcmdno)"),
+ let historyfile =
+  file(historyfilename, ":(escapeformat):(newhistory):(escapeformat)/p:(newcmdno)"),
  setElementValue("status", "writing files")
-  + setElementValue("history", newhistory)
-  + setElementValue("cmdno", newcmdno)
-  + HTTPcmdline(
+ + setElementValue("history", newhistory)
+ + setElementValue("cmdno", newcmdno)
+ + HTTPcmdline(
   writearg(outfiles + historyfile, args.s, "createOutputFiles", "HTTPcmdline")
   , empty:JS.HTTPresult
  )
 
 Function createOutputFiles(p2:JS.HTTPstate.cmdstate) real
 {Callback ExecuteCmd. for Sets status in HTML page to hyperlinks to the files created}
-setElementValue("status", "results:  :(href(files.fromJS.p2 >> 1))")
+setElementValue("status", "results: :(href(files.fromJS.p2 >> 1))")
 
 Function loadcmd(a:real) real
 setElementValue("cmdline", getElementValue."ex. :(%(1, a))")
@@ -142,8 +153,7 @@ while isempty.cmdline
 do
  if cmd = e sub 1 then
   let cl = [cmd] + addDefaultName(cmdline0, e sub 2)
-  for fs = empty:seq.seq.filename, p ∈ e << 2
-  do fs + tofilenames.extractValue(cl, [p]),
+  for fs = empty:seq.seq.filename, p ∈ e << 2 do fs + tofilenames.extractValue(cl, [p]),
   next(cl, fs)
  else next(cmdline, b)
 for acc = empty:seq.file, filegroups = empty:seq.int, e ∈ b
@@ -157,19 +167,32 @@ function href(outfiles:seq.file) seq.word
 for links = "", f ∈ outfiles
 do
  let name = fullname.fn.f,
- links + "/sp /tag <a /sp href = :(merge("../" + name)) > :(name) /sp /tag </a> /sp",
+ links
+ + "/sp"
+ + htmlMark("a", ["href:(merge("../" + name))"])
+ + name
+ + "/sp"
+ + htmlMark."/a"
+ + "/sp",
 links
 
 function history seq.word
-{Extract history from HTML page and convert it to a Tau sting using /sp /tag
-/tag <tr><td> /sp and /sp /tag /tag <td>.}
+{Extract history from HTML page and convert it to a Tau sting.}
 let table = getElementValue."history"
-for table0 = "", w ∈ subseq(table, 5, n.table - 1)
+for table0 = "", href = "", state = 0, w ∈ subseq(table, 9, n.table - 1)
 do
- if w ∈ "</td></tr><tr><td> </td></tr><tr><td></td></tr><tr><td>" then table0 + "/tag <tr><td>"
- else if w ∈ "</td><td>" then table0 + "/sp /tag <td>"
- else if w ∈ "<a </a>" then table0 + "/sp /tag :(w) /sp"
- else table0 + w,
+ if state = 1 then if w ∈ dq then next(table, "", 2) else next(table, href, 1)
+ else if state = 2 then if w ∈ dq then next(table, href, 3) else next(table, href, 4)
+ else if state = 4 then
+  if w ∈ ">" then next(table0 + "/sp" + htmlMark("a", ["href:(merge("../" + href))"]) + "/sp", "", 0)
+  else next(table, href, 4)
+ else
+  let new =
+   if w ∈ "</td></tr><tr><td> </td></tr><tr><td></td></tr><tr><td>" then table0 + "/sp" + htmlMark."tr td" + "/sp"
+   else if w ∈ "</td><td>" then table0 + "/sp" + htmlMark."td"
+   else if w ∈ "</a>" then table0 + "/sp" + htmlMark."/a" + "/sp"
+   else table0 + w,
+  next(new, href, state),
 table0
 
 function filegroups(c:cmdstate, flat:seq.file) seq.seq.file
@@ -200,7 +223,7 @@ function cmdDesc seq.seq.word
  , "PEGdebug input input"
  , "usegraph input input"
  , "buildhelp input input target"
- , "tauhlp cmd"
+ , "tauhelp cmd"
  , "prettyScript input input hashes"
 ]
 
@@ -216,7 +239,7 @@ if cmd ∈ "front" then
   , extractValue(cmdline, "mods")
   , extractValue(cmdline, "~mods")
   , extractFlag(cmdline, "within")
-  , extractValue(cmdline, "out")
+  , extractValue(cmdline, "%")
  )
 else if cmd ∈ "transform" then
  transform:callconfig(

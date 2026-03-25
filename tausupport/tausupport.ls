@@ -164,8 +164,7 @@ let blksz = 8128
 let noblks = (n.b + blksz - 1) / blksz
 for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0)
 do
- let new =
-  packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
+ let new = packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
  let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8)),
  acc + bitcast:seq.byte(toptr.new),
 acc

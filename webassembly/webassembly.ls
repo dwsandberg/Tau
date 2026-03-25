@@ -100,7 +100,7 @@ let wasmfiles =
  )
 let script =
  {if includetemplate then toseqbyte.toUTF8."<script>"+getfile:byte("/webassembly/template.js")+toseqbyte.toUTF8."</script>"else}
- toseqbyte.textformat."<script src =:(merge.dq."/webassembly/template.js")> </script>"
+ toseqbyte.textFormat."<script src =:(merge.dq."/webassembly/template.js")> </script>"
 for acc = wasmfiles, page ∈ input
 do
  if ext.fn.page ∉ "html" then acc
@@ -111,7 +111,7 @@ do
    filename."+:(dirpath.fn.wasmfiles sub 1):([name.fn.page]).html"
    , pagehtml
    + script
-   + toseqbyte.textformat(
+   + toseqbyte.textFormat(
     scriptstart
     + (LF + "pageinit(" + %.merge.dq.libname + "," + %.name.fn.page + "); </script>")
    )

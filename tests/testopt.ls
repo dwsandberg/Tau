@@ -191,9 +191,7 @@ let cl =
   "%1 %2 %3 Loop:4(int, int, int)int /br
   Start(seq.int)/br
   %5 0 =(int, int)boolean Br2(1, 2)/br
-  :(dq."C")Exit /br
-  :(dq."B")Exit /br
-  EndBlock /br
+  :(dq."C")Exit /br:(dq."B")Exit /br EndBlock /br
   Define 7 %4 %5+(int, int)int Define 8 %5 0 =(int, int)boolean Br2(1, 2)/br
   %6 Exit /br
   %4 %5 1-(int, int)int %6 %4 *(int, int)int Continue 3 /br
@@ -221,11 +219,8 @@ let cl =
   , {51}
   "Start(seq.int)/br
   %1 JmpB 19 2:4 8:1 9:1 10:2 11:4 14:4 16:4 15:1:1 Jmp 19 /br
-  :(dq."R")Exit /br
-  %1 1 =(int, int)boolean Br2(1, 2)/br
-  :(dq."~ENTRY")Exit /br
-  :(dq."")Exit /br
-  EndBlock /br
+  :(dq."R")Exit /br %1 1 =(int, int)boolean Br2(1, 2)/br
+  :(dq."~ENTRY")Exit /br:(dq."")Exit /br EndBlock /br
   "
   , {52}
   "Start(int)/br
@@ -272,7 +267,7 @@ function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int) seq.word
 let name = merge."optest:(no)"
 for code = "", p ∈ p2 do if name = name.sym.p then %.code.p else code,
 if codelist sub no = code
- ∨ no = 260 ∧ shuffletest.sameto(code, codelist sub no, 1, "") then ""
+ ∨ {no = 260 ∧ shuffletest.sameto(code, codelist sub no, 1,"")}false then ""
 else
  "/br:(red."FAILED")test:(no)in optest. Got: /br
  :(code)/p Expected::(codelist sub no)"

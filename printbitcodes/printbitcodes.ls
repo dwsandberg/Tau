@@ -136,8 +136,7 @@ let typeblock =
   assert blockid.(blocks.z) sub 1 = toint.TYPES report "Expected TYPE Table as first block",
   1
 let types =
- for acc = empty:seq.seq.int, @e ∈ recs.getinfoB.(blocks.z) sub typeblock
- do acc + removeabbr.@e,
+ for acc = empty:seq.seq.int, @e ∈ recs.getinfoB.(blocks.z) sub typeblock do acc + removeabbr.@e,
  acc
 let q1 =
  for acc = empty:seq.seq.word, @e ∈ arithseq(n.types - 1, 1, 0)
@@ -186,10 +185,8 @@ let str1 =
   acc >> 1)]+subseq(typerecords, 3, n.typerecords), a)/br
   ,[file(filename(output), bc)]/p
   Function inittypes seq.llvmtype /br
-  [:(number.q1)]/p
-  Function initslots seq.slot /br
-  [:(number.constanddefs)]/p
-  Function bodies seq.track /br
+  [:(number.q1)]/p Function initslots seq.slot /br
+  [:(number.constanddefs)]/p Function bodies seq.track /br
   [:(bodies)]"
  else obj2txt(objectfldslots(slots2, q1), constanddefs) + number.constanddefs + bodies,
 str1
@@ -235,12 +232,7 @@ do
   let newinfo = info(inst, offset, blocklabels, consts, types, check, llvm)
   let b1 = printfuncbody(newinfo, offset + nopara, llvm),
   let b =
-   for acc = "", @e ∈ b1
-   do
-    acc
-    + @e
-    + "+/br
-    ",
+   for acc = "", @e ∈ b1 do acc + @e + "+/br",
    acc >> 2,
   next(
    result
@@ -253,8 +245,7 @@ do
    + toword.offset
    + ","
    + toword.nopara
-   + ")/br
-   +"
+   + ")/br+"
    + b
    + seperator
    , codeblock + 1

@@ -205,8 +205,7 @@ let rule =
   "/br"
   , "/td /tr"
   , "/td /tr"
-  , "/sp:(escapeformat)/br:(escapeformat)/sp /br
-  "
+  , "/sp:(escapeformat)/br:(escapeformat)/sp /br"
   , "/br"
   , "/br,:(dq)"
  ]
@@ -295,16 +294,8 @@ do
       else Fail
      else if isempty.part.(parts.s) sub (partno + 1) then Reduce(reduce + 1)
      else nextpart
-    for
-     RecoverEnding = ""
-     , last0 = "?" sub 1
-     , w ∈ if recover then part.p << (count - 1) else ""
-    do
-     next(
-      if w ∈ "!" ∨ last0 ∈ "!" then RecoverEnding
-      else RecoverEnding + smallest(small, w)
-      , w
-     )
+    for RecoverEnding = "", last0 = "?" sub 1, w ∈ if recover then part.p << (count - 1) else ""
+    do next(if w ∈ "!" ∨ last0 ∈ "!" then RecoverEnding else RecoverEnding + smallest(small, w), w)
     let C =
      if e ∈ "any Any" then tableEntry(MatchAny, "?" sub 1, success1, failmatch, RecoverEnding)
      else

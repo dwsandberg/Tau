@@ -29,8 +29,7 @@ else
  do
   let d3 = decodeLEBu(a, place),
   next(text + constantseq(value.d3, (%.wtype.a sub next.d3) sub 1), next.d3 + 1),
- "(:(text))/br
- :(zzz(nocheck, argtypes >> 2 + text, subseq(a, place, n.a - 1), %.sym.f))"
+ "(:(text))/br:(zzz(nocheck, argtypes >> 2 + text, subseq(a, place, n.a - 1), %.sym.f))"
 
 Function printcode(a:seq.byte) seq.word zzz(true, "", a, "")
 

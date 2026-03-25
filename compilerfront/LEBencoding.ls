@@ -90,8 +90,7 @@ do
  let byte = tobits.a sub (i + j),
  next(acc ∨ (byte ∧ 0x7F) << (j * 7), byte, j + 1)
 let value =
- if (lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc
- else acc ∨ tobits.-1 << (j * 7),
+ if (lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc else acc ∨ tobits.-1 << (j * 7),
 decoderesult(toint.value, i + j)
 
 type decoderesult is value:int, next:int

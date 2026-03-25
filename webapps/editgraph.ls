@@ -22,13 +22,13 @@ use set.int
 
 use seq1.int
 
-Each nodes of the graph are numbered uniquely. A graph named n will be represented as <* block n 2 1, 3 1, 4 3 2, 5 *>, which represents the arcs <* block (1 2) (1 3) (2 4) (2 4) *> with node 5 having no arcs to it. The following PEG Grammar defines the representation /tag <table>
-/tag <tr><td> Graph GraphName Node Nodes'
-/tag <tr><td> * Nodes', Node
-/tag <tr><td> Node NodeNumber Predecessors
-/tag <tr><td> * Predecessors NodeNumber
-/tag <tr><td> GraphName any
-/tag <tr><td> SVGnodeid GraphName.NodeNumber /tag </table>
+Each nodes of the graph are numbered uniquely. A graph named n will be represented as <* block n 2 1, 3 1, 4 3 2, 5 *>, which represents the arcs // block (1 2) (1 3) (2 4) (2 4) /block with node 5 having no arcs to it. The following PEG Grammar defines the representation  /table
+ Graph GraphName Node Nodes' /td /tr
+ * Nodes', Node /td /tr
+ Node NodeNumber Predecessors /td /tr
+ * Predecessors NodeNumber /td /tr
+  GraphName any /td /tr
+  SVGnodeid GraphName.NodeNumber /td /tr /table
 
 The object in the html page can be manipulated with function to retrieve and set attribute values (setAttribute getattributes) and to set and get the contents of elements (setElementValue and getElementValue)
 

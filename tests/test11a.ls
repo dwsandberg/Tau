@@ -102,13 +102,7 @@ let p =
  process.compilerFront:callconfig("pass1", [file("a.ls", txt)] + in, "testit", ""),
 if aborted.p then message.p
 else
- for acc = "", sd ∈ toseq.prg.result.p
- do
-  acc
-  + "/br /br
-  "
-  + %.sym.sd
-  + %.code.sd,
+ for acc = "", sd ∈ toseq.prg.result.p do acc + "/br /br" + %.sym.sd + %.code.sd,
  acc
 
 function compare(in:seq.file, exp1:seq.word, exp2:seq.word) boolean
@@ -176,8 +170,7 @@ check(acc, b, "precedence test")
 
 function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word) seq.word
 let x =
- for acc = "", i ∈ arithseq(n.y, 1, 1)
- do if y sub i = b sub i then acc else acc + toword.i,
+ for acc = "", i ∈ arithseq(n.y, 1, 1) do if y sub i = b sub i then acc else acc + toword.i,
  acc,
 if x = "" then "PASS:(testname)" else "// FAILED /literal test:(x)in:(testname)"
 

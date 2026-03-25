@@ -231,8 +231,7 @@ else
  assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64] report "asi64 problem:(typ.l):(stacktrace)",
  slot.(toseq.l) sub 4
 
-Function constvalue(i:slot) int
-(toseq.decode.to:encoding.slotrecord(toint.i + 1)) sub 2
+Function constvalue(i:slot) int (toseq.decode.to:encoding.slotrecord(toint.i + 1)) sub 2
 
 Function constantrecords seq.slotrecord encodingdata:slotrecord
 

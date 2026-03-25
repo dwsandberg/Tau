@@ -1,15 +1,15 @@
-<!doctype html> <html lang="en"> <meta charset="utf-8"> <head><link rel="stylesheet" href="../tau.css"></head> <body> <p><a href="#profileExample">Module profileExample /tag &lt;span class="block">&lt;/a></span> 
- <h1>Profiling</h1> <p>Profiling works by adding code to the procedure that tracks how much time is spent in each subprocedure that is called. When the results are displayed, the largest time is found and normalized to 100. All other calls are in 100th's of the largest time. 
- <p><a href="./profileExample.html">Result of run profileExample defined below. </a> 
- <p><span class="keyword" id="profileExample">Module</span> profileExample 
- <p>use seq.file 
- <p>use file 
- <p>use standard 
- <p>use profile 
- <p>use process.seq.word 
- <p>To add profiling to the functions in this Module the follow steps were taken:<br>1. To the function to be profiled add{OPTION PROFILE}NOINLINE was also include for these small function since if a procedure is expaned inline, no profile results will be shown for that procedure.<br>2. Add a use clause"use profile"<br>3. Add profileresults. "time"to make the profile results visible <br>4. In the.bld file add to the makelib command the option profile = <br>5. In the sources for the makelib command also+tests profile+common graphcode <br>6. Make sure the uses option of the makelib command includes commmon. 
- <p><a id="profileExample.word" href="#profileExample">Function /tag &lt;span class="keyword">&lt;/a></span> profileExample <span class="spc">seq.word</span> <br><span class="comment">{OPTION PROFILE NOINLINE COMMAND /strong profile Example}</span> <br><span class="keyword">let</span> p <span class="spc">=</span> process.processtest(2 sup 2 + 3)<br><span class="keyword">let</span> p2 <span class="spc">=</span> subtest(2 sup 2 + 3), <br><span class="literal">"test:(<span class="comment">{subtest.4+}</span> result.p):(profileresults.<span class="literal">"time"</span>)"</span> 
- <p><a id="subtest:int:seq.word" href="#profileExample">function /tag &lt;span class="keyword">&lt;/a></span> subtest(i:int)<span class="spc">seq.word</span> <br><span class="comment">{OPTION PROFILE NOINLINE}</span> <br>%(i sup 10 + tr.i)
- <p><a id="tr:int:int" href="#profileExample">function /tag &lt;span class="keyword">&lt;/a></span> tr(n:int)<span class="spc">int</span> <br><span class="comment">{OPTION PROFILE NOINLINE}</span> <br><span class="keyword">let</span> a <span class="spc">=</span> %.n, <br><span class="keyword">if</span> <span class="spc">n &lt; 3</span> <span class="keyword">then</span> <span class="spc">n</span> <span class="keyword">else</span> tr(n - 1) + tr(n - 2)
- <p><a id="processtest:int:seq.word" href="#profileExample">function /tag &lt;span class="keyword">&lt;/a></span> processtest(i:int)<span class="spc">seq.word</span> <br><span class="comment">{OPTION PROFILE NOINLINE}</span> <br>subtest.i 
-  
+<!doctype html> <html lang="en"> <meta charset="utf-8"> <head> <link rel="stylesheet" href="../tau.css"> </head> <body> <p> <a href="#profileExample"> Module profileExample</a<span class="block">></span></p> 
+<h1> Profiling</h1><p> Profiling works by adding code to the procedure that tracks how much time is spent in each subprocedure that is called. When the results are displayed, the largest time is found and normalized to 100. All other calls are in 100th's of the largest time. </p> 
+<p><a href="./profileExample.html"> Result of run profileExample defined below. </a> </p> 
+<p><span class="keyword" id="profileExample"> Module</span> profileExample</p> 
+<p> use seq.file</p> 
+<p> use file</p> 
+<p> use standard</p> 
+<p> use profile</p> 
+<p> use process.seq.word</p> 
+<p> To add profiling to the functions in this Module the follow steps were taken:<br> 1. To the function to be profiled add{OPTION PROFILE}NOINLINE was also include for these small function since if a procedure is expaned inline, no profile results will be shown for that procedure.<br> 2. Add a use clause"use profile"<br> 3. Add profileresults. "time"to make the profile results visible<br> 4. In the.bld file add to the makelib command the option profile =<br> 5. In the sources for the makelib command also+tests profile+common graphcode<br> 6. Make sure the uses option of the makelib command includes commmon. </p> 
+<p><a id="profileExample.word" href="#profileExample"> Function</a<span class="keyword">></span> profileExample<span class="spc"> seq.word</span> <br><span class="comment">{OPTION PROFILE NOINLINE COMMAND /strong profile Example}</span> <br> <span class="keyword"> let</span> p<span class="spc"> =</span> process.processtest(2<span class="spc"> sup</span> 2<span class="spc">+</span> 3)<br> <span class="keyword"> let</span> p2<span class="spc"> =</span> subtest(2<span class="spc"> sup</span> 2<span class="spc">+</span> 3),<br><span class="literal">"test:(<span class="comment"> {subtest.4+}</span> result.p):(profileresults.<span class="literal"> "time"</span> )"</span> </p> 
+<p><a id="subtest:int:seq.word" href="#profileExample"> function</a<span class="keyword">></span> subtest(i:int)<span class="spc"> seq.word</span> <br><span class="comment">{OPTION PROFILE NOINLINE}</span> <br> %(i<span class="spc"> sup</span> 10<span class="spc">+</span> tr.i)</p> 
+<p><a id="tr:int:int" href="#profileExample"> function</a<span class="keyword">></span> tr(n:int)<span class="spc"> int</span> <br><span class="comment">{OPTION PROFILE NOINLINE}</span> <br> <span class="keyword"> let</span> a<span class="spc"> =</span> %.n,<br><span class="keyword"> if</span><span class="spc"> n<span class="spc"> &lt;</span> 3</span> <span class="keyword"> then</span><span class="spc"> n</span> <span class="keyword"> else</span> tr(n<span class="spc">-</span> 1)<span class="spc"> +</span> tr(n<span class="spc">-</span> 2)</p> 
+<p><a id="processtest:int:seq.word" href="#profileExample"> function</a<span class="keyword">></span> processtest(i:int)<span class="spc"> seq.word</span> <br><span class="comment">{OPTION PROFILE NOINLINE}</span> <br> subtest.i</p> 
+ 

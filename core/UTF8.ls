@@ -98,4 +98,6 @@ Function tocharseq(a:seq.int) seq.char
 for acc = empty:seq.char, @e ∈ a do acc + char.@e,
 acc
 
-Function escapeformat word merge."/ escapeformat" 
+Function escapeformat word merge."/ escapeformat"
+
+Function escapeFormat(b:seq.word) seq.word [escapeformat] + b + [escapeformat] 

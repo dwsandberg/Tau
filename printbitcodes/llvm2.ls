@@ -65,8 +65,7 @@ pp(idx + size, toint.getbits(a, idx, size))
 Function getbits(a:SBIT, idx:int, size:int) bits
 let bidx = (idx - 1) / 8 + 1
 let mask = tobits.-1 << size ⊻ tobits.-1,
-(toseqbits.subseq(sbit.a, bidx, bidx + (size + 15) / 8)) sub 1
- >> ((idx - 1) mod 8)
+(toseqbits.subseq(sbit.a, bidx, bidx + (size + 15) / 8)) sub 1 >> ((idx - 1) mod 8)
  ∧ mask
 
 Function getvbr(a:SBIT, idx:int, size:int) pp getvbr(a, size, bits.0, 0, idx, 0)

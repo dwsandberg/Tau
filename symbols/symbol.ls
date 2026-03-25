@@ -231,9 +231,7 @@ else if kind ∈ [kcontinue, ksequence] then toint.name.s
 else n.types.s - if issimplename.s then 1 else 2
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype) seq.word
-let fullname =
- if isempty.nametype then if name ∈ "=" then [encodeword([char.32] + decodeword.name)] else [name]
- else [name] + ":" + %.nametype sub 1,
+let fullname = if isempty.nametype then [name] else [name] + ":" + %.nametype sub 1,
 if n.paratypes = 0 then fullname
 else
  for acc = fullname + "(", t ∈ paratypes do acc + %.t + ",",
@@ -325,22 +323,10 @@ else if kind = kdefine then "Define:(name.s)"
 else if kind = kcontinue then "Continue" + wordname.s + "/br"
 else if kind = krecord then fsig2("Record" sub 1, nametype.s, paratypes.s)
 else if kind = ksequence then "seq(:(worddata.s)):(resulttype.s)"
-else if kind = kbr then
- "Br2("
- + toword.brt.s
- + ","
- + toword.brf.s
- + ")/br
- "
-else if kind = kstart then
- "Start(:(resulttype.s))/br
- "
-else if kind = kendblock then
- "EndBlock /br
- "
-else if kind = kexit then
- "Exit /br
- "
+else if kind = kbr then "Br2(" + toword.brt.s + "," + toword.brf.s + ")/br"
+else if kind = kstart then "Start(:(resulttype.s))/br"
+else if kind = kendblock then "EndBlock /br"
+else if kind = kexit then "Exit /br"
 else if kind = kloop then "Loop:(fsig2(wordname.s, nametype.s, paratypes.s) << 1):(para.module.s)/br"
 else if kind = kfref then "FREF:(basesym.s)"
 else
