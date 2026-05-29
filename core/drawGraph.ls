@@ -112,10 +112,10 @@ do
  ),
 svg(
  [
-  ".reversed{fill:none ; stroke:red ; stroke-width:.07 ; stroke-dasharray:1 1 ;}"
-  , ".both{fill:none ; stroke:black ; stroke-width:0.14 ;}"
-  , ".arc{fill:none ; stroke:black ; stroke-width:.07 ;}"
-  , ".nodes{dominant-baseline:hanging; font: 1px sans-serif ; stroke-width:.1 ;}"
+  ".reversed{fill:none; stroke:red; stroke-width:.07; stroke-dasharray:1 1;}"
+  , ".both{fill:none; stroke:black; stroke-width:0.14;}"
+  , ".arc{fill:none; stroke:black; stroke-width:.07;}"
+  , ".nodes{dominant-baseline:hanging; font: 1px sans-serif; stroke-width:.1;}"
   , "svg g:hover text{opacity:1;}"
   , "svg g:hover rect{opacity:1;}"
  ]

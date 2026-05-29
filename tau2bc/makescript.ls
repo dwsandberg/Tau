@@ -188,8 +188,8 @@ for changelist = "", n ∈ toseq.changed do changelist + fullname.n
 for unchangelist = "", n ∈ toseq.unchanged do unchangelist + fullname.n
 let acc2 =
  "set /sp-e /br
- changelist /nsp =:(dq.changelist)/br unchangelist /nsp =:(dq.unchangelist)/br for f in $changelist $unchangedlist ; do /br
- if /sp ! /sp[/sp-f $f /sp]/sp ; then /br
+ changelist /nsp =:(dq.changelist)/br unchangelist /nsp =:(dq.unchangelist)/br for f in $changelist $unchangedlist; do /br
+ if /sp ! /sp[/sp-f $f /sp]/sp; then /br
  echo:(dq."File $f does not exist."); exit 1 /br
  fi /br
  done /br
@@ -211,8 +211,8 @@ else
    let rest = if n.toseq.d < 4 then [cmd] else [(toseq.d) sub 4],
    cmds
    + "/br function:(cmd)/sp{/br
-   built/ /nsp:(exe).lib:(rest)$@ /br if /sp[/sp-e tmp/error.html /sp]/sp ; then /br
-   $tauopen tmp/error.html ; exit 1 /br
+   built/ /nsp:(exe).lib:(rest)$@ /br if /sp[/sp-e tmp/error.html /sp]/sp; then /br
+   $tauopen tmp/error.html; exit 1 /br
    fi /br
    }",
  createorder(subg, allfile, acc + cmds) + "/br fi"

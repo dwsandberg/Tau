@@ -18,7 +18,7 @@ let gram103 =
  maketable."ZZ any = ! C any /action X $.1 = $.2 /br
  C any = /action"
 let gram104 =
- maketable."* ZZ3 any = V /action $.0 $.1 = $.2 ; /br
+ maketable."* ZZ3 any = V /action $.0 $.1 = $.2; /br
  * V ! C any /action $.0 $.1 /br
  C any = /action"
 let gram105 =
@@ -66,7 +66,7 @@ let result =
   , "Match f1(a:int, b:boolean)seq.seq.int"
  )
  + check(gram105, "????{A B{C}}", "Match A B C")
- + check(gram104, "a1 = value one a2 =", "Match a1 = value one ; a2 = ;")
+ + check(gram104, "a1 = value one a2 =", "Match a1 = value one; a2 =;")
  + check(gram103, "a1 = v1", "Match X a1 = v1")
  + check(
   maketable."ZZ3 ! D any /action $.0 $.1 /br

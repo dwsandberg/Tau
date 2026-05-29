@@ -85,10 +85,10 @@ empty:stack.seq.word
 type markupNoExtension is a:int
 
 function tauCSS seq.word
-"span.keyword{/* daws totxt: content = ' /sp ' = */ color:blue ;}/br
-span.literal{/* daws totxt: content */ color:red ;}/br
-span.comment{/* daws totxt: content */ color:green ;}/br
-span.block{/* daws totxt: = content /indent = */ padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}/br
+"span.keyword{/* daws totxt: content = ' /sp ' = */ color:blue;}/br
+span.literal{/* daws totxt: content */ color:red;}/br
+span.comment{/* daws totxt: content */ color:green;}/br
+span.block{/* daws totxt: = content /indent = */ padding:0px 0px 0px 0px; margin:0px 0px 0px 20px; display:block;}/br
 p.code{/* daws totxt: = content /removeMarkup = /p
 */}"
 
@@ -97,7 +97,11 @@ Function file(fn:filename, out:seq.word) file
 let stdCSS = processCSS([tauCSS], defaults)
 let bytes =
  if ext.fn ∈ "html" then
-  toseqbyte.processTXT:markupNoExtension(["//../tau.css /link:(out)"], stdCSS, false, "en")
+  toseqbyte.txt2html:markupNoExtension(
+   ["// utf-8 /charset //../tau.css /link:(out)"]
+   , stdCSS
+   , "<!doctype html> <html lang /nsp =:(dq."en")>"
+  )
  else toseqbyte.textFormat.out,
 file(fn, bytes)
 

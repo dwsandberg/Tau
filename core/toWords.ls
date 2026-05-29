@@ -477,7 +477,7 @@ function tableText seq.tblrec
  , {38}tblrec(0, char1."8")
  , {39}tblrec(0, char1."9")
  , {3A}tblrec(Period, char1.":")
- , {3B}tblrec(0, char1.";")
+ , {3B}tblrec(StandAlone, char1.";")
  , {3C}tblrec(0, char1."<")
  , {3D}tblrec(StandAlone, char1."=")
  , {3E}tblrec(0, char1.">")

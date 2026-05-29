@@ -285,7 +285,7 @@ let functyp2 = tollvmtype(typedict, addwords),
   , r.1
   , r.5
  )
- + RETURN
+ + RET(r.7, r.5)
 ]
 
 function entrypointbody(

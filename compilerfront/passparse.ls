@@ -151,7 +151,7 @@ let g3 = newgraph.abstractarcs.prg
 1:is unbound and module parameter is T /br
 2:is not unbound and module parameter is T /br
 3:module parameter is not T /br
-examples:seq1.T:=(T, T)boolean ; seq1.T:step(arithmeticseq.T)T ; /br
+examples:seq1.T:=(T, T)boolean; seq1.T:step(arithmeticseq.T)T; /br
 seq1.sparseele.T:binarysearch(seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)

@@ -293,8 +293,11 @@ Function optest56(i:int,a:int) int
 
      i ∈ [2,4,5] ∨ (i ∈ [9,6,7]) ∨ i=10
      
+Function optest57   byte
+{should reduce to 88}
+   optest57a."X"
 
-
+function optest57a(a:seq.word)  byte tobyte.toint.char1."X"
 
 
 /Function optest50(i:int, b:int) int

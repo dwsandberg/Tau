@@ -467,7 +467,8 @@ else
       {check printrecord slotorder2 are form printbitcodes descslot}
       if kind.parent sub (idx + 1) ≠ kdefine then
        {subexpression was found but not placed in variable}
-       let newparent = subseq(parent, 1, idx) + Define.nextvar + Local.nextvar + parent << idx
+       let newparent =
+        subseq(parent, 1, idx) + Define.nextvar + Local.nextvar + parent << idx
        let newpart =
         replace(parts, placeX, newparent)
         + (subseq(this, 1, exp - 4)

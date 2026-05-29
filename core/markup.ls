@@ -27,26 +27,15 @@ use seq1.word
 unbound dawsextensions:T(op:word, argstk:stack.seq.word) stack.seq.word
 {return empty:stack.seq.word if not defined}
 
-Function processTXT:T(
-z:seq.seq.word
-, replacements:seq.classinfo
-, xhtml:boolean
-, lang:seq.word
-) UTF8
-let p1 = z sub 1
-for header = 0, idx = 1, w ∈ p1
-do next(if w ∈ "/base /link /title /meta" then idx else header, idx + 1)
-let newz = [subseq(p1, 1, header) + "/head", p1 << header] + z << 1,
-textFormat(
- if xhtml then "<?xml version =:(dq."1.0")encoding =:(dq."utf-8")?> <html xmlns =:(dq."http://www.w3.org/1999/xhtml")xmlns:epub =:(dq."http://www.idpf.org/2007/ops")>"
- else "<!doctype html> <html lang /nsp =:(dq.":(lang)")> <meta charset /nsp =:(dq."utf-8")>"
-)
- + HTMLformat1a.txt2html:T(newz, asset.replacements, xhtml)
-
 /function showZ:T(out:seq.word)seq.word for acc ="", w ∈ out do acc+encodeword(decodeword.w+char1."Z"), acc
 
-Function txt2html:T(z:seq.seq.word, replacements:set.classinfo, xhtml:boolean) seq.word
+Function txt2html:T(z:seq.seq.word, classes:seq.classinfo, headertext:seq.word) UTF8
+let xhtml = subseq(headertext, 1, 2) ∉ ["<!doctype html>", "<!doctype html"],
+textFormat.headertext + HTMLformat1a.txt2html:T(z, classes, xhtml)
+
+Function txt2html:T(z:seq.seq.word, classes:seq.classinfo, xhtml:boolean) seq.word
 {covert paragraph to html}
+let replacements = asset.classes
 let gdefatt = lookupkey(replacements, "/global$defs" sub 1)
 let globaldefs = if isempty.gdefatt then "" else def.gdefatt sub 1
 let pdef = def.lookupkey(replacements, "/p" sub 1) sub 1
@@ -96,13 +85,12 @@ do
       acc1 >> n.content + "/!< p /!>" + content
      let marks1 =
       if basedon ∈ "/caption" ∧ kind.top.marks ∈ "mark" then pop.marks
-      else if basedon ∈ "/div /li" ∧ kind.top.marks ∈ "block" then pop.marks
+      else if basedon ∈ {???? should somehow make a group of these eles}"/div /li /svg /g /defs /td"
+      ∧ kind.top.marks ∈ "block" then pop.marks
       else if basedon ∈ "/ol /ul" then
        for marks1 = marks while kind.top.marks1 ∈ "block /li" ∧ place.top.marks1 = n.acc1 do pop.marks1,
        marks1
-      else if basedon ∈ "/li" ∧ kind.top.marks ∈ "block" then pop.marks
       else if basedon ∈ "/td" ∧ kind.top.marks ∈ "/th" then push(pop.marks, mark(basedon, place.top.marks))
-      else if basedon ∈ "/td" ∧ kind.top.marks ∈ "block" then pop.marks
       else if basedon ∈ "/tr" ∧ kind.top.marks ∈ "/td /th" then pop.marks
       else if basedon ∈ "/table" ∧ place.top.marks = n.acc1 then
        let stkt = if kind.top.marks ∈ "block" then pop.marks else marks,
@@ -141,81 +129,62 @@ defs:seq.word
 , xhtml:boolean
 , raw:seq.seq.word
 ) seq.word
-let inele = 1
-let inattval = 3
-let noaction = "!" sub 1
-for
- stk = empty:stack.seq.word
- , state = 0
- , laststk = 0
- , ele = noaction
- , lookahead ∈ extractdef(defs, "tohtml" sub 1) + noaction
+let alldefs = getDefines.defs
+let rr = parseBB2.extractdef(alldefs, "tohtml")
+for acc = "", e ∈ rr
 do
- if lookahead ∈ "=" then
-  let atts = top(stk, n.toseq.stk - laststk)
-  let val =
-   if state = inele then
-    for acc = "", a ∈ atts do acc + attribute(extractdef(defs, a sub 1), a sub 1),
-    acc
-   else attribute(%(atts << 1), (atts sub 1) sub 1),
-  let newstk = push(push(pop(stk, n.atts), val), [ele]),
-  next(newstk, inattval, n.toseq.newstk - 1, noaction)
- else if ele = noaction then next(stk, state, laststk, lookahead)
- else if ele ∈ "'" then next(push(stk, [lookahead]), state, laststk, noaction)
- else if ele ∈ "</" then
-  let new =
-   "/!<" + if lookahead ∈ "p" then escapeFormat."/p" else [merge("/" + lookahead)],
-  next(push(stk, new), inele, n.toseq.stk + 1, noaction)
- else if ele ∈ "<" then next(push(stk, "/!<" + lookahead), inele, n.toseq.stk + 1, noaction)
- else if ele ∈ "> />" then
-  {???? does not handle"/>"correctly for xhtml}
-  let atts = top(stk, n.toseq.stk - laststk)
-  let val =
-   if state = inele then
-    for acc = "", a ∈ atts do acc + attribute(extractdef(defs, a sub 1), a sub 1),
-    acc
-   else attribute(%(atts << 1), (atts sub 1) sub 1),
-  let newstk = push(pop(stk, n.atts + 1), undertop(stk, n.atts) + val + "/!>"),
-  next(newstk, 0, n.toseq.newstk, lookahead)
- else if state = inele then next(push(stk, [ele]), state, laststk, lookahead)
- else if ele ∈ "/nsp /sp" then next(push(stk, [ele]), state, laststk, lookahead)
- else if ele ∈ "/post /pre" then
-  {designed to add directory and extension to file names}
-  assert n.toseq.stk > 2 report "XXX B"
-  let second = top.stk
-  let first = top.pop.stk,
-  let val =
-   if ele ∈ "pre" then
-    if isempty.second ∨ first << (n.first - n.second) = second ∨ second sub 1 ∈ first then first
-    else first + second
-   else if isempty.first then second
-   else first + "/nsp" + second,
-  next(push(pop(stk, 2), val), state, laststk, lookahead)
- else if ele ∈ "/raw" then
-  let endtag = merge("/" + last.last.raw)
-  for txt = "", quit = false, p0 ∈ reverse.raw
-  while not.quit
-  do
-   let p5 =
-    if not.isempty.txt then p0
-    else
-     {???? needto look up p sub p.n-1 to find out if it is based on"/p"}
-     let aa = if subseq(p0, n.p0 - 1, n.p0 - 1) = "/p" then 2 else 1
-     {???? bug in formating when aa is removed}
-     p0 >> aa
-   for end = false, p1 = "", w ∈ p5
-   do
-    if w = endtag then next(true, "")
-    else if w ∈ "/br" then next(end, p1 + "/ /nsp br" + w)
-    else if w ∈ "/p" then next(end, p1 + "/ /nsp p")
-    else next(end, p1 + w),
-   next(p1 + "/br /br" + txt, end),
-  next(push(stk, txt >> 2), state, laststk, lookahead)
+ acc
+ + if name.e = "no eval" then value.e
  else
-  let result = dawsextensions:T(ele, stk),
-  if not.isempty.result then next(result, state, laststk, lookahead)
-  else
-   let value = extractdef(defs, ele, content)
-   let newstk = push(stk, value),
-   next(newstk, state, laststk, lookahead),
-%.toseq.stk 
+  {now evaluate exp and assign result to value}
+  for stk = empty:stack.seq.word, state = 0, ele ∈ value.e
+  do
+   if ele ∈ "'" then next(stk, 1)
+   else if ele ∈ "/nsp /sp" ∨ state = 1 then next(push(stk, [ele]), 0)
+   else if ele ∈ "content" then next(push(stk, content), 0)
+   else if ele ∈ "colon" then next(push(stk, ": "), 0)
+   else if ele ∈ "/post /pre" then
+    {designed to add directory and extension to file names}
+    assert n.toseq.stk > 1 report "XXX B"
+    let second = top.stk
+    let first = top.pop.stk,
+    let val =
+     if ele ∈ "pre" then
+      if isempty.second ∨ first << (n.first - n.second) = second ∨ second sub 1 ∈ first then first
+      else first + second
+     else
+      {post}
+      if isempty.first then second
+      else if first << (n.first - n.second) = second then first
+      else first + second,
+    next(push(pop(stk, 2), val), state)
+   else if ele ∈ "/raw" then
+    let endtag = merge("/" + last.last.raw)
+    for txt = "", quit = false, p0 ∈ reverse.raw
+    while not.quit
+    do
+     let p5 =
+      if not.isempty.txt then p0
+      else
+       {???? needto look up p sub p.n-1 to find out if it is based on"/p"}
+       let aa = if subseq(p0, n.p0 - 1, n.p0 - 1) = "/p" then 2 else 1
+       {???? bug in formating when aa is removed}
+       p0 >> aa
+     for end = false, p1 = "", w ∈ p5
+     do
+      if w = endtag then next(true, "")
+      else if w ∈ "/br" then next(end, p1 + "/ /nsp br" + w)
+      else if w ∈ "/p" then next(end, p1 + "/ /nsp p")
+      else next(end, p1 + w),
+     next(p1 + "/br /br" + txt, end),
+    next(push(stk, txt >> 2), state)
+   else
+    let result = dawsextensions:T(ele, stk),
+    if not.isempty.result then next(result, state)
+    else
+     let value = extractdef(alldefs, [ele])
+     let newstk = push(stk, value),
+     next(newstk, state)
+  let value = %.toseq.stk,
+  if isempty.name.e then value else attribute(value, name.e),
+acc 

@@ -6,6 +6,6 @@ use standard
 
 Function taudatalayout seq.word "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 
-Function datalayout seq.word "e-m:o-i64:64-i128:128-n32:64-S128-Fn32"
+Function datalayout seq.word "e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-n32:64-S128-Fn32"
 
 Function triple seq.word "arm64-apple-macosx26.0.0"

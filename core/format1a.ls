@@ -26,29 +26,27 @@ use seq.word
 
 use seq1.seq.word
 
-function showZ(out:seq.word) seq.word
-for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
-acc
-
-function toAttribute(a:seq.byte, b:seq.word) seq.byte X.b
-
-function escape&<(a:seq.byte) seq.byte
-let lt = tobyte.toint.char1."<"
-let amp = tobyte.toint.char1."&"
-for i = 1, e ∈ a while e ≠ lt ∧ e ≠ amp do i + 1,
-if i > n.a then a
-else
- subseq(a, 1, i - 1)
- + (if a sub i = amp then X."&amp;" else X."&lt;")
- + escape&<(a << i)
-
-function X(a:seq.word) seq.byte
-for acc0 = empty:seq.byte, w ∈ a
+function toAttribute(a:seq.byte, b:seq.word) seq.byte
+for acc0 = empty:seq.byte, w ∈ b
 do
  for acc = acc0, ch ∈ decodeword.w
  do acc + if toint.ch < 128 then [tobyte.toint.ch] else toseqbyte.encodeUTF8.ch,
  acc + tobyte.32,
 acc0 >> 1
+
+function escape&<(a:seq.byte) seq.byte
+let amp = byte1."&"
+let lt = byte1."<"
+let escamp = [amp, byte1."a", byte1."m", byte1."p", byte1.";"]
+let esclt = [amp, byte1."l", byte1."t", byte1.";"]
+for acc = empty:seq.byte, last = 1, i = 1, e ∈ a
+do
+ if e = amp then next(acc + subseq(a, last, i - 1) + escamp, i + 1, i + 1)
+ else if e = lt then next(acc + subseq(a, last, i - 1) + esclt, i + 1, i + 1)
+ else next(acc, last, i + 1),
+if last = 1 then a else acc + subseq(a, last, n.a)
+
+function byte1(a:seq.word) byte tobyte.toint.char1.a
 
 Function textFormat(myinput:seq.word) UTF8
 {OPTION NOINLINE}
@@ -105,19 +103,19 @@ seqElementType:word
 {commonName: textOut notablex: wordmap: dq dq sub 1, ec escapeformat, break"/br
 "sub 1,"$"sub 1}
 [
- "* CN+" = $.0 + X."+"
- , "/-" = $.0 + X."-"
- , "/." = $.0 + X."."
- , "/:" = $.0 + X.":"
- , "/. " = $.0 + X.". "
- , "/: " = $.0 + X.": "
- , "/ dq" = $.0 + X.dq
- , "/(" = $.0 + X."("
- , "/)" = $.0 + X.")"
- , "/{" = $.0 + X."{"
- , "/}" = $.0 + X."}"
- , "/[" = $.0 + X."["
- , "/]" = $.0 + X."]"
+ "* CN+" = $.0 + byte1."+"
+ , "/-" = $.0 + byte1."-"
+ , "/." = $.0 + byte1."."
+ , "/:" = $.0 + byte1.":"
+ , "/. " = $.0 + [byte1.".", tobyte.32]
+ , "/: " = $.0 + [byte1.":", tobyte.32]
+ , "/ dq" = $.0 + byte1.dq
+ , "/(" = $.0 + byte1."("
+ , "/)" = $.0 + byte1.")"
+ , "/{" = $.0 + byte1."{"
+ , "/}" = $.0 + byte1."}"
+ , "/[" = $.0 + byte1."["
+ , "/]" = $.0 + byte1."]"
  , "/ /!< CN /!>" = $.0 + tobyte.toint.char1."<" + $.1 + tobyte.toint.char1.">" + tobyte.32
  , "/ /sp" = addSpace.$.0
  , "/ /nsp" = $.0
@@ -129,40 +127,42 @@ seqElementType:word
  else $.0 + toseqbyte(emptyUTF8 + [char.10, char.10] + decodeword."<p>" sub 1))
  , "/ ec N ec" = $.0 + $.1
  , "/ CS" = $.0 + $.1
- , "+CS," = $.0 + X.","
+ , "+CS," = $.0 + byte1.","
+ , "/;" = $.0 + byte1.";"
  , "/ /sp" = addSpace.$.0
  , "/ /!< CN /!>" = $.0 + tobyte.toint.char1."<" + $.1 + tobyte.toint.char1.">"
  , "/ ec N ec" = addSpace.$.0 + $.1
  , "/ !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p ! break ! ec ! /!> ! /!< ! /nsp any"
  = addSpace.$.0 + (if textOut then $.1 else escape&<.$.1)
- , "* N S+" = $.0 + $.1 + X."+"
- , "/ S-" = $.0 + $.1 + X."-"
- , "/ S." = $.0 + $.1 + X."."
- , "/ S:" = $.0 + $.1 + X.":"
- , "/ S. " = $.0 + $.1 + X.". "
- , "/ S: " = $.0 + $.1 + X.": "
- , "/ S dq" = $.0 + $.1 + X.dq
- , "/ S(" = $.0 + $.1 + X."("
- , "/ S)" = $.0 + $.1 + X.")"
- , "/ S{" = $.0 + $.1 + X."{"
- , "/ S}" = $.0 + $.1 + X."}"
- , "/ S[" = $.0 + $.1 + X."["
- , "/ S]" = $.0 + $.1 + X."]"
+ , "* N S+" = $.0 + $.1 + byte1."+"
+ , "/ S-" = $.0 + $.1 + byte1."-"
+ , "/ S." = $.0 + $.1 + byte1."."
+ , "/ S:" = $.0 + $.1 + byte1.":"
+ , "/ S. " = $.0 + $.1 + [byte1.".", tobyte.32]
+ , "/ S: " = $.0 + $.1 + [byte1.":", tobyte.32]
+ , "/ S dq" = $.0 + $.1 + byte1.dq
+ , "/ S(" = $.0 + $.1 + byte1."("
+ , "/ S)" = $.0 + $.1 + byte1.")"
+ , "/ S{" = $.0 + $.1 + byte1."{"
+ , "/ S}" = $.0 + $.1 + byte1."}"
+ , "/ S[" = $.0 + $.1 + byte1."["
+ , "/ S]" = $.0 + $.1 + byte1."]"
  , "/ S" = $.0 + $.1
- , "/+" = $.0 + X."+"
- , "/-" = $.0 + X."-"
- , "/." = $.0 + X."."
- , "/:" = $.0 + X.":"
- , "/. " = $.0 + X.". "
- , "/: " = $.0 + X.": "
- , "/ dq" = $.0 + X.dq
- , "/(" = $.0 + X."("
- , "/)" = $.0 + X.")"
- , "/{" = $.0 + X."{"
- , "/}" = $.0 + X."}"
- , "/[" = $.0 + X."["
- , "/]" = $.0 + X."]"
- , "+S," = $.0 + X.","
+ , "/+" = $.0 + byte1."+"
+ , "/-" = $.0 + byte1."-"
+ , "/." = $.0 + byte1."."
+ , "/:" = $.0 + byte1.":"
+ , "/. " = $.0 + [byte1.".", tobyte.32]
+ , "/: " = $.0 + [byte1.":", tobyte.32]
+ , "/ dq" = $.0 + byte1.dq
+ , "/(" = $.0 + byte1."("
+ , "/)" = $.0 + byte1.")"
+ , "/{" = $.0 + byte1."{"
+ , "/}" = $.0 + byte1."}"
+ , "/[" = $.0 + byte1."["
+ , "/]" = $.0 + byte1."]"
+ , "+S," = $.0 + byte1.","
+ , "/;" = $.0 + byte1.";"
  , "/ !+!-!.!:!. !: ! dq !(!)![!]!{!}! ec any"
  = addSpace.$.0 + if textOut then $.1 else escape&<.$.1
 ]
@@ -171,28 +171,28 @@ seqElementType:word
 
 /br Non-terminals:CN CS N S /br
 Terminals:()+,-.. /!< /!> /nsp /p
-/sp:: []any break dq ec{}/br
+/sp:: ;[]any break dq ec{}/br
 * CN ←+/-/./:/. /: / dq /(/)/{/}/[/]/ /!< CN /!> / /sp / /nsp / break / /p
 / ec N ec / CS /br
-+CS ←, / /sp / /!< CN /!> / ec N ec / !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p
++CS ←, /; / /sp / /!< CN /!> / ec N ec / !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p
 ! break ! ec ! /!> ! /!< ! /nsp any /br
 * N ← S+/ S-/ S./ S:/ S. / S: / S dq / S(/ S)/ S{/ S}/ S[/ S]/ S /+/-/./:/. /: / dq /(/)/{/}/[/]/br
-+S ←, / !+!-!.!:!. !: ! dq !(!)![!]!{!}! ec any
++S ←, /; / !+!-!.!:!. !: ! dq !(!)![!]!{!}! ec any
 
 function action(partno:int, R:seq.seq.byte, textOut:boolean) seq.byte
-if partno = 2 then R sub n.R + X."+"
-else if partno = 3 then R sub n.R + X."-"
-else if partno = 4 then R sub n.R + X."."
-else if partno = 5 then R sub n.R + X.":"
-else if partno = 6 then R sub n.R + X.". "
-else if partno = 7 then R sub n.R + X.": "
-else if partno = 8 then R sub n.R + X.dq
-else if partno = 9 then R sub n.R + X."("
-else if partno = 10 then R sub n.R + X.")"
-else if partno = 11 then R sub n.R + X."{"
-else if partno = 12 then R sub n.R + X."}"
-else if partno = 13 then R sub n.R + X."["
-else if partno = 14 then R sub n.R + X."]"
+if partno = 2 then R sub n.R + byte1."+"
+else if partno = 3 then R sub n.R + byte1."-"
+else if partno = 4 then R sub n.R + byte1."."
+else if partno = 5 then R sub n.R + byte1.":"
+else if partno = 6 then R sub n.R + [byte1.".", tobyte.32]
+else if partno = 7 then R sub n.R + [byte1.":", tobyte.32]
+else if partno = 8 then R sub n.R + byte1.dq
+else if partno = 9 then R sub n.R + byte1."("
+else if partno = 10 then R sub n.R + byte1.")"
+else if partno = 11 then R sub n.R + byte1."{"
+else if partno = 12 then R sub n.R + byte1."}"
+else if partno = 13 then R sub n.R + byte1."["
+else if partno = 14 then R sub n.R + byte1."]"
 else if partno = 15 then
  R sub (n.R - 1)
  + tobyte.toint.char1."<"
@@ -209,40 +209,42 @@ else if partno = 19 then
  else R sub n.R + toseqbyte(emptyUTF8 + [char.10, char.10] + decodeword."<p>" sub 1)
 else if partno = 20 then R sub (n.R - 1) + R sub n.R
 else if partno = 21 then R sub (n.R - 1) + R sub n.R
-else if partno = 22 then R sub n.R + X.","
-else if partno = 23 then addSpace.R sub n.R
-else if partno = 24 then R sub (n.R - 1) + tobyte.toint.char1."<" + R sub n.R + tobyte.toint.char1.">"
-else if partno = 25 then addSpace.R sub (n.R - 1) + R sub n.R
-else if partno = 26 then addSpace.R sub (n.R - 1) + if textOut then R sub n.R else escape&<.R sub n.R
-else if partno = 27 then R sub (n.R - 1) + R sub n.R + X."+"
-else if partno = 28 then R sub (n.R - 1) + R sub n.R + X."-"
-else if partno = 29 then R sub (n.R - 1) + R sub n.R + X."."
-else if partno = 30 then R sub (n.R - 1) + R sub n.R + X.":"
-else if partno = 31 then R sub (n.R - 1) + R sub n.R + X.". "
-else if partno = 32 then R sub (n.R - 1) + R sub n.R + X.": "
-else if partno = 33 then R sub (n.R - 1) + R sub n.R + X.dq
-else if partno = 34 then R sub (n.R - 1) + R sub n.R + X."("
-else if partno = 35 then R sub (n.R - 1) + R sub n.R + X.")"
-else if partno = 36 then R sub (n.R - 1) + R sub n.R + X."{"
-else if partno = 37 then R sub (n.R - 1) + R sub n.R + X."}"
-else if partno = 38 then R sub (n.R - 1) + R sub n.R + X."["
-else if partno = 39 then R sub (n.R - 1) + R sub n.R + X."]"
-else if partno = 40 then R sub (n.R - 1) + R sub n.R
-else if partno = 41 then R sub n.R + X."+"
-else if partno = 42 then R sub n.R + X."-"
-else if partno = 43 then R sub n.R + X."."
-else if partno = 44 then R sub n.R + X.":"
-else if partno = 45 then R sub n.R + X.". "
-else if partno = 46 then R sub n.R + X.": "
-else if partno = 47 then R sub n.R + X.dq
-else if partno = 48 then R sub n.R + X."("
-else if partno = 49 then R sub n.R + X.")"
-else if partno = 50 then R sub n.R + X."{"
-else if partno = 51 then R sub n.R + X."}"
-else if partno = 52 then R sub n.R + X."["
-else if partno = 53 then R sub n.R + X."]"
-else if partno = 54 then R sub n.R + X.","
-else if partno = 55 then addSpace.R sub (n.R - 1) + if textOut then R sub n.R else escape&<.R sub n.R
+else if partno = 22 then R sub n.R + byte1.","
+else if partno = 23 then R sub n.R + byte1.";"
+else if partno = 24 then addSpace.R sub n.R
+else if partno = 25 then R sub (n.R - 1) + tobyte.toint.char1."<" + R sub n.R + tobyte.toint.char1.">"
+else if partno = 26 then addSpace.R sub (n.R - 1) + R sub n.R
+else if partno = 27 then addSpace.R sub (n.R - 1) + if textOut then R sub n.R else escape&<.R sub n.R
+else if partno = 28 then R sub (n.R - 1) + R sub n.R + byte1."+"
+else if partno = 29 then R sub (n.R - 1) + R sub n.R + byte1."-"
+else if partno = 30 then R sub (n.R - 1) + R sub n.R + byte1."."
+else if partno = 31 then R sub (n.R - 1) + R sub n.R + byte1.":"
+else if partno = 32 then R sub (n.R - 1) + R sub n.R + [byte1.".", tobyte.32]
+else if partno = 33 then R sub (n.R - 1) + R sub n.R + [byte1.":", tobyte.32]
+else if partno = 34 then R sub (n.R - 1) + R sub n.R + byte1.dq
+else if partno = 35 then R sub (n.R - 1) + R sub n.R + byte1."("
+else if partno = 36 then R sub (n.R - 1) + R sub n.R + byte1.")"
+else if partno = 37 then R sub (n.R - 1) + R sub n.R + byte1."{"
+else if partno = 38 then R sub (n.R - 1) + R sub n.R + byte1."}"
+else if partno = 39 then R sub (n.R - 1) + R sub n.R + byte1."["
+else if partno = 40 then R sub (n.R - 1) + R sub n.R + byte1."]"
+else if partno = 41 then R sub (n.R - 1) + R sub n.R
+else if partno = 42 then R sub n.R + byte1."+"
+else if partno = 43 then R sub n.R + byte1."-"
+else if partno = 44 then R sub n.R + byte1."."
+else if partno = 45 then R sub n.R + byte1.":"
+else if partno = 46 then R sub n.R + [byte1.".", tobyte.32]
+else if partno = 47 then R sub n.R + [byte1.":", tobyte.32]
+else if partno = 48 then R sub n.R + byte1.dq
+else if partno = 49 then R sub n.R + byte1."("
+else if partno = 50 then R sub n.R + byte1.")"
+else if partno = 51 then R sub n.R + byte1."{"
+else if partno = 52 then R sub n.R + byte1."}"
+else if partno = 53 then R sub n.R + byte1."["
+else if partno = 54 then R sub n.R + byte1."]"
+else if partno = 55 then R sub n.R + byte1.","
+else if partno = 56 then R sub n.R + byte1.";"
+else if partno = 57 then addSpace.R sub (n.R - 1) + if textOut then R sub n.R else escape&<.R sub n.R
 else R sub 1
 
 function mytable seq.tableEntry
@@ -269,137 +271,141 @@ function mytable seq.tableEntry
  , {20}tableEntry(T', "/br" sub 1, Reduce*(18, T'.2), T'.21, "")
  , {21}tableEntry(T', "/p" sub 1, Reduce*(19, T'.2), T'.22, "")
  , {22}tableEntry(T', escapeformat, NT.23, NT.25, "")
- , {23}tableEntry(NT.54, "N" sub 1, T.24, NT.25, "")
+ , {23}tableEntry(NT.55, "N" sub 1, T.24, NT.25, "")
  , {24}tableEntry(T, escapeformat, Reduce*(20, T'.2), NT.25, "")
  , {25}tableEntry(NT.T'.26, "CS" sub 1, Reduce*(21, T'.2), Success*, "")
- , {26}tableEntry(T', "," sub 1, Reduce*(22, T'.110), T'.27, "")
- , {27}tableEntry(T', "/sp" sub 1, Reduce*(23, T'.110), T'.28, "")
- , {28}tableEntry(T', "/!<" sub 1, NT.29, T.31, "")
- , {29}tableEntry(NT.T'.2, "CN" sub 1, T.30, T.31, "")
- , {30}tableEntry(T, "/!>" sub 1, Reduce*(24, T'.110), T.31, "")
- , {31}tableEntry(T, escapeformat, NT.32, !T.34, "")
- , {32}tableEntry(NT.54, "N" sub 1, T.33, !T.34, "")
- , {33}tableEntry(T, escapeformat, Reduce*(25, T'.110), !T.34, "")
- , {34}tableEntry(!T, "+" sub 1, Fail, !T.35, "")
- , {35}tableEntry(!T, "-" sub 1, Fail, !T.36, "")
- , {36}tableEntry(!T, "." sub 1, Fail, !T.37, "")
- , {37}tableEntry(!T, ":" sub 1, Fail, !T.38, "")
- , {38}tableEntry(!T, ". " sub 1, Fail, !T.39, "")
- , {39}tableEntry(!T, ": " sub 1, Fail, !T.40, "")
- , {40}tableEntry(!T, dq sub 1, Fail, !T.41, "")
- , {41}tableEntry(!T, "(" sub 1, Fail, !T.42, "")
- , {42}tableEntry(!T, ")" sub 1, Fail, !T.43, "")
- , {43}tableEntry(!T, "[" sub 1, Fail, !T.44, "")
- , {44}tableEntry(!T, "]" sub 1, Fail, !T.45, "")
- , {45}tableEntry(!T, "{" sub 1, Fail, !T.46, "")
- , {46}tableEntry(!T, "}" sub 1, Fail, !T.47, "")
- , {47}tableEntry(!T, "/p" sub 1, Fail, !T.48, "")
- , {48}tableEntry(!T, "/br" sub 1, Fail, !T.49, "")
- , {49}tableEntry(!T, escapeformat, Fail, !T.50, "")
- , {50}tableEntry(!T, "/!>" sub 1, Fail, !T.51, "")
- , {51}tableEntry(!T, "/!<" sub 1, Fail, !T.52, "")
- , {52}tableEntry(!T, "/nsp" sub 1, Fail, MatchAny.53, "")
- , {53}tableEntry(MatchAny, "?" sub 1, Reduce*(26, T'.110), Fail, "")
- , {54}tableEntry(NT.T.94, "S" sub 1, T'.55, T'.81, "")
- , {55}tableEntry(T', "+" sub 1, Reduce*(27, NT.54), T'.57, "")
- , {56}tableEntry(NT.T.94, "S" sub 1, T'.57, T'.81, "")
- , {57}tableEntry(T', "-" sub 1, Reduce*(28, NT.54), T'.59, "")
- , {58}tableEntry(NT.T.94, "S" sub 1, T'.59, T'.81, "")
- , {59}tableEntry(T', "." sub 1, Reduce*(29, NT.54), T'.61, "")
- , {60}tableEntry(NT.T.94, "S" sub 1, T'.61, T'.81, "")
- , {61}tableEntry(T', ":" sub 1, Reduce*(30, NT.54), T'.63, "")
- , {62}tableEntry(NT.T.94, "S" sub 1, T'.63, T'.81, "")
- , {63}tableEntry(T', ". " sub 1, Reduce*(31, NT.54), T'.65, "")
- , {64}tableEntry(NT.T.94, "S" sub 1, T'.65, T'.81, "")
- , {65}tableEntry(T', ": " sub 1, Reduce*(32, NT.54), T'.67, "")
- , {66}tableEntry(NT.T.94, "S" sub 1, T'.67, T'.81, "")
- , {67}tableEntry(T', dq sub 1, Reduce*(33, NT.54), T'.69, "")
- , {68}tableEntry(NT.T.94, "S" sub 1, T'.69, T'.81, "")
- , {69}tableEntry(T', "(" sub 1, Reduce*(34, NT.54), T'.71, "")
- , {70}tableEntry(NT.T.94, "S" sub 1, T'.71, T'.81, "")
- , {71}tableEntry(T', ")" sub 1, Reduce*(35, NT.54), T'.73, "")
- , {72}tableEntry(NT.T.94, "S" sub 1, T'.73, T'.81, "")
- , {73}tableEntry(T', "{" sub 1, Reduce*(36, NT.54), T'.75, "")
- , {74}tableEntry(NT.T.94, "S" sub 1, T'.75, T'.81, "")
- , {75}tableEntry(T', "}" sub 1, Reduce*(37, NT.54), T'.77, "")
- , {76}tableEntry(NT.T.94, "S" sub 1, T'.77, T'.81, "")
- , {77}tableEntry(T', "[" sub 1, Reduce*(38, NT.54), T.79, "")
- , {78}tableEntry(NT.T.94, "S" sub 1, T.79, T'.81, "")
- , {79}tableEntry(T, "]" sub 1, Reduce*(39, NT.54), NT.80, "")
- , {80}tableEntry(NT.T.94, "S" sub 1, Reduce*(40, NT.54), T'.81, "")
- , {81}tableEntry(T', "+" sub 1, Reduce*(41, NT.54), T'.82, "")
- , {82}tableEntry(T', "-" sub 1, Reduce*(42, NT.54), T'.83, "")
- , {83}tableEntry(T', "." sub 1, Reduce*(43, NT.54), T'.84, "")
- , {84}tableEntry(T', ":" sub 1, Reduce*(44, NT.54), T'.85, "")
- , {85}tableEntry(T', ". " sub 1, Reduce*(45, NT.54), T'.86, "")
- , {86}tableEntry(T', ": " sub 1, Reduce*(46, NT.54), T'.87, "")
- , {87}tableEntry(T', dq sub 1, Reduce*(47, NT.54), T'.88, "")
- , {88}tableEntry(T', "(" sub 1, Reduce*(48, NT.54), T'.89, "")
- , {89}tableEntry(T', ")" sub 1, Reduce*(49, NT.54), T'.90, "")
- , {90}tableEntry(T', "{" sub 1, Reduce*(50, NT.54), T'.91, "")
- , {91}tableEntry(T', "}" sub 1, Reduce*(51, NT.54), T'.92, "")
- , {92}tableEntry(T', "[" sub 1, Reduce*(52, NT.54), T.93, "")
- , {93}tableEntry(T, "]" sub 1, Reduce*(53, NT.54), Success*, "")
- , {94}tableEntry(T, "," sub 1, Reduce*(54, T.138), !T.95, "")
- , {95}tableEntry(!T, "+" sub 1, Fail, !T.96, "")
- , {96}tableEntry(!T, "-" sub 1, Fail, !T.97, "")
- , {97}tableEntry(!T, "." sub 1, Fail, !T.98, "")
- , {98}tableEntry(!T, ":" sub 1, Fail, !T.99, "")
- , {99}tableEntry(!T, ". " sub 1, Fail, !T.100, "")
- , {100}tableEntry(!T, ": " sub 1, Fail, !T.101, "")
- , {101}tableEntry(!T, dq sub 1, Fail, !T.102, "")
- , {102}tableEntry(!T, "(" sub 1, Fail, !T.103, "")
- , {103}tableEntry(!T, ")" sub 1, Fail, !T.104, "")
- , {104}tableEntry(!T, "[" sub 1, Fail, !T.105, "")
- , {105}tableEntry(!T, "]" sub 1, Fail, !T.106, "")
- , {106}tableEntry(!T, "{" sub 1, Fail, !T.107, "")
- , {107}tableEntry(!T, "}" sub 1, Fail, !T.108, "")
- , {108}tableEntry(!T, escapeformat, Fail, MatchAny.109, "")
- , {109}tableEntry(MatchAny, "?" sub 1, Reduce*(55, T.138), Fail, "")
- , {110}tableEntry(T', "," sub 1, Reduce*(22, T'.110), T'.111, "")
- , {111}tableEntry(T', "/sp" sub 1, Reduce*(23, T'.110), T'.112, "")
- , {112}tableEntry(T', "/!<" sub 1, NT.113, T.115, "")
- , {113}tableEntry(NT.T'.2, "CN" sub 1, T.114, T.115, "")
- , {114}tableEntry(T, "/!>" sub 1, Reduce*(24, T'.110), T.115, "")
- , {115}tableEntry(T, escapeformat, NT.116, !T.118, "")
- , {116}tableEntry(NT.54, "N" sub 1, T.117, !T.118, "")
- , {117}tableEntry(T, escapeformat, Reduce*(25, T'.110), !T.118, "")
- , {118}tableEntry(!T, "+" sub 1, Success*, !T.119, "")
- , {119}tableEntry(!T, "-" sub 1, Success*, !T.120, "")
- , {120}tableEntry(!T, "." sub 1, Success*, !T.121, "")
- , {121}tableEntry(!T, ":" sub 1, Success*, !T.122, "")
- , {122}tableEntry(!T, ". " sub 1, Success*, !T.123, "")
- , {123}tableEntry(!T, ": " sub 1, Success*, !T.124, "")
- , {124}tableEntry(!T, dq sub 1, Success*, !T.125, "")
- , {125}tableEntry(!T, "(" sub 1, Success*, !T.126, "")
- , {126}tableEntry(!T, ")" sub 1, Success*, !T.127, "")
- , {127}tableEntry(!T, "[" sub 1, Success*, !T.128, "")
- , {128}tableEntry(!T, "]" sub 1, Success*, !T.129, "")
- , {129}tableEntry(!T, "{" sub 1, Success*, !T.130, "")
- , {130}tableEntry(!T, "}" sub 1, Success*, !T.131, "")
- , {131}tableEntry(!T, "/p" sub 1, Success*, !T.132, "")
- , {132}tableEntry(!T, "/br" sub 1, Success*, !T.133, "")
- , {133}tableEntry(!T, escapeformat, Success*, !T.134, "")
- , {134}tableEntry(!T, "/!>" sub 1, Success*, !T.135, "")
- , {135}tableEntry(!T, "/!<" sub 1, Success*, !T.136, "")
- , {136}tableEntry(!T, "/nsp" sub 1, Success*, MatchAny.137, "")
- , {137}tableEntry(MatchAny, "?" sub 1, Reduce*(26, T'.110), Success*, "")
- , {138}tableEntry(T, "," sub 1, Reduce*(54, T.138), !T.139, "")
- , {139}tableEntry(!T, "+" sub 1, Success*, !T.140, "")
- , {140}tableEntry(!T, "-" sub 1, Success*, !T.141, "")
- , {141}tableEntry(!T, "." sub 1, Success*, !T.142, "")
- , {142}tableEntry(!T, ":" sub 1, Success*, !T.143, "")
- , {143}tableEntry(!T, ". " sub 1, Success*, !T.144, "")
- , {144}tableEntry(!T, ": " sub 1, Success*, !T.145, "")
- , {145}tableEntry(!T, dq sub 1, Success*, !T.146, "")
- , {146}tableEntry(!T, "(" sub 1, Success*, !T.147, "")
- , {147}tableEntry(!T, ")" sub 1, Success*, !T.148, "")
- , {148}tableEntry(!T, "[" sub 1, Success*, !T.149, "")
- , {149}tableEntry(!T, "]" sub 1, Success*, !T.150, "")
- , {150}tableEntry(!T, "{" sub 1, Success*, !T.151, "")
- , {151}tableEntry(!T, "}" sub 1, Success*, !T.152, "")
- , {152}tableEntry(!T, escapeformat, Success*, MatchAny.153, "")
- , {153}tableEntry(MatchAny, "?" sub 1, Reduce*(55, T.138), Success*, "")
+ , {26}tableEntry(T', "," sub 1, Reduce*(22, T'.112), T'.27, "")
+ , {27}tableEntry(T', ";" sub 1, Reduce*(23, T'.112), T'.28, "")
+ , {28}tableEntry(T', "/sp" sub 1, Reduce*(24, T'.112), T'.29, "")
+ , {29}tableEntry(T', "/!<" sub 1, NT.30, T.32, "")
+ , {30}tableEntry(NT.T'.2, "CN" sub 1, T.31, T.32, "")
+ , {31}tableEntry(T, "/!>" sub 1, Reduce*(25, T'.112), T.32, "")
+ , {32}tableEntry(T, escapeformat, NT.33, !T.35, "")
+ , {33}tableEntry(NT.55, "N" sub 1, T.34, !T.35, "")
+ , {34}tableEntry(T, escapeformat, Reduce*(26, T'.112), !T.35, "")
+ , {35}tableEntry(!T, "+" sub 1, Fail, !T.36, "")
+ , {36}tableEntry(!T, "-" sub 1, Fail, !T.37, "")
+ , {37}tableEntry(!T, "." sub 1, Fail, !T.38, "")
+ , {38}tableEntry(!T, ":" sub 1, Fail, !T.39, "")
+ , {39}tableEntry(!T, ". " sub 1, Fail, !T.40, "")
+ , {40}tableEntry(!T, ": " sub 1, Fail, !T.41, "")
+ , {41}tableEntry(!T, dq sub 1, Fail, !T.42, "")
+ , {42}tableEntry(!T, "(" sub 1, Fail, !T.43, "")
+ , {43}tableEntry(!T, ")" sub 1, Fail, !T.44, "")
+ , {44}tableEntry(!T, "[" sub 1, Fail, !T.45, "")
+ , {45}tableEntry(!T, "]" sub 1, Fail, !T.46, "")
+ , {46}tableEntry(!T, "{" sub 1, Fail, !T.47, "")
+ , {47}tableEntry(!T, "}" sub 1, Fail, !T.48, "")
+ , {48}tableEntry(!T, "/p" sub 1, Fail, !T.49, "")
+ , {49}tableEntry(!T, "/br" sub 1, Fail, !T.50, "")
+ , {50}tableEntry(!T, escapeformat, Fail, !T.51, "")
+ , {51}tableEntry(!T, "/!>" sub 1, Fail, !T.52, "")
+ , {52}tableEntry(!T, "/!<" sub 1, Fail, !T.53, "")
+ , {53}tableEntry(!T, "/nsp" sub 1, Fail, MatchAny.54, "")
+ , {54}tableEntry(MatchAny, "?" sub 1, Reduce*(27, T'.112), Fail, "")
+ , {55}tableEntry(NT.T'.95, "S" sub 1, T'.56, T'.82, "")
+ , {56}tableEntry(T', "+" sub 1, Reduce*(28, NT.55), T'.58, "")
+ , {57}tableEntry(NT.T'.95, "S" sub 1, T'.58, T'.82, "")
+ , {58}tableEntry(T', "-" sub 1, Reduce*(29, NT.55), T'.60, "")
+ , {59}tableEntry(NT.T'.95, "S" sub 1, T'.60, T'.82, "")
+ , {60}tableEntry(T', "." sub 1, Reduce*(30, NT.55), T'.62, "")
+ , {61}tableEntry(NT.T'.95, "S" sub 1, T'.62, T'.82, "")
+ , {62}tableEntry(T', ":" sub 1, Reduce*(31, NT.55), T'.64, "")
+ , {63}tableEntry(NT.T'.95, "S" sub 1, T'.64, T'.82, "")
+ , {64}tableEntry(T', ". " sub 1, Reduce*(32, NT.55), T'.66, "")
+ , {65}tableEntry(NT.T'.95, "S" sub 1, T'.66, T'.82, "")
+ , {66}tableEntry(T', ": " sub 1, Reduce*(33, NT.55), T'.68, "")
+ , {67}tableEntry(NT.T'.95, "S" sub 1, T'.68, T'.82, "")
+ , {68}tableEntry(T', dq sub 1, Reduce*(34, NT.55), T'.70, "")
+ , {69}tableEntry(NT.T'.95, "S" sub 1, T'.70, T'.82, "")
+ , {70}tableEntry(T', "(" sub 1, Reduce*(35, NT.55), T'.72, "")
+ , {71}tableEntry(NT.T'.95, "S" sub 1, T'.72, T'.82, "")
+ , {72}tableEntry(T', ")" sub 1, Reduce*(36, NT.55), T'.74, "")
+ , {73}tableEntry(NT.T'.95, "S" sub 1, T'.74, T'.82, "")
+ , {74}tableEntry(T', "{" sub 1, Reduce*(37, NT.55), T'.76, "")
+ , {75}tableEntry(NT.T'.95, "S" sub 1, T'.76, T'.82, "")
+ , {76}tableEntry(T', "}" sub 1, Reduce*(38, NT.55), T'.78, "")
+ , {77}tableEntry(NT.T'.95, "S" sub 1, T'.78, T'.82, "")
+ , {78}tableEntry(T', "[" sub 1, Reduce*(39, NT.55), T.80, "")
+ , {79}tableEntry(NT.T'.95, "S" sub 1, T.80, T'.82, "")
+ , {80}tableEntry(T, "]" sub 1, Reduce*(40, NT.55), NT.81, "")
+ , {81}tableEntry(NT.T'.95, "S" sub 1, Reduce*(41, NT.55), T'.82, "")
+ , {82}tableEntry(T', "+" sub 1, Reduce*(42, NT.55), T'.83, "")
+ , {83}tableEntry(T', "-" sub 1, Reduce*(43, NT.55), T'.84, "")
+ , {84}tableEntry(T', "." sub 1, Reduce*(44, NT.55), T'.85, "")
+ , {85}tableEntry(T', ":" sub 1, Reduce*(45, NT.55), T'.86, "")
+ , {86}tableEntry(T', ". " sub 1, Reduce*(46, NT.55), T'.87, "")
+ , {87}tableEntry(T', ": " sub 1, Reduce*(47, NT.55), T'.88, "")
+ , {88}tableEntry(T', dq sub 1, Reduce*(48, NT.55), T'.89, "")
+ , {89}tableEntry(T', "(" sub 1, Reduce*(49, NT.55), T'.90, "")
+ , {90}tableEntry(T', ")" sub 1, Reduce*(50, NT.55), T'.91, "")
+ , {91}tableEntry(T', "{" sub 1, Reduce*(51, NT.55), T'.92, "")
+ , {92}tableEntry(T', "}" sub 1, Reduce*(52, NT.55), T'.93, "")
+ , {93}tableEntry(T', "[" sub 1, Reduce*(53, NT.55), T.94, "")
+ , {94}tableEntry(T, "]" sub 1, Reduce*(54, NT.55), Success*, "")
+ , {95}tableEntry(T', "," sub 1, Reduce*(55, T'.141), T.96, "")
+ , {96}tableEntry(T, ";" sub 1, Reduce*(56, T'.141), !T.97, "")
+ , {97}tableEntry(!T, "+" sub 1, Fail, !T.98, "")
+ , {98}tableEntry(!T, "-" sub 1, Fail, !T.99, "")
+ , {99}tableEntry(!T, "." sub 1, Fail, !T.100, "")
+ , {100}tableEntry(!T, ":" sub 1, Fail, !T.101, "")
+ , {101}tableEntry(!T, ". " sub 1, Fail, !T.102, "")
+ , {102}tableEntry(!T, ": " sub 1, Fail, !T.103, "")
+ , {103}tableEntry(!T, dq sub 1, Fail, !T.104, "")
+ , {104}tableEntry(!T, "(" sub 1, Fail, !T.105, "")
+ , {105}tableEntry(!T, ")" sub 1, Fail, !T.106, "")
+ , {106}tableEntry(!T, "[" sub 1, Fail, !T.107, "")
+ , {107}tableEntry(!T, "]" sub 1, Fail, !T.108, "")
+ , {108}tableEntry(!T, "{" sub 1, Fail, !T.109, "")
+ , {109}tableEntry(!T, "}" sub 1, Fail, !T.110, "")
+ , {110}tableEntry(!T, escapeformat, Fail, MatchAny.111, "")
+ , {111}tableEntry(MatchAny, "?" sub 1, Reduce*(57, T'.141), Fail, "")
+ , {112}tableEntry(T', "," sub 1, Reduce*(22, T'.112), T'.113, "")
+ , {113}tableEntry(T', ";" sub 1, Reduce*(23, T'.112), T'.114, "")
+ , {114}tableEntry(T', "/sp" sub 1, Reduce*(24, T'.112), T'.115, "")
+ , {115}tableEntry(T', "/!<" sub 1, NT.116, T.118, "")
+ , {116}tableEntry(NT.T'.2, "CN" sub 1, T.117, T.118, "")
+ , {117}tableEntry(T, "/!>" sub 1, Reduce*(25, T'.112), T.118, "")
+ , {118}tableEntry(T, escapeformat, NT.119, !T.121, "")
+ , {119}tableEntry(NT.55, "N" sub 1, T.120, !T.121, "")
+ , {120}tableEntry(T, escapeformat, Reduce*(26, T'.112), !T.121, "")
+ , {121}tableEntry(!T, "+" sub 1, Success*, !T.122, "")
+ , {122}tableEntry(!T, "-" sub 1, Success*, !T.123, "")
+ , {123}tableEntry(!T, "." sub 1, Success*, !T.124, "")
+ , {124}tableEntry(!T, ":" sub 1, Success*, !T.125, "")
+ , {125}tableEntry(!T, ". " sub 1, Success*, !T.126, "")
+ , {126}tableEntry(!T, ": " sub 1, Success*, !T.127, "")
+ , {127}tableEntry(!T, dq sub 1, Success*, !T.128, "")
+ , {128}tableEntry(!T, "(" sub 1, Success*, !T.129, "")
+ , {129}tableEntry(!T, ")" sub 1, Success*, !T.130, "")
+ , {130}tableEntry(!T, "[" sub 1, Success*, !T.131, "")
+ , {131}tableEntry(!T, "]" sub 1, Success*, !T.132, "")
+ , {132}tableEntry(!T, "{" sub 1, Success*, !T.133, "")
+ , {133}tableEntry(!T, "}" sub 1, Success*, !T.134, "")
+ , {134}tableEntry(!T, "/p" sub 1, Success*, !T.135, "")
+ , {135}tableEntry(!T, "/br" sub 1, Success*, !T.136, "")
+ , {136}tableEntry(!T, escapeformat, Success*, !T.137, "")
+ , {137}tableEntry(!T, "/!>" sub 1, Success*, !T.138, "")
+ , {138}tableEntry(!T, "/!<" sub 1, Success*, !T.139, "")
+ , {139}tableEntry(!T, "/nsp" sub 1, Success*, MatchAny.140, "")
+ , {140}tableEntry(MatchAny, "?" sub 1, Reduce*(27, T'.112), Success*, "")
+ , {141}tableEntry(T', "," sub 1, Reduce*(55, T'.141), T.142, "")
+ , {142}tableEntry(T, ";" sub 1, Reduce*(56, T'.141), !T.143, "")
+ , {143}tableEntry(!T, "+" sub 1, Success*, !T.144, "")
+ , {144}tableEntry(!T, "-" sub 1, Success*, !T.145, "")
+ , {145}tableEntry(!T, "." sub 1, Success*, !T.146, "")
+ , {146}tableEntry(!T, ":" sub 1, Success*, !T.147, "")
+ , {147}tableEntry(!T, ". " sub 1, Success*, !T.148, "")
+ , {148}tableEntry(!T, ": " sub 1, Success*, !T.149, "")
+ , {149}tableEntry(!T, dq sub 1, Success*, !T.150, "")
+ , {150}tableEntry(!T, "(" sub 1, Success*, !T.151, "")
+ , {151}tableEntry(!T, ")" sub 1, Success*, !T.152, "")
+ , {152}tableEntry(!T, "[" sub 1, Success*, !T.153, "")
+ , {153}tableEntry(!T, "]" sub 1, Success*, !T.154, "")
+ , {154}tableEntry(!T, "{" sub 1, Success*, !T.155, "")
+ , {155}tableEntry(!T, "}" sub 1, Success*, !T.156, "")
+ , {156}tableEntry(!T, escapeformat, Success*, MatchAny.157, "")
+ , {157}tableEntry(MatchAny, "?" sub 1, Reduce*(57, T'.141), Success*, "")
 ]
 
 function =(seq.word, seq.byte) boolean true
