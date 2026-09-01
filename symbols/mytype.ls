@@ -42,7 +42,7 @@ Export type:typedef
 
 Export library(typedef) word
 
-Export modname(a:typedef) word
+Export modname(typedef) word
 
 Export name(typedef) word
 

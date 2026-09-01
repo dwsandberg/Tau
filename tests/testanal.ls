@@ -26,46 +26,41 @@ let inputs =
   analtest(
    symbol(internalmod, "recursiveWpart", [typegraph, seqof.typeword, seqof.typeword], seqof.typeword)
    , "%1 %2 sinks(graph.word, seq.word)seq.word Define 4 Start(seq.int)%4 getseqlength(ptr)int 0:(eqsig)Br2(1, 2)%3 Exit %1 %2 %4 seq.word:asset(seq.word)seq.word seq.word:+(seq.word, seq.word)seq.word %3 %4 seq.word:+(seq.word, seq.word)seq.word recursiveWpart(graph.word, seq.word, seq.word)seq.word Exit EndBlock"
-   , "%1 %2 %3 Loop:4(graph.word, seq.word, seq.word)seq.word /br
-   %4 %5 sinks(graph.word, seq.word)seq.word Define 7 %7 getseqlength(ptr)int 0:(eqsig)Br2(1, 2)/br
-   %6 Exit /br
-   %4 %5 %7 seq.word:asset(seq.word)seq.word seq.word:+(seq.word, seq.word)seq.word %6 %7 seq.word:+(seq.word, seq.word)seq.word Continue 3 /br
-   EndBlock /br
+   , "%1 %2 %3 Loop:4(graph.word, seq.word, seq.word)seq.word /br:($$)
+   %4 %5 sinks(graph.word, seq.word)seq.word Define 7 %7 getseqlength(ptr)int 0:(eqsig)Br2(1, 2)/br:($$)
+   %6 Exit /br:($$)
+   %4 %5 %7 seq.word:asset(seq.word)seq.word seq.word:+(seq.word, seq.word)seq.word %6 %7 seq.word:+(seq.word, seq.word)seq.word Continue 3 /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "basic", [typeint, typeint], typeint)
    , "Start(int)%1 3:(eqsig)Br2(1, 2)%1 Exit %2 Exit EndBlock"
-   , "Start(int)/br
-   %1 3:(eqsig)Br2(1, 2)/br
-   %1 Exit /br
-   %2 Exit /br
-   EndBlock /br
-   "
+   , "Start(int)/br %1 3:(eqsig)Br2(1, 2)/br %1 Exit /br %2 Exit /br EndBlock /br"
   )
   , analtest(
    symbol(internalmod, "basic11", [typeint], typeint)
    , "Start(int)%1 4 >(int, int)boolean Br2(1, 2)Start(int)%1 7777:(eqsig)Br2(1, 2)6 Exit 7 Exit EndBlock Exit %1 7777:(eqsig)Br2(1, 2)6 Exit 7 Exit EndBlock"
-   , "Start(int)/br
-   %1 4 >(int, int)boolean Br2(1, 1)/br
-   %1 7777:(eqsig)Br2(1, 2)/br
-   6 Exit /br
-   7 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 4 >(int, int)boolean Br2(1, 1)/br:($$)
+   %1 7777:(eqsig)Br2(1, 2)/br:($$)
+   6 Exit /br:($$)
+   7 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "basic22", [typeint, typeint, typeint], typeint)
    , "Start(int)%1 1:(eqsig)Br2(1, 2)1 Exit 2 Define 3 Start(int)2 %1:(eqsig)Br2(1, 2)2 Exit 3 Define 4 Start(int)%1 3:(eqsig)Br2(1, 2)%2 %3+(int, int)int %4+(int, int)int Exit 3 Exit EndBlock Exit EndBlock Exit EndBlock"
-   , "Start(int)/br
-   %1 1:(eqsig)Br2(1, 2)/br
-   1 Exit /br
-   2 %1:(eqsig)Br2(1, 2)/br
-   2 Exit /br
-   %1 3:(eqsig)Br2(1, 2)/br
-   %2 2+(int, int)int 3+(int, int)int Exit /br
-   3 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 1:(eqsig)Br2(1, 2)/br:($$)
+   1 Exit /br:($$)
+   2 %1:(eqsig)Br2(1, 2)/br:($$)
+   2 Exit /br:($$)
+   %1 3:(eqsig)Br2(1, 2)/br:($$)
+   %2 2+(int, int)int 3+(int, int)int Exit /br:($$)
+   3 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
@@ -81,56 +76,56 @@ let inputs =
   , analtest(
    symbol(internalmod, "recursive", [typeint, typeint], typeint)
    , "Start(int)%1 1:(eqsig)Br2(1, 2)%2 Exit %1 1-(int, int)int %1 %2 *(int, int)int recursive(int, int)int Exit EndBlock"
-   , "%1 %2 Loop:3(int, int)int /br
-   %3 1:(eqsig)Br2(1, 2)/br
-   %4 Exit /br
-   %3 1-(int, int)int %3 %4 *(int, int)int Continue 2 /br
-   EndBlock /br
+   , "%1 %2 Loop:3(int, int)int /br:($$)
+   %3 1:(eqsig)Br2(1, 2)/br:($$)
+   %4 Exit /br:($$)
+   %3 1-(int, int)int %3 %4 *(int, int)int Continue 2 /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "booleanBlock", [typeint, typeint], typeint)
    , "Start(int)%1 9:(eqsig)Br2(1, 4)Start(boolean)%1 3:(eqsig)Br2(1, 2)3 3:(eqsig)Exit false boolean Exit EndBlock Br2(1, 2)%2 1+(int, int)int Exit %1 5 *(int, int)int 4+(int, int)int Exit 9 Exit EndBlock"
-   , "Start(int)/br
-   %1 9:(eqsig)Br2(2, 1)/br
-   9 Exit /br
-   %1 3:(eqsig)Br2(1, 2)/br
-   %2 1+(int, int)int Exit /br
-   %1 5 *(int, int)int 4+(int, int)int Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 9:(eqsig)Br2(2, 1)/br:($$)
+   9 Exit /br:($$)
+   %1 3:(eqsig)Br2(1, 2)/br:($$)
+   %2 1+(int, int)int Exit /br:($$)
+   %1 5 *(int, int)int 4+(int, int)int Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "tricky_case", [typeint, typeint], typeint)
    , "Start(int)%1 2:(eqsig)Br2(3, 1)%1 4:(eqsig)Br2(2, 1)%1 3:(eqsig)Br2(2, 3)true boolean Br2(1, 1)true boolean Br2(2, 2)%2 0 >(int, int)boolean Br2(1, 2)2 Exit 3 Exit EndBlock"
-   , "Start(int)/br
-   %1 JmpB 9 2:2 4:2 3:2:1 Jmp 9 /br
-   %2 0 >(int, int)boolean Br2(1, 2)/br
-   2 Exit /br
-   3 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 JmpB 9 2:2 4:2 3:2:1 Jmp 9 /br:($$)
+   %2 0 >(int, int)boolean Br2(1, 2)/br:($$)
+   2 Exit /br:($$)
+   3 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "simplerun", [typeint, typeint], typeint)
    , "Start(int)%1 5:(eqsig)Br2(1, 2)6 Exit %1 3:(eqsig)Br2(1, 2)4 Exit %1 1:(eqsig)Br2(1, 2)2 Exit 8 Exit EndBlock"
-   , "Start(int)/br
-   %1 JmpB 9 5:1 3:2 1:3:4 Jmp 9 /br
-   6 Exit /br
-   4 Exit /br
-   2 Exit /br
-   8 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 JmpB 9 5:1 3:2 1:3:4 Jmp 9 /br:($$)
+   6 Exit /br:($$)
+   4 Exit /br:($$)
+   2 Exit /br:($$)
+   8 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "run_2", [typeint, typeint, typeint], typeint)
    , "Start(int)%3 5:(eqsig)Br2(4, 1)%3 2:(eqsig)Br2(3, 1)%3 12:(eqsig)Br2(2, 1)%3 3:(eqsig)Br2(2, 3)10 Exit 10 Exit 11 Exit EndBlock"
-   , "Start(int)/br
-   %3 JmpB 11 5:1 2:1 12:1 3:1:2 Jmp 11 /br
-   10 Exit /br
-   11 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %3 JmpB 11 5:1 2:1 12:1 3:1:2 Jmp 11 /br:($$)
+   10 Exit /br:($$)
+   11 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
@@ -141,29 +136,29 @@ let inputs =
     , typeint
    )
    , "1 2 3 Loop:5(int, int, int)int %10 %7:(eqsig)Br2(1, 2)0 Exit %1 2:(eqsig)Br2(2, 1)%1 4:(eqsig)Br2(2, 3)true boolean Br2(1, 2)%5 %6 %5 Continue 3 %1 3:(eqsig)Br2(1, 2)%5 %6 %4 Continue 3 %2 4:(eqsig)Br2(2, 1)%2 5:(eqsig)Br2(2, 3)true boolean Br2(1, 2)%5 %6 %8 Continue 3 %5 %6 %9 Continue 3 EndBlock"
-   , "1 2 3 Loop:8(int, int, int)int /br
-   %10 %10:(eqsig)Br2(1, 2)/br
-   0 Exit /br
-   %1 JmpB 9 2:4 4:4 3:1:2 Jmp 9 /br
-   %8 %9 %4 Continue 3 /br
-   %2 4:(eqsig)Br2(2, 1)/br
-   %2 5:(eqsig)Br2(1, 2)/br
-   %8 %9 %8 Continue 3 /br
-   %8 %9 %9 Continue 3 /br
-   EndBlock /br
+   , "1 2 3 Loop:8(int, int, int)int /br:($$)
+   %10 %10:(eqsig)Br2(1, 2)/br:($$)
+   0 Exit /br:($$)
+   %1 JmpB 9 2:4 4:4 3:1:2 Jmp 9 /br:($$)
+   %8 %9 %4 Continue 3 /br:($$)
+   %2 4:(eqsig)Br2(2, 1)/br:($$)
+   %2 5:(eqsig)Br2(1, 2)/br:($$)
+   %8 %9 %8 Continue 3 /br:($$)
+   %8 %9 %9 Continue 3 /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
    symbol(internalmod, "jump", [typeint, typeint], typeint)
    , "Start(int)%1 JmpB 11 1:1 2:2 5:3 7:4:5 Jmp 11 1 Exit 2 Exit 5 Exit 7 Exit 0 Exit EndBlock"
-   , "Start(int)/br
-   %1 JmpB 11 1:1 2:2 5:3 7:4:5 Jmp 11 /br
-   1 Exit /br
-   2 Exit /br
-   5 Exit /br
-   7 Exit /br
-   0 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 JmpB 11 1:1 2:2 5:3 7:4:5 Jmp 11 /br:($$)
+   1 Exit /br:($$)
+   2 Exit /br:($$)
+   5 Exit /br:($$)
+   7 Exit /br:($$)
+   0 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
   , analtest(
@@ -179,12 +174,12 @@ let inputs =
   , analtest(
    symbol(internalmod, "last one", [typeint, typeint, typeint, typeint], typeint)
    , "Start(int)%1 8:(eqsig)Br2(1, 2)%4 Exit %1 9:(eqsig)Br2(1, 2)%4 Exit %1 10:(eqsig)Br2(2, 1)%1 11:(eqsig)Br2(1, 2)%4 Exit %1 12:(eqsig)Br2(2, 1)%1 13:(eqsig)Br2(1, 2)%4 Exit %1 14:(eqsig)Br2(1, 2)14 Exit 9 Exit EndBlock"
-   , "Start(int)/br
-   %1 JmpB 17 8:1 9:1 10:1 11:1 12:1 13:1 14:2:3 Jmp 17 /br
-   %4 Exit /br
-   14 Exit /br
-   9 Exit /br
-   EndBlock /br
+   , "Start(int)/br:($$)
+   %1 JmpB 17 8:1 9:1 10:1 11:1 12:1 13:1 14:2:3 Jmp 17 /br:($$)
+   %4 Exit /br:($$)
+   14 Exit /br:($$)
+   9 Exit /br:($$)
+   EndBlock /br:($$)
    "
   )
  ]

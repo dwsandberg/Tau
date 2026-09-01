@@ -1,5 +1,7 @@
 Module passsymbol
 
+precedence > for >2
+
 use seq.findabstractresult
 
 use set.modref
@@ -69,7 +71,7 @@ modname:modref
 , exports:set.symbol
 , unresolvedexports:set.symbol
 , typedict:set.mytype
-, text:seq.symdef
+, srclink:seq.symdef
 ) passsymbols
 
 Export type:prg6
@@ -84,13 +86,13 @@ Export simple(prg6) seq.passsymbols
 
 Export types(prg6) seq.seq.mytype
 
-Export type:symdef{From symbol}{From symbolconstant}
+Export type:symdef {From symbolconstant}
 
-Export code(symdef) seq.symbol {From symbol}{From symbolconstant}
+Export code(symdef) seq.symbol {From symbolconstant}
 
-Export sym(symdef) symbol {From symbol}{From symbolconstant}
+Export sym(symdef) symbol {From symbolconstant}
 
-Export symdef(symbol, seq.symbol, int) symdef {From symbol}{From symbolconstant}
+Export symdef(sym:symbol, code:seq.symbol, pno:int) symdef {From symbolconstant}
 
 Function resolvesymbols(
 allsrc:seq.seq.word

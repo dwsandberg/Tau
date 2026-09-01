@@ -4,6 +4,8 @@ use UTF8
 
 use bits
 
+use seq1.char
+
 use seq.int
 
 use seq1.oneRule
@@ -30,7 +32,7 @@ use set.word
 
 use sort.word
 
-Export state(i:int) state
+Export state(toint:int) state
 
 Export type:pegpart
 
@@ -50,7 +52,13 @@ Export leftside(pegrule) word
 
 Export parts(pegrule) seq.pegpart
 
-Export pegrule(word, word, seq.pegpart, int, state) pegrule
+Export pegrule(
+kind:word
+, leftside:word
+, parts:seq.pegpart
+, nostates:int
+, begin:state
+) pegrule
 
 Export type:state
 
@@ -110,9 +118,7 @@ do
  if leftside.r ∈ NonTchange then next(acc + pegrule("!" sub 1, leftside.r, parts.r, nostates.r, begin.r), add)
  else if leftside.r ∈ NonTAdd then next(acc, add + r)
  else next(acc + r, add)
-assert isempty.add report
- "PEG grammar not implemented using same non-terminal with ! and without ! /br
- NonT!:(toseq.NonT!)/br NonTAdd:(toseq.NonTAdd)",
+assert isempty.add report "PEG grammar not implemented using same non-terminal with ! and without ! /br NonT!:(toseq.NonT!)/br NonTAdd:(toseq.NonTAdd)",
 acc
 
 -----------
@@ -185,30 +191,33 @@ for Non = empty:set.word, rightsides = "", r ∈ g
 do
  for parts = "", e ∈ parts.r do parts + part.e,
  next(Non + leftside.r, rightsides + parts)
-let terms =
- asset.rightsides
- \ Non
- \ asset."/ ! /br
- "
+let terms = asset.rightsides \ Non \ asset."/ ! /br"
 let unusedNon = toseq(Non \ asset.rightsides - leftside.g sub 1),
 checkrules.g
- + (if isempty.unusedNon then "" else "/br Unused non-terminals::(unusedNon)")
- + "/br Non-terminals::(sort>alpha.toseq.Non)/br Terminals::(sort>alpha.toseq.terms)/br"
+ + (if isempty.unusedNon then "" else "/eol Unused non-terminals::(unusedNon)")
+ + "/eol Non-terminals::(sort>alpha.toseq.Non)/eol Terminals::(noformat.sort>alpha.toseq.terms)/eol"
  + %(5, g)
+
+Function noformat(s:seq.word) seq.word
+for acc2 = "", w ∈ s
+do
+ let t = decodeword.w,
+ if n.t > 1 ∧ t sub 1 = char1."/" then acc2 + escapeFormat.[w] else acc2 + w,
+if s = acc2 then s else "//noformat:(acc2)/noformat"
+
+function showZ(out:seq.word) seq.word
+for acc = "", w ∈ out
+do
+ let z = decodeword.w,
+ acc + encodeword(z + char1."Y"),
+acc
 
 Function %(format:int, newg:seq.pegrule) seq.word
 {1 as string 2-as table 3-as table with action 4-as txt 6-as code}
 let action = ["/action", "", "/td", "", "", dq + "="] sub format
 let part = ["/br /", "/td /tr", "/td /tr", "/", "/", "/br,:(dq)/"] sub format
 let rule =
- [
-  "/br"
-  , "/td /tr"
-  , "/td /tr"
-  , "/sp:(escapeformat)/br:(escapeformat)/sp /br"
-  , "/br"
-  , "/br,:(dq)"
- ]
+ ["/br", "/td /tr", "/td /tr", "/sp:(escapeFormat."/br")/sp /br", "/br", "/br,:(dq)"]
  sub format
 let arrow = ["", "/td", "/td", "←", "←", ""] sub format
 for txt0 = "", r ∈ newg
@@ -217,14 +226,14 @@ do
  do
   let seperator = if not.isempty.txt1 ∧ format ∈ [2, 3] then "/td" else "",
   txt1
-  + (seperator + part.e + action + (if isempty.action then "" else replacement.e) + part),
- txt0
- + ((if kind.r ∈ "*+" then [kind.r] else "") + leftside.r + arrow + txt1 >> n.part)
- + rule,
+  + (seperator + part.e + action + (if isempty.action then "" else replacement.e) + part)
+ let formatedrule =
+  (if kind.r ∈ "*+" then [kind.r] else "") + leftside.r + arrow + txt1 >> n.part,
+ if format = 5 then txt0 + noformat.formatedrule + "/eol"
+ else txt0 + formatedrule + rule,
 if format ∈ [2, 3] then "left /th right /th action /th /tr:(txt0)/table"
-else if format = 4 then
- "function genPEG(attributeType:word)seq.boolean[/br
- :(subseq(txt0, 1, n.txt0 - 1))]"
+else if format = 4 then "function genPEG(attributeType:word)seq.boolean[/br:(subseq(txt0, 1, n.txt0 - 1))]"
+else if format = 5 then txt0
 else txt0 >> 1
 
 function checkrules(g:seq.pegrule) seq.word
@@ -509,7 +518,7 @@ do
  next(
   acc
   + (if action.action.a = Reduce then "/br:(rowno):(action.a)/td:(Sstate.a)/td:(Fstate.a)/td:(recover.a)/td /tr"
-  else "/br:(rowno):(action.a)/td:(escapeformat):([match.a]):(escapeformat)/td:(Sstate.a)/td:(Fstate.a)/td:(recover.a)/td /tr")
+  else "/br:(rowno):(action.a)/td:(escapeFormat.[match.a])/td:(Sstate.a)/td:(Fstate.a)/td:(recover.a)/td /tr")
   , rowno + 1
  ),
 "// PEG Rule Table /caption:(acc)/table"
@@ -607,7 +616,7 @@ type state is toint:int
 
 Export toint(state) int
 
-Export state(i:int) state
+Export state(toint:int) state
 
 Export type:state
 

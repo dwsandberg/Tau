@@ -77,7 +77,6 @@ input:seq.file
 , order:seq.word
 ) seq.word
 {COMMAND PROFILE /strong usegraph graphs /em use relationship between modules in source code. /br
-/br
 options: /br
 exclude /strong lists the modules to ignore in the use clauses. /br
 include /strong restricts the modules considered to those listed./br

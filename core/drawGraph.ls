@@ -205,7 +205,7 @@ do
     if n.k = 1 then next(txt, empty:seq.<<.T)
     else next(txt + "/br:(k)", empty:seq.<<.T)
    else next(txt, k + e),
-  "XXX:(toseq.remaining)/br:(txt)",
+  "Problem in drawGraph:(toseq.remaining)/br:(txt)",
  next(g, xx2, sort>3.acc2, remaining \ handled, nextpos2a + [1], lastNodeNo2, paths2)
 for txt = "", e ∈ xx do txt + "/br:(tail.e)----:(head.e):(layer.tail.e - layer.head.e)"
 let gg1 = newgraph.xx + lowlayersnodes,

@@ -6,9 +6,9 @@ Export type:char
 
 Export toint(char) int
 
-Export char(int) char
+Export char(toint:int) char
 
-Export word(int) word
+Export word(rawvalue:int) word
 
 Export type:ordering
 
@@ -110,6 +110,6 @@ Export type:timestamp
 
 Export seconds(timestamp) int
 
-Export timestamp(int) timestamp
+Export timestamp(seconds:int) timestamp
 
 type timestamp is seconds:int 

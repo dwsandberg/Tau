@@ -55,7 +55,7 @@ Export wordref(w:word) int {From persistant}
 
 Export constdata seq.slot {From persistant}
 
-Export type:symbol{From symbol}{From symbol}
+Export type:symbol {From symbol}{From symbol}
 
 Function tollvmtype(alltypes:typedict, s:symbol) llvmtype
 function.tollvmtypelist(alltypes, s)

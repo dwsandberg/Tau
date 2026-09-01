@@ -58,13 +58,13 @@ use set.symdef
 
 use sort.symdef
 
-Export type:passsymbols
+Export type:passsymbols {From passsymbol}
 
-Export defines(passsymbols) set.symbol
+Export defines(passsymbols) set.symbol {From passsymbol}
 
-Export modname(passsymbols) modref
+Export modname(passsymbols) modref {From passsymbol}
 
-Export uses(passsymbols) set.modref
+Export uses(passsymbols) set.modref {From passsymbol}
 
 Function passsymbols(modname:modref, uses:set.modref, defines:set.symbol) passsymbols
 passsymbols(
@@ -129,7 +129,7 @@ function addscc(order:seq.modref, scc:seq.modref) seq.modref
 if n.scc = 1 then order + scc
 else order + moduleref."internal)" + scc + moduleref."internal("
 
-Export orderNodes(set.modref, set.arc.modref) seq.modref
+Export orderNodes(set.modref, set.arc.modref) seq.modref {From orderNodes.arc.modref}
 
 Function expand(
 used:seq.modref
@@ -179,7 +179,7 @@ do
  next(txt + "/br:(no.s):(library.module.sym.sd):(options.sd):(sym.sd)", i + 1),
 txt
 
-Export >1(a:passsymbols, b:passsymbols) ordering
+Export >1(a:passsymbols, b:passsymbols) ordering {From passsymbol}
 
 type segmap is modref:modref, segno:int
 

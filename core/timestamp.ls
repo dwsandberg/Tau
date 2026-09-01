@@ -10,7 +10,7 @@ use kernal
 
 use standard
 
-Export type:timestamp
+Export type:timestamp {From kernal}
 
 function subseq(a:UTF8, i:int, j:int) UTF8 UTF8.subseq(toseqbyte.a, i, j)
 
@@ -86,6 +86,6 @@ let d = decompose.ts,
  ]
 ]
 
-Export seconds(t:timestamp) int
+Export seconds(timestamp) int {From kernal}
 
-Export timestamp(seconds:int) timestamp 
+Export timestamp(int) timestamp {From kernal} 

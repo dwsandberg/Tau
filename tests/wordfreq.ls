@@ -38,31 +38,29 @@ acc
 
 Function testwordfreq seq.word
 for result = empty:seq.word, p ∈ mincount(50, wordfreq.testdata)
-do
- if count.p = 0 then result
- else result + "/br the word:(w.p)occurs:(count.p)times."
+do if count.p = 0 then result else result + "/br the word:(w.p)occurs:(count.p)times."
 let result1 =
- "/br the word s occurs 58 times./br
- the word nextvar occurs 58 times./br
- the word symbol occurs 66 times./br
- the word-occurs 67 times./br
- the word code occurs 69 times./br
- the word result occurs 72 times./br
- the word sym occurs 79 times./br
- the word seq occurs 83 times./br
- the word then occurs 86 times./br
- the word else occurs 86 times./br
- the word if occurs 88 times./br
- the word:(dq)occurs 88 times./br
- the word _ occurs 97 times./br
- the word let occurs 99 times./br
- the word:occurs 100 times./br
- the word+occurs 136 times./br
- the word 1 occurs 147 times./br
- the word = occurs 178 times./br
- the word(occurs 241 times./br
- the word)occurs 241 times./br
- the word.occurs 408 times./br
+ "/br the word s occurs 58 times./br:($$)
+ the word nextvar occurs 58 times./br:($$)
+ the word symbol occurs 66 times./br:($$)
+ the word-occurs 67 times./br:($$)
+ the word code occurs 69 times./br:($$)
+ the word result occurs 72 times./br:($$)
+ the word sym occurs 79 times./br:($$)
+ the word seq occurs 83 times./br:($$)
+ the word then occurs 86 times./br:($$)
+ the word else occurs 86 times./br:($$)
+ the word if occurs 88 times./br:($$)
+ the word:(dq)occurs 88 times./br:($$)
+ the word _ occurs 97 times./br:($$)
+ the word let occurs 99 times./br:($$)
+ the word:occurs 100 times./br:($$)
+ the word+occurs 136 times./br:($$)
+ the word 1 occurs 147 times./br:($$)
+ the word = occurs 178 times./br:($$)
+ the word(occurs 241 times./br:($$)
+ the word)occurs 241 times./br:($$)
+ the word.occurs 408 times./br:($$)
  the word, occurs 460 times.",
 if subseq(result, 1, 8) = subseq(result1, 1, 8) then "PASS wordfreq"
 else "// FAIL wordfreq /literal"

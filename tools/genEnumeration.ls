@@ -83,7 +83,7 @@ else
  [
   "type:(type)is toint:int"
   , "Export toint(:(type))int"
-  , "Export:(type)(i:int):(type)"
+  , "Export:(type)(toint:int):(type)"
   , "Export type::(type)"
   , "Function =(a::(type), b::(type))boolean toint.a = toint.b"
  ]
@@ -106,7 +106,7 @@ type e1 is toint:int
 
 Export toint(e1) int
 
-Export e1(i:int) e1
+Export e1(toint:int) e1
 
 Export type:e1
 
@@ -130,7 +130,7 @@ type e2 is toint:int
 
 Export toint(e2) int
 
-Export e2(i:int) e2
+Export e2(toint:int) e2
 
 Export type:e2
 

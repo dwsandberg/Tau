@@ -1,6 +1,6 @@
 Module seq8.T
 
-for testing non standard sequence optimization. new([1, 128])should be reduce to constant. /br
+for testing non standard sequence optimization. new([1, 128])should be reduce to constant. /eol
 if non standard sequence is not detected will give new([1, 128])sub 2 instead of 128. 
 
 use seq.T

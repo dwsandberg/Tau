@@ -1,5 +1,7 @@
 Module autolink
 
+precedence > for >1
+
 use set.autolink
 
 use standard

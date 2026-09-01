@@ -44,38 +44,28 @@ use seq1.word
 
 use sort.word
 
-Export id(symbol) seq.word {From prettyR}
+Export id(sym:symbol) seq.word {From prettyR}
 
-Export type:autolink{From prettyR}
+Export type:autolink {From autolink}
 
-Export file(autolink) seq.word {From prettyR}
+Export file(autolink) seq.word {From autolink}
 
-Export id(autolink) seq.word {From prettyR}
+Export id(autolink) seq.word {From autolink}
 
-Export autolink(seq.word, seq.word) autolink {From prettyR}
+Export autolink(seq.word, seq.word) autolink {From autolink}
 
-Export >1(a:autolink, b:autolink) ordering {From prettyR}
+Export >1(a:autolink, b:autolink) ordering {From autolink}
 
-Export >2(a:autolink, b:autolink) ordering {From prettyR}
+Export >2(a:autolink, b:autolink) ordering {From autolink}
 
-Export prettyX(
-srctxt:seq.word
-, code:seq.symbol
-, syms:set.autolink
-, change:boolean
-, totxt:boolean
-) seq.word
+Export removeMarkup(a:seq.word) seq.word {From prettyR}
 
-Export removeMarkup(s:seq.word) seq.word
-
-Export showZ(seq.word) seq.word {From prettySupport}
+Export showZ(out:seq.word) seq.word {From prettySupport}
 
 Function sortuse(b:seq.seq.word, prefix:seq.word) seq.seq.word
 for a = empty:seq.seq.word, u ∈ b do a + reverse.u
 for acc = empty:seq.seq.word, @e ∈ sort>alpha.toseq.asset.a do acc + (prefix + reverse.@e),
 acc
-
-Function pretty(p:seq.word) seq.word pretty(p, true)
 
 Function libsrc(m:midpoint, outfn:seq.filename) seq.file
 let outname = outfn sub 1
@@ -100,19 +90,26 @@ do
      libs
      + file(filename("+:(dirpath.outname)" + libname + ".libsrc"), toseqbyte.textFormat.libtxt),
    next(newlibname, all + "/p" + libtxt, p, newlibs)
- else next(libname, all, libtxt + "/p" + pretty(p, false, true), libs),
+ else next(libname, all, libtxt + "/p" + removeMarkup.pretty.p, libs),
 if full then [file(changeext(outname, "libsrc"), toseqbyte.textFormat.all)] + libs
 else libs
 
-Function pretty(p:seq.word, change:boolean) seq.word pretty(p, change, false)
+function parse(p:seq.word) seq.symbol
+assert opprec."+" sub 1 = 4 report "no prec specified"
+let r = parse(totokens.p, empty:seq.symbol),
+if status.r ∈ "Match" then result.r else [EndBlock]
 
-Function pretty(p:seq.word, change:boolean, totxt:boolean) seq.word
-if p sub 1 ∈ "Function function" then
- assert opprec."+" sub 1 = 4 report "no prec specified"
- let r = parse(totokens.p, empty:seq.symbol),
- if status.r ∈ "Match MatchPrefix" then prettyX(p, result.r, empty:set.autolink, change, totxt)
- else [status.r] + %.result.r
-else prettyX(p, empty:seq.symbol, empty:set.autolink, change, totxt)
+Function prettyFunction(srctxt:seq.word, code:seq.symbol, syms:set.autolink) seq.word
+{used to pretty already parsed code}
+prettyX(srctxt, code, syms, true)
+
+Function prettyNoChange(p:seq.word) seq.word
+let code = if p sub 1 ∈ "Function function" then parse.p else empty:seq.symbol,
+if code = [EndBlock] then p else prettyX(p, code, empty:set.autolink, false)
+
+Function pretty(p:seq.word) seq.word
+let code = if p sub 1 ∈ "Function function" then parse.p else empty:seq.symbol,
+if code = [EndBlock] then p else prettyX(p, code, empty:set.autolink, true)
 
 function toAttribute(b:seq.symbol, tokens:seq.token) seq.symbol
 for w = "", e ∈ tokens do w + toword.e,
@@ -153,8 +150,7 @@ else a + b
 Function forbody(vars:seq.symbol, exitexp:seq.symbol, forbody:seq.symbol) seq.symbol
 let n = value.vars sub 1
 let textvars = subseq(vars, 2, n + 1)
-let codevars =
- vars << (n + 1) >> (if worddata.vars sub n.vars = "." then 1 else 0)
+let codevars = vars << (n + 1) >> (if worddata.vars sub n.vars = "." then 1 else 0)
 let noseq = name.textvars sub n.textvars ∈ ".",
 codevars
  + exitexp
@@ -271,42 +267,43 @@ seqElementType:token
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:AccumList AccumList' And And' Atom Compare Compare' Declare Declare' E EL' FP FPL FPL' ForDeclare IF Id N Name Or Or' Parser Power Power' Product Product' String String' Sum Sum' Type Unary comma? str2 /br
-Terminals:()*+,-.:= >[]any assert colon do dq else for function if let report sub then while{}∈ ∧ ∨ /br
-Parser ← function Name(FPL)Type Declare' E / function Name Type Declare' E /br
-String ← dq dq / dq String' dq /br
-* String' ← colon(E)/ colon / str2 /br
-+str2 ← ! dq ! colon any /br
-E ← Or /br
-* EL' ←, E /br
-Or ← And Or' /br
-* Or' ← ∨ And /br
-And ← Compare And' /br
-* And' ← ∧ Compare /br
-Compare ← Sum Compare' /br
-* Compare' ← > Sum /br
-Sum ← Product Sum' /br
-* Sum' ←+Product /br
-Product ← Unary Product' /br
-* Product' ← * Unary /br
-Unary ←-Unary / Id.Unary /{N}Unary / Power /br
-Power ← Atom Power' /br
-* Power' ← sub Unary /br
-Atom ←(E)/[E EL']/ String / Declare Declare' E / if E then E IF else E / Name(E EL')/ Name /br
-Name ← Id:Type / Id /br
-Id ← !, ![!(!]!)!:!.! dq any /br
-comma? ←, / /br
-* IF ← else if E then E /br
-Type ← Id.Type / Id /br
-Declare ← let any = E comma? / assert E report E comma? /{N}comma? / for ForDeclare do E comma? / for ForDeclare while E do E comma? /br
-ForDeclare ← AccumList, any ∈ E / AccumList /br
-AccumList ← ! while any = E AccumList' /br
-* AccumList' ←, any = E /br
-* Declare' ← Declare /br
-FPL ← FP FPL' /br
-* FPL' ←, FP /br
-FP ← any:Type / Type /br
-* N ←{N}/ !}any
+/eol
+Non-terminals:AccumList AccumList' And And' Atom Compare Compare' Declare Declare' E EL' FP FPL FPL' ForDeclare IF Id N Name Or Or' Parser Power Power' Product Product' String String' Sum Sum' Type Unary comma? str2 /eol
+Terminals:()*+,-.:= >[]any assert colon do dq else for function if let report sub then while{}∈ ∧ ∨ /eol
+Parser ← function Name(FPL)Type Declare' E / function Name Type Declare' E /eol
+String ← dq dq / dq String' dq /eol
+* String' ← colon(E)/ colon / str2 /eol
++str2 ← ! dq ! colon any /eol
+E ← Or /eol
+* EL' ←, E /eol
+Or ← And Or' /eol
+* Or' ← ∨ And /eol
+And ← Compare And' /eol
+* And' ← ∧ Compare /eol
+Compare ← Sum Compare' /eol
+* Compare' ← > Sum /eol
+Sum ← Product Sum' /eol
+* Sum' ←+Product /eol
+Product ← Unary Product' /eol
+* Product' ← * Unary /eol
+Unary ←-Unary / Id.Unary /{N}Unary / Power /eol
+Power ← Atom Power' /eol
+* Power' ← sub Unary /eol
+Atom ←(E)/[E EL']/ String / Declare Declare' E / if E then E IF else E / Name(E EL')/ Name /eol
+Name ← Id:Type / Id /eol
+Id ← !, ![!(!]!)!:!.! dq any /eol
+comma? ←, / /eol
+* IF ← else if E then E /eol
+Type ← Id.Type / Id /eol
+Declare ← let any = E comma? / assert E report E comma? /{N}comma? / for ForDeclare do E comma? / for ForDeclare while E do E comma? /eol
+ForDeclare ← AccumList, any ∈ E / AccumList /eol
+AccumList ← ! while any = E AccumList' /eol
+* AccumList' ←, any = E /eol
+* Declare' ← Declare /eol
+FPL ← FP FPL' /eol
+* FPL' ←, FP /eol
+FP ← any:Type / Type /eol
+* N ←{N}/ !}any /eol
 
 function action(partno:int, R:seq.seq.symbol, rinfo:resultType) seq.symbol
 if partno = 2 then mergeText(R sub (n.R - 1), R sub n.R)

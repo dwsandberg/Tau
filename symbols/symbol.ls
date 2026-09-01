@@ -20,7 +20,7 @@ use seq.typedef
 
 use seq1.word
 
-Export symbolKind(i:int) symbolKind
+Export symbolKind(toint:int) symbolKind
 
 Export type:symbol
 
@@ -36,7 +36,7 @@ Export toint(symbolKind) int
 
 Export ∈(symbolKind, seq.symbolKind) boolean {From seq.symbolKind}
 
-Export type:set.symbol{From set.symbol}
+Export type:set.symbol {From set.symbol}
 
 type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, flags:bits
 
@@ -317,7 +317,7 @@ else if kind = kwords then if dq sub 1 ∈ worddata.s then "':(worddata.s)'" els
 else if kind = kword then
  "WORD"
  + if wordname.s = encodeword.[char.254] then "word$char$254" sub 1
- else if wordname.s ∈ ("<* *> \keyword \br" + escapeformat) then encodeword(decodeword.wordname.s + char.32)
+ else if wordname.s ∈ ("\br" + escapeformat) then encodeword(decodeword.wordname.s + char.32)
  else wordname.s
 else if kind = kdefine then "Define:(name.s)"
 else if kind = kcontinue then "Continue" + wordname.s + "/br"
@@ -376,13 +376,7 @@ symbol(
 )
 
 Function symbolC(i:int, libname:word) symbol
-symbol(
- [merge.[libname, "." sub 1, toword.i]]
- , othermod
- , [typeptr]
- , 0x0
- , tobits.kconstantrecord
-)
+symbol([merge.[libname, "." sub 1, toword.i]], othermod, [typeptr], 0x0, tobits.kconstantrecord)
 
 Function symbol4(
 module:modref
@@ -498,7 +492,7 @@ type symbolKind is toint:int
 
 Export toint(symbolKind) int
 
-Export symbolKind(i:int) symbolKind
+Export symbolKind(toint:int) symbolKind
 
 Export type:symbolKind
 

@@ -20,13 +20,13 @@ use standard
 
 Export type:layernode
 
-Export layer(a:layernode) int
+Export layer(layernode) int
 
-Export no(a:layernode) int
+Export no(layernode) int
 
-Export pos(a:layernode) int
+Export pos(layernode) int
 
-Export layernode(int, int, int) layernode
+Export layernode(no:int, layer:int, pos:int) layernode
 
 Export type:path
 
@@ -38,7 +38,7 @@ Export g(rr5) graph.arc.layernode
 
 Export orgNodeCount(rr5) int
 
-Export rr5(g:graph.arc.layernode, paths:seq.path, int) rr5
+Export rr5(g:graph.arc.layernode, paths:seq.path, orgNodeCount:int) rr5
 
 type layernode is no:int, layer:int, pos:int
 

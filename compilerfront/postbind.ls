@@ -120,10 +120,12 @@ do
      if isempty.k2 then instantiateTemplate(symz, templates)
      else
       assert n.k2 = 1 report
-       "unbound problem:(symz):(if n.k2 > 1 then
+       "unbound problem:(symz):(
+       if n.k2 > 1 then
         for txt = "", symt ∈ toseq.k2 do txt + "/br" + library.module.symt + %.symt,
         txt
-       else "")"
+       else ""
+       )"
       let sym2 = k2 sub 1,
       let b2 = getSymdef(source, sym2),
       if not.isempty.b2 then
@@ -348,14 +350,13 @@ else
   ∧ parameter.modpara.gx sub 1 = modpara.gx sub 2 then {???? generalize?}gx sub 2
   else
    assert n.gx = 1 report
-    "Cannot find template for X:(n.gx):(sym2):(if isempty.gx then
-     {for txt ="", e ∈toseq.templates do if name.sym.e = name.sym2 then txt+"/br
-     :(sym.e)"else txt}
-     ""
-    else
-     for txt = "", k ∈ gx do txt + "/br" + %.sym.sd.k + %.modpara.k,
-     txt
-    )",
+    let zz =
+     {???? why need zz}
+     if isempty.gx then ""
+     else
+      for txt = "", k ∈ gx do txt + "/br" + %.sym.sd.k + %.modpara.k,
+      txt,
+    "Cannot find template for X:(n.gx):(sym2):(zz)",
    gx sub 1,
  for newcode = empty:seq.symbol, sym4 ∈ code.sd.tmp
  do

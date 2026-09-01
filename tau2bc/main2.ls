@@ -69,12 +69,7 @@ input:seq.file
 {OPTION PROFILE First line of src.m was added by compilerFront so remove it}
 for uses = "", e ∈ input do if ext.fn.e ∈ "libinfo" then uses + name.fn.e else uses
 let m =
- compilerFront:callconfig(
-  "bitcode uses: :(uses):(options)Library::(name.outfn sub 1)"
-  , input
-  , exports
-  , entryUses
- )
+ compilerFront:callconfig("bitcode uses: :(uses):(options)Library::(name.outfn sub 1)", input, exports, entryUses)
 let p = process.compilerback(m, changeext(outfn sub 1, "bc"), options, uses)
 assert not.aborted.p report message.p,
 result.p

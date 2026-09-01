@@ -12,14 +12,14 @@ use standard
 
 use toWords
 
-Export type:UTF8{From UTF8}
+Export type:UTF8 {From UTF8}
 
 Export towords(a:UTF8) seq.word {From toWords}
 
-Export breakparagraph(input:seq.byte) seq.seq.word {From toWords}
+Export breakparagraph(bytes:seq.byte) seq.seq.word {From toWords}
 
 Export fromHTML(bytes:seq.byte) seq.seq.word
-{input is broken into paragraphs when each paragraph is either an HTML element or is text. Paragraphs of text end with a double quote.}
+{input is broken into paragraphs when each paragraph is either an HTML element or is text. Paragraphs of text end with a double quote.}{From toWords}
 
 Function breaklines(a:UTF8) seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 

@@ -1,5 +1,7 @@
 Module bits
 
+precedence > for >1
+
 use seq.bits
 
 use seq.int
@@ -12,7 +14,7 @@ Export toint(bits) int
 
 Export type:byte
 
-Export bits(int) bits
+Export bits(toint:int) bits
 
 type bits is toint:int
 

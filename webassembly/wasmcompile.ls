@@ -364,8 +364,10 @@ do
   next(last, sym, pop.typestk, push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
  else if kind = kexit then
   assert top.typestk = top.pop.typestk report
-   "Exit type problem STK::(for l = "", e ∈ toseq.typestk do l + %.e,
-   l)/br:(printcode.curblk)",
+   "Exit type problem STK::(
+   for l = "", e ∈ toseq.typestk do l + %.e,
+   l
+   )/br:(printcode.curblk)",
   next(last, sym, pop.typestk, push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
  else if kind = kendblock then
   for blkhead = n.toseq.blkstk, e ∈ reverse.toseq.blkstk
@@ -540,10 +542,16 @@ do
    for acc = empty:seq.wtype, @e ∈ paratypes.sym do acc + wtype64(alltypes, @e),
    acc
   assert paratypes = top(typestk, n.paratypes) report
-   "type missmatch:(sym):(for acc = "", @e ∈ top(typestk, n.paratypes) do acc + %.@e,
-   acc)/:(for acc = "", @e ∈ paratypes do acc + %.@e,
-   acc)/br:(for acc = "", @e ∈ code do acc + %.@e,
-   acc)"
+   "type missmatch:(sym):(
+   for acc = "", @e ∈ top(typestk, n.paratypes) do acc + %.@e,
+   acc
+   )/:(
+   for acc = "", @e ∈ paratypes do acc + %.@e,
+   acc
+   )/br:(
+   for acc = "", @e ∈ code do acc + %.@e,
+   acc
+   )"
   let ele = lookup2(knownfuncs, wfunc(alltypes, sym, empty:seq.byte)),
   let this =
    if not.isempty.ele then

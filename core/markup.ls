@@ -41,30 +41,32 @@ let globaldefs = if isempty.gdefatt then "" else def.gdefatt sub 1
 let pdef = def.lookupkey(replacements, "/p" sub 1) sub 1
 for acc0 = "", mark0 = push(empty:stack.mark, mark("block" sub 1, 0)), pno = 1, p ∈ z
 do
- for last = "?" sub 1, skip = false, defines = "", marks = mark0, acc = acc0, e ∈ p + "/p"
+ for pidx = 1, skip = false, defines = "", marks = mark0, acc = acc0, e ∈ p + "/p"
  do
-  if e = escapeformat then next(e, not.skip, defines, marks, acc + e)
-  else if skip then next(e, skip, defines, marks, acc + e)
-  else if last ∈ "block" ∧ e ∈ "/br" then next(e, skip, defines, marks, acc)
-  else if e ∈ "//" then next(e, skip, defines, push(marks, n.acc), acc)
+  if e = escapeformat then next(pidx + 1, not.skip, defines, marks, acc + e)
+  else if skip then next(pidx + 1, skip, defines, marks, acc + e)
+  else if acc << (pidx - 2) = "/block /br" then next(pidx + 1, skip, defines, marks, acc)
+  else if e ∈ "//" then next(pidx + 1, skip, defines, push(marks, n.acc), acc)
   else if e ∈ "/p" then
    let place = place.top.marks,
-   if n.acc = place then next(e, skip, defines, marks, acc)
+   if n.acc = place then next(pidx + 1, skip, defines, marks, acc)
    else
     let content = subseq(acc, place + 1, n.acc)
     let newacc =
      subseq(acc, 1, place)
-     + evaldef:T(defines + pdef, content, xhtml, subseq(z, 1, pno))
+     + evaldef:T(defines + pdef, content, xhtml, subseq(z, 1, pno), pidx)
      + encodeword.[char.10],
     let newmarks = if kind.top.marks ∈ "block" then pop.marks else marks,
-    next(e, skip, defines, push(newmarks, mark("block" sub 1, n.newacc)), newacc)
+    next(pidx + 1, skip, defines, push(newmarks, mark("block" sub 1, n.newacc)), newacc)
   else
    let r = lookupkey(replacements, e),
-   if isempty.r then next(e, skip, defines, marks, acc + e)
+   if isempty.r then next(pidx + 1, skip, defines, marks, acc + e)
    else
     let att = r sub 1
     let basedon = baseon.att,
-    if isnamedmark.att ∧ key.att = tag.att then {marks beginning of tag}next(e, skip, defines, push(marks, mark(basedon, n.acc)), acc)
+    if isnamedmark.att ∧ key.att = tag.att then
+     {marks beginning of tag}
+     next(pidx + 1, skip, defines, push(marks, mark(basedon, n.acc)), acc)
     else if ismark.att ∨ isdefine.att then
      let nomark = isempty.marks ∨ kind.top.marks ∉ "mark"
      let lastplace = if nomark then n.acc - 1 else place.top.marks
@@ -73,10 +75,10 @@ do
      let combinedDef = defines + def.att + globaldefs
      let new =
       (if isdefine.att then "" else smallacc)
-      + evaldef:T(combinedDef, content, xhtml, subseq(z, 1, pno)),
+      + evaldef:T(combinedDef, content, xhtml, subseq(z, 1, pno), pidx),
      let stk2 = if nomark then marks else pop.marks,
-     if isdefine.att then next(e, skip, defines + new, stk2, smallacc)
-     else next(e, skip, "", stk2, new)
+     if isdefine.att then next(pidx + 1, skip, defines + new, stk2, smallacc)
+     else next(pidx + 1, skip, "", stk2, new)
     else
      for acc1 = acc, ee ∈ [1]
      while basedon ∈ "/div" ∧ kind.top.marks ∈ "block" ∧ place.top.marks < n.acc1
@@ -103,7 +105,7 @@ do
      let combinedDef = defines + def.att + globaldefs
      let new =
       (if isdefine.att then "" else smallacc)
-      + evaldef:T(combinedDef, content, xhtml, subseq(z, 1, pno))
+      + evaldef:T(combinedDef, content, xhtml, subseq(z, 1, pno), pidx)
      let stk7 =
       if basedon = kind.top.marks1 then pop.marks1
       else if basedon ∈ "/td" ∧ kind.top.marks1 ∈ "/th" then pop.marks
@@ -119,7 +121,7 @@ do
        {if not.isempty.stk7 ∧ kind.top.stk7 ∈"/div /td /th"then push(stk7, mark("block"sub 1, n.new))else}
        let stk5 = if not.isempty.stk7 ∧ kind.top.stk7 ∈ "block" then pop.stk7 else stk7,
        push(stk5, mark("block" sub 1, n.new)),
-     next(e, skip, "", stk2, new),
+     next(pidx + 1, skip, "", stk2, new),
  next(acc, marks, pno + 1),
 acc0
 
@@ -128,10 +130,10 @@ defs:seq.word
 , content:seq.word
 , xhtml:boolean
 , raw:seq.seq.word
+, pidx:int
 ) seq.word
 let alldefs = getDefines.defs
-let rr = parseBB2.extractdef(alldefs, "tohtml")
-for acc = "", e ∈ rr
+for acc = "", e ∈ getToHTMLexpression.alldefs
 do
  acc
  + if name.e = "no eval" then value.e
@@ -159,25 +161,23 @@ do
       else first + second,
     next(push(pop(stk, 2), val), state)
    else if ele ∈ "/raw" then
-    let endtag = merge("/" + last.last.raw)
-    for txt = "", quit = false, p0 ∈ reverse.raw
+    {extract original input for last format command}
+    let endtag = merge."/:(subseq(last.raw, pidx, pidx))"
+    let raw2 = raw >> 1 + subseq(last.raw, 1, pidx - 1),
+    for txt = "", quit = false, p0 ∈ reverse.raw2
     while not.quit
     do
-     let p5 =
-      if not.isempty.txt then p0
-      else
-       {???? needto look up p sub p.n-1 to find out if it is based on"/p"}
-       let aa = if subseq(p0, n.p0 - 1, n.p0 - 1) = "/p" then 2 else 1
-       {???? bug in formating when aa is removed}
-       p0 >> aa
-     for end = false, p1 = "", w ∈ p5
-     do
-      if w = endtag then next(true, "")
-      else if w ∈ "/br" then next(end, p1 + "/ /nsp br" + w)
-      else if w ∈ "/p" then next(end, p1 + "/ /nsp p")
-      else next(end, p1 + w),
-     next(p1 + "/br /br" + txt, end),
-    next(push(stk, txt >> 2), state)
+     for i2 = n.p0, w ∈ reverse.p0 while i2 > 0 ∧ w ≠ endtag do i2 - 1,
+     if i2 > 0 then next(p0 << i2 + txt, true) else next(p0 + txt, false),
+    next(push(stk, txt), state)
+   else if ele ∈ "/escape/" then
+    {if word begins with / then remove / from word and use nospace format to recombine}
+    for acc2 = "", w ∈ top.stk
+    do
+     let t = decodeword.w,
+     if n.t > 1 ∧ t sub 1 = char1."/" then acc2 + encodeword(t + char.32)
+     else acc2 + w,
+    next(push(pop.stk, acc2), state)
    else
     let result = dawsextensions:T(ele, stk),
     if not.isempty.result then next(result, state)

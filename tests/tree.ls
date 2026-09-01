@@ -39,6 +39,8 @@ else
  %.label.t
  + if nosons.t = 1 then ".:(t sub 1)"
  else
-  "(:(for acc = "", e ∈ sons.t do acc + %.e + ",",
-  acc >> 1 + ")")"
+  "(:(
+  for acc = "", e ∈ sons.t do acc + %.e + ",",
+  acc >> 1 + ")"
+  )"
  

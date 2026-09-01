@@ -20,7 +20,7 @@ use seq.word
 
 Export type:encoding.T
 
-Export valueofencoding(a:encoding.T) int
+Export valueofencoding(encoding.T) int
 
 Export type:encodingstate.T
 

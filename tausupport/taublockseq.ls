@@ -18,7 +18,7 @@ use bitcast.ptr
 
 Export type:blockseq.T
 
-Export type:seq.T{From seq.T}
+Export type:seq.T {From seq.T}
 
 builtin getfld(address:blockseq.T, offset:int) seq.T {load value of type T at address}
 

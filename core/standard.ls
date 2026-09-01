@@ -1,5 +1,7 @@
 Module standard
 
+precedence > for >1 >2 >3 >4 >alpha
+
 use bits
 
 use seq.char
@@ -20,29 +22,29 @@ use seq.seq.word
 
 use seq1.word
 
-Export char1(s:seq.word) char
+Export char1(s:seq.word) char {From word}
 
-Export type:boolean
+Export type:boolean {From kernal}
 
-Export type:char
+Export type:char {From kernal}
 
-Export toint(char) int
+Export toint(char) int {From kernal}
 
-Export char(int) char
+Export char(int) char {From kernal}
 
-Export type:ordering
+Export type:ordering {From kernal}
 
-Export toword(n:int) word {Covert integer to a single word.}{From UTF8}
+Export toword(n:int) word {Covert integer to a single word.}{From word}
 
-Export toint(w:word) int {Convert an integer represented as a word to an int}{From UTF8}
+Export toint(w:word) int {Convert an integer represented as a word to an int}{From word}
 
-Export not(a:boolean) boolean {From internal}
+Export not(a:boolean) boolean
 
-Export =(a:boolean, b:boolean) boolean {From internal}
+Export =(a:boolean, b:boolean) boolean
 
-Export false boolean {From internal}
+Export false boolean
 
-Export true boolean {From internal}
+Export true boolean
 
 Export arithseq(int, int, int) seq.int {From seq1.int}
 
@@ -50,7 +52,7 @@ Export constantseq(len:int, element:int) seq.int {From seq1.int}
 
 Export findindex(seq.word, word) int {From seq1.word}
 
-Export type:seq.char{From seq.char}
+Export type:seq.char {From seq.char}
 
 Export isempty(seq.char) boolean {From seq.char}
 
@@ -68,7 +70,7 @@ Export empty:seq.char seq.char {From seq.char}
 
 Export subseq(seq.char, int, int) seq.char {From seq.char}
 
-Export type:seq.int{From seq.int}
+Export type:seq.int {From seq.int}
 
 Export isempty(seq.int) boolean {From seq.int}
 
@@ -88,7 +90,7 @@ Export subseq(seq.int, int, int) seq.int {From seq.int}
 
 Export ∈(int, seq.int) boolean {From seq.int}
 
-Export type:seq.seq.word{From seq.seq.word}
+Export type:seq.seq.word {From seq.seq.word}
 
 Export n(seq.seq.word) int {From seq.seq.word}
 
@@ -104,7 +106,7 @@ Export subseq(seq.seq.word, int, int) seq.seq.word {From seq.seq.word}
 
 Export ∈(seq.word, seq.seq.word) boolean {From seq.seq.word}
 
-Export type:seq.word{From seq.word}
+Export type:seq.word {From seq.word}
 
 Export isempty(seq.word) boolean {From seq.word}
 
@@ -112,7 +114,7 @@ Export n(seq.word) int {From seq.word}
 
 Export sub(seq.word, int) word {From seq.word}
 
-Export +(a:seq.word, b:seq.word) seq.word {OPTION COMPILETIME}{From seq.word}
+Export +(seq.word, seq.word) seq.word {From seq.word}
 
 Export +(seq.word, word) seq.word {From seq.word}
 
@@ -123,7 +125,7 @@ Export =(seq.word, seq.word) boolean {From seq.word}
 
 Export >>(s:seq.word, i:int) seq.word {* removes i words from end of s}{From seq.word}
 
-Export last(seq.word) word
+Export last(seq.word) word {From seq.word}
 
 Export empty:seq.word seq.word {From seq.word}
 
@@ -135,13 +137,13 @@ Export encodeword(a:seq.char) word {From word}
 
 Export merge(a:seq.word) word {make multiple word into a single word.}{From word}
 
-Export type:word{From word}
+Export type:word {From kernal}
 
 Export decodeword(w:word) seq.char {From word}
 
 Export hash(a:word) int {From word}
 
-Export =(a:word, b:word) boolean {From word}
+Export =(a:word, b:word) boolean {From kernal}
 
 Export >1(a:word, b:word) ordering {From word}
 
@@ -153,17 +155,17 @@ Function dq seq.word
 
 Function dq(s:seq.word) seq.word dq + s + dq
 
-Export >1(char, char) ordering
+Export >1(a:char, b:char) ordering {From word}
 
-Export =(char, char) boolean
+Export =(a:char, b:char) boolean {From kernal}
 
-Export EQ ordering
+Export EQ ordering {From kernal}
 
-Export GT ordering
+Export GT ordering {From kernal}
 
-Export LT ordering
+Export LT ordering {From kernal}
 
-Export =(ordering, ordering) boolean
+Export =(a:ordering, b:ordering) boolean {From kernal}
 
 Function ∧(a:ordering, b:ordering) ordering if a = EQ then b else a
 
@@ -172,13 +174,13 @@ if a then if b then {T T}EQ else {T F}GT
 else if b then {F T}LT
 else {F F}EQ
 
-Export ∧(a:boolean, b:boolean) boolean
+Export ∧(a:boolean, b:boolean) boolean {From kernal}
 
-Export ∨(a:boolean, b:boolean) boolean
+Export ∨(a:boolean, b:boolean) boolean {From kernal}
 
 -------------------------------
 
-Export -(i:int) int
+Export -(i:int) int {From kernal}
 
 Export >1(a:int, b:int) ordering
 
@@ -194,27 +196,27 @@ Export =(a:int, b:int) boolean
 
 --------------------
 
-Export abs(x:int) int
+Export abs(x:int) int {From kernal}
 
-Export mod(x:int, y:int) int
+Export mod(x:int, y:int) int {From kernal}
 
 Export >(a:int, b:int) boolean
 
-Export <(a:int, b:int) boolean
+Export <(a:int, b:int) boolean {From kernal}
 
-Export between(i:int, lower:int, upper:int) boolean
+Export between(i:int, lower:int, upper:int) boolean {From kernal}
 
-Export sup(i:int, n:int) int
+Export sup(x:int, n:int) int {From kernal}
 
-Export max(a:int, b:int) int
+Export max(a:int, b:int) int {From kernal}
 
-Export min(a:int, b:int) int
+Export min(a:int, b:int) int {From kernal}
 
 -------------------------------
 
-Export hash(a:seq.int) int
+Export hash(a:seq.int) int {From word}
 
-Export hash(a:seq.word) int
+Export hash(a:seq.word) int {From word}
 
 Function randomseq(seed:int, length:int) seq.int
 {Xorshift* see Wikapedia entry on Xorshift}
@@ -259,8 +261,7 @@ do
 found ∧ value ≠ "false"
 
 function hexdigit(b:bits) char
-let k = decodeword."0123456789ABCDEF" sub 1
-assert n.k = 16 report "XXX:(n.k)",
+let k = decodeword."0123456789ABCDEF" sub 1,
 k sub (1 + toint(b ∧ 0x0F))
 
 function hexword(b:bits) word
@@ -282,10 +283,14 @@ Function %(o:ordering) seq.word ["LT EQ GT" sub (toint.o + 1)]
 Function >alpha(a:word, b:word) ordering
 if a = b then EQ else decodeword.a >alpha decodeword.b
 
-Export type:word
+Export type:word {From kernal}
 
 Function >alpha(a:char, b:char) ordering a >1 b
 
 Function seqseg2(s:seq.int, i:int) pseq.int seqseg(s, i)
 
-Function red(s:seq.word) seq.word "//:(s)/literal" 
+Function red(s:seq.word) seq.word "//:(s)/literal"
+
+------------
+
+Function $$ seq.word "" 

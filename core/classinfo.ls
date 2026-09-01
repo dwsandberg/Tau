@@ -205,68 +205,53 @@ acc
 
 Function defaults seq.classinfo
 let data =
- "q{/* daws flags: mark tohtml: < q class id > content </ q > totxt: content /mark id /id class */}/br
- b{/* daws flags: mark tohtml: < b class id > content </ b > totxt: content /mark id /id class */}/br
- i{/* daws flags: mark tohtml: < i class id > content </ i > totxt: content /mark id /id class */}/br
- em{/* daws flags: mark tohtml: < em class id > content </ em > totxt: content /mark id /id class */}/br
- strong{/* daws flags: mark tohtml: < strong class id > content </ strong > totxt: content /mark id /id class */}/br
- span{/* daws flags: mark tohtml: < span class id > content </ span > totxt: content /mark id /id class */}/br
- span.spc{/* daws flags: mark tohtml: /sp < span class id > content </ span > /sp */}/br
- caption{/* daws flags: namedmark tohtml: < caption class id > content </ caption > totxt: content class */}/br
- a{/* daws flags: mark tohtml: < a class id href > content </ a > totxt: content /mark href /href class */}/br
- sub{/* daws flags: mark tohtml: /nsp < sub class id > content </ sub > totxt: content /mark id /id class */}/br
- sup{/* daws flags: mark tohtml: /nsp < sup class id > content </ sup > totxt: content /mark id /id class */}/br
- !doctype{/* daws flags: noendtag */}/br
- meta{/* daws flags: noendtag */}/br
- !{/* daws flags: noendtag */}/br
- html{/* daws tohtml: content </ html > */}/br
- body{/* daws flags: */}/br
- ?xml{/* daws flags: noendtag */}/br
- head{/* daws tohtml: < head > content </ head > < body > totxt: content /p
- */}/br
- link{/* daws flags: noendtag rel: stylesheet tohtml: < link rel href:content /> totxt: href /mark class /br
- */}/br
- base{/* daws flags: noendtag tohtml: < base rel href:content /> totxt: href /mark class */}/br
- title{/* daws tohtml: < title class > content </ title > totxt: content class /br
- */}/br
- hr{/* daws flags: noendtag tohtml: content < hr class /> totxt: content class /p
- */}/br
- br{/* daws flags: noendtag tohtml: content < br class id /> totxt: contentid /id class /br
- */}/br
- img{/* daws flags: mark noendtag alt: a picture tohtml: < img class id alt src:prefix content /pre postfix /post /> totxt: prefix src postfix /post /pre /mark id /id class */}/br
- style{/* daws */}/br
- p{/* daws tohtml: < p class id > content </ p > totxt: content id /id class */}/br
- h1{/* daws flags: namedmark tohtml: < h1 class id > content </ h1 > totxt: content id /id class /p
- */}/br
- h2{/* daws tohtml: < h2 class id > content </ h2 > totxt: content id /id class /p
- */}/br
- h3{/* daws tohtml: < h3 class id > content </ h3 > totxt: content id /id class /p
- */}/br
- h4{/* daws tohtml: < h4 class id > content </ h4 > totxt: content id /id class /p
- */}/br
- h5{/* daws tohtml: < h5 class id > content </ h5 > totxt: content id /id class /p
- */}/br
- h6{/* daws tohtml: < h6 class id > content </ h6 > totxt: content id /id class /p
- */}/br
- table{/* daws flags: namedmark tohtml: < table class id > content </ table > totxt: content /mark id /id class /br
- */}/br
- li{/* daws tohtml: < li class id > content </ li > totxt: content id /id class /p
- */}/br
- ol{/* daws flags: namedmark tohtml: < ol class id start > content </ ol > totxt: content /mark id /id class /p
- */}/br
- ul{/* daws flags: namedmark tohtml: < ul class id > content </ ul > totxt: content /mark id /id class /p
- */}/br
- div{/* daws flags: namedmark tohtml: < div class id > content </ div > totxt: content /mark id /id class /p
- */}/br
- tr{/* daws tohtml: < tr class id > content </ tr > totxt: content id /id class /br
- */}/br
- td{/* daws tohtml: < td class id > content </ td > totxt: content id /id class */}/br
- th{/* daws tohtml: < th class id > content </ th > totxt: content id /id class */}/br
- href{/* daws flags: define tohtml: ' href colon content */}/br
- id{/* daws flags: define tohtml: ' id colon content */}/br
- rel{/* daws flags: define tohtml: ' rel colon content */}/br
- meta.charset{/* daws tohtml: < meta charset:content; > */}/br
- ",
+ "q{/* daws flags: mark tohtml: < q class id > content </ q > totxt: content /mark id /id class */}:($$)
+ b{/* daws flags: mark tohtml: < b class id > content </ b > totxt: content /mark id /id class */}:($$)
+ i{/* daws flags: mark tohtml: < i class id > content </ i > totxt: content /mark id /id class */}:($$)
+ em{/* daws flags: mark tohtml: < em class id > content </ em > totxt: content /mark id /id class */}:($$)
+ strong{/* daws flags: mark tohtml: < strong class id > content </ strong > totxt: content /mark id /id class */}:($$)
+ span{/* daws flags: mark tohtml: < span class id > content </ span > totxt: content /mark id /id class */}:($$)
+ span.spc{/* daws flags: mark tohtml: /sp < span class id > content </ span > /sp */}:($$)
+ caption{/* daws flags: namedmark tohtml: < caption class id > content </ caption > totxt: content class */}:($$)
+ a{/* daws flags: mark tohtml: < a class id href > content </ a > totxt: content /mark href /href class */}:($$)
+ sub{/* daws flags: mark tohtml: /nsp < sub class id > content </ sub > totxt: content /mark id /id class */}:($$)
+ sup{/* daws flags: mark tohtml: /nsp < sup class id > content </ sup > totxt: content /mark id /id class */}:($$)
+ !doctype{/* daws flags: noendtag */}:($$)
+ meta{/* daws flags: noendtag */}:($$)
+ !{/* daws flags: noendtag */}:($$)
+ html{/* daws tohtml: content </ html > */}:($$)
+ body{/* daws flags: */}:($$)
+ ?xml{/* daws flags: noendtag */}:($$)
+ head{/* daws tohtml: < head > content </ head > < body > totxt: content /p */}:($$)
+ link{/* daws flags: noendtag rel: stylesheet tohtml: < link rel href:content /> totxt: href /mark class /br */}:($$)
+ base{/* daws flags: noendtag tohtml: < base rel href:content /> totxt: href /mark class */}:($$)
+ title{/* daws tohtml: < title class > content </ title > totxt: content class /br */}:($$)
+ hr{/* daws flags: noendtag tohtml: content < hr class /> totxt: content class /p */}:($$)
+ br{/* daws flags: noendtag tohtml: content < br class id /> totxt: content id /id class /br */}:($$)
+ br.eol{/* daws totxt: content /eol /br */}:($$)
+ img{/* daws flags: mark noendtag alt: a picture tohtml: < img class id alt src:prefix content /pre postfix /post /> totxt: prefix src postfix /post /pre /mark id /id class */}:($$)
+ style{/* daws */}:($$)
+ p{/* daws tohtml: < p class id > content </ p > totxt: content id /id class /p */}:($$)
+ h1{/* daws flags: namedmark tohtml: < h1 class id > content </ h1 > totxt: content id /id class /p */}:($$)
+ h2{/* daws tohtml: < h2 class id > content </ h2 > totxt: content id /id class /p */}:($$)
+ h3{/* daws tohtml: < h3 class id > content </ h3 > totxt: content id /id class /p */}:($$)
+ h4{/* daws tohtml: < h4 class id > content </ h4 > totxt: content id /id class /p */}:($$)
+ h5{/* daws tohtml: < h5 class id > content </ h5 > totxt: content id /id class /p */}:($$)
+ h6{/* daws tohtml: < h6 class id > content </ h6 > totxt: content id /id class /p */}:($$)
+ table{/* daws flags: namedmark tohtml: < table class id > content </ table > totxt: content /mark id /id class /br */}:($$)
+ li{/* daws tohtml: < li class id > content </ li > totxt: content id /id class /p */}:($$)
+ ol{/* daws flags: namedmark tohtml: < ol class id start > content </ ol > totxt: content /mark id /id class /p */}:($$)
+ ul{/* daws flags: namedmark tohtml: < ul class id > content </ ul > totxt: content /mark id /id class /p */}:($$)
+ div{/* daws flags: namedmark tohtml: < div class id > content </ div > totxt: content /mark id /id class /p */}:($$)
+ div.noformat{/* daws tohtml: < div class id > /raw /escape/ </ div > totxt: content /escape/ /mark id /id class */ display:inline;}:($$)
+ tr{/* daws tohtml: < tr class id > content </ tr > totxt: content id /id class /br */}:($$)
+ td{/* daws tohtml: < td class id > content </ td > totxt: content id /id class */}:($$)
+ th{/* daws tohtml: < th class id > content </ th > totxt: content id /id class */}:($$)
+ href{/* daws flags: define tohtml: ' href colon content */}:($$)
+ id{/* daws flags: define tohtml: ' id colon content */}:($$)
+ rel{/* daws flags: define tohtml: ' rel colon content */}:($$)
+ meta.charset{/* daws tohtml: < meta charset:content; > */}:($$)
+ input{/* daws flags: noendtag type: hidden tohtml: content < input type /> totxt: content type /type class */}",
 processCSS([data], empty:seq.classinfo)
 
 Function attribute(val:seq.word, att:seq.word) seq.word
@@ -278,7 +263,7 @@ Export kind(mark) word
 
 Export place(mark) int
 
-Export mark(word, int) mark
+Export mark(kind:word, place:int) mark
 
 type mark is kind:word, place:int
 
@@ -294,7 +279,7 @@ Function %(a:pair) seq.word "@:(name.a)::(value.a);"
 
 Function =(a:pair, b:pair) boolean name.a = name.b
 
-Export pair(seq.word, seq.word) pair
+Export pair(name:seq.word, value:seq.word) pair
 
 Export name(pair) seq.word
 
@@ -313,10 +298,66 @@ Function extractdef(a:seq.pair, name:seq.word) seq.word
 let j = lookup(a, pair(name, "")),
 if isempty.j then "" else value.j sub 1
 
-Function parseBB2(a:seq.word) seq.pair
+Function getToHTMLexpression(alldefs:seq.pair) seq.pair
+let a = extractdef(alldefs, "tohtml")
 let r = parse(a, empty:seq.pair)
-assert status.r ∈ "Match" report "BB parse error" + a,
+assert status.r ∈ "Match" report "BB parse error:(a)",
 result.r
+
+Export type:stkinfo
+
+Export info(stkinfo) classinfo
+
+Export place(stkinfo) int
+
+Export tagcontent(stkinfo) seq.word
+
+Export stkinfo(classinfo, seq.word, int) stkinfo
+
+type stkinfo is info:classinfo, tagcontent:seq.word, place:int
+
+Function getAtt(txt:seq.word) seq.pair
+let inname = 0
+let invalue = 1
+let indq = 2
+for
+ acc = empty:seq.pair
+ , name = ""
+ , state = inname
+ , val = ""
+ , e ∈ subseq(txt, 2, n.txt - 1)
+do
+ if state = inname then
+  if e ∈ "=" then next(acc, name, invalue, val)
+  else next(acc, name + e, state, val)
+ else if e ∈ dq then
+  if state = invalue then next(acc, name, indq, val)
+  else next(acc + pair(name, val), "", inname, "")
+ else next(acc, name, state, val + e),
+acc
+
+Function rmprefix(prefix0:seq.word, A:seq.word) seq.word
+if isempty.prefix0 then A
+else
+ let prefix = if last.prefix0 ∈ "/nsp" then prefix0 >> 1 else prefix0,
+ if n.A < n.prefix then A
+ else
+  for B = A, prefix1 = prefix
+  while not.isempty.prefix1 ∧ prefix1 sub 1 = B sub 1
+  do next(B << 1, prefix1 << 1),
+  if isempty.prefix1 ∨ isempty.B then B
+  else
+   let m1 = decodeword.prefix1 sub 1
+   let m2 = decodeword.B sub 1,
+   if subseq(m2, 1, n.m1) = m1 then [encodeword(m2 << n.m1)] + B << 1 else B
+
+Function rmpostfix(t:seq.word, postfix:seq.word) seq.word
+if n.t < n.postfix then t
+else
+ for A = t, postfix1 = postfix
+ while not.isempty.postfix1 ∧ last.postfix1 = last.A
+ do next(A >> 1, postfix >> 1),
+ A
 
 function endMark word encodeword.[char.254]
 
@@ -329,8 +370,7 @@ else if isempty.value.first.a ∧ isempty.name.first.a then a >> 1
 else a
 
 function endtag(a:seq.word) seq.word
-"/!<"
- + if a = "p" then escapeFormat."/p" + "/!>" else [merge("/" + a)] + "/!>"
+"/!<:(if a = "p" then escapeFormat."/p" + "/!>" else [merge."/:(a)"] + "/!>")"
 
 function +(acc:seq.pair, s:seq.word) seq.pair
 if isempty.acc then [pair("", s)]
@@ -367,14 +407,15 @@ function genPEG(seqElementType:word, attributeType:seq.pair) seq.boolean
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:C1 N1 N1' N2 S V /br
-Terminals:-/>:; < </ > any /br
-* S ← < any C1 > / < any C1 /> / </ any > / ! < ! </ any /br
-* C1 ← N2:V; / N2:V / N2 /br
-N2 ← N1 N1' /br
-* N1' ←-any /br
-N1 ← ! > ! /> any /br
-* V ← !; ! > ! /> any
+/eol
+Non-terminals:C1 N1 N1' N2 S V /eol
+Terminals://noformat-/>:; < </ > any /noformat /eol
+//noformat * S ← < any C1 > / < any C1 /> / </ any > / ! < ! </ any /noformat /eol
+* C1 ← N2:V; / N2:V / N2 /eol
+N2 ← N1 N1' /eol
+* N1' ←-any /eol
+//noformat N1 ← ! > ! /> any /noformat /eol
+//noformat * V ← !; ! > ! /> any /noformat /eol
 
 function action(partno:int, R:seq.seq.pair) seq.pair
 if partno = 2 then tag(R sub (n.R - 2), R sub (n.R - 1), R sub n.R, "/!>")

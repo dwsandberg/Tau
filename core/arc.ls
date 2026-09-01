@@ -12,7 +12,7 @@ Export head(arc.T) T
 
 Export tail(arc.T) T
 
-Export arc(T, T) arc.T
+Export arc(tail:T, head:T) arc.T
 
 type arc is tail:T, head:T
 

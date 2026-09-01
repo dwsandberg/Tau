@@ -151,22 +151,23 @@ do
       assert currenttype = "i64" report "not expecting type in prttoint:(currenttype):(types sub (a sub 3 + 1))",
       "ptrtoint(:(lookupconst(result, a sub 4)),:(types sub (a sub 3 + 1)):(if check then ",:(printrecord(CONSTANTS, a)))" else ")")"
     else if a sub 1 = toint.CGEP ∧ n.a = 8 ∧ check then
-     "CGEP(:(if a sub 2 = 1 then "conststype" else types sub (a sub 3 + 1)),:(lookupconst(result, a sub 4)
+     "CGEP(:(if a sub 2 = 1 then "conststype" else types sub (a sub 3 + 1)),:(
+     lookupconst(result, a sub 4)
      + ","
      + lookupconst(result, a sub 6)
      + ","
      + lookupconst(result, a sub 8)
      + ","
      + printrecord(CONSTANTS, a)
-     + ")")"
+     + ")"
+     )"
     else if a sub 1 = toint.CGEP ∧ n.a = 8 then
      let a8 = lookupconst(result, a sub 8)
      let a6 = lookupconst(result, a sub 6),
      (if currenttype = "ptr.i8" then "CGEPi8(" else "CGEP(")
      + lookupconst(result, a sub 4)
      + ","
-     + (if a6 = "C32.0" ∧ subseq(a8, 1, 2) = "C64." then [a8 sub 3]
-     else a6 + "," + a8)
+     + (if a6 = "C32.0" ∧ subseq(a8, 1, 2) = "C64." then [a8 sub 3] else a6 + "," + a8)
      + if check then ",:(printrecord(CONSTANTS, a)))" else ")"
     else
      assert constop.a sub 1 ∈ [CAGGREGATE, CNULL, CDATA, CCAST] report "KL:(decode.constop.a sub 1)" + toword.a sub 1,

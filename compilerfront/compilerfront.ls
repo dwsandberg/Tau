@@ -50,9 +50,9 @@ use seq.seq.word
 
 use set.word
 
-Export type:midpoint{From symbol1}
+Export type:midpoint {From symbol1}
 
-Export libmods(m:midpoint) seq.modExports {From symbol1}
+Export libmods(midpoint) seq.modExports {From symbol1}
 
 Export option(midpoint) seq.word {From symbol1}
 
@@ -73,7 +73,7 @@ option:seq.word
 ) midpoint
 {From symbol1}
 
-Export type:modExports{From symbol1}
+Export type:modExports {From symbol1}
 
 Export exports(modExports) seq.symbol {From symbol1}
 
@@ -81,10 +81,9 @@ Export modname(modExports) modref {From symbol1}
 
 Export types(modExports) seq.seq.mytype {From symbol1}
 
-Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
-{From symbol1}
+Export modExports(modref, seq.symbol, seq.seq.mytype) modExports {From symbol1}
 
-Export type:typedict{From typedict}
+Export type:typedict {From typedict}
 
 function types(libinfo:midpoint) seq.seq.mytype
 for acc = empty:seq.seq.mytype, m ∈ libmods.libinfo do acc + types.m,
@@ -345,11 +344,13 @@ do
 let stacktrace2 =
  if isempty.stackTrace then ""
  else
-  "stacktrace::([
+  "stacktrace::(
+  [
    library.module.sym.stackTrace sub 1
    , name.module.sym.stackTrace sub 1
    , name.sym.stackTrace sub 1
-  ])",
+  ]
+  )",
 midpoint(
  option.midin
  , prgX

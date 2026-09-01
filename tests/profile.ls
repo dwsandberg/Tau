@@ -2,21 +2,13 @@ Module profile
 
 precedence > for >1 >2
 
-use seq1.addrsym
-
 use seq.addrsym
 
 use seq.seq.addrsym
 
+use seq1.addrsym
+
 use set.addrsym
-
-use seq1.parc
-
-use seq.parc
-
-use seq.seq.parc
-
-use standard
 
 use arc.int
 
@@ -24,13 +16,33 @@ use seq.arc.int
 
 use set.arc.int
 
-use graph.profileMeasure.symbol
+use set.int
+
+use seq.parc
+
+use seq.seq.parc
+
+use seq1.parc
+
+use standard
+
+use svg
 
 use arc.symbol
 
+use profileMeasure.symbol
+
+use drawGraph.profileMeasure.symbol
+
+use graph.profileMeasure.symbol
+
+use seq.profileMeasure.symbol
+
+use set.profileMeasure.symbol
+
 use seq.symbol
 
-use svg
+use set.symbol
 
 use symbol1
 
@@ -55,20 +67,6 @@ Function decode(d:set.addrsym, i:int) symbol sym.lookup(d, addrsym(i, Lit.0)) su
 
 function %(p:parc) seq.word
 %.caller.p + %.callee.p + %.counts.p + %.clocks.p + %.unused.p
-
-use set.int
-
-use graph.profileMeasure.symbol
-
-use set.profileMeasure.symbol
-
-use seq.profileMeasure.symbol
-
-use set.symbol
-
-use drawGraph.profileMeasure.symbol
-
-use profileMeasure.symbol
 
 Function profileresults(measure:seq.word) seq.word
 for d0 = empty:seq.addrsym, a ∈ addresssymbols do d0 + a

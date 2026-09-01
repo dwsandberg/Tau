@@ -16,7 +16,7 @@ Export type:UTF8
 
 Export toseqbyte(UTF8) seq.byte
 
-Export UTF8(seq.byte) UTF8
+Export UTF8(toseqbyte:seq.byte) UTF8
 
 type UTF8 is toseqbyte:seq.byte
 
@@ -100,4 +100,9 @@ acc
 
 Function escapeformat word merge."/ escapeformat"
 
-Function escapeFormat(b:seq.word) seq.word [escapeformat] + b + [escapeformat] 
+Function escapeFormat(b:seq.word) seq.word
+if isempty.b then b else [escapeformat] + b + [escapeformat]
+
+Function showZ(out:seq.word) seq.word
+for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
+acc 

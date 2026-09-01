@@ -66,7 +66,7 @@ function errormessage(message:seq.word, rinfo:recoverInfo) seq.word
 let input = input.rinfo
 let place = place.rinfo
 let ending = recoveryEnding.rinfo
-let pp = pretty(towords.subseq(input, 1, place - 1) + ending, false)
+let pp = prettyNoChange(towords.subseq(input, 1, place - 1) + ending)
 for idx = n.pp, remove = ending, addback = "", go = not.isempty.ending, e ∈ reverse.pp
 while go
 do
@@ -211,14 +211,18 @@ assert not.isempty.f report
  if n.name = 1 ∧ name sub 1 ∈ "if else then for" then errormessage("Syntax error", rinfo)
  else
   errormessage(
-   "cannot find 1:(if n.name = 1 then name else [name sub 1, ":" sub 1] + name << 1)(:(for acc = "", @e ∈ paratypes do acc + %.@e + ",",
-   acc >> 1))"
+   "cannot find 1:(if n.name = 1 then name else [name sub 1, ":" sub 1] + name << 1)(:(
+   for acc = "", @e ∈ paratypes do acc + %.@e + ",",
+   acc >> 1
+   ))"
    , rinfo
   )
 assert n.f = 1 report
  errormessage(
-  "found more than one:(for acc = "", @e ∈ toseq.f do acc + library.module.@e + "." + %.@e,
-  acc)"
+  "found more than one:(
+  for acc = "", @e ∈ toseq.f do acc + library.module.@e + "." + %.@e,
+  acc
+  )"
   , rinfo
  )
 let discard =
@@ -666,42 +670,43 @@ seqElementType:token
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:AccumList AccumList' And And' Atom Compare Compare' Declare Declare' E EL' FP FPL FPL' ForDeclare IF Id N Name Or Or' Parser Power Power' Product Product' String String' Sum Sum' Type Unary comma? str2 /br
-Terminals:()*+,-.= >[]any assert colon do dq else for function if let report sup then while{}∈ ∧ ∨ /br
-Parser ← function Name(FPL)Type Declare' E / function Name Type Declare' E /br
-String ← dq String' dq /br
-* String' ← colon(E)/ colon / str2 /br
-+str2 ← ! dq ! colon any /br
-E ← Or /br
-* EL' ←, E /br
-Or ← And Or' /br
-* Or' ← ∨ And /br
-And ← Compare And' /br
-* And' ← ∧ Compare /br
-Compare ← Sum Compare' /br
-* Compare' ← > Sum /br
-Sum ← Product Sum' /br
-* Sum' ←+Product /br
-Product ← Unary Product' /br
-* Product' ← * Unary /br
-Unary ←-Unary / Id.Unary /{N}Unary / Power /br
-Power ← Atom Power' /br
-* Power' ← sup Unary /br
-Atom ←(E)/[E EL']/ String / Declare Declare' E / if E then E IF else E / Name(E EL')/ Name /br
-Name ← Id colon Type / Id /br
-Id ← ! dq any /br
-comma? ←, / /br
-* IF ← else if E then E /br
-Type ← Id.Type / Id /br
-Declare ← let any = E comma? / assert E report E comma? /{N}comma? / for ForDeclare do E comma? / for ForDeclare while E do E comma? /br
-ForDeclare ← AccumList, any ∈ E / AccumList /br
-AccumList ← ! while any = E AccumList' /br
-* AccumList' ←, any = E /br
-* Declare' ← Declare /br
-FPL ← FP FPL' /br
-* FPL' ←, FP /br
-FP ← any colon Type / Type /br
-* N ←{N}/ !}any
+/eol
+Non-terminals:AccumList AccumList' And And' Atom Compare Compare' Declare Declare' E EL' FP FPL FPL' ForDeclare IF Id N Name Or Or' Parser Power Power' Product Product' String String' Sum Sum' Type Unary comma? str2 /eol
+Terminals:()*+,-.= >[]any assert colon do dq else for function if let report sup then while{}∈ ∧ ∨ /eol
+Parser ← function Name(FPL)Type Declare' E / function Name Type Declare' E /eol
+String ← dq String' dq /eol
+* String' ← colon(E)/ colon / str2 /eol
++str2 ← ! dq ! colon any /eol
+E ← Or /eol
+* EL' ←, E /eol
+Or ← And Or' /eol
+* Or' ← ∨ And /eol
+And ← Compare And' /eol
+* And' ← ∧ Compare /eol
+Compare ← Sum Compare' /eol
+* Compare' ← > Sum /eol
+Sum ← Product Sum' /eol
+* Sum' ←+Product /eol
+Product ← Unary Product' /eol
+* Product' ← * Unary /eol
+Unary ←-Unary / Id.Unary /{N}Unary / Power /eol
+Power ← Atom Power' /eol
+* Power' ← sup Unary /eol
+Atom ←(E)/[E EL']/ String / Declare Declare' E / if E then E IF else E / Name(E EL')/ Name /eol
+Name ← Id colon Type / Id /eol
+Id ← ! dq any /eol
+comma? ←, / /eol
+* IF ← else if E then E /eol
+Type ← Id.Type / Id /eol
+Declare ← let any = E comma? / assert E report E comma? /{N}comma? / for ForDeclare do E comma? / for ForDeclare while E do E comma? /eol
+ForDeclare ← AccumList, any ∈ E / AccumList /eol
+AccumList ← ! while any = E AccumList' /eol
+* AccumList' ←, any = E /eol
+* Declare' ← Declare /eol
+FPL ← FP FPL' /eol
+* FPL' ←, FP /eol
+FP ← any colon Type / Type /eol
+* N ←{N}/ !}any /eol
 
 function action(
 partno:int

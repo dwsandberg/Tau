@@ -116,8 +116,10 @@ if tp = INTEGER then [merge("i" + toword.a sub 2)]
 else if tp = ARRAY then "array(" + toword.a sub 2 + "," + %.b sub 3 + ")"
 else if tp = POINTER then "ptr.:(b sub 2)"
 else if tp = FUNCTION then
- "function(:(for acc = "", @e ∈ subseq(b, 3, n.a) do acc + %.@e + ",",
- acc >> 1))"
+ "function(:(
+ for acc = "", @e ∈ subseq(b, 3, n.a) do acc + %.@e + ",",
+ acc >> 1
+ ))"
 else if tp = TVOID then "VOID"
 else if tp = DOUBLE then "double"
 else "?"

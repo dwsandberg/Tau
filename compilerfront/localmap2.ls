@@ -22,7 +22,7 @@ Export value(localmap2) seq.symbol
 
 Export localmap2(key:int, value:seq.symbol) localmap2
 
-Export type:hashset.localmap2{From hashset.localmap2}
+Export type:hashset.localmap2 {From hashset.localmap2}
 
 Export +(hashset.localmap2, localmap2) hashset.localmap2 {From hashset.localmap2}
 

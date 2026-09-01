@@ -35,6 +35,7 @@ function =(a:tkn, b:tkn) boolean w.a = w.b
 function hash(a:tkn) int hash.w.a
 
 Function addprec(str:seq.word, internal:boolean) seq.word
+{???? no need for internal?}
 for precedence = 0, e ∈ str
 do
  if e ∈ "for" then precedence
@@ -46,9 +47,7 @@ do
    assert prec ∈ [1, 3, 4, 5, 6, 7] report ":(e)does not have a precedence",
    prec
  else
-  assert eqvclass.token.decode.encode.tkn(e, token(e, precedence)) = precedence report
-   ":(e)has already been given a different precedence: /br
-   :(str)",
+  assert eqvclass.token.decode.encode.tkn(e, token(e, precedence)) = precedence report ":(e)has already been given a different precedence: /br:(str)",
   precedence,
 ""
 
@@ -77,5 +76,7 @@ else value.a >> 32 = value.b >> 32
 Function totokens(s:seq.word) seq.token
 for p2 = empty:seq.token, e ∈ s do p2 + totoken.e,
 p2
+
+Function allTkn seq.word %.encodingdata:tkn
 
 Export type:token 

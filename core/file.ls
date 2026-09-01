@@ -44,7 +44,7 @@ Export ext(filename) word
 
 Export name(filename) word
 
-Export textFormat(s:seq.word) UTF8
+Export textFormat(myinput:seq.word) UTF8 {From format1a}
 
 Function HTMLformat1(myinput:seq.word) UTF8 HTMLformat1a.myinput
 
@@ -79,18 +79,17 @@ Function file(name:seq.word, bytes:seq.byte) file file(getname.name, bytes)
 
 function dawsextensions:markupNoExtension(op:word, argstk:stack.seq.word) stack.seq.word
 {return empty:stack.seq.word if not defined}
-{if op ∈"/pretty"then push(pop.argstk, pretty.top.argstk)else}
 empty:stack.seq.word
 
 type markupNoExtension is a:int
 
 function tauCSS seq.word
-"span.keyword{/* daws totxt: content = ' /sp ' = */ color:blue;}/br
-span.literal{/* daws totxt: content */ color:red;}/br
-span.comment{/* daws totxt: content */ color:green;}/br
-span.block{/* daws totxt: = content /indent = */ padding:0px 0px 0px 0px; margin:0px 0px 0px 20px; display:block;}/br
-p.code{/* daws totxt: = content /removeMarkup = /p
-*/}"
+"span.keyword{/* daws totxt: content */ color:blue;}:($$)
+span.literal{/* daws */ color:red;}:($$)
+span.comment{/* daws totxt: content */ color:green;}:($$)
+span.block{padding:0px 0px 0px 0px; margin:0px 0px 0px 20px; display:block;}:($$)
+p.code{/* daws totxt: content /removeMarkup */:($$)
+div.noformat{/* daws tohtml: < div class id > /raw /escape/ </ div > totxt: content /escape/ /mark id /id class */ display:inline;}}"
 
 Function file(fn:filename, out:seq.word) file
 {OPTION NOINLINE}

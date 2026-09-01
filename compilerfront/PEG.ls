@@ -34,25 +34,26 @@ use seq1.word
 
 use set.word
 
-Export type:PEGtable{From PEGmachine}
+Export type:PEGtable {From PEGmachine}
 
 Export entries(PEGtable) seq.tableEntry {From PEGmachine}
 
-Export maketable(gin:seq.pegrule, subs:seq.word, addrecover:boolean) PEGtable
+Export maketable(gin:seq.pegrule, subs0:seq.word, addrecover:boolean) PEGtable
 {From PEGmachine}
 
-Export runMachine(int, PEGtable, seq.seq.word, seq.word) seq.word {From PEGmachine}
+Export runMachine(
+actno:int
+, actions:PEGtable
+, strings:seq.seq.word
+, t:seq.word
+) seq.word
+{From PEGmachine}
 
 Function %(t:PEGtable) seq.word %table.entries.t
 
 Function maketable(s:seq.word) PEGtable
 let gin = PEGparse.s,
-maketable(
- gin
- , "dq:(dq), $/ /, //action /action, //br /br
- "
- , false
-)
+maketable(gin, "dq:(dq), $/ /, //action /action, //br /br", false)
 
 function toAttribute(b:seq.word, a:seq.word) seq.word a
 

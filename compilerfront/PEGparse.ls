@@ -52,26 +52,26 @@ seqElementType:word
 , place:int
 ) seq.boolean
 {wordmap: K"/br
-"sub 1, dq dq sub 1, //"/"sub 1, //action"/action"sub 1,"$"sub 1}
+"sub 1, dq dq sub 1, /slash"/"sub 1, //action"/action"sub 1,"$"sub 1}
 [
  "S[dq CodeFormat" = $.1
  , "/ F1" = $.1
- , "* F1 ! // * any Part Part'"
+ , "* F1 ! /slash * any Part Part'"
  = attribute("", grammar.$.0 + rule("*", str.$.1, parts.$.2 + parts.$.3))
- , "/ ! //+any Part Part'"
+ , "/ ! /slash+any Part Part'"
  = attribute("", grammar.$.0 + rule("+", str.$.1, parts.$.2 + parts.$.3))
- , "/ ! // any Part Part'"
+ , "/ ! /slash any Part Part'"
  = attribute("", grammar.$.0 + rule(str.$.1, parts.$.2 + parts.$.3))
- , "* Part' // Part" = toAttribute(parts.$.0 + parts.$.1)
+ , "* Part' /slash Part" = toAttribute(parts.$.0 + parts.$.1)
  , "/ K" = $.0
  , "Part Str //action Str" = toAttribute.[pegpart(str.$.1, str.$.2)]
- , "* Str ! K ! // ! //action any" = /All
+ , "* Str ! K ! /slash ! //action any" = /All
  , "* CodeFormat * any Part2 Part2'"
  = attribute("", grammar.$.0 + rule("*", str.$.1, parts.$.2 + parts.$.3))
  , "/+any Part2 Part2'"
  = attribute("", grammar.$.0 + rule("+", str.$.1, parts.$.2 + parts.$.3))
  , "/ any Part2 Part2'" = attribute("", grammar.$.0 + rule(str.$.1, parts.$.2 + parts.$.3))
- , "* Part2' // Part2" = toAttribute(parts.$.0 + parts.$.1)
+ , "* Part2' /slash Part2" = toAttribute(parts.$.0 + parts.$.1)
  , "Part2 Str1 dq = Code', dq" = toAttribute.[pegpart(str.$.1, str.$.2)]
  , "/ Str1 dq = Code']" = toAttribute.[pegpart(str.$.1, str.$.2)]
  , "Code' Code" = /All
@@ -86,20 +86,21 @@ seqElementType:word
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:Code Code' CodeFormat F1 N2 Part Part' Part2 Part2' S Str Str1 /br
-Terminals:()*+, // //action = K[]any dq /br
-S ←[dq CodeFormat / F1 /br
-* F1 ← ! // * any Part Part' / ! //+any Part Part' / ! // any Part Part' /br
-* Part' ← // Part / K /br
-Part ← Str //action Str /br
-* Str ← ! K ! // ! //action any /br
-* CodeFormat ← * any Part2 Part2' /+any Part2 Part2' / any Part2 Part2' /br
-* Part2' ← // Part2 /br
-Part2 ← Str1 dq = Code', dq / Str1 dq = Code']/br
-Code' ← Code /br
-* Str1 ← ! dq any /br
-* Code ← dq Str1 dq /(Code N2)/[Code N2]/, ! dq / !, ! dq !(!)![!]any /br
-* N2 ←, Code
+/eol
+Non-terminals:Code Code' CodeFormat F1 N2 Part Part' Part2 Part2' S Str Str1 /eol
+Terminals://noformat()*+, //action /slash = K[]any dq /noformat /eol
+S ←[dq CodeFormat / F1 /eol
+//noformat * F1 ← ! /slash * any Part Part' / ! /slash+any Part Part' / ! /slash any Part Part' /noformat /eol
+//noformat * Part' ← /slash Part / K /noformat /eol
+//noformat Part ← Str //action Str /noformat /eol
+//noformat * Str ← ! K ! /slash ! //action any /noformat /eol
+* CodeFormat ← * any Part2 Part2' /+any Part2 Part2' / any Part2 Part2' /eol
+//noformat * Part2' ← /slash Part2 /noformat /eol
+Part2 ← Str1 dq = Code', dq / Str1 dq = Code']/eol
+Code' ← Code /eol
+* Str1 ← ! dq any /eol
+* Code ← dq Str1 dq /(Code N2)/[Code N2]/, ! dq / !, ! dq !(!)![!]any /eol
+* N2 ←, Code /eol
 
 function action(partno:int, R:seq.attribute) attribute
 if partno = 2 then R sub n.R

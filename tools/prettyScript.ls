@@ -1,7 +1,5 @@
 Module prettyScript
 
-Implement /em prettyScript command.
-
 use file
 
 use seq1.filename

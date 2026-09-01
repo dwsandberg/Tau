@@ -98,8 +98,7 @@ error:boolean
 [
  "SymbolMode type Id is FPL Comment" = createtype(common, $.1, $.2, place.rinfo)
  , "/ any Header" = $.2
- , "Header Id(FPL)Type Comment"
- = createfunc(common, place.rinfo, text.$.1, null, $.2, $.3)
+ , "Header Id(FPL)Type Comment" = createfunc(common, place.rinfo, text.$.1, null, $.2, $.3)
  , "/ Id Type Comment" = createfunc(common, place.rinfo, text.$.1, null, null, $.2)
  , "/ Id:Type(FPL)Type Comment"
  = createfunc(common, place.rinfo, text.$.1, $.2, $.3, $.4)
@@ -118,17 +117,18 @@ error:boolean
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:Comment FP FPL FPL' Header Id N SymbolMode Type /br
-Terminals:(),.. :]any is type{}/br
-SymbolMode ← type Id is FPL Comment / any Header /br
-Header ← Id(FPL)Type Comment / Id Type Comment / Id:Type(FPL)Type Comment / Id:Type Type Comment /br
-FPL ← FP FPL' /br
-* FPL' ←, FP /br
-FP ← any:Type / Type /br
-Type ← Id.Type / Id /br
-Id ← !, !]!{!(!)!:!. any /br
-* Comment ←{N}/br
-* N ←{N}/ !{!}any
+/eol
+Non-terminals:Comment FP FPL FPL' Header Id N SymbolMode Type /eol
+Terminals:(),.. :]any is type{}/eol
+SymbolMode ← type Id is FPL Comment / any Header /eol
+Header ← Id(FPL)Type Comment / Id Type Comment / Id:Type(FPL)Type Comment / Id:Type Type Comment /eol
+FPL ← FP FPL' /eol
+* FPL' ←, FP /eol
+FP ← any:Type / Type /eol
+Type ← Id.Type / Id /eol
+Id ← !, !]!{!(!)!:!. any /eol
+* Comment ←{N}/eol
+* N ←{N}/ !{!}any /eol
 
 function action(
 partno:int

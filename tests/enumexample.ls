@@ -1,6 +1,4 @@
- 
-
- enumexample  // enum /id /h1
+enumexample enum /id /h1
 
 Module enumexample
 
@@ -14,7 +12,7 @@ In the first example, the question mark acts as a placeholder for numbers that w
 
 The second example uses an existing data type byte. 
 
-function genEnum seq.seq.word 
+function genEnum seq.seq.word
 [
  "newType: numbers names: ? two0 two1 ? two2 ? ? ? two3"
  , "existingType: byte decodeName: twodecode valueName: Two0 1 Two1 2 Two2 4 Two3 0x08"
@@ -38,13 +36,13 @@ Function two1 numbers numbers.2
 
 Function two2 numbers numbers.4
 
-Function two3 numbers numbers.8  
+Function two3 numbers numbers.8
 
 Function decode(code:numbers) seq.word
 let discard = [two0, two1, two2, two3]
 let i = toint.code,
 if between(i + 1, 1, 9) then
- let r = ["? two0 two1 ? two2 ? ? ? two3"] sub (i+1),
+ let r = ["? two0 two1 ? two2 ? ? ? two3"] sub (i + 1),
  if r ≠ "?" then r else "numbers." + toword.i
 else "numbers." + toword.i
 

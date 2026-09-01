@@ -38,19 +38,21 @@ acc
 
 function cmddescTable PEGtable
 {Descriptions end at first linebreak or paragraph, beginning of new block, or end of the block.}
-maketable."* Options /strong any Description Discard!Block <* block Values *> /action $.0 //br $.1 $.2 <* block $.4 *> /br
-/ /strong any Description /action $.0 //br $.1 $.2 /br
-/ DiscardAll /action $.0 /br
-* Description ! //br ! /p
-! /strong ! <* ! *> !}any /action $.0 $.1 /br
-* Values /strong Description /action $.0 //br $.1 /br
-/ DiscardAll /action $.0 /br
-DiscardAll <* block N *> /action /br
-/ <* ! block N *> /action /br
-/ ! /strong ! <* ! *> !}any /action /br
-* Discard!Block <* ! block N *> /action /br
-/ ! /strong ! <* ! *> !}any /action /br
-* N <* N *> /action /br
+maketable."* Options /strong any Description Discard!Block <* block Values *> /action $.0 //br:($$)
+$.1 $.2 <* block $.4 *> /br:($$)
+/ /strong any Description /action $.0 //br:($$)
+$.1 $.2 /br:($$)
+/ DiscardAll /action $.0 /br:($$)
+* Description ! //br ! /p ! /strong ! <* ! *> !}any /action $.0 $.1 /br:($$)
+* Values /strong Description /action $.0 //br:($$)
+$.1 /br:($$)
+/ DiscardAll /action $.0 /br:($$)
+DiscardAll <* block N *> /action /br:($$)
+/ <* ! block N *> /action /br:($$)
+/ ! /strong ! <* ! *> !}any /action /br:($$)
+* Discard!Block <* ! block N *> /action /br:($$)
+/ ! /strong ! <* ! *> !}any /action /br:($$)
+* N <* N *> /action /br:($$)
 / ! <* ! *> !}any /action"
 
 Function returnType(e:headerType) seq.word
@@ -125,8 +127,7 @@ function genPEG(seqElementType:word, attributeType:seq.word) seq.boolean
  , "/ Type" = checkReturn.$.1
  , "FPL FP FPL'" = $.1 + $.2
  , "* FPL', FP" = $.0 + $.1
- , "FP any:Type"
- = (if $.2 ∉ ["boolean", "seq.word", "seq.file"] then "~ENTRY" else "")
+ , "FP any:Type" = (if $.2 ∉ ["boolean", "seq.word", "seq.file"] then "~ENTRY" else "")
  , "/ Type" = ""
  , "Type any.Type" = /All
  , "/ !, !)!(!{any" = /All
@@ -138,16 +139,17 @@ function genPEG(seqElementType:word, attributeType:seq.word) seq.boolean
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:C F FP FPL FPL' N S Type /br
-Terminals:(),.:Any Export any type{}/br
-S ← Export type:Type C / Any Any F C /br
-F ←(FPL)Type /:Type(FPL)Type /:Type Type / Type /br
-FPL ← FP FPL' /br
-* FPL' ←, FP /br
-FP ← any:Type / Type /br
-Type ← any.Type / !, !)!(!{any /br
-C ←{N}/ /br
-* N ←{N}/ !}Any
+/eol
+Non-terminals:C F FP FPL FPL' N S Type /eol
+Terminals:(),.:Any Export any type{}/eol
+S ← Export type:Type C / Any Any F C /eol
+F ←(FPL)Type /:Type(FPL)Type /:Type Type / Type /eol
+FPL ← FP FPL' /eol
+* FPL' ←, FP /eol
+FP ← any:Type / Type /eol
+Type ← any.Type / !, !)!(!{any /eol
+C ←{N}/ /eol
+* N ←{N}/ !}Any /eol
 
 function action(partno:int, R:seq.seq.word) seq.word
 if partno = 2 then ""

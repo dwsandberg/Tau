@@ -70,8 +70,10 @@ else
     if iscore4.subfld ∨ subfld = typeT ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
    assert n.totypedict.alltypes < n.totypedict.acc report
-    "PROBLEM:(type)flat::(for txt = "", g ∈ flatflds do txt + %.g,
-    txt + "/br"):(acc)",
+    "PROBLEM:(type)flat::(
+    for txt = "", g ∈ flatflds do txt + %.g,
+    txt + "/br"
+    ):(acc)",
    addtype(acc, type)
 
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype) typedict
@@ -94,10 +96,11 @@ acc
 function resolvetypesize(prg1:seq.typeentry) typedict
 let bx5 = checkflat(empty:set.typeentry, prg1)
 assert isempty.unknown.bx5 report
- "recursive type problem:/br
- :(for acc10 = "", h ∈ unknown.bx5
+ "recursive type problem:/br:(
+ for acc10 = "", h ∈ unknown.bx5
  do acc10 + "type:(type.h)is:(%(",", flatflds.h))" >> 1 + "/br",
- acc10)"
+ acc10
+ )"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d),
 acc
 

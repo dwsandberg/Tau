@@ -35,11 +35,7 @@ let z =
   , compare(in, "a+-b", "a+(-b)")
   , compare(in, "a sup 2+b", "(a sup 2)+b")
   , compare(in, "n.[1, 2]", "n([1, 2])")
-  , testerror(
-   in
-   , "// In module testit name of field is missing in: /literal"
-   , "type testtype is a:int, int"
-  )
+  , testerror(in, "// In module testit name of field is missing in: /literal", "type testtype is a:int, int")
   , testerror(in, "// cannot find 1(()/literal", "function f1(a:int)boolean(a")
   , testerror(in, "// cannot find 1[()/literal", "function f1(a:int)boolean[a")
   , testerror(in, "// cannot find 1[()/literal", "function f1(a:int)boolean[a+")
@@ -48,36 +44,16 @@ let z =
    , "Function f1 is defined twice in module testit"
    , "function f1(a:int)int 3 /p function f1(a:int)int 3"
   )
-  , testerror(
-   in
-   , "// then and else types are different /literal"
-   , "function f1(a:int)int if true then true else 0"
-  )
-  , testerror(
-   in
-   , "// cond of if must be boolean but is int /literal"
-   , "function f1(a:int)int if 1 then 2 else 3"
-  )
-  , testerror(
-   in
-   , "// condition in assert must be boolean in:/literal"
-   , "function f1(a:int)int assert 1 report 2, 3"
-  )
+  , testerror(in, "// then and else types are different /literal", "function f1(a:int)int if true then true else 0")
+  , testerror(in, "// cond of if must be boolean but is int /literal", "function f1(a:int)int if 1 then 2 else 3")
+  , testerror(in, "// condition in assert must be boolean in:/literal", "function f1(a:int)int assert 1 report 2, 3")
   , testerror(
    in
    , "// report in assert must be seq of word in:/literal"
    , "function f1(a:int)int assert true report 2, 3"
   )
-  , testerror(
-   in
-   , "function f1(z:hhh)// cannot resolve type hhh /literal"
-   , "function f1(z:hhh)int 3"
-  )
-  , testerror(
-   in
-   , "function f1(z:int)xxx 3 // cannot resolve type xxx /literal"
-   , "function f1(z:int)xxx 3"
-  )
+  , testerror(in, "function f1(z:hhh)// cannot resolve type hhh /literal", "function f1(z:hhh)int 3")
+  , testerror(in, "function f1(z:int)xxx 3 // cannot resolve type xxx /literal", "function f1(z:int)xxx 3")
   , testerror(in, "recursive type problem:", "type testtype is fld1:testtype, fld2:int")
   , testerror(
    in

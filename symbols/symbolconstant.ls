@@ -20,7 +20,7 @@ use seq.symdef
 
 use set.symdef
 
-Export symdefOption(i:int) symdefOption
+Export symdefOption(toint:int) symdefOption
 
 Export type:symbolconstant
 
@@ -28,7 +28,7 @@ Export type:symdef
 
 Export code(symdef) seq.symbol
 
-Export sym(sd:symdef) symbol
+Export sym(symdef) symbol
 
 Export type:symdefOption
 
@@ -37,8 +37,10 @@ Export toint(symdefOption) int
 Function fullconstantcode(s:symbol) seq.symbol
 let t = findencode.symdef(s, empty:seq.symbol, 0)
 assert not.isempty.t report
- "unregister symbolconstant:(s):(for txt = "", sd ∈ toseq.constantsymbols."X" sub 1 do txt + "/p" + %.sym.sd + %.code.sd,
- txt):(stacktrace)",
+ "unregister symbolconstant:(s):(
+ for txt = "", sd ∈ toseq.constantsymbols."X" sub 1 do txt + "/p" + %.sym.sd + %.code.sd,
+ txt
+ ):(stacktrace)",
 code.t sub 1
 
 Function Constant2(libname:word, args:seq.symbol) symbol
@@ -134,7 +136,7 @@ type symdefOption is toint:int
 
 Export toint(symdefOption) int
 
-Export symdefOption(i:int) symdefOption
+Export symdefOption(toint:int) symdefOption
 
 Export type:symdefOption
 

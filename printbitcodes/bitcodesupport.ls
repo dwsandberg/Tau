@@ -44,8 +44,10 @@ else
   if llvm then printtype(s, a sub 2, llvm) + "*"
   else "ptr.:(printtype(s, a sub 2, llvm))"
  else if tp = FUNCTION then
-  "function.[:(for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",",
-  acc >> 1)]"
+  "function.[:(
+  for acc = "", @e ∈ subseq(a, 3, n.a) do acc + printtype(s, @e, llvm) + ",",
+  acc >> 1
+  )]"
  else if tp = TVOID then "VOID"
  else if tp = DOUBLE then "double"
  else "?"

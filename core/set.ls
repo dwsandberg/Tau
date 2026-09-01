@@ -10,11 +10,11 @@ Export type:set.T
 
 Export toseq(set.T) seq.T
 
-Export sub(seq.T, int) T
+Export sub(s:seq.T, i:int) T {From seq.T}
 
-Export +(seq.T, T) seq.T {From seq.T}
+Export +(l:seq.T, a:T) seq.T {From seq.T}
 
-Export +(seq.T, seq.T) seq.T {From seq.T}
+Export +(a:seq.T, b:seq.T) seq.T {From seq.T}
 
 Export empty:seq.T seq.T {From seq.T}
 

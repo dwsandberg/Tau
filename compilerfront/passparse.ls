@@ -132,9 +132,7 @@ let s1 = s0 << findindex(s0, "{" sub 1),
 if isempty.s1 ∨ s1 sub 1 ∉ "OPTION COMMAND" then NOOPTIONS
 else
  for acc = NOOPTIONS, w ∈ s1
- while w
- ∉ "{}/br
- "
+ while w ∉ "{}/br"
  do
   if w ∈ "PROFILE" then acc + PROFILE + NOINLINE
   else if w ∈ "STATE" then acc + STATE

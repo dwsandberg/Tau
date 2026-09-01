@@ -78,15 +78,15 @@ Export encode(seq.char) encoding.seq.char {From encoding.seq.char}
 
 Export addencodings(seq.seq.char) int {From encoding.seq.char}
 
-Export type:einfo{From encodingsupport}
+Export type:einfo {From encodingsupport}
 
 Export evectorUpdate(b:ptr) ptr {From encodingsupport}
 
 Export geteinfo(gl:ptr, name:seq.word) einfo {From encodingsupport}
 
-Export geteinfo2(int, int) einfo {From encodingsupport}
+Export geteinfo2(encodingno:int, dummy:int) einfo {From encodingsupport}
 
-Export type:ptr{From ptr}
+Export type:ptr {From ptr}
 
 Export blockseqtype:byte int {From taublockseq.byte}
 

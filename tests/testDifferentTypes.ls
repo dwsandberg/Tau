@@ -22,7 +22,7 @@ function >2(a:bug17, b:bug17) ordering part1.a >1 part1.b
 
 Function testDiffTypes seq.word
 if AA."H" + "/p" + BB."HH"
- = "set order: a B, a A, b H, b J, lookup:b H findelement2:b H b J /p
+ = "set order: a B, a A, b H, b J, lookup:b H findelement2:b H b J /p:($$)
 set order: a B, a A, b J, b HH, lookup:b HH findelement2:b J b HH" then "Pass testDifferentTypes"
 else "Fail testDifferentTypes"
 

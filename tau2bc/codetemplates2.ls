@@ -36,7 +36,7 @@ use seq.typedef
 
 use seq1.seq.word
 
-Export type:match5{From codetemplates}
+Export type:match5 {From codetemplates}
 
 Export action(match5) word {From codetemplates}
 
@@ -50,7 +50,7 @@ Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
 
 Export sym(match5) symbol {From codetemplates}
 
-Export type:recordcoderesult{From codetemplates}
+Export type:recordcoderesult {From codetemplates}
 
 Export bc(recordcoderesult) internalbc {From codetemplates}
 

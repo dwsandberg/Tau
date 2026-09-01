@@ -58,7 +58,7 @@ Export code(expandresult) seq.symbol
 
 Export nextvar(expandresult) int
 
-Export expandresult(int, seq.symbol) expandresult
+Export expandresult(nextvar:int, code:seq.symbol) expandresult
 
 Export type:optargs
 
@@ -290,8 +290,6 @@ if n.parts = 3
 else empty:seq.symbol
 
 type stkele is part:seq.symbol, blkparts:seq.seq.symbol
-
-/Function %(a:stkele)seq.word"/p part::(part.a):(%n.blkparts.a)"
 
 Function checkrecursive(
 parts:seq.seq.symbol

@@ -101,7 +101,7 @@ seqElementType:word
 , commonType:boolean
 ) seq.boolean
 {commonName: textOut notablex: wordmap: dq dq sub 1, ec escapeformat, break"/br
-"sub 1,"$"sub 1}
+"sub 1, //<"/!<"sub 1, //>"/!>"sub 1,"$"sub 1}
 [
  "* CN+" = $.0 + byte1."+"
  , "/-" = $.0 + byte1."-"
@@ -116,7 +116,7 @@ seqElementType:word
  , "/}" = $.0 + byte1."}"
  , "/[" = $.0 + byte1."["
  , "/]" = $.0 + byte1."]"
- , "/ /!< CN /!>" = $.0 + tobyte.toint.char1."<" + $.1 + tobyte.toint.char1.">" + tobyte.32
+ , "/ //< CN //>" = $.0 + tobyte.toint.char1."<" + $.1 + tobyte.toint.char1.">" + tobyte.32
  , "/ /sp" = addSpace.$.0
  , "/ /nsp" = $.0
  , "/ break"
@@ -130,9 +130,9 @@ seqElementType:word
  , "+CS," = $.0 + byte1.","
  , "/;" = $.0 + byte1.";"
  , "/ /sp" = addSpace.$.0
- , "/ /!< CN /!>" = $.0 + tobyte.toint.char1."<" + $.1 + tobyte.toint.char1.">"
+ , "/ //< CN //>" = $.0 + tobyte.toint.char1."<" + $.1 + tobyte.toint.char1.">"
  , "/ ec N ec" = addSpace.$.0 + $.1
- , "/ !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p ! break ! ec ! /!> ! /!< ! /nsp any"
+ , "/ !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p ! break ! ec ! //> ! //< ! /nsp any"
  = addSpace.$.0 + (if textOut then $.1 else escape&<.$.1)
  , "* N S+" = $.0 + $.1 + byte1."+"
  , "/ S-" = $.0 + $.1 + byte1."-"
@@ -169,15 +169,13 @@ seqElementType:word
 
 <<<< Below is auto generated code >>>>
 
-/br Non-terminals:CN CS N S /br
-Terminals:()+,-.. /!< /!> /nsp /p
-/sp:: ;[]any break dq ec{}/br
-* CN ←+/-/./:/. /: / dq /(/)/{/}/[/]/ /!< CN /!> / /sp / /nsp / break / /p
-/ ec N ec / CS /br
-+CS ←, /; / /sp / /!< CN /!> / ec N ec / !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p
-! break ! ec ! /!> ! /!< ! /nsp any /br
-* N ← S+/ S-/ S./ S:/ S. / S: / S dq / S(/ S)/ S{/ S}/ S[/ S]/ S /+/-/./:/. /: / dq /(/)/{/}/[/]/br
-+S ←, /; / !+!-!.!:!. !: ! dq !(!)![!]!{!}! ec any
+/eol
+Non-terminals:CN CS N S /eol
+Terminals://noformat()+,-.. //<//>/nsp/p/sp:: ;[]any break dq ec{}/noformat /eol
+//noformat * CN ←+/-/./:/. /: / dq /(/)/{/}/[/]/ //< CN //> / /sp / /nsp / break / /p / ec N ec / CS /noformat /eol
+//noformat+CS ←, /; / /sp / //< CN //> / ec N ec / !+!-!.!:!. !: ! dq !(!)![!]!{!}! /p ! break ! ec ! //> ! //< ! /nsp any /noformat /eol
+* N ← S+/ S-/ S./ S:/ S. / S: / S dq / S(/ S)/ S{/ S}/ S[/ S]/ S /+/-/./:/. /: / dq /(/)/{/}/[/]/eol
++S ←, /; / !+!-!.!:!. !: ! dq !(!)![!]!{!}! ec any /eol
 
 function action(partno:int, R:seq.seq.byte, textOut:boolean) seq.byte
 if partno = 2 then R sub n.R + byte1."+"

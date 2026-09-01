@@ -111,6 +111,10 @@ Function optest36(i:word) int
 if i ∈ "" then 27
 else if i ∈ "a b c" then 26 else 0
 
+/Function optest360(i:word) int 
+if i ∈ "" then 27
+else if i ∈ ("a b c"+"b") then 26 else 0
+
 Function optest37(s:seq.word, i:int) int
 if s sub i  =  "xxx"sub 1 then
 3
@@ -300,7 +304,7 @@ Function optest57   byte
 function optest57a(a:seq.word)  byte tobyte.toint.char1."X"
 
 
-/Function optest50(i:int, b:int) int
+/Function optest59(i:int, b:int) int
 {Check to see that duplicate labels are not included in Jump because LLVM requires no duplicates in
 Switch instruction. }
 if i = 5555 then

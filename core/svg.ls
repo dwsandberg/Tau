@@ -6,7 +6,7 @@ use uniqueids
 
 Function htmlMark(element:seq.word, attributes:seq.seq.word) seq.word
 {For multi word attribute enclose in equals like htmlMark("rect",["class node","= pointer-events = none"])}
-for acc = "/!<" + element, e ∈ attributes
+for acc = "/!<:(element)", e ∈ attributes
 do
  if n.e < 2 then if e = "/" then acc + "/ /nsp" else acc
  else
@@ -14,8 +14,8 @@ do
   + if e sub 1 ∈ "=" then
    let eqidx = findindex(e << 1, "=" sub 1)
    let attname = subseq(e, 2, eqidx),
-   "/sp:(attname)/nsp =:(dq)/nsp" + e << (eqidx + 1) + dq
-  else "/sp:(e sub 1)/nsp =:(dq)/nsp" + e << 1 + dq,
+   "/sp:(attname)/nsp =:(dq)/nsp:(e << (eqidx + 1)):(dq)"
+  else "/sp:(e sub 1)/nsp =:(dq)/nsp:(e << 1):(dq)",
 acc + "/!>"
 
 Function htmlMark(element:seq.word) seq.word

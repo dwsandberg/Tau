@@ -42,19 +42,15 @@ Function PEGdebug(input:seq.file, steps:seq.word, notable:boolean) seq.word
 let in = breakparagraph.input << 1
 assert n.in > 1 report "Expected first paragraph of input to be input and second paragraph to be the grammar"
 let gin = adjust.PEGparse.in sub 2
-let tab =
- maketable(
-  gin
-  , "dq:(dq), // /, //action /action, //br /br
-  "
-  , true
- )
+let tab = maketable(gin, "dq:(dq), // /, //action /action, //br /br", true)
 let inputtxt = in sub 1
 let start = if isempty.steps then 1 else toint.steps sub 1
 let end = if n.steps < 2 then start + 999 else toint.last.steps
 let r = parse(inputtxt, entries.tab, "", tab, start, end),
-"Status:(status.r):(if status.r ∈ "Failed" then subseq(inputtxt, 1, i.top.stk.r - 1) + "RI(" + recoveryEnding(r, entries.tab) + ")"
-else "Result:/p:(result.r)")/p:(trace.r)/table:(if notable then "" else "/p:(tab)/p:(%(3, gin))")"
+"Status:(status.r):(
+if status.r ∈ "Failed" then subseq(inputtxt, 1, i.top.stk.r - 1) + "RI(" + recoveryEnding(r, entries.tab) + ")"
+else "Result:/p:(result.r)"
+)/p:(trace.r)/table:(if notable then "" else "/p:(tab)/p:(%(3, gin))")"
 
 Function toAttribute(b:seq.word, a:seq.word) seq.word a
 
@@ -124,9 +120,7 @@ else 'MatchPrefix
 Function result(a:recoverInfo) seq.word last.result.top.stk.a
 
 function tracestart(trace:seq.word) seq.word
-"Key to column labels S--step no; D--Depth of Stack F--on fail reset I to F; I--Location in input; Lower case are values on top of stack /p
-S /td D /td f /td success /td fail /td result /td Result /td F /td State /td I /td Remaining input /td /tr
-:(trace)"
+"Key to column labels S--step no; D--Depth of Stack F--on fail reset I to F; I--Location in input; Lower case are values on top of stack /p S /td D /td f /td success /td fail /td result /td Result /td F /td State /td I /td Remaining input /td /tr:(trace)"
 
 function trace(
 stepno:int

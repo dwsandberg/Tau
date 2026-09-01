@@ -16,7 +16,7 @@ Export type:hashset.T
 
 Export cardinality(hashset.T) int
 
-Export type:seq.seq.hashelement.T{From seq.seq.hashelement.T}
+Export type:seq.seq.hashelement.T {From seq.seq.hashelement.T}
 
 type hashelement is data:T, hash:int
 

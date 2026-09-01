@@ -27,13 +27,14 @@ Function nodeLabel(node:symbol) seq.seq.word
 Function symbol(module:modref, name:seq.word, returntype:mytype) symbol
 symbol(module, name, empty:seq.mytype, returntype)
 
-Export =(a:symdef, b:symdef) boolean
+Export =(a:symdef, b:symdef) boolean {From symbolconstant}
 
 Export symbol(modref, seq.word, mytype) symbol {From symbol}
 
-Export symbol(modref, seq.word, seq.mytype, mytype) symbol {From symbol}
+Export symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype) symbol
+{From symbol}
 
-Export symIdxNB(seqparatype:mytype) symbol
+Export symIdxNB(seqparatype:mytype) symbol {From symbol}
 
 Export type:addrsym
 
@@ -41,11 +42,11 @@ Export addr(addrsym) int
 
 Export sym(addrsym) symbol
 
-Export addrsym(int, symbol) addrsym
+Export addrsym(addr:int, sym:symbol) addrsym
 
 Export type:midpoint
 
-Export libmods(m:midpoint) seq.modExports
+Export libmods(midpoint) seq.modExports
 
 Export option(midpoint) seq.word
 
@@ -67,11 +68,11 @@ Export types(modExports) seq.seq.mytype
 
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
 
-Export type:modref{From mytype}
+Export type:modref {From mytype}
 
-Export %(modref) seq.word {From mytype}
+Export %(s:modref) seq.word {From mytype}
 
-Export isAbstract(modref) boolean {From mytype}
+Export isAbstract(m:modref) boolean {From mytype}
 
 Export library(modref) word {From mytype}
 
@@ -79,19 +80,19 @@ Export name(modref) word {From mytype}
 
 Export para(modref) mytype {From mytype}
 
-Export type:mytype{From mytype}
+Export type:mytype {From mytype}
 
-Export %(t:mytype) seq.word {From mytype}
+Export %(s:mytype) seq.word {From mytype}
 
-Export parameter(mytype) mytype {From mytype}
+Export parameter(t:mytype) mytype {From mytype}
 
-Export seqof(mytype) mytype {From mytype}
+Export seqof(base:mytype) mytype {From mytype}
 
-Export moduleref(seq.word) modref {From mytype}
+Export moduleref(modname:seq.word) modref {From mytype}
 
-Export typeref(seq.word) mytype {From mytype}
+Export typeref(s:seq.word) mytype {From mytype}
 
-Export type:typedef{From mytype}
+Export type:typedef {From mytype}
 
 Export =(modref, modref) boolean {From mytype}
 
@@ -137,7 +138,7 @@ Export Record(seq.mytype) symbol {From symbol}
 
 Export Words(seq.word) symbol {From symbol}
 
-Export type:symbol{From symbol}
+Export type:symbol {From symbol}
 
 Export %(symbol) seq.word {From symbol}
 
@@ -193,7 +194,7 @@ Export worddata(symbol) seq.word {From symbol}
 
 Export wordname(symbol) word {From symbol}
 
-Export type:symdef{From symbol}
+Export type:symdef {From symbol}
 
 Export code(symdef) seq.symbol {From symbol}
 
@@ -312,13 +313,13 @@ Export typeword mytype {From symbol}
 
 Export fullconstantcode(s:symbol) seq.symbol {From symbolconstant}
 
-Export type:symbolconstant{From symbolconstant}
+Export type:symbolconstant {From symbolconstant}
 
 Export Constant2(libname:word, args:seq.symbol) symbol {From symbolconstant}
 
-Export type:typedict{From typedict}
+Export type:typedict {From typedict}
 
-Export type:typeentry{From typedict}
+Export type:typeentry {From typedict}
 
 Export basetype(mytype, typedict) mytype {From typedict}
 
@@ -373,7 +374,7 @@ let a = extractValue(option.info, "Library"),
 
 Export typebase(i:int) mytype {From mytype}
 
-Export type:modref{From mytype}
+Export type:modref {From mytype}
 
 Export %(modref) seq.word {From mytype}
 
@@ -387,7 +388,7 @@ Export name(modref) word {From mytype}
 
 Export para(modref) mytype {From mytype}
 
-Export type:mytype{From mytype}
+Export type:mytype {From mytype}
 
 Export %(p:mytype) seq.word {From mytype}
 
@@ -407,7 +408,7 @@ Export seqof(mytype) mytype {From mytype}
 
 Export tomodref(mytype) modref {From mytype}
 
-Export type:passtypes{From mytype}
+Export type:passtypes {From mytype}
 
 Export moduleref(seq.word) modref {From mytype}
 
@@ -437,7 +438,7 @@ Export typeptr mytype {From mytype}
 
 Export typereal mytype {From mytype}
 
-Export type:set.symbol{From set.symbol}
+Export type:set.symbol {From set.symbol}
 
 Export changelibrary(symbol, seq.word) symbol
 

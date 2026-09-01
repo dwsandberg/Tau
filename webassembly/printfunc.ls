@@ -170,7 +170,7 @@ do
     if nocheck then stk
     else if op = localset then
      assert between(arg + 1, 1, n.locals) report
-      "?? localset problem /br
+      "?? localset problem /br:($$)
       :(text + decodeop.op)"
       + toword.arg
       + xx
@@ -210,7 +210,7 @@ do
     else
      assert op ∈ [localtee] report "OPCODEX:(decodeop.op)::(text)stk:(toseq.stk)"
      assert between(arg + 1, 1, n.locals) report
-      "?? localtee problem /br
+      "?? localtee problem /br:($$)
       :(text):(decodeop.op)"
       + toword.arg
       + xx,

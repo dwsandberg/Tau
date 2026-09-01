@@ -1,5 +1,7 @@
 Module baseTypeCheck
 
+precedence > for >1
+
 use seq1.mytype
 
 use stack.mytype

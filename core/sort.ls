@@ -1,5 +1,7 @@
 Module sort.T
 
+precedence > for >1 >2 >3 >4 >alpha
+
 use seq.T
 
 use set.T

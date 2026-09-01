@@ -82,11 +82,11 @@ reallit(
  , 1
 )
 
-function isNaN(r:real) boolean representation.r = representation.NaN
+Function isNaN(r:real) boolean representation.r = representation.NaN
 
 Function %(decimalPlaces:int, rin1:real) seq.word
 {converts rin1 to text form with specified number no decimal places.}
-if representation.rin1 = representation.NaN then "NaN"
+if isNaN.rin1 then "NaN"
 else
  let neg = rin1 >1 toreal.0 = LT
  let rin = if neg then toreal.0 - rin1 else rin1

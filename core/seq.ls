@@ -8,13 +8,13 @@ Export a(pseq.T) seq.T
 
 Export b(pseq.T) seq.T
 
-Export start(a:pseq.T) int
+Export start(pseq.T) int
 
 Export type:seq.T
 
-Export to:pseq.T(s:seq.T) pseq.T
+Export to:pseq.T(seq.T) pseq.T
 
-Export getseqtype(a:seq.T) int
+Export getseqtype(seq.T) int
 
 unbound =(T, T) boolean
 

@@ -34,11 +34,11 @@ use token
 
 use seq1.word
 
-Export formatHeader(p:seq.word) seq.word
+Export formatHeader(p1:seq.word) seq.word {From prettySupport}
 
 Export showZ(out:seq.word) seq.word {From prettySupport}
 
-Export width(seq.word) int {From prettySupport}
+Export width(s:seq.word) int {From prettySupport}
 
 Export maxwidth int {From prettySupport}
 
@@ -68,7 +68,7 @@ else
   else
    let checkNot = if nextsym = NotOp then checkNot.sym0 else empty:seq.symbol
    let newskip = if isempty.checkNot then false else true
-   let sym = if isempty.checkNot then sym0 else checkNot sub 1,
+   let sym = if isempty.checkNot then sym0 else checkNot sub 1
    let newstk =
     let kind = kind.sym,
     if kind = kdefine ∧ not.isempty.stk then
@@ -93,11 +93,7 @@ else
       else prettyR(0, overallwidth, fullifthen + "//" + removeclose.text.thenpart + "/spc"),
      push(
       push(pop(stk1, 2), tmp)
-      , prettyR(
-       {prec}10
-       , 7
-       , if isempty.text.undertop(stk1, 2) then "// if /keyword" else "// else if /keyword"
-      )
+      , prettyR({prec}10, 7, if isempty.text.undertop(stk1, 2) then "// if /keyword" else "// else if /keyword")
      )
     else if kind = kendblock ∧ n.toseq.stk ≥ 2 then
      let stk1 = reduce(stk, change)
@@ -107,24 +103,16 @@ else
       , prettyR({prec}10, 7, "// else /keyword")
      )
     else if kind = kint then push(stk, prettyR.[name.sym])
-    else if kind = kwords then push(stk, prettyR."//:(dq.escape2format.worddata.sym)/literal")
+    else if kind = kwords then push(stk, prettyR."//:(dq.escapeFormat.worddata.sym)/literal")
     else if name.sym ∈ "$assert" then
      let reportpart = reduce(stk, change)
      let assertpart = reduce(pop.reportpart, change),
      if width.top.reportpart + 14 > maxwidth then
       push(
        pop.assertpart
-       , prettyR(
-        0
-        , 10000
-        , "// assert /keyword //:(addblock.top.assertpart)/spc // report /keyword:(addblock.top.reportpart)"
-       )
+       , prettyR(0, 10000, "// assert /keyword //:(addblock.top.assertpart)/spc // report /keyword:(addblock.top.reportpart)")
       )
-     else
-      push(
-       pop.assertpart
-       , prettyR."// assert /keyword //:(text.top.assertpart)/spc // report /keyword:(text.top.reportpart)"
-      )
+     else push(pop.assertpart, prettyR."// assert /keyword //:(text.top.assertpart)/spc // report /keyword:(text.top.reportpart)")
     else if nopara.sym = 0 then
      let tmp =
       if kind.sym ∈ [kother, kcompoundname] then href(sym, links) else compoundName.sym,
@@ -136,8 +124,7 @@ else
       push(pop.stk1, prettyR(0, width.top.stk1 + 2, "(:(text.top.stk1))"))
     else if nopara.sym = 1 ∧ name.sym ∈ "{" then
      {comment in header}
-     {assert false report"comment1"+showZ.text.top.stk}
-     push(pop.stk, prettyR."//{:(subseq(text.top.stk, 3, n.text.top.stk - 2))}/comment")
+     push(pop.stk, prettyR."//{:(escape2format.subseq(text.top.stk, 3, n.text.top.stk - 2))}/comment")
     else if nopara.sym = 1 ∧ name.sym ∈ "-" then
      {unary minus}
      let stk1 = reduce(stk, if prec.top.stk > 2 then {add()}change + 1 else change),
@@ -149,7 +136,8 @@ else
      {handle"...:(%.exp)..."}
      let stk1 = reduce(stk, change)
      let txt = text.top.stk1,
-     push(pop.stk1, prettyR."//:(dq(":" + "(:(txt))"))/literal")
+     let eol = if txt = "$$" then "/br" else "",
+     push(pop.stk1, prettyR."//:(dq(":" + "(:(txt)):(eol)"))/literal")
     else if nopara.sym = 1 ∧ prec.top.stk < 3 ∧ kind.sym ≠ ksequence ∧ hassimplename.sym then
      {name.arg format}
      let stk1 = reduce(stk, change),
@@ -158,9 +146,9 @@ else
      {comment on expression}
      let expstk = reduce(stk, change)
      let comment = text.top.pop.expstk
-     let comment1 = "//{:(subseq(comment, 3, n.comment - 2))}/comment",
+     let comment1 = "//{:(escape2format.subseq(comment, 3, n.comment - 2))}/comment",
      let new =
-      if width.comment1 + width.top.expstk > maxwidth then prettyR(0, 10000, comment1 + "/br:(text.top.expstk)")
+      if width.comment1 + width.top.expstk > maxwidth then prettyR(0, 10000, comment1 + "/rmbr:(text.top.expstk)")
       else prettyR(comment1 + text.top.expstk),
      push(pop(expstk, 2), new)
     else
@@ -178,19 +166,26 @@ else
       let t = pop.stk1,
       if sym = catStringOp ∧ isString.top.t then
        {handle adding back in...:()... in strings}
-       let new2 =
-        if isString.top.stk1 then
-         let ttext = text.top.t,
-         if ttext sub (n.ttext - 3) ∈ ":" ∧ (text.top.stk1) sub 6 ∈ "(" then push(stk1, prettyR(opprec."+" sub 1, 1, "//+/spc"))
-         else
-          let a = text.top.t >> 2
-          let b = text.top.stk1 << 2,
-          let c =
-           if last.a ∈ [escapeformat] ∧ b sub 1 ∈ [escapeformat] then a >> 1 + b << 1
-           else a + b,
-          push(pop.t, prettyR.c)
-        else push(pop.t, prettyR(text.top.t >> 2 + ":" + "(:(removeclose.text.top.stk1)):(dq)/literal")),
-       new2
+       if isString.top.stk1 then
+        let ttext = text.top.t,
+        if ttext sub (n.ttext - 3) ∈ ":" ∧ (text.top.stk1) sub 6 ∈ "(" then push(stk1, prettyR(opprec."+" sub 1, 1, "//+/spc"))
+        else
+         let a = text.top.t >> 2
+         let b = text.top.stk1 << 2,
+         let c =
+          if last.a ∈ [escapeformat] ∧ b sub 1 ∈ [escapeformat] then a >> 1 + b << 1
+          else a + b,
+         push(pop.t, prettyR.c)
+       else
+        let colon = ":"
+        let exp2 = removeclose.text.top.stk1,
+        let new2 =
+         if width.top.stk1 > maxwidth then
+          colon
+          + if last.exp2 ∈ "/block" then "(/br:(exp2)):(dq)/literal" else "(/rmbr:(exp2)/rmbr):(dq)/literal"
+         else if exp2 = "$$" then colon + "(:(exp2))/rmbr:(dq)/literal"
+         else colon + "(:(exp2)):(dq)/literal",
+        push(pop.t, prettyR(text.top.t >> 2 + ":(new2)"))
       else if prec.top.t ∈ [0, opprec] then push(stk1, new)
       else
        let tmp = if opprec = 2 ∧ prec.top.t = 1 then false else prec.top.t > opprec,
@@ -206,8 +201,7 @@ else
        next(pop.stkt, [top.stkt] + args),
       if name.sym ∈ "$fortext" then
        let whileexp0 = text.args sub (n.args - 2)
-       let whileexp =
-        if whileexp0 = "true" then "" else "// while /keyword //:(whileexp0)/spc"
+       let whileexp = if whileexp0 = "true" then "" else "// while /keyword //:(whileexp0)/spc"
        let accNames =
         {remove quotes}subseq(text.args sub n.args, 4, n.text.args sub n.args - 3)
        for acc6 = empty:stack.prettyR, i = 1, name ∈ accNames
@@ -217,7 +211,7 @@ else
          let tmp =
           prettyR(
            if i = n.accNames then ":(name)∈ //:(text.args sub i)/spc"
-           else ":(name)// = /spc" + text.args sub i
+           else ":(name)// = /spc:(text.args sub i)"
           ),
          next(
           if i = 1 then push(acc6, tmp)
@@ -227,8 +221,7 @@ else
        let accums = "// for /keyword:(removeclose.addblock.top.reduce(acc6, change))"
        let doexp0 = addblock.args sub (n.args - 1)
        let totwidth = width.doexp0 + width.whileexp + width.accums
-       let doexp =
-        if totwidth > maxwidth then "// do /keyword:(doexp0)" else "// do /keyword:(doexp0)",
+       let doexp = if totwidth > maxwidth then "// do /keyword:(doexp0)" else "// do /keyword:(doexp0)",
        let forexp =
         if totwidth > maxwidth then prettyR(0, 10000, addbr(if isempty.whileexp then accums else addbr.accums + whileexp) + doexp)
         else prettyR(accums + whileexp + doexp),
@@ -241,13 +234,14 @@ else
        {???? adding block is not needed when one parameter and is already a block}
        if kind.sym = ksequence then push(stk1, prettyR(0, width.plist + 2, "[:(addblock.plist)]"))
        else push(stk1, prettyR(0, w + width.plist, href(sym, links) + "(" + addblock.plist + ")")),
+   let new2 = text.top.newstk,
    next(newstk, nextsym, newskip)
  let tmp = top.reduce(stk, change),
  let tmp2 = removeclose.text.tmp,
  prettyR(0, width.tmp, tmp2)
 
 function addbr(s:seq.word) seq.word
-s + if not.isempty.s ∧ blockIsLast.s then "" else "/br"
+s + if not.isempty.s ∧ blockIsLast.s then "" else "/rmbr"
 
 function addblock(s:prettyR) seq.word
 if width.s < 10000 then text.s else "//:(text.s)/block"
@@ -276,7 +270,7 @@ else
  for text = firstarg, big = firstarg, width2 = width.text.top.acc1, i = 1, e ∈ args
  do
   let op = ops sub i
-  let addbr = if blockIsLast.big ∨ text.op = "." then "" else "/br",
+  let addbr = if blockIsLast.big ∨ text.op = "." then "" else "/rmbr",
   if prec.op = {prec}11 ∧ i = n.ops then
    next(
     addcomma(if change then removeclose.text else text) + text.op + text.e
@@ -303,8 +297,7 @@ else
  let top = top.stk
  let add = addparenthesis
  {∨ prec.top ={prec}10 ∧ text.top ="// else /keyword"}
- {???? Uncomment the above code to prevent parens from being dropped in \br(if a then b else c)+d being dropped /br
- adds too many parentheses. }
+ {???? Uncomment the above code to prevent parens from being dropped in(if a then b else c)+d being dropped. Adds too many parentheses. }
  let new =
   if change ∧ add ∧ prec.top ≠ {prec}11 then prettyR(0, width2 + 2, "(:(finaltext))")
   else prettyR(0, finalwidth, finaltext),
@@ -353,50 +346,63 @@ else
   if isempty.file.match then "// // # /nsp:(id.match)/href:(compoundName.sym)/a"
   else "// //:(file.match)/nsp # /nsp:(id.match)/href:(compoundName.sym)/a"
 
+function functionId(p:seq.word) seq.word
+{???? need to get type when no parameters}
+if p sub 1 ∈ "Function function Builtin builtin" then
+ for j = 3 while p sub j ∈ ".:" do j + 2
+ let z =
+  (if j = 3 then subseq(p, 2, 2)
+  else subseq(p, 2, {2)+":"+subseq(p, 3,}j - 1))
+  + if p sub j ∉ "(" then
+   for k = j + 1 while p sub k ∈ "." do k + 2,
+   subseq(p, j + 1, k - 1)
+  else
+   for k = findindex(p, ")" sub 1) + 2 while p sub k ∈ "." do k + 2
+   for acc = ":", last = p sub (j + 1), e ∈ subseq(p, j + 2, k - 1) + ","
+   do
+    if e ∈ ":" ∨ last ∈ ",:)" then next(acc, e)
+    else if e ∈ ",)" then next(acc + last + ":", e)
+    else next(acc + last, e),
+   acc >> 1,
+ z
+else ""
+
 Function prettyX(
 srctxt:seq.word
 , code:seq.symbol
 , syms:set.autolink
 , change:boolean
-, totxt:boolean
 ) seq.word
 if srctxt sub 1 ∈ "Function function" then
  let header = formatHeader.srctxt
  let body = pretty(code, syms, change),
  let tmp =
   if width.header + width.body < maxwidth then header + text.body
-  else header + "/br" + text.body,
- if totxt then removeMarkup.tmp else tmp
+  else header + "/rmbr" + text.body,
+ addescapemark."// //:(functionId.srctxt)/id:(tmp)/code"
 else
  let p = srctxt,
  if p sub 1 ∈ "Export unbound Builtin builtin" then
   let h = formatHeader.p
-  let rest = p << (findindex(p, "{" sub 1) - 1),
-  let p1 = if width(h + rest) < maxwidth then h + rest else h + "/br" + rest,
-  if totxt then removeMarkup.p1 else p1
+  let rest0 = p << (findindex(p, "{" sub 1) - 1),
+  let p1 =
+   addescapemark(
+    if isempty.rest0 then h
+    else
+     let rest1 = subseq(rest0, 2, n.rest0 - 1)
+     assert "{:(rest1)}" = rest0 report "JJJ:(showZ.rest1)",
+     let rest = "//{:(escape2format.rest1)}/comment",
+     if width(h + rest) < maxwidth then h + "/sp" + rest else h + "/rmbr" + rest
+   ),
+  p1 + "/code"
  else if p sub 1 ∈ "type" then
   let p1 =
    if width.p < maxwidth then p
    else
-    for acc = subseq(p, 1, 3), e ∈ break(p << 3, ",", true) do acc + "/br" + e,
+    for acc = subseq(p, 1, 3), e ∈ break(p << 3, ",", true) do acc + "/rmbr" + e,
     acc,
-  if totxt then removeMarkup.p1 else p1
- else if totxt then escape2format.p
+  p1 + "/code"
  else p
-
-Function escape2format(in:seq.word) seq.word
-escapeFormat(
- if width.in < maxwidth then in
- else
-  for result = "", w ∈ in
-  do
-   if w
-   ∈ "/br /p /tr
-   "
-   ∧ n.result > 1 then result + w + escapeFormat."/br"
-   else result + w,
-  result
-)
 
 Function compoundNameType mytype typeref."internal internal:"
 
@@ -407,12 +413,34 @@ function compoundName(s:symbol) seq.word
 if resulttype.s = compoundNameType then towords(emptyUTF8 + decodeword.name.s)
 else fullname.s
 
-Function removeMarkup(a:seq.word) seq.word
+Function addescapemark(s:seq.word) seq.word
+let a = "/!< input type /nsp =:(dq."hidden")/sp class /nsp =:(dq."esc")/ /!>"
+for acc = "", skip = false, e ∈ s
+do
+ if e = escapeformat then if skip then next(acc + e + a, false) else next(acc + a + e, true)
+ else next(acc + e, skip),
+acc
+
+function removethem(s:seq.word) seq.word
+let a = "/!< input type /nsp =:(dq."hidden")/sp class /nsp =:(dq."esc")/ /!>"
+for acc = "", state = 1, e ∈ s
+do
+ if e = a sub state then if state = n.a then next(acc >> (n.a - 1), 1) else next(acc + e, state + 1)
+ else next(acc + e, 1),
+acc
+
+Function removeMarkup(a1:seq.word) seq.word
+let a = removethem.a1
 {assert chk2(if a sub 1 ∈"type module"then a else a)report"XXX"}
 for skip = false, acc = "", mark = empty:stack.int, e ∈ a
 do
- if e = escapeformat then next(not.skip, acc + e, mark)
+ if e = escapeformat then
+  if skip ∧ last.acc = escapeformat then next(not.skip, acc >> 1, mark)
+  else next(not.skip, acc + e, mark)
  else if skip then next(skip, acc + [e], mark)
+ else if e ∈ "/eol" then next(skip, acc + "/eol /br", mark)
+ else if e ∈ "/rmbr" then next(skip, acc + "/br", mark)
+ else if e ∈ "/id" then next(skip, subseq(acc, 1, top.mark - 1), if isempty.mark then mark else pop.mark)
  else if e ∈ "//" then next(skip, acc, push(mark, n.acc))
  else if e ∈ "/keyword" then next(skip, acc + "/sp", if isempty.mark then mark else pop.mark)
  else if e ∈ "/spc" then

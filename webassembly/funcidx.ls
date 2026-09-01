@@ -276,8 +276,10 @@ let t =
  for found = empty:seq.wfunc, e ∈ s while isempty.found do if a = e then found + e else found,
  found
 assert name.sym.a ∉ "intpart" ∨ not.isempty.t report
- "KKK:(sym.a):(for txt = ">>>", b ∈ s do txt + %.sym.b + "/br",
- txt)",
+ "KKK:(sym.a):(
+ for txt = ">>>", b ∈ s do txt + %.sym.b + "/br",
+ txt
+ )",
 t
 
 Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte, funcidx:int) wfunc

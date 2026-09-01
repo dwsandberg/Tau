@@ -41,7 +41,7 @@ let discard = tknencoding
 for acc = "", p ∈ modEntry(breakparagraph.input, entryUses, core)
 do
  acc
- + (if p sub 1 ∈ "Function function" then pretty(p, true, true) + "/p" else p + "/p")
+ + (if p sub 1 ∈ "Function function" then removeMarkup.pretty.p + "/p" else p + "/p")
 let words =
  if core then
   for names = "", f ∈ input do names + name.fn.f + "." + ext.fn.f,
@@ -90,14 +90,18 @@ if not.core then
  + [
   "Export addbcwords(seq.byte)int"
   , "Function entrypoint(args:UTF8)UTF8 let p = process.entrypoint2(args), if aborted.p then finishentry.[file(:(dq."tmp/error.html"), message.p)]else result.p"
-  , "function entrypoint2(args0:UTF8)UTF8 let args = towords.args0,:(partA), assert not.isempty.cmdline report:(dq."No command named")+cmd let files = getfiles.b let errors = errors.files assert isempty.errors report:(dq."Error fetching input files /br
-  ")+errors finishentry.runthecmd(cmdline, files)"
+  , "function entrypoint2(args0:UTF8)UTF8 let args = towords.args0,:(partA), assert not.isempty.cmdline report:(dq."No command named")+cmd let files = getfiles.b let errors = errors.files assert isempty.errors report:(dq."Error fetching input files /br")+errors finishentry.runthecmd(cmdline, files)"
  ]
  + common
 else common
 
 function partA seq.word
-"let cmdline0 = args let cmd = cmdline0 sub 1 for cmdline =:(dq.""), b = empty:seq.seq.filename, e ∈ cmdDesc while isempty.cmdline do if cmd = e sub 1 then let cl = if n.e = 1 then cmdline0 else[cmd]+addDefaultName(cmdline0, e sub 2)for fs = empty:seq.seq.filename, p ∈ e << 2 do fs+tofilenames.extractValue(cl,[p]), next(cl+:(dq."output: default.html"), fs)else next(cmdline, b)"
+"let cmdline0 = args let cmd = cmdline0 sub 1:($$)
+for cmdline =:(dq.""), b = empty:seq.seq.filename, e ∈ cmdDesc while isempty.cmdline do:($$)
+if cmd = e sub 1 then let cl = if n.e = 1 then cmdline0:($$)
+else[cmd]+addDefaultName(cmdline0, e sub 2):($$)
+for fs = empty:seq.seq.filename, p ∈ e << 2 do:($$)
+fs+tofilenames.extractValue(cl,[p]), next(cl+:(dq."output: default.html"), fs)else next(cmdline, b)"
 
 function buildruncmd2(e:headerType, cmd:seq.word) seq.seq.word
 let p = header.e

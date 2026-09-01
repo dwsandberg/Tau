@@ -16,7 +16,7 @@ Export type:process.T
 
 Export body2(process.T) T
 
-Export header(a:process.T) UTF8
+Export header(process.T) UTF8
 
 type process is abortedx:boolean, msg:seq.word, header:UTF8, body1:seq.T, body2:T
 

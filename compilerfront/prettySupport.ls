@@ -12,12 +12,12 @@ Function maxwidth int 100
 
 Function getheader(s:seq.word) seq.word
 let gram =
- maketable."Head Export type:any Type' /action // Export /keyword type:$.1 $.2 /br
- / any any:any Type' FPL any Type' /action // $.1 /keyword $.2:$.3 $.4 $.5 // $.6 $.7 /spc /br
- / any any FPL any Type' /action // $.1 /keyword $.2 $.3 // $.4 $.5 /spc /br
- * Type'.any /action /All /br
- FPL(L)/action($.1)/br
- / /action /br
+ maketable."Head Export type:any Type' /action // Export /keyword type:$.1 $.2 /br:($$)
+ / any any:any Type' FPL any Type' /action // $.1 /keyword $.2:$.3 $.4 $.5 // $.6 $.7 /spc /br:($$)
+ / any any FPL any Type' /action // $.1 /keyword $.2 $.3 // $.4 $.5 /spc /br:($$)
+ * Type'.any /action /All /br:($$)
+ FPL(L)/action($.1)/br:($$)
+ / /action /br:($$)
  * L !)any /action /All",
 run(gram, s) << 1
 
@@ -28,29 +28,36 @@ else
  let i = findindex(p, "(" sub 1),
  if i > n.p then p
  else
-  for acc = subseq(p, 1, i), e ∈ break(p << i, ",)", true) do acc + "/br" + e,
+  for acc = subseq(p, 1, i), e ∈ break(p << i, ",)", true) do acc + "/rmbr" + e,
   acc
 
-Function showZ(out:seq.word) seq.word
-for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
-acc
+Function escape2format(in:seq.word) seq.word
+if n.in > 2 ∧ last.in = escapeformat ∧ in sub 1 = escapeformat then escape2format.subseq(in, 2, n.in - 1)
+else
+ for result = "", width = 0, w ∈ in
+ do
+  next(
+   if w ∈ "/br /p" then result + w + escapeFormat."/rmbr" else result + w
+   , if w ∈ ("./nsp //" + escapeformat) then width
+   else if w ∈ "(,)/sp:(dq)/spc" then width + 1
+   else width + n.decodeword.w + 1
+  ),
+ escapeFormat(if width.in < maxwidth then in else result)
 
 Function width(s:seq.word) int
-for acc = 0, strwidth = 0, w ∈ s
+for acc = 0, inescape = false, w ∈ s
 while acc < 10000 - 10
 do
- if w = escapeformat then next(acc, if strwidth > 0 then 0 else 1)
- else if w ∈ "/br" ∧ (strwidth = 0 ∨ strwidth > maxwidth) then next(10000, strwidth)
- else if strwidth > 0 then
-  let k = n.decodeword.w + 1,
-  next(acc + k, strwidth + k)
- else next(acc + wordwidth.w, strwidth),
+ if w = escapeformat then next(acc, not.inescape)
+ else if not.inescape ∧ w ∈ "/br /rmbr" then next(10000, inescape)
+ else
+  next(
+   if w ∈ ("/literal /comment /keyword: ./nsp //" + escapeformat) then acc
+   else if w ∈ "(,)/sp:(dq)/spc" then acc + 1
+   else acc + n.decodeword.w + 1
+   , inescape
+  ),
 acc
-
-function wordwidth(w:word) int
-if w ∈ ("/literal /comment /keyword: ./nsp //" + escapeformat) then 0
-else if w ∈ "(,)/sp:(dq)/spc" then 1
-else n.decodeword.w + 1
 
 Function addcomma(s:seq.word) seq.word
 for i = 0, w ∈ reverse.s while w ∈ "/block" do i + 1,

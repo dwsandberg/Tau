@@ -35,19 +35,13 @@ test(bytes, tableHTML)
 
 type tblrec is kind:int, chr:char
 
-function handleCharRef(chars:seq.char, ch:char) seq.char
-if ch = char1.";" then
- let list = decodeword."<&" sub 1
- for acc = empty:seq.char, idx = 1, e ∈ [decodeword."&lt" sub 1, decodeword."&amp" sub 1]
- do
-  if subseq(chars, n.chars - n.e + 1, n.chars) = e then next(chars >> n.e + list sub idx, idx + 1)
-  else next(acc, idx + 1),
- if isempty.acc then chars + ch else acc
-else chars + ch
-
-function showZ(out:seq.word) seq.word
-for acc = "", w ∈ out do acc + encodeword(decodeword.w + char1."Z"),
-acc
+function handleCharRef(chars:seq.char) seq.char
+let list = decodeword."<&" sub 1
+for acc = empty:seq.char, idx = 1, e ∈ [decodeword."&lt" sub 1, decodeword."&amp" sub 1]
+do
+ if subseq(chars, n.chars - n.e + 1, n.chars) = e then next(chars >> n.e + list sub idx, idx + 1)
+ else next(acc, idx + 1),
+if isempty.acc then chars + char1.";" else acc
 
 function addnewword(words:seq.word, chars:seq.char) seq.word
 if n.chars = 0 then words else words + encodeword.chars
@@ -93,7 +87,7 @@ do
   if ch = char1."&" then next(tag + Charesc, 0, paragraph, chars + ch, bits.0, 0, words)
   else if ch = char1."<" then
    {starting a tag}
-   if tag = InTag then next(0, 0, paragraph, chars + ch, bits.0, 0, words)
+   if tag = InTag then next(tag, 0, paragraph, chars + ch, bits.0, 0, words)
    else
     let newwords = addnewword(words, chars),
     if not.isempty.newwords ∧ last.newwords ∉ ">" then next(tag + InTag, 0, paragraph + [newwords + dq], [ch], bits.0, 0, "")
@@ -107,13 +101,27 @@ do
      if isempty.words then [[encodeword(chars + ch)]]
      else [words + dq] + [encodeword(chars + ch)],
     next(0, 0, paragraph + tmp, empty:seq.char, bits.0, 0, "")
-   else next(0, 0, paragraph + [addnewword(words, chars) + ">"], empty:seq.char, bits.0, 0, "")
+   else
+    let newwords = addnewword(words, chars)
+    for kk = 0, i = 0, indq = false, e ∈ newwords
+    do
+     if e ∈ dq then next(kk, i + 1, not.indq)
+     else next(if not.indq ∧ (decodeword.e) sub 1 = char1."<" then i else kk, i + 1, indq),
+    if indq then {in attribute value of element}next(tag, 0, paragraph, chars + ch, bits.0, 0, words)
+    else
+     let toadd =
+      if kk = 0 then [newwords + ">"]
+      else [subseq(newwords, 1, kk) + dq, newwords << kk + ">"],
+     next(0, 0, paragraph + toadd, empty:seq.char, bits.0, 0, "")
  else if kind = Space then
   let newstate = if ch = {LF}char.10 ∧ state = 0 then 2 else state
   let newtag = if tag ∈ [Charesc, Charesc + InTag] then tag - Charesc else tag,
   next(tag, newstate, paragraph, empty:seq.char, bits.0, 0, addnewword(words, chars))
  else if kind = 0 then
-  if tag ∈ [Charesc, Charesc + InTag] ∧ ch = char1.";" then next(tag - Charesc, 0, paragraph, handleCharRef(chars, ch), bits.0, 0, words)
+  if tag ∈ [Charesc, Charesc + InTag] ∧ ch = char1.";" then
+   let newchars = handleCharRef.chars
+   let newtag = if last.newchars = char1."<" then tag - Charesc else tag - Charesc,
+   next(newtag, 0, paragraph, newchars, bits.0, 0, words)
   else next(tag, 0, paragraph, chars + ch, bits.0, 0, words)
  else if kind = ThreeByte then next(tag, 0, paragraph, chars, 0xF ∧ bits, 2, words)
  else if kind = TwoByte then next(tag, 0, paragraph, chars, 0x1F ∧ bits, 1, words)
@@ -128,9 +136,7 @@ do
   let newwords = addnewword(words, chars) + encodeword.[ch],
   next(tag, 0, paragraph, empty:seq.char, bits.0, 0, newwords)
  else if kind = Period then next(tag, period/colon, paragraph, [ch], bits.0, 0, addnewword(words, chars))
- else
-  assert false report "kind:(kind)",
-  next(tag, 0, paragraph, chars, bits.0, 0, words),
+ else next(tag, 0, paragraph, chars, bits.0, 0, words),
 if isempty.words0 then paragraph0
 else
  let html = kind.classify sub (toint.char1."<" + 1) = Char&<>,
@@ -155,7 +161,7 @@ function Period int 8
 function Char&<> int 9
 
 function tableHTML seq.tblrec
-{auto generated}
+{same as tableText except &<> are marked with Char&<> and; is not standalone}
 [
  {00}tblrec(0, char.0)
  , {01}tblrec(0, char.1)

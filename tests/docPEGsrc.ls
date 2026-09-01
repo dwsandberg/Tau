@@ -1,5 +1,3 @@
-
-
 Using PEG in Tau /h2
 
 This document describes how to use Tau to create PEG grammars to parse the following sequence of words:
@@ -14,7 +12,7 @@ A PEG grammar to parse the above is // G1 ← function any int E /br
 E ← Sum /br
 Sum ← Atom Sum' /br
 * Sum' ←+Atom /br
-Atom ← (E) /br
+Atom ←(E)/br
 / let any = E, E /br
 / any /block
 
@@ -26,18 +24,18 @@ Rules that are repeated, such as * Sum' above, may also use $.0 which represents
 
 The PEG module uses a string of words to specify the action, and $.n is replaced with the attribute of the corresponding non-terminal. 
 
-The first example will produce the list of rules used in a post-order traversal of the parse tree. Here is what the output should look like // Example1 a Atom ← any {1} /br
-Atom ← any {2} /br
+The first example will produce the list of rules used in a post-order traversal of the parse tree. Here is what the output should look like // Example1 a Atom ← any{1}/br
+Atom ← any{2}/br
 * Sum' ←+Atom /br
 Sum ← Atom Sum' /br
 E ← Sum /br
-Atom ← any {a} /br
-Atom ← any {3} /br
-Atom ← any {4} /br
+Atom ← any{a}/br
+Atom ← any{3}/br
+Atom ← any{4}/br
 * Sum' ←+Atom /br
 Sum ← Atom Sum' /br
 E ← Sum /br
-Atom ← (E) /br
+Atom ←(E)/br
 * Sum' ←+Atom /br
 Sum ← Atom Sum' /br
 E ← Sum /br
@@ -60,16 +58,16 @@ The PEG grammar above was transformed into the string literal in the postOrder f
 
 Function postOrder seq.word
 run(
- maketable."G1 function any int E /action $.1 $.2 G1 ← function any int E //br /br
- E Sum /action $.1 E ← Sum //br /br
- Sum Atom Sum' /action $.1 $.2 Sum ← Atom Sum' //br /br
- * Sum'+Atom /action $.0 $.1 * Sum' ←+Atom //br /br
- Atom (E) /action $.1 Atom ← (E) //br /br
- / let any = E, E /action $.1 $.2 $.3 Atom ← let any = E, E //br /br
- / any /action Atom ← any {$.1} //br"
+ maketable."G1 function any int E /action $.1 $.2 G1 ← function any int E //br /br:($$)
+ E Sum /action $.1 E ← Sum //br /br:($$)
+ Sum Atom Sum' /action $.1 $.2 Sum ← Atom Sum' //br /br:($$)
+ * Sum'+Atom /action $.0 $.1 * Sum' ←+Atom //br /br:($$)
+ Atom(E)/action $.1 Atom ←(E)//br /br:($$)
+ / let any = E, E /action $.1 $.2 $.3 Atom ← let any = E, E //br /br:($$)
+ / any /action Atom ← any{$.1}//br"
  , input
 )
-<< 1
+ << 1
 
 The << 1 in the last line above removes the status returned by the run function.
 
@@ -77,67 +75,65 @@ The function below is very similar to the above procedure, but reverses the orde
 
 Function ReversePostOrder seq.word
 run(
- maketable."G1 function any int E /action G1 ← functionR any int E //br $.2 //br $.1 /br
- E Sum /action E ← Sum //br $.1 /br
- Sum Atom Sum' /action Sum ← Atom Sum' //br $.2 $.1 /br
- * Sum'+Atom /action * Sum' ←+Atom //br $.1 $.0 /br
- Atom (E) /action Atom ← (E) //br $.1 /br
- / let any = E, E /action Atom ← let any = E, //br $.3 $.2 $.1 /br
- / any /action Atom ← any {$.1} //br"
+ maketable."G1 function any int E /action G1 ← functionR any int E //br $.2 //br $.1 /br:($$)
+ E Sum /action E ← Sum //br $.1 /br:($$)
+ Sum Atom Sum' /action Sum ← Atom Sum' //br $.2 $.1 /br:($$)
+ * Sum'+Atom /action * Sum' ←+Atom //br $.1 $.0 /br:($$)
+ Atom(E)/action Atom ←(E)//br $.1 /br:($$)
+ / let any = E, E /action Atom ← let any = E, //br $.3 $.2 $.1 /br:($$)
+ / any /action Atom ← any{$.1}//br"
  , input
 )
-<< 1
+ << 1
 
 By adding indentation to the ReversePostOrder, we can represent the parse tree. The level of indentation indicates the node's position in the parse tree. 
 
 use PEGparse
 
-
 Function parseTree seq.word
- run(
-maketable("G1 function any int E /action G1 ← functionR any int E // $.2 //br $.1 /block /br
-  E Sum /action E ← Sum // $.1 /block /br
-  Sum Atom Sum' /action Sum ← Atom Sum' // $.2 //br $.1 /block /br
-  * Sum'+Atom /action * Sum' ←+Atom // $.1 //br $.0 /block /br
-  Atom (E) /action Atom ← (E) // $.1 /block /br
-  / let any = E, E /action Atom ← let any = E, E // $.3 //br $.2 //br $.1 /block /br
-  / any /action Atom ← any {$.1}"
-), input
- ) << 1
- 
- 
+run(
+ maketable."G1 function any int E /action G1 ← functionR any int E // $.2 //br $.1 /block /br:($$)
+ E Sum /action E ← Sum // $.1 /block /br:($$)
+ Sum Atom Sum' /action Sum ← Atom Sum' // $.2 //br $.1 /block /br:($$)
+ * Sum'+Atom /action * Sum' ←+Atom // $.1 //br $.0 /block /br:($$)
+ Atom(E)/action Atom ←(E)// $.1 /block /br:($$)
+ / let any = E, E /action Atom ← let any = E, E // $.3 //br $.2 //br $.1 /block /br:($$)
+ / any /action Atom ← any{$.1}"
+ , input
+)
+ << 1
 
 The output of the parseTree is: 
 
 G1 ← functionR any int E // E ← Sum // Sum ← Atom Sum' // /br
-Atom ← let any = E, E // E ← Sum // Sum ← Atom Sum' // * Sum' ←+Atom // Atom ← (E) // E ← Sum // Sum ← Atom Sum' // * Sum' ←+Atom // Atom ← any {4} /br
-/block Atom ← any {3} /block /block /block /block Atom ← any {a} /block /block E ← Sum // Sum ← Atom Sum' // * Sum' ←+Atom // Atom ← any {2} /br
-/block Atom ← any {1} /block /block a /block /block /block Example1 /block
+Atom ← let any = E, E // E ← Sum // Sum ← Atom Sum' // * Sum' ←+Atom // Atom ←(E)// E ← Sum // Sum ← Atom Sum' // * Sum' ←+Atom // Atom ← any{4}/br
+:($$)/block Atom ← any{3}/block /block /block /block Atom ← any{a}/block /block E ← Sum // Sum ← Atom Sum' // * Sum' ←+Atom // Atom ← any{2}/br
+:($$)/block Atom ← any{1}/block /block a /block /block /block Example1 /block
 
 The stkCode function below creates postfix code for a simple stack machine. The output is // 1 2 Add Store a a 3 4 Add Add /block
 
 Function stkCode seq.word
 run(
- maketable."G1 function any int E /action $.2 /br
- E Sum /action $.1 /br
- Sum Atom Sum' /action $.1 $.2 /br
- * Sum'+Atom /action $.0 $.1 Add /br
- Atom (E) /action $.1 /br
- / let any = E, E /action $.2 Store $.1 $.3 /br
+ maketable."G1 function any int E /action $.2 /br:($$)
+ E Sum /action $.1 /br:($$)
+ Sum Atom Sum' /action $.1 $.2 /br:($$)
+ * Sum'+Atom /action $.0 $.1 Add /br:($$)
+ Atom(E)/action $.1 /br:($$)
+ / let any = E, E /action $.2 Store $.1 $.3 /br:($$)
  / any /action $.1"
  , input
 )
-<< 1
+ << 1
 
-The PEGdebug tool provides detailed steps of the parse. The debug tool output for the parse of the postfix function is provided //    here  // ./PEGdebugEx.html /href /a, but no explanation of the output is provided. 
+The PEGdebug tool provides detailed steps of the parse. The debug tool output for the parse of the postfix function is provided here //./PEGdebugEx.html /href /a, but no explanation of the output is provided. 
 
 Using genPEG /h3
 
-The transform tool can generate code for a function // parse /em that allows code to be written equivalent to the stkCode function above.  
+The transform tool can generate code for a function parse /em that allows code to be written equivalent to the stkCode function above. 
 
-Function stkCode2 seq.word result.parse(input, {initail Attribute} "")
+Function stkCode2 seq.word result.parse(input, {initail Attribute}"")
 
-Below is a function genPEG that the transform tool replaces any code after that procedure with auto-generated code. One function that will be generated is // Function parse (input:seq.seqElementType, attributeType) runresultType /block In this case, the seqElementType is word /em, and the attributeType is // seq.word /em . The parse function executes the actions of the rules in the order of the post-order traversal of the parse tree. Each action combines the attributes matching the Non-terminals of the rule into a single attribute. 
+Below is a function genPEG that the transform tool replaces any code after that procedure with auto-generated code. One function that will be generated is // Function parse(input:seq.seqElementType, attributeType)runresultType /block In this case, the seqElementType is word /em, and the attributeType is // seq.word /em. The parse function executes the actions of the rules in the order of the post-order traversal of the parse tree. Each action combines the attributes matching the Non-terminals of the rule into a single attribute. 
 
 We need to supply a couple of functions before giving the genPEG procedure. 
 
@@ -146,45 +142,45 @@ function endMark word
 encodeword.[char.254]
 
 function toAttribute(attribute:seq.word, seqElement:seq.word) seq.word
-{This is used to form the attribute for the any /em in a rule by calling toAttribute (<current attribute>, [<the element" any" matches>]. This function is also called when starting a * or /sp + /sp Non-terminal. In this case, the seqElement is the empty sequence.}
+{This is used to form the attribute for the any /em in a rule by calling toAttribute(<current attribute>,[<the element"any"matches>]. This function is also called when starting a * or /sp+/sp Non-terminal. In this case, the seqElement is the empty sequence.}
 seqElement
 
 use seq.word
 
-Any code after the genPEG procedure is replaced with auto-generated code.  Because of this any user defined function must be before the genPEG procedure.  The function below shows the output of the functions above.
+Any code after the genPEG procedure is replaced with auto-generated code. Because of this any user defined function must be before the genPEG procedure. The function below shows the output of the functions above.
 
 Function PEGex seq.word
 {COMMAND}
-{ stkCode
- + "/hr"
- + } ":(postOrder) /p  :(ReversePostOrder) /p :(stkCode) "
-+
- "/p :(parseTree)"
- 
+{stkCode+"/hr"+}
+":(postOrder)/p:(ReversePostOrder)/p:(stkCode)" + "/p:(parseTree)"
 
 The body of the PEGprocedure is formed by taking the string in the stkCode procedure and making the following changes: 
 
 //ol quote each rule and action /li
-change /action to =, change   / /nsp br  to a comma /li
-change $.1 to:($.1) and do the same for the other $ expressions. /li /ol
+
+change /action to =, change to a comma /li
+
+change $.1 to:($.1)and do the same for the other $ expressions. /li /ol
 
 function genPEG(seqElementType:word, attributeType:seq.word) seq.boolean
-{wordmap: dq dq, " $" sub 1}
+{wordmap: dq dq,"$"sub 1}
 [
  "G1 function any int E" = ":($.2)"
  , "E Sum" = ":($.1)"
  , "Sum Atom Sum'" = ":($.1):($.2)"
  , "* Sum'+Atom" = ":($.0):($.1)Add"
- , "Atom (E)" = ":($.1)"
+ , "Atom(E)" = ":($.1)"
  , "/ let any = E, E" = ":($.2)Store:($.1):($.3)"
  , "/ any" = ":($.1)"
 ]
 
 The comment in the genPEG procedure is significant as it specifies how to map a word in a rule into the attributeType. Following the = is a comma-separated list. If the word of the rule matches the first word of the element in the list, it will be replaced with the remainder of the words in the element. The last element of the list is the default case and is used if the word in the rule does not match any of the other elements. In the default case, the entire element is used, and $ is replaced with the rule's word. 
 
- Using a symbol table /h4
+Using a symbol table /h4
 
-Next, we will add a check to see that all references are defined. The following should produce an error // function Example1 int /br let a = 1+2,  /br b+(3+4) /block since // b /em is not defined.
+Next, we will add a check to see that all references are defined. The following should produce an error // function Example1 int /br
+let a = 1+2, /br
+b+(3+4)/block since b /em is not defined.
 
 We start fresh with a new module.
 
@@ -216,18 +212,18 @@ let initAttribute = attribute(asset."1 2 3 4", "")
 let finalAttribute = result.parse(input, initAttribute),
 code.finalAttribute
 
-The rule" / let any = E, E"   to add a symbol to the symbol table before the symbol is referenced. Below this rule," / Declare, E" is replaced with" Declare any = E", and" Declare any = E" is added. The action of the second rule will add a value to the symbol table. Also, check in action of the" / any" rule is added to raise an error if the symbol is not defined.
+The rule"/ let any = E, E"to add a symbol to the symbol table before the symbol is referenced. Below this rule,"/ Declare, E"is replaced with"Declare any = E", and"Declare any = E"is added. The action of the second rule will add a value to the symbol table. Also, check in action of the"/ any"rule is added to raise an error if the symbol is not defined.
 
 These changes have been made to the genPEG below. Calling stkCode3 will now raise the error // Not defined b /block
 
 function genPEG(seqElementType:word, attributeType:attribute) seq.boolean
-{wordmap: " $" sub 1}
+{wordmap: "$"sub 1}
 [
  "G1 function any int E" = $.2
  , "E Sum" = $.1
  , "Sum Atom Sum'" = attribute(symbols.$.0, code.$.1 + code.$.2)
  , "* Sum'+Atom" = attribute(symbols.$.0, code.$.0 + code.$.1 + "Add")
- , "Atom (E)" = $.1
+ , "Atom(E)" = $.1
  , "/ Declare E" = attribute(symbols.$.0, code.$.1 + code.$.2)
  , "/ any"
  = assert (code.$.1) sub 1 ∈ symbols.$.1 report "Not defined:(code.$.1)",
@@ -236,14 +232,14 @@ function genPEG(seqElementType:word, attributeType:attribute) seq.boolean
  = attribute(symbols.$.0 + (code.$.1) sub n.code.$.1, code.$.2 + "Store" + code.$.1)
 ]
 
- Adding Error Recover /h4
+Adding Error Recover /h4
 
 This section describes how to determine the location of the parse error. The same grammar is used as in the section above, with a rule added for if-then-else. The module in this section runs multiple examples and traps any errors that arise during processing. 
 
 This example uses many genPEG options. Here is a summary of what the options do: 
 
-// /td /tr
-// Option /strong /td // Value /strong /td // Purpose /strong /td /tr
+//table /td /tr
+Option /strong /td Value /strong /td Purpose /strong /td /tr
 seqElementType /td type /td the element type of the sequence to be parsed /td /tr
 attributeType /td type /td the type of the attribute constructed by the parse./td /tr
 resultType: type /td the type name to be used for the results of the parse.commonType type /td type of an immutable value that will be available throughout the parse. This value is supplied as a parameter of the parse. /td /tr
@@ -251,15 +247,13 @@ commonName /td word /td The name to use in an action to reference the above immu
 wordmap /td map value /td How to map a terminal in rule to an element of the sequence to be parsed /td /tr
 error /td flag /td include information for pinpointing where the parse failed./td /tr
 /table
-
-An option may be specified in the parameter list of genPEG or in the first comment of genPEG // /td /tr
-// Kind /strong /td // As /strong // parameter /strong /td // In /strong // comment /strong /td /tr
+An option may be specified in the parameter list of genPEG or in the first comment of genPEG //table /td /tr
+Kind /strong /td As /strong parameter /strong /td In /strong comment /strong /td /tr
 type /td option:value /td comment:type /td /tr
 word /td /td option = value /td /tr
 flag /td option:boolean /td option = /td /tr
 map value /td /td option = comma seperated list./td /tr
 /table
-
 The resultType may have the following fields:// /br
 result: the final attribute /br
 status: one of the words Match, MatchPrefix, or Failed./br
@@ -269,7 +263,7 @@ recoveryEnding: On failure, a sequence of words that can be added to the input o
 
 The recoveryEnding also provides a way to construct an input that can be parsed. In this section, we use the same parser to parse it again. But to do a successful parse, the semantic checking must not be done. This example uses the commonName and commonType options to add a parameter to the parse to turn semantic checking on or off. In the Tau implementation, instead of using the same parser, a second parser is used to pretty-print the input. 
 
-Here is the description of the examples used, and the output they give. The first line of the output is the input to the parser// Example of a successful parse.// function Example1 int let a = 1+2, a+(3+4) status: Match place:18 code:1 2 Add Store a a 3 4 Add Add /block Example of a parse with extra words at the end.// function Example2 int let a = 1+2, a+(3+4) extra words status: MatchPrefix place:18 code:1 2 Add Store a a 3 4 Add Add /block Example of a Failed parse that never executes an action.// function Example3 int let status:Failed place:0 code:/block Example of a semantic error:// function Example4 int let a = 1+2, (((b)))+(3+4) Error at 15 message:b is not defined. To finish parse, ')))+(3+4) ' was replaced with '))) ' /block Another example of a successful parse // function Example5 int if 1 then 2+3 else 4 status: Match place:12 code:1 2 3 Add 4 If /block Example of parse that failed and then backtrack ending up match none of the rule, The maxinum the maxium place in the input where a reduce was done was used as recovery point. In this example the recover point is a the reduction of 2+3.// function Example6 int if 1 then 2+3 else Failed Error at 10 message:syntax error. To finish parse, ' else ' was replaced with ' else any ' /block /block
+Here is the description of the examples used, and the output they give. The first line of the output is the input to the parser// Example of a successful parse.// function Example1 int let a = 1+2, a+(3+4)status: Match place:18 code:1 2 Add Store a a 3 4 Add Add /block Example of a parse with extra words at the end.// function Example2 int let a = 1+2, a+(3+4)extra words status: MatchPrefix place:18 code:1 2 Add Store a a 3 4 Add Add /block Example of a Failed parse that never executes an action.// function Example3 int let status:Failed place:0 code:/block Example of a semantic error:// function Example4 int let a = 1+2,(((b)))+(3+4)Error at 15 message:b is not defined. To finish parse, ')))+(3+4)' was replaced with ')))' /block Another example of a successful parse // function Example5 int if 1 then 2+3 else 4 status: Match place:12 code:1 2 3 Add 4 If /block Example of parse that failed and then backtrack ending up match none of the rule, The maxinum the maxium place in the input where a reduce was done was used as recovery point. In this example the recover point is a the reduction of 2+3.// function Example6 int if 1 then 2+3 else Failed Error at 10 message:syntax error. To finish parse, ' else ' was replaced with ' else any ' /block
 
 Module PEGEx3
 
@@ -294,9 +288,9 @@ Function stkCode4 seq.word
 let data =
  [
   "function Example1 int let a = 1+2, a+(3+4)"
-  , "function Example2 int let a = 1+2, a+(3+4) extra words"
+  , "function Example2 int let a = 1+2, a+(3+4)extra words"
   , "function Example3 int let"
-  , "function Example4 int let a = 1+2, (((b)))+(3+4)"
+  , "function Example4 int let a = 1+2,(((b)))+(3+4)"
   , "function Example5 int if 1 then 2+3 else 4"
   , "function Example6 int if 1 then 2+3 else"
  ]
@@ -329,14 +323,14 @@ seqElementType:word
 , commonType:boolean
 , checkSemantics:boolean
 ) seq.boolean
-{commonName: checkSemantics error: wordmap: " $" sub 1}
+{commonName: checkSemantics error: wordmap: "$"sub 1}
 [
  "G1 function any int E" = $.2
  , "E if E then E else E" = attribute(symbols.$.0, code.$.1 + code.$.2 + code.$.3 + "If")
  , "/ Sum" = $.1
  , "Sum Atom Sum'" = attribute(symbols.$.0, code.$.1 + code.$.2)
  , "* Sum'+Atom" = attribute(symbols.$.0, code.$.0 + code.$.1 + "Add")
- , "Atom (E)" = $.1
+ , "Atom(E)" = $.1
  , "/ Declare E" = attribute(symbols.$.0, code.$.1 + code.$.2)
  , "/ ! if ! let any"
  = assert not.checkSemantics ∨ (code.$.1) sub 1 ∈ symbols.$.1 report errormessage(":(code.$.1)is not defined", rinfo),

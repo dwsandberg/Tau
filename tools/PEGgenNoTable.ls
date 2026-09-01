@@ -105,11 +105,12 @@ do
  , "type frame is Sstate:int, Fstate:int, i:int, result:seq.attributeType, faili:int, failini:seqElementType, failresult:seq.attributeType"
  , "type resultType is stk:stack.frame /trace, trace:seq.word /end"
  , "Function result(a:resultType)attributeType last.result.top.stk.a"
- , "function parse(myinput0:seq.seqElementType, initAttr:attributeType /common, common:commonType /end)resultType /br
- let myinput = packed(myinput0+endMark)/br
- let initresult =[initAttr]let initstk = push(empty:stack.frame, frame(1, 0, 1, initresult, 1, myinput sub 1, initresult))/br
- for /trace stepno = 1, trace0 =:(dq.""), /end stk = initstk, state = 2, i = 1, inputi = myinput sub 1, result = initresult, faili = 1, failini = myinput sub 1, failresult = initresult /br
- while state > toint.Match do /trace let trace = trace0 /end:(code >> 1)/br resultType(push(stk, frame(state, state, i, result, n.myinput, inputi, result))/trace, trace0 /end)"
+ , "function parse(myinput0:seq.seqElementType, initAttr:attributeType /common, common:commonType /end)resultType /br:($$)
+ let myinput = packed(myinput0+endMark)/br:($$)
+ let initresult =[initAttr]let initstk = push(empty:stack.frame, frame(1, 0, 1, initresult, 1, myinput sub 1, initresult))/br:($$)
+ for /trace stepno = 1, trace0 =:(dq.""), /end stk = initstk, state = 2, i = 1, inputi = myinput sub 1, result = initresult, faili = 1, failini = myinput sub 1, failresult = initresult /br:($$)
+ while state > toint.Match do /trace let trace = trace0 /end:(code >> 1)/br:($$)
+ resultType(push(stk, frame(state, state, i, result, n.myinput, inputi, result))/trace, trace0 /end)"
 ]
 
 function replaceWords2(a:word, b:seq.word) seq.word
@@ -151,7 +152,10 @@ if level > 0 ∧ (state ∈ newStates.info ∨ state = start.info) then
  + ","
  + failresult
  + ")"
-else if action.state = Fail then "let top = top.stk, if Fstate.top ≥ toint.S' then let newi = i.top,:(next)pop.:(stk), Fstate.top, newi, idxNB(myinput, newi), result.top, faili.top, failini.top, failresult.top)else:(next)pop.:(stk), Fstate.top, faili.top, failini.top, failresult.top, faili.top, failini.top, failresult.top)"
+else if action.state = Fail then
+ "let top = top.stk, if Fstate.top ≥ toint.S' then let newi = i.top,:(next)pop.:(stk):($$)
+ , Fstate.top, newi, idxNB(myinput, newi), result.top, faili.top, failini.top, failresult.top)else:(next)pop.:(stk):($$)
+ , Fstate.top, faili.top, failini.top, failresult.top, faili.top, failini.top, failresult.top)"
 else if action.state = Success* then "let top = top.stk,:(next)pop.:(stk), Sstate.top,:(i),:(inputi), result.top+:(result), faili.top, failini.top, failresult.top)"
 else if action.state = Discard* then "let top = top.stk,:(next):(stk),:(cvt(info, nextState.state, 5)),:(i),:(inputi), result.top, i,:(inputi), result.top)"
 else if action.state = Reduce* then "let R =:(result)let att =[:((actions.info) sub reduceNo.state)]:(next):(stk),:(cvt(info, nextState.state, 6)),:(i),:(inputi), att,:(i),:(inputi), att)"
@@ -162,10 +166,10 @@ else
  let teaction = action.action.te,
  let ns = nextState.action.te,
  if teaction ∈ [NT, NT*] then
-  "let newstk = push(:(stk), frame(:(cvt(info, Sstate.te, 7)),:(cvt(info, Fstate.te, 8)),:(i),:(result), faili, failini, failresult))let tmp =[toAttribute(:(result)sub n.:(result), empty:seq.seqElementType)],:(if ns ∈ newStates.info then
-   next
-   + "newstk,:(cvt(info, ns, 9)),:(i),:(inputi), tmp,:(i),:(inputi), tmp)"
-  else build(level + 1, info, ns, "newstk", i, inputi, "tmp", i, inputi, "tmp"))"
+  "let newstk = push(:(stk), frame(:(cvt(info, Sstate.te, 7)),:(cvt(info, Fstate.te, 8)),:(i),:(result), faili, failini, failresult))let tmp =[toAttribute(:(result)sub n.:(result), empty:seq.seqElementType)],:(
+  if ns ∈ newStates.info then next + "newstk,:(cvt(info, ns, 9)),:(i),:(inputi), tmp,:(i),:(inputi), tmp)"
+  else build(level + 1, info, ns, "newstk", i, inputi, "tmp", i, inputi, "tmp")
+  )"
  else if teaction = T' then
   let newi = merge."i:(level)"
   let newinputi = merge."inputi:(level)",
@@ -183,20 +187,30 @@ else
      , failini
      , failresult
     )
-   else "let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(build(level + 1, info, Sstate.te, stk, [newi], [newinputi], result, faili, failini, failresult))",
+   else
+    "let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(
+    build(level + 1, info, Sstate.te, stk, [newi], [newinputi], result, faili, failini, failresult)
+    )",
   "if{T'}:(inputi)=:(replaceWords2(match.te, wordmap.info))then:(KK)else:(build(level + 1, info, Fstate.te, stk, i, inputi, result, faili, failini, failresult))"
  else if teaction = !T then
   let newinputi = merge."ini:(level)",
-  "if{!T}:(inputi)=:(replaceWords2(match.te, wordmap.info))then:(build(level + 1, info, Sstate.te, stk, faili, failini, failresult, faili, failini, failresult))else:(build(level + 1, info, Fstate.te, stk, i, inputi, result, faili, failini, failresult))"
+  "if{!T}:(inputi)=:(replaceWords2(match.te, wordmap.info))then:(
+  build(level + 1, info, Sstate.te, stk, faili, failini, failresult, faili, failini, failresult)
+  )else:(build(level + 1, info, Fstate.te, stk, i, inputi, result, faili, failini, failresult))"
  else if teaction = T then
   let newi = merge."i:(level)"
   let newinputi = merge."inputi:(level)",
-  "if{T}:(inputi)≠:(replaceWords2(match.te, wordmap.info))then let:(newi)= idxNB(myinput, faili):(build(level + 1, info, Fstate.te, stk, "faili", [newi], result, faili, failini, failresult))else let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(build(level + 1, info, Sstate.te, stk, [newi], [newinputi], result, faili, failini, failresult))"
+  "if{T}:(inputi)≠:(replaceWords2(match.te, wordmap.info))then let:(newi)= idxNB(myinput, faili):(
+  build(level + 1, info, Fstate.te, stk, "faili", [newi], result, faili, failini, failresult)
+  )else let:(newi)=:(i)+1, let:(newinputi)= idxNB(myinput,:(i)+1):(
+  build(level + 1, info, Sstate.te, stk, [newi], [newinputi], result, faili, failini, failresult)
+  )"
  else if teaction = MatchAny then
   let newinputi = merge."inputi:(level)"
   let newi = merge."i:(level)",
   let newresult = merge."result:(level)",
-  "if{Match Any}:(inputi)= endMark then:(build(level + 1, info, Fstate.te, stk, i, inputi, result, faili, failini, failresult))else let:(newresult)=:(result)+toAttribute(:(result)sub n.:(result),[:(inputi)])let:(newi)=:(i)+1 let:(newinputi)= idxNB(myinput,:(i)+1),:(build(
+  "if{Match Any}:(inputi)= endMark then:(build(level + 1, info, Fstate.te, stk, i, inputi, result, faili, failini, failresult))else let:(newresult)=:(result)+toAttribute(:(result)sub n.:(result),[:(inputi)])let:(newi)=:(i)+1 let:(newinputi)= idxNB(myinput,:(i)+1),:(
+  build(
    level + 1
    , info
    , Sstate.te
@@ -207,6 +221,7 @@ else
    , faili
    , failini
    , failresult
-  ))"
+  )
+  )"
  else "Internal PEG Error.:(teaction)"
  

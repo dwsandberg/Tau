@@ -149,9 +149,7 @@ let names =
  acc
 let slots2 = slotorder2(z, 4, empty:seq.slotdesc)
 let checkslots = number.check(slots2, q1)
-assert "ERROR" sub 1 ∉ checkslots report
- "check slot error(search for ERROR)/br
- :(number.q1):(checkslots)"
+assert "ERROR" sub 1 ∉ checkslots report "check slot error(search for ERROR)/br:(number.q1):(checkslots)"
 let constanddefs = descslot(check, objects, slots2, names, q1)
 let ttt =
  for acc = "", e ∈ arithseq(n.q1, 1, 0) do acc + toword.e,
@@ -162,32 +160,15 @@ let labels =
 let bodies = printbodies(functionblocks, slots2, constanddefs, q1, check, llvm) >> 3
 let str1 =
  if bitcode then
-  "Module data /p
-  use standard /p
-  use runcode /p
-  use seq.track /p
-  use bitcodesupport /p
-  use llvm /p
-  use seq.llvmtype /p
-  use seq.slot /p
-  use seq.seq.int /p
-  use seq.seq.seq.int /p
-  use internalbc /p
-  use file /p
-  use seq.file /p
-  Function test2(input:seq.file, output:seq.word)seq.file{COMMAND}/br
-  let tobepatched = typ.array(-2, i64)/br
-  let discard = subseq(inittypes, 3, n.inittypes)/br
-  let discard1 = initslots /br
-  for a = empty:seq.seq.seq.int, e ∈ bodies do a+finish.e /br
-  let bc = llvm([:(for acc = "", @e ∈ subseq(recs.getinfoB.(blocks.z) sub typeblock, 2, 3)
+  "Module data /p use standard /p use runcode /p use seq.track /p use bitcodesupport /p use llvm /p use seq.llvmtype /p use seq.slot /p use seq.seq.int /p use seq.seq.seq.int /p use internalbc /p use file /p use seq.file /p:($$)
+  Function test2(input:seq.file, output:seq.word)seq.file{COMMAND}/br let tobepatched = typ.array(-2, i64)/br let discard = subseq(inittypes, 3, n.inittypes)/br let discard1 = initslots /br for a = empty:seq.seq.seq.int, e ∈ bodies do a+finish.e /br let bc = llvm([:(
+  for acc = "", @e ∈ subseq(recs.getinfoB.(blocks.z) sub typeblock, 2, 3)
   do acc + printrecord(TYPES, @e) + ",",
-  acc >> 1)]+subseq(typerecords, 3, n.typerecords), a)/br
-  ,[file(filename(output), bc)]/p
-  Function inittypes seq.llvmtype /br
-  [:(number.q1)]/p Function initslots seq.slot /br
-  [:(number.constanddefs)]/p Function bodies seq.track /br
-  [:(bodies)]"
+  acc >> 1
+  )]+subseq(typerecords, 3, n.typerecords), a)/br,[file(filename(output), bc)]/p:($$)
+  Function inittypes seq.llvmtype /br[:(number.q1)]/p:($$)
+  Function initslots seq.slot /br[:(number.constanddefs)]/p:($$)
+  Function bodies seq.track /br[:(bodies)]"
  else obj2txt(objectfldslots(slots2, q1), constanddefs) + number.constanddefs + bodies,
 str1
 
@@ -211,11 +192,7 @@ blocks:seq.block
 , check:boolean
 , llvm:boolean
 ) seq.word
-let seperator =
- if llvm then "/p"
- else
-  "/br, /br
-  "
+let seperator = if llvm then "/p" else "/br, /br"
 for result = empty:seq.word, codeblock = 1, slotno = 1, sl ∈ slots
 do
  let rec = rec.sl,
@@ -286,8 +263,10 @@ do
     let op2 = relocate(info, slot, d sub 3),
     "store(:(op1),:(op2),:(decode.align.d sub 4))"
    else if tp = GEP then
-    "getelementptr(:(reglabel),:((types.info) sub (d sub 3 + 1)),:(for acc = "", @e ∈ subseq(d, 4, n.d) do acc + relocate(info, slot, @e) + ",",
-    acc >> 1))"
+    "getelementptr(:(reglabel),:((types.info) sub (d sub 3 + 1)),:(
+    for acc = "", @e ∈ subseq(d, 4, n.d) do acc + relocate(info, slot, @e) + ",",
+    acc >> 1
+    ))"
    else if tp = CALL then
     let fconst = relocate(info, slot, d sub 5),
     if llvm then
@@ -324,10 +303,9 @@ do
       + ")"
      else "branch problem"
     else if between(d sub 2, 1, n.blocks.info) then
-     "br.:(if between(d sub 2, 1, n.blocks.info) then [toword.(blocks.info) sub (d sub 2 + 1)]
-     else
-      "{:([toword.d sub 2])}0+/br
-      label.:([ll])"
+     "br.:(
+     if between(d sub 2, 1, n.blocks.info) then [toword.(blocks.info) sub (d sub 2 + 1)]
+     else "{:([toword.d sub 2])}0+/br label.:([ll])"
      )"
     else "branch problem" + toword(d sub 2 + 1)
    else
@@ -488,8 +466,7 @@ if count.p = 0 then empty:seq.word
 else
  "/br the code:(printrecord(blockop.block, [w.p, 0]))occurs"
  + toword.count.p
- + "times. /br
- "
+ + "times. /br"
 
 function removelowcount(mincount:int, p:codefreq) seq.codefreq
 if count.p < mincount then empty:seq.codefreq else [p]
